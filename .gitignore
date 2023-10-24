@@ -1,0 +1,6 @@
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
+.idea
+__pycache__
