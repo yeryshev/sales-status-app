@@ -1,6 +1,9 @@
 ### macOS ###
+.env
 .DS_Store
 .AppleDouble
 .LSOverride
-.idea
+/.idea
+/usage_logs
+/venv
 __pycache__
