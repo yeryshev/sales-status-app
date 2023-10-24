@@ -19,8 +19,8 @@ class User(Base):
     isWorkingRemotely = Column(Boolean, default=False, nullable=False)
     statusId = Column(Integer, default=3)
     commentId = Column(Integer, nullable=True)
-    # createdAt = Column(DateTime)
-    # updatedAt = Column(DateTime)
+    createdAt = Column(DateTime)
+    updatedAt = Column(DateTime)
 
     comments = relationship("Comment", back_populates="owner")
     tasks = relationship("Task", back_populates="owner")
