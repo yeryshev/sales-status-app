@@ -22,9 +22,7 @@ def upgrade():
         "comments",
         sa.Column("id", sa.Integer, primary_key=True, index=True),
         sa.Column("description", sa.String),
-        sa.Column("ownerId", sa.Integer, sa.ForeignKey("users.id"), nullable=False),
-        sa.Column("createdAt", sa.DateTime),
-        sa.Column("updatedAt", sa.DateTime),
+        sa.Column("owner_id", sa.Integer, sa.ForeignKey("users.id"), nullable=False),
     )
 
 

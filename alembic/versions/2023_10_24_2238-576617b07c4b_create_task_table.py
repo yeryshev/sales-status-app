@@ -22,12 +22,10 @@ def upgrade():
         "tasks",
         sa.Column("id", sa.Integer, primary_key=True, index=True),
         sa.Column("uuid", sa.String),
-        sa.Column("statusId", sa.Integer),
-        sa.Column("commentId", sa.Integer),
-        sa.Column("userId", sa.Integer, sa.ForeignKey("users.id"), nullable=False),
+        sa.Column("status_id", sa.Integer),
+        sa.Column("comment_id", sa.Integer),
+        sa.Column("user_id", sa.Integer, sa.ForeignKey("users.id"), nullable=False),
         sa.Column("date", sa.Date),
-        sa.Column("createdAt", sa.DateTime),
-        sa.Column("updatedAt", sa.DateTime),
     )
 
 

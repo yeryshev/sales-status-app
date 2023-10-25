@@ -24,16 +24,14 @@ def upgrade():
         sa.Column("username", sa.String, unique=True),
         sa.Column("email", sa.String, unique=True, nullable=False),
         sa.Column("password", sa.String, nullable=False),
-        sa.Column("firstName", sa.String),
-        sa.Column("secondName", sa.String),
-        sa.Column("photoUrl", sa.String),
-        sa.Column("extNumber", sa.String),
+        sa.Column("first_name", sa.String),
+        sa.Column("second_name", sa.String),
+        sa.Column("photo_url", sa.String),
+        sa.Column("ext_number", sa.String),
         sa.Column("telegram", sa.String),
-        sa.Column("isWorkingRemotely", sa.Boolean, default=False, nullable=False),
-        sa.Column("statusId", sa.Integer, default=3, nullable=False),
-        sa.Column("commentId", sa.Integer, nullable=True),
-        sa.Column("createdAt", sa.DateTime),
-        sa.Column("updatedAt", sa.DateTime),
+        sa.Column("is_working_remotely", sa.Boolean, default=False, nullable=False),
+        sa.Column("status_id", sa.Integer, default=3, nullable=False),
+        sa.Column("comment_id", sa.Integer, nullable=True),
     )
 
 

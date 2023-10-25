@@ -22,8 +22,6 @@ def upgrade():
         "statuses",
         sa.Column("id", sa.Integer, primary_key=True, index=True),
         sa.Column("title", sa.String),
-        sa.Column("createdAt", sa.DateTime),
-        sa.Column("updatedAt", sa.DateTime),
     )
 
 

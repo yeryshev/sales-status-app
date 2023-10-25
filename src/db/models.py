@@ -11,16 +11,14 @@ class User(Base):
     username = Column(String, unique=True)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
-    firstName = Column(String)
-    secondName = Column(String)
-    photoUrl = Column(String)
-    extNumber = Column(String)
+    first_name = Column(String)
+    second_name = Column(String)
+    photo_url = Column(String)
+    ext_number = Column(String)
     telegram = Column(String)
-    isWorkingRemotely = Column(Boolean, default=False, nullable=False)
-    statusId = Column(Integer, default=3)
-    commentId = Column(Integer, nullable=True)
-    createdAt = Column(DateTime)
-    updatedAt = Column(DateTime)
+    is_working_remotely = Column(Boolean, default=False, nullable=False)
+    status_id = Column(Integer, default=3)
+    comment_id = Column(Integer, nullable=True)
 
     comments = relationship("Comment", back_populates="owner")
     tasks = relationship("Task", back_populates="owner")
@@ -35,8 +33,6 @@ class Status(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
-    createdAt = Column(DateTime)
-    updatedAt = Column(DateTime)
 
 
 class Comment(Base):
@@ -44,9 +40,7 @@ class Comment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     description = Column(String)
-    ownerId = Column(Integer, ForeignKey("users.id"), nullable=False)
-    createdAt = Column(DateTime)
-    updatedAt = Column(DateTime)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     owner = relationship("User", back_populates="comments")
 
@@ -56,11 +50,9 @@ class Task(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     uuid = Column(String)
-    statusId = Column(Integer)
-    commentId = Column(Integer)
-    userId = Column(Integer, ForeignKey("users.id"))
+    status_id = Column(Integer)
+    comment_id = Column(Integer)
+    user_id = Column(Integer, ForeignKey("users.id"))
     date = Column(Date)
-    createdAt = Column(DateTime)
-    updatedAt = Column(DateTime)
 
     owner = relationship("User", back_populates="tasks")
