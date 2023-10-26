@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.orm import Session
 from src.db import models
 
@@ -14,6 +16,7 @@ def create_users(db: Session):
         telegram="eryshev",
         is_working_remotely=False,
         status_id=3,
+        updated_at=datetime.now(),
     )
 
     user2 = models.User(
@@ -27,6 +30,7 @@ def create_users(db: Session):
         telegram="verceti",
         is_working_remotely=False,
         status_id=3,
+        updated_at=datetime.now(),
     )
 
     users = [user1, user2]

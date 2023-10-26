@@ -32,6 +32,7 @@ def upgrade():
         sa.Column("is_working_remotely", sa.Boolean, default=False, nullable=False),
         sa.Column("status_id", sa.Integer, default=3, nullable=False),
         sa.Column("comment_id", sa.Integer, nullable=True),
+        sa.Column("updated_at", sa.DateTime, default=sa.func.now(), onupdate=sa.func.now(), nullable=False),
     )
 
 

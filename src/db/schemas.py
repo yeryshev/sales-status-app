@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field
+from datetime import datetime
+
+from pydantic import BaseModel
 
 
 class UserWithoutPassword(BaseModel):
@@ -12,6 +14,7 @@ class UserWithoutPassword(BaseModel):
     is_working_remotely: bool
     status_id: int | None
     comment_id: int | None
+    updated_at: datetime
 
 
 class User(UserWithoutPassword):

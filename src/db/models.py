@@ -1,5 +1,8 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, ForeignKeyConstraint, DateTime, Date
-from sqlalchemy.orm import relationship
+from datetime import datetime
+from typing import List
+
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from src.db.database import Base
 
@@ -7,52 +10,49 @@ from src.db.database import Base
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True)
-    email = Column(String, unique=True, nullable=False)
-    password = Column(String, nullable=False)
-    first_name = Column(String)
-    second_name = Column(String)
-    photo_url = Column(String)
-    ext_number = Column(String)
-    telegram = Column(String)
-    is_working_remotely = Column(Boolean, default=False, nullable=False)
-    status_id = Column(Integer, default=3)
-    comment_id = Column(Integer, nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(unique=True)
+    email: Mapped[str] = mapped_column(unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(nullable=False)
+    first_name: Mapped[str] = mapped_column(nullable=True)
+    second_name: Mapped[str] = mapped_column(nullable=True)
+    photo_url: Mapped[str] = mapped_column(nullable=True)
+    ext_number: Mapped[str] = mapped_column(nullable=True)
+    telegram: Mapped[str] = mapped_column(nullable=True)
+    is_working_remotely: Mapped[bool] = mapped_column(default=False, nullable=False)
+    status_id: Mapped[int] = mapped_column(default=3, nullable=False)
+    comment_id: Mapped[int] = mapped_column(ForeignKey("comments.id", ondelete="SET NULL"), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(default=datetime.now, onupdate=datetime.now, nullable=False)
 
-    comments = relationship("Comment", back_populates="owner")
-    tasks = relationship("Task", back_populates="owner")
-
-    # __table_args__ = (
-    #     ForeignKeyConstraint(['commentId'], ["comments.id"], ondelete="SET NULL"),
-    # )
+    comments: Mapped[List["Comment"]] = relationship(foreign_keys=[comment_id])
+    tasks: Mapped[List["Task"]] = relationship(back_populates="owner")
 
 
 class Status(Base):
     __tablename__ = "statuses"
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    title: Mapped[str] = mapped_column(nullable=False)
 
 
 class Comment(Base):
     __tablename__ = "comments"
 
-    id = Column(Integer, primary_key=True, index=True)
-    description = Column(String)
-    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    description: Mapped[str] = mapped_column(nullable=False)
+    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
 
-    owner = relationship("User", back_populates="comments")
+    owner: Mapped["User"] = relationship(foreign_keys=owner_id)
 
 
 class Task(Base):
     __tablename__ = "tasks"
 
-    id = Column(Integer, primary_key=True, index=True)
-    uuid = Column(String)
-    status_id = Column(Integer)
-    comment_id = Column(Integer)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    date = Column(Date)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    uuid: Mapped[str] = mapped_column(unique=True)
+    status_id: Mapped[int] = mapped_column(ForeignKey("statuses.id"), nullable=False)
+    comment_id: Mapped[int] = mapped_column(ForeignKey("comments.id", ondelete="SET NULL"), nullable=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    date: Mapped[datetime] = mapped_column(nullable=False)
 
-    owner = relationship("User", back_populates="tasks")
+    owner: Mapped["User"] = relationship(back_populates="tasks", foreign_keys=user_id)
