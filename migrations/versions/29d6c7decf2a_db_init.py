@@ -5,11 +5,12 @@ Revises:
 Create Date: 2023-10-29 16:00:48.735824
 
 """
+from datetime import datetime
 from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy import text
 
 # revision identifiers, used by Alembic.
 revision: str = '29d6c7decf2a'
@@ -20,16 +21,20 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'comments',
+        'comment',
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('description', sa.String),
         sa.Column('owner_id', sa.Integer),
-        sa.Column('created_at', sa.DateTime),
-        sa.Column('updated_at', sa.DateTime),
+        sa.Column('created_at', sa.DateTime, server_default=text("TIMEZONE('utc', now())")),
+        sa.Column(
+            'updated_at',
+            sa.DateTime,
+            server_default=text("TIMEZONE('utc', now())"),
+            onupdate=datetime.utcnow,),
     )
 
     op.create_table(
-        'users',
+        'user',
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('username', sa.String, unique=True),
         sa.Column('email', sa.String(length=320), unique=True),
@@ -42,7 +47,7 @@ def upgrade() -> None:
         sa.Column('is_working_remotely', sa.Boolean, default=False),
         sa.Column('status_id', sa.Integer),
         sa.Column('comment_id', sa.Integer, sa.ForeignKey(
-            "comments.id",
+            "comment.id",
             name="users_comment_id_fkey",
             ondelete="SET NULL",
         )),
@@ -54,7 +59,7 @@ def upgrade() -> None:
     )
 
     op.create_table(
-        'statuses',
+        'status',
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('title', sa.String),
         sa.Column('created_at', sa.DateTime),
@@ -62,17 +67,17 @@ def upgrade() -> None:
     )
 
     op.create_table(
-        'tasks',
+        'task',
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('uuid', sa.String),
-        sa.Column('status_id', sa.Integer, sa.ForeignKey("statuses.id", ondelete="CASCADE")),
+        sa.Column('status_id', sa.Integer, sa.ForeignKey("status.id", ondelete="CASCADE")),
         sa.Column(
             'comment_id',
             sa.Integer,
-            sa.ForeignKey("comments.id", ondelete="SET NULL"),
+            sa.ForeignKey("comment.id", ondelete="SET NULL"),
             nullable=True
         ),
-        sa.Column('user_id', sa.Integer, sa.ForeignKey("users.id", ondelete="CASCADE")),
+        sa.Column('user_id', sa.Integer, sa.ForeignKey("user.id", ondelete="CASCADE")),
         sa.Column('date', sa.DateTime),
         sa.Column('created_at', sa.DateTime),
         sa.Column('updated_at', sa.DateTime)
@@ -80,7 +85,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_table('tasks')
-    op.drop_table('comments')
-    op.drop_table('statuses')
-    op.drop_table('users')
+    op.drop_table('task')
+    op.drop_table('comment')
+    op.drop_table('status')
+    op.drop_table('user')

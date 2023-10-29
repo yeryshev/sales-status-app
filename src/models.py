@@ -14,7 +14,7 @@ updated_at = Annotated[datetime, mapped_column(
 
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "user"
 
     id: Mapped[intpk]
     username: Mapped[str] = mapped_column(unique=True)
@@ -32,7 +32,7 @@ class User(Base):
     is_working_remotely: Mapped[bool] = mapped_column(default=False)
     status_id: Mapped[int] = mapped_column(default=3)
     comment_id: Mapped[Optional[int]] = mapped_column(ForeignKey(
-        "comments.id",
+        "comment.id",
         name="users_comment_id_fkey",
         ondelete="SET NULL"
     ))
@@ -48,7 +48,7 @@ class User(Base):
 
 
 class Status(Base):
-    __tablename__ = "statuses"
+    __tablename__ = "status"
 
     id: Mapped[intpk]
     title: Mapped[str]
@@ -57,7 +57,7 @@ class Status(Base):
 
 
 class Comment(Base):
-    __tablename__ = "comments"
+    __tablename__ = "comment"
 
     id: Mapped[intpk]
     description: Mapped[str]
@@ -67,13 +67,13 @@ class Comment(Base):
 
 
 class Task(Base):
-    __tablename__ = "tasks"
+    __tablename__ = "task"
 
     id: Mapped[intpk]
     uuid: Mapped[str]
-    status_id: Mapped[int] = mapped_column(ForeignKey("statuses.id", ondelete="CASCADE"))
-    comment_id: Mapped[int] = mapped_column(ForeignKey("comments.id", ondelete="SET NULL"), nullable=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    status_id: Mapped[int] = mapped_column(ForeignKey("status.id", ondelete="CASCADE"))
+    comment_id: Mapped[int] = mapped_column(ForeignKey("comment.id", ondelete="SET NULL"), nullable=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     date: Mapped[datetime]
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
