@@ -14,6 +14,7 @@ class UserWithoutPassword(BaseModel):
     is_working_remotely: bool
     status_id: int | None
     comment_id: int | None
+    created_at: datetime
     updated_at: datetime
 
 
@@ -35,4 +36,4 @@ class Task(BaseModel):
     status_id: int
     comment_id: int | None
     user_id: int
-    date: str
+    date: datetime
