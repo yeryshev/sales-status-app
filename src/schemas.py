@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 
 class UserWithoutPassword(BaseModel):
-    username: str | None
     email: str
     first_name: str | None
     second_name: str | None

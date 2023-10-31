@@ -1,33 +1,35 @@
+from datetime import datetime
 from typing import Optional
 
 from fastapi_users import schemas
+from pydantic import Field
 
 
 class UserRead(schemas.BaseUser[int]):
-    id: int
-    username: str
-    email: str
-    is_active: bool = True
-    is_superuser: bool = False
-    is_verified: bool = False
-
-    class Config:
-        orm_mode = True
+    first_name: Optional[str]
+    second_name: Optional[str]
+    photo_url: Optional[str]
+    ext_number: Optional[str]
+    telegram: Optional[str]
+    is_working_remotely: bool
+    status_id: int
+    comment_id: Optional[int]
+    updated_at: datetime
 
 
 class UserCreate(schemas.BaseUserCreate):
-    username: str
-    email: str
-    password: str
-    is_active: Optional[bool] = True
-    is_superuser: Optional[bool] = False
-    is_verified: Optional[bool] = False
+    pass
 
 
 class UserUpdate(schemas.BaseUserUpdate):
-    username: Optional[str] = None
-    email: Optional[str] = None
-    password: Optional[str] = None
-    is_active: Optional[bool] = None
-    is_superuser: Optional[bool] = None
-    is_verified: Optional[bool] = None
+    first_name: Optional[str] = Field(None, alias="firstName")
+    second_name: Optional[str] = Field(None, alias="secondName")
+    photo_url: Optional[str] = Field(None, alias="photo")
+    ext_number: Optional[str] = Field(None, alias="extNumber")
+    telegram: Optional[str] = Field(None, alias="telegram")
+    is_working_remotely: Optional[bool] = Field(None, alias="isWorkingRemotely")
+    status_id: Optional[int] = Field(None, alias="statusId")
+    comment_id: Optional[int] = Field(None, alias="commentId")
+    is_active: Optional[bool] = Field(None, alias="isActive")
+    is_superuser: Optional[bool] = Field(None, alias="isSuperuser")
+    is_verified: Optional[bool] = Field(None, alias="isVerified")

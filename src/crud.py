@@ -1,12 +1,13 @@
 from sqlalchemy import select
-from src.database import async_engine, async_session_factory, Base
-from src.models import User, Status
+from src.database import engine, async_session_factory, Base
+from src.auth.models import User
+from src.models import Status
 
 
 class AsyncORM:
     @staticmethod
     async def create_tables():
-        async with async_engine.begin() as conn:
+        async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
             await conn.run_sync(Base.metadata.create_all)
 
@@ -14,7 +15,6 @@ class AsyncORM:
     async def insert_users():
         async with async_session_factory() as session:
             vadim = User(
-                username="eryshev",
                 email="yeryshev@gmail.com",
                 hashed_password="12345",
                 first_name="Vadim",
@@ -25,7 +25,6 @@ class AsyncORM:
                 status_id=3,
             )
             alex = User(
-                username="alex",
                 email="dergunow@gmail.com",
                 hashed_password="12345",
                 first_name="Alex",
@@ -49,12 +48,16 @@ class AsyncORM:
             return users
 
     @staticmethod
-    async def update_user(user_id: int = 2, new_username: str = "alexey"):
+    async def update_user(user_id: int, **kwargs):
         async with async_session_factory() as session:
             user = await session.get(User, user_id)
-            user.username = new_username
             await session.refresh(user)
+
+            for key, value in kwargs.items():
+                setattr(user, key, value)
+
             await session.commit()
+            return user
 
     @staticmethod
     async def insert_statuses():
