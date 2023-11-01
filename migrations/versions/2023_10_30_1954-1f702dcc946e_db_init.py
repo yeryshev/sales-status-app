@@ -36,7 +36,6 @@ def upgrade() -> None:
     op.create_table(
         'user',
         sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('username', sa.String, unique=True),
         sa.Column('email', sa.String(length=320), unique=True),
         sa.Column('hashed_password', sa.String(length=1024)),
         sa.Column('first_name', sa.String),

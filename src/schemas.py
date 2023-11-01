@@ -1,24 +1,5 @@
-from datetime import datetime
-
 from pydantic import BaseModel
-
-
-class UserWithoutPassword(BaseModel):
-    email: str
-    first_name: str | None
-    second_name: str | None
-    photo_url: str | None
-    ext_number: str | None
-    telegram: str | None
-    is_working_remotely: bool
-    status_id: int | None
-    comment_id: int | None
-    created_at: datetime
-    updated_at: datetime
-
-
-class User(UserWithoutPassword):
-    password: str
+from datetime import datetime
 
 
 class Status(BaseModel):

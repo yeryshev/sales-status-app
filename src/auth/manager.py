@@ -43,7 +43,6 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         pass
-        # print(f"User {user.id} has registered.")
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
