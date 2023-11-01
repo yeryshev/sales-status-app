@@ -1,17 +1,37 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.models import User
-from src.crud import AsyncORM
+from src.models import Comment, Status
 from src.database import get_async_session
 from src.auth.base_config import current_user
-from src.users.schemas import UserRead, UserUpdate
+from src.users.schemas import UserRead, UserUpdate, Teammate
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.get("/")
-async def get_users():
-    return await AsyncORM.select_users()
+@router.get("/", response_model=list[Teammate], response_model_by_alias=True)
+async def get_users(session: AsyncSession = Depends(get_async_session)):
+    query = (select(User, Status, Comment)
+             .select_from(User)
+             .outerjoin(Status, Status.id == User.status_id)
+             .outerjoin(Comment, Comment.id == User.comment_id)
+             .order_by(User.status_id.asc(), User.updated_at.desc()))
+
+    result = await session.execute(query)
+    rows = result.fetchall()
+
+    users = []
+    for row in rows:
+        user, status, comment = row
+        user_dict = {**user.__dict__}
+        del user_dict['status_id']
+        del user_dict['comment_id']
+        user_dict['status'] = status.title if status else None
+        user_dict['comment'] = comment.description if comment else None
+        users.append(user_dict)
+
+    return users
 
 
 @router.patch("/{user_id}", response_model=UserRead, response_model_by_alias=True)

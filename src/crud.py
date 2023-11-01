@@ -44,7 +44,6 @@ class AsyncORM:
             query = select(User)
             result = await session.execute(query)
             users = result.scalars().all()
-            print(f"{users=}")
             return users
 
     @staticmethod

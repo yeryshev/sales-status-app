@@ -30,3 +30,15 @@ class UserRead(BaseModel):
     is_active: bool = Field(None, serialization_alias="isActive")
     is_superuser: bool = Field(None, serialization_alias="isSuperuser")
     is_verified: bool = Field(None, serialization_alias="isVerified")
+
+
+class Teammate(BaseModel):
+    id: int
+    first_name: Optional[str] = Field(None, serialization_alias="firstName")
+    second_name: Optional[str] = Field(None, serialization_alias="secondName")
+    photo_url: Optional[str] = Field(None, serialization_alias="photoUrl")
+    ext_number: Optional[str] = Field(None, serialization_alias="extNumber")
+    telegram: Optional[str] = Field(None, serialization_alias="telegram")
+    is_working_remotely: Optional[bool] = Field(None, serialization_alias="isWorkingRemotely")
+    status: Optional[str]
+    comment: Optional[str]
