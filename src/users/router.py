@@ -12,26 +12,29 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 @router.get("/", response_model=list[Teammate], response_model_by_alias=True)
 async def get_users(session: AsyncSession = Depends(get_async_session)):
-    query = (select(User, Status, Comment)
-             .select_from(User)
-             .outerjoin(Status, Status.id == User.status_id)
-             .outerjoin(Comment, Comment.id == User.comment_id)
-             .order_by(User.status_id.asc(), User.updated_at.desc()))
+    try:
+        query = (select(User, Status, Comment)
+                 .select_from(User)
+                 .outerjoin(Status, Status.id == User.status_id)
+                 .outerjoin(Comment, Comment.id == User.comment_id)
+                 .order_by(User.status_id.asc(), User.updated_at.desc()))
 
-    result = await session.execute(query)
-    rows = result.fetchall()
+        result = await session.execute(query)
+        rows = result.fetchall()
 
-    users = []
-    for row in rows:
-        user, status, comment = row
-        user_dict = {**user.__dict__}
-        del user_dict['status_id']
-        del user_dict['comment_id']
-        user_dict['status'] = status.title if status else None
-        user_dict['comment'] = comment.description if comment else None
-        users.append(user_dict)
+        users = []
+        for row in rows:
+            user, status, comment = row
+            user_dict = {**user.__dict__}
+            del user_dict['status_id']
+            del user_dict['comment_id']
+            user_dict['status'] = status.title if status else None
+            user_dict['comment'] = comment.description if comment else None
+            users.append(user_dict)
 
-    return users
+        return users
+    except Exception:
+        raise HTTPException(status_code=404, detail="Users not found")
 
 
 @router.patch("/{user_id}", response_model=UserRead, response_model_by_alias=True)
