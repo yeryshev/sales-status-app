@@ -18,6 +18,7 @@ class UserUpdate(BaseModel):
 
 
 class UserRead(BaseModel):
+    id: int
     first_name: Optional[str] = Field(None, serialization_alias="firstName")
     second_name: Optional[str] = Field(None, serialization_alias="secondName")
     photo_url: Optional[str] = Field(None, serialization_alias="photoUrl")
