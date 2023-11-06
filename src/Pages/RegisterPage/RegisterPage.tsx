@@ -14,7 +14,6 @@ import { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../features/user/slice/userSlice';
-import { AnimatedCircle } from '../../components/AnimatedCircle';
 
 export default function RegisterPage() {
   const dispatch = useDispatch();
@@ -50,19 +49,6 @@ export default function RegisterPage() {
       default:
         alert('Что-то пошло не так');
     }
-
-    // if (response.ok) {
-    //   const user = await response.json();
-    //   dispatch(setUser(user));
-    //   navigate('/');
-    // } else if (response.status === 400) {
-    //   alert('Такой пользователь уже существует');
-    // } else if (response.status === 422) {
-    //   const { detail } = await response.json();
-    //   alert(detail[0].msg);
-    // } else {
-    //   alert('Что-то пошло не так');
-    // }
   };
 
   return (
@@ -70,7 +56,6 @@ export default function RegisterPage() {
       <CssBaseline />
       <AppBar position="relative">
         <Toolbar>
-          <AnimatedCircle />
           <Typography variant="h6" color="inherit" noWrap>
             Team Status
           </Typography>

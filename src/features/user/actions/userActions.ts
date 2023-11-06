@@ -41,7 +41,7 @@ export const clearUser = createAsyncThunk('auth/clearUser', async () => {
 
 export const updateUser = createAsyncThunk('user/updateUser', async (user: User) => {
   try {
-    const response = await fetch(`/api/users/`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/${user.id}`, {
       method: 'PATCH',
       credentials: 'include',
       headers: {

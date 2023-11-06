@@ -13,7 +13,6 @@ import { AppBar, Toolbar } from '@mui/material';
 import { useAppDispatch } from '../../redux/store';
 import { setUser } from '../../features/user/slice/userSlice';
 import { FormEvent } from 'react';
-import { AnimatedCircle } from '../../components/AnimatedCircle';
 import { checkUser } from '../../features/user/actions/userActions';
 import axios from 'axios';
 
@@ -22,16 +21,9 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // const data = new FormData(event.currentTarget);
     const formData = new FormData();
     formData.set('username', event.currentTarget.email.value);
     formData.set('password', event.currentTarget.password.value);
-
-    // const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/jwt/login`, {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'multipart/form-data' },
-    //   body: formData,
-    // });
 
     const response = await axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/auth/jwt/login`,
@@ -43,7 +35,6 @@ export default function LoginPage() {
         withCredentials: true,
       }
     );
-    console.log('🚀 ~ file: LoginPage.tsx:45 ~ handleSubmit ~ response:', response);
 
     // let detail;
 
@@ -51,11 +42,12 @@ export default function LoginPage() {
       case 400:
         alert('Неверный логин или пароль');
         return;
-      // case 422:
-      //   detail = (await response.json()).detail;
-      //   // alert(detail[0].msg);
-      //   alert(detail[0].loc[0] + ' ' + detail[0].msg + ' ' + detail[0].loc[1]);
-      //   return;
+      case 422:
+        //   detail = (await response.json()).detail;
+        //   // alert(detail[0].msg);
+        //   alert(detail[0].loc[0] + ' ' + detail[0].msg + ' ' + detail[0].loc[1]);
+        alert('Неверный логин или пароль');
+        return;
       case 204:
         dispatch(checkUser())
           .then((user) => dispatch(setUser(user)))
@@ -67,17 +59,6 @@ export default function LoginPage() {
         alert('Что-то пошло не так');
         return;
     }
-
-    // if (response.ok) {
-    //   const user: User = await response.json();
-    //   dispatch(setUser(user));
-    //   navigate('/');
-    // } else {
-    //   const { message } = await response.json();
-    //   if (message) {
-    //     alert(message);
-    //   }
-    // }
   };
 
   return (
@@ -86,7 +67,6 @@ export default function LoginPage() {
       <AppBar position="relative">
         <Toolbar>
           {/* <HomeIcon sx={{ mr: 2 }} /> */}
-          <AnimatedCircle />
           <Typography variant="h6" color="inherit" noWrap>
             Team Status
           </Typography>

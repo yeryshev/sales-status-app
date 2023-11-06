@@ -15,7 +15,6 @@ import { useTheme } from '@mui/material/styles';
 import { useColorModeCtx } from '../../helpers/contexts/themeContext';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import { AnimatedCircle } from '../AnimatedCircle';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
@@ -78,7 +77,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
           >
             <MenuIcon />
           </IconButton>
-          <AnimatedCircle />
           <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
             Team Status
           </Typography>

@@ -51,7 +51,9 @@ const Profile = () => {
   };
 
   const handleUpdateAll = async () => {
-    dispatch(updateUser(formData));
+    if (user) {
+      dispatch(updateUser({ ...formData, id: user.id }));
+    }
     setLoading(true);
     timer.current = window.setTimeout(() => {
       setLoading(false);
@@ -84,7 +86,7 @@ const Profile = () => {
       });
       const result = await response.json();
       if (user) {
-        dispatch(updateUser({ ...user, photo: result.path }));
+        dispatch(updateUser({ ...user, photoUrl: result.path }));
       }
     } catch (error) {
       console.log(error);
@@ -153,7 +155,7 @@ const Profile = () => {
                       }
                     >
                       <Avatar
-                        src={user?.photo}
+                        src={user?.photoUrl}
                         sx={{ width: 100, height: 100 }}
                         alt={formData.firstName}
                       />
@@ -285,7 +287,7 @@ const Profile = () => {
                         ...formData,
                         isWorkingRemotely: user?.isWorkingRemotely,
                         statusId: user?.statusId,
-                        photo: user?.photo,
+                        photo: user?.photoUrl,
                       }) === JSON.stringify(user)
                     }
                     variant="contained"
