@@ -11,55 +11,11 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Link as MuiLink } from '@mui/material';
 import { AppBar, Toolbar } from '@mui/material';
 import { useAppDispatch } from '../../redux/store';
-import { setUser } from '../../features/user/slice/userSlice';
-import { FormEvent } from 'react';
-import { checkUser } from '../../features/user/actions/userActions';
-import axios from 'axios';
+import { handleSubmit } from './handleSubmit';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.set('username', event.currentTarget.email.value);
-    formData.set('password', event.currentTarget.password.value);
-
-    const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/auth/jwt/login`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: true,
-      }
-    );
-
-    // let detail;
-
-    switch (response.status) {
-      case 400:
-        alert('Неверный логин или пароль');
-        return;
-      case 422:
-        //   detail = (await response.json()).detail;
-        //   // alert(detail[0].msg);
-        //   alert(detail[0].loc[0] + ' ' + detail[0].msg + ' ' + detail[0].loc[1]);
-        alert('Неверный логин или пароль');
-        return;
-      case 204:
-        dispatch(checkUser())
-          .then((user) => dispatch(setUser(user)))
-          .then(() => {
-            navigate('/');
-          });
-        return;
-      default:
-        alert('Что-то пошло не так');
-        return;
-    }
-  };
 
   return (
     <>
@@ -87,7 +43,12 @@ export default function LoginPage() {
           <Typography component="h1" variant="h5">
             Авторизация
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box
+            component="form"
+            onSubmit={(e) => handleSubmit(e, dispatch, navigate)}
+            noValidate
+            sx={{ mt: 1 }}
+          >
             <TextField
               margin="normal"
               required
