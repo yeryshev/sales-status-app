@@ -1,0 +1,20 @@
+.status {
+  border-radius: 8px;
+  padding: 8px;
+  font-weight: 700;
+}
+
+.status--online {
+  background-color: #c8e6c9;
+  color: #1b5e20;
+}
+
+.status--busy {
+  background-color: #fff9c4;
+  color: #f57f17;
+}
+
+.status--offline {
+  background-color: #f5f5f5;
+  color: #212121;
+}
