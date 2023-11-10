@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -11,16 +13,15 @@ from src.models import Comment
 router = APIRouter(prefix="/comments", tags=["Comments"])
 
 
-class CommentCreate(BaseModel):
+class CommentIn(BaseModel):
     description: str
 
 
-class CommentRead(BaseModel):
+class CommentOut(CommentIn):
     id: int
-    description: str
 
 
-@router.get("/", response_model=list[CommentRead])
+@router.get("/", response_model=list[CommentOut])
 async def get_comments(session: AsyncSession = Depends(get_async_session), session_user: User = Depends(current_user)):
     try:
         query = select(Comment).filter(Comment.owner_id == session_user.id).order_by(Comment.created_at.desc())
@@ -31,9 +32,9 @@ async def get_comments(session: AsyncSession = Depends(get_async_session), sessi
         raise HTTPException(status_code=404, detail="Comments not found")
 
 
-@router.post("/", response_model=CommentRead)
+@router.post("/", response_model=CommentOut)
 async def create_comment(
-        comment: CommentCreate,
+        comment: CommentIn,
         session: AsyncSession = Depends(get_async_session),
         session_user: User = Depends(current_user)
 ):
@@ -46,7 +47,7 @@ async def create_comment(
         raise HTTPException(status_code=500, detail="Could not create comment")
 
 
-@router.delete("/{comment_id}", response_model=CommentRead)
+@router.delete("/{comment_id}", response_model=CommentOut)
 async def delete_comment(
         comment_id: int,
         session: AsyncSession = Depends(get_async_session),

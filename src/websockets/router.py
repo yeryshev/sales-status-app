@@ -1,3 +1,5 @@
+import ast
+
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 import json
 
@@ -27,8 +29,8 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-@router.websocket("/ws/{client_id}")
-async def websocket_endpoint(websocket: WebSocket, client_id: int):
+@router.websocket("/")
+async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
@@ -36,4 +38,4 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
             await manager.broadcast(data)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        await manager.broadcast(f"Client #{client_id} left the chat")
+

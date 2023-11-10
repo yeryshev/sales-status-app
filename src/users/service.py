@@ -16,7 +16,7 @@ async def get_users(session: AsyncSession) -> list[Teammate]:
                  .select_from(User)
                  .outerjoin(Status, Status.id == User.status_id)
                  .outerjoin(Comment, Comment.id == User.comment_id)
-                 .order_by(User.status_id.asc(), User.updated_at.asc()))
+                 .order_by(User.status_id.asc(), User.updated_at.desc()))
 
         result = await session.execute(query)
         rows = result.fetchall()
