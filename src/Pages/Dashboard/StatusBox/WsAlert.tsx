@@ -1,6 +1,6 @@
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSocketCtx } from '../../../helpers/contexts/wsContext';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
@@ -22,32 +22,39 @@ const WsAlert = () => {
     setOpen(false);
   };
 
-  socket.onmessage = (message: MessageEvent) => {
-    const arg = JSON.parse(message.data);
-    if (arg.userId === userId) return;
-    switch (arg.statusId) {
-      case 1:
-        setAlertType('success');
-        setMessage('на месте');
-        break;
-      case 2:
-        setAlertType('warning');
-        setMessage('занят');
-        break;
-      case 3:
-        setAlertType('error');
-        setMessage('недоступен');
-        break;
-      default:
-        setAlertType('success');
-    }
-    setUserName(
-      `${team.find((t) => t.id === arg.userId)?.firstName} ${
-        team.find((t) => t.id === arg.userId)?.secondName
-      }`
-    );
-    handleOpen();
-  };
+  useEffect(() => {
+    const handleStatusChange = (arg: MessageEvent) => {
+      const data = JSON.parse(arg.data);
+      if (data.userId === userId || !data.statusId) return;
+      switch (data.statusId) {
+        case 1:
+          setAlertType('success');
+          setMessage('на месте');
+          break;
+        case 2:
+          setAlertType('warning');
+          setMessage('занят');
+          break;
+        case 3:
+          setAlertType('error');
+          setMessage('недоступен');
+          break;
+        default:
+          setAlertType('success');
+      }
+      setUserName(
+        `${team.find((t) => t.id === data.userId)?.firstName} ${
+          team.find((t) => t.id === data.userId)?.secondName
+        }`
+      );
+      handleOpen();
+    };
+    socket.addEventListener('message', handleStatusChange);
+
+    return () => {
+      socket.removeEventListener('message', handleStatusChange);
+    };
+  }, [socket, team, userId]);
 
   return (
     <div>

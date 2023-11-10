@@ -33,7 +33,7 @@ export default function StatusBox() {
 
   useEffect(() => {
     if (user?.id) {
-      dispatch(setComments(user?.id));
+      dispatch(setComments());
       dispatch(changeStatus(user.statusId));
     }
   }, [dispatch, user?.id, user?.statusId]);
@@ -45,32 +45,18 @@ export default function StatusBox() {
       dispatch(changeStatus(user?.statusId));
     };
 
-    const handleSocketMessage = (message: MessageEvent) => {
-      const arg = JSON.parse(message.data);
-      if (arg.action === 'change-status' || arg.action === 'change-comment') {
-        handleStatusChange();
-      }
-    };
-
-    socket.onmessage = handleSocketMessage;
+    socket.addEventListener('message', handleStatusChange);
 
     return () => {
-      socket.removeEventListener('message', handleSocketMessage);
-      socket.removeEventListener('message', handleSocketMessage);
+      socket.removeEventListener('message', handleStatusChange);
     };
   }, [socket, dispatch, user?.statusId]);
 
   const handlePickComment = useCallback(
-    (statusId: number | null) => {
+    (commentId: number | null) => {
       if (user) {
-        dispatch(updateUser({ ...user, commentId: statusId })).then(() => {
-          socket.send(
-            JSON.stringify({
-              action: 'change-comment',
-              userId: user.id,
-              statusId,
-            })
-          );
+        dispatch(updateUser({ ...user, commentId })).then(() => {
+          socket.send(JSON.stringify({ userId: user.id, commentId }));
         });
       }
     },
@@ -81,21 +67,15 @@ export default function StatusBox() {
     event.preventDefault();
     const statusId = Number(event.target.value);
     if (user) {
-      dispatch(updateUser({ ...user, statusId: statusId })).then(() => {
-        socket.send(
-          JSON.stringify({
-            action: 'change-status',
-            userId: user.id,
-            statusId,
-          })
-        );
+      dispatch(updateUser({ ...user, statusId })).then(() => {
+        socket.send(JSON.stringify({ userId: user.id, statusId }));
       });
     }
   };
   const handleAddComment = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (user?.id) {
-      dispatch(addComment({ comment: commentInput, userId: user?.id })).then(() => {
+      dispatch(addComment({ comment: commentInput })).then(() => {
         setCommentInput('');
       });
     }

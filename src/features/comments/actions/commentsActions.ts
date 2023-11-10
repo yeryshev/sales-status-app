@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { Comment } from '../../../types/Comment';
 
-export const setComments = createAsyncThunk('comments/setComments', async (userId: number) => {
+export const setComments = createAsyncThunk('comments/setComments', async () => {
   try {
-    const response = await fetch(`/api/status/${userId}/`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/comments/`, {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
@@ -22,9 +22,9 @@ export const setComments = createAsyncThunk('comments/setComments', async (userI
 
 export const addComment = createAsyncThunk(
   'comments/addComment',
-  async ({ comment, userId }: { comment: string; userId: number }) => {
+  async ({ comment }: { comment: string }) => {
     try {
-      const response = await fetch(`/api/status/${userId}/`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/comments/`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -48,7 +48,7 @@ export const deleteComment = createAsyncThunk(
   'comments/deleteComment',
   async (commentId: number) => {
     try {
-      const response = await fetch(`/api/status/${commentId}`, {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/comments/${commentId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {

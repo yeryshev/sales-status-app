@@ -26,7 +26,7 @@ const Stats = (): JSX.Element => {
           </ListItemAvatar>
           <ListItemText
             primary="Онлайн"
-            secondary={team.filter((t) => t.mainStatus === 'online').length}
+            secondary={team.filter((t) => t.status === 'online').length}
           />
         </ListItem>
         <ListItem>
@@ -37,7 +37,7 @@ const Stats = (): JSX.Element => {
           </ListItemAvatar>
           <ListItemText
             primary="Заняты"
-            secondary={team.filter((t) => t.mainStatus === 'busy').length}
+            secondary={team.filter((t) => t.status === 'busy').length}
           />
         </ListItem>
         <ListItem>
@@ -48,7 +48,7 @@ const Stats = (): JSX.Element => {
           </ListItemAvatar>
           <ListItemText
             primary="Недоступны"
-            secondary={team.filter((t) => t.mainStatus === 'offline').length}
+            secondary={team.filter((t) => t.status === 'offline').length}
           />
         </ListItem>
       </List>

@@ -1,13 +1,11 @@
 import { ReactNode, useRef } from 'react';
-// import { io } from 'socket.io-client';
 import { SocketCtx } from './index';
 
 const SocketCtxProvider = (props: { children?: ReactNode }) => {
-  const socketRef = useRef(new WebSocket(`ws://localhost:8000/ws/1`));
+  // const socketRef = useRef(new WebSocket(`${import.meta.env.VITE_SOCKET_URL}`));
+  const socketRef = new WebSocket(`${import.meta.env.VITE_SOCKET_URL}`);
 
-  return (
-    <SocketCtx.Provider value={{ socket: socketRef.current }}>{props.children}</SocketCtx.Provider>
-  );
+  return <SocketCtx.Provider value={{ socket: socketRef }}>{props.children}</SocketCtx.Provider>;
 };
 
 export default SocketCtxProvider;
