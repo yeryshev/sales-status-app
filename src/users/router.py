@@ -4,28 +4,36 @@ from src.auth.models import User
 from src.database import get_async_session
 from src.auth.base_config import current_user
 from src.users.schemas import UserRead, UserUpdate, Teammate
-from src.users.service import update_user, get_users
+from src.users.service import update_user, get_team
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.get("/", response_model=list[Teammate], response_model_by_alias=True)
-async def get_users_router(session: AsyncSession = Depends(get_async_session)):
+@router.get("/team", response_model=list[Teammate], response_model_by_alias=True)
+async def get_users_router(
+        session: AsyncSession = Depends(get_async_session),
+        session_user: User = Depends(current_user)):
+    if not session_user:
+        raise HTTPException(status_code=403, detail="Unauthorized")
     try:
-        users = await get_users(session)
-        return users
+        team = await get_team(session)
+        return team
     except Exception:
         raise HTTPException(status_code=404, detail="Users not found")
 
 
-@router.patch("/{user_id}", response_model=UserRead, response_model_by_alias=True)
+@router.get("/me", response_model=UserRead)
+def check_user(user: UserRead = Depends(current_user)):
+    return user
+
+
+@router.patch("/me", response_model=UserRead, response_model_by_alias=True)
 async def update_user_router(
-        user_id: int,
         user_update: UserUpdate,
         session: AsyncSession = Depends(get_async_session),
         session_user: User = Depends(current_user)
 ):
-    user = await session.get(User, user_id)
+    user = await session.get(User, session_user.id)
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

@@ -13,6 +13,9 @@ class UserRead(schemas.BaseUser[int]):
     is_working_remotely: bool = Field(None, serialization_alias="isWorkingRemotely")
     status_id: int = Field(None, serialization_alias="statusId")
     comment_id: Optional[int] = Field(None, serialization_alias="commentId")
+    is_active: bool = Field(None, serialization_alias="isActive")
+    is_superuser: bool = Field(None, serialization_alias="isSuperuser")
+    is_verified: bool = Field(None, serialization_alias="isVerified")
 
     class Config:
         populate_by_name = True

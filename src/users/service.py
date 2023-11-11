@@ -1,16 +1,14 @@
-from fastapi import APIRouter
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.models import User
-from src.models import Comment, Status
+from src.models import Status
 from src.users.schemas import UserUpdate, Teammate
 from src.users.utils import create_teammates
+from src.comments.models import Comment
 
-router = APIRouter(prefix="/users", tags=["Users"])
 
-
-async def get_users(session: AsyncSession) -> list[Teammate]:
+async def get_team(session: AsyncSession) -> list[Teammate]:
     try:
         query = (select(User, Status, Comment)
                  .select_from(User)

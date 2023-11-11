@@ -1,12 +1,9 @@
 from datetime import datetime
 from typing import Optional
-
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin, exceptions, models, schemas
-
 from src.auth.models import User, get_user_db
-
-SECRET = "SECRET"
+from config import AUTH_SECRET as SECRET
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):

@@ -6,7 +6,8 @@ from sqlalchemy import String, ForeignKey, Boolean
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column
 from src.database import Base, get_async_session
-from src.models import intpk, created_at, updated_at, Comment
+from src.models import intpk, created_at, updated_at
+from src.comments.models import Comment
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):

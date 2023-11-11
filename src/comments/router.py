@@ -1,33 +1,22 @@
-from typing import Optional
-
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.base_config import current_user
 from src.auth.models import User
+from src.comments.schemas import CommentOut, CommentIn
+from src.comments.service import get_comments_of_user, add_comment_to_db, delete_comment_from_db
 from src.database import get_async_session
-from src.models import Comment
+from src.comments.models import Comment
 
 router = APIRouter(prefix="/comments", tags=["Comments"])
 
 
-class CommentIn(BaseModel):
-    description: str
-
-
-class CommentOut(CommentIn):
-    id: int
-
-
 @router.get("/", response_model=list[CommentOut])
-async def get_comments(session: AsyncSession = Depends(get_async_session), session_user: User = Depends(current_user)):
+async def get_comments(
+        session: AsyncSession = Depends(get_async_session),
+        session_user: User = Depends(current_user)):
     try:
-        query = select(Comment).filter(Comment.owner_id == session_user.id).order_by(Comment.created_at.desc())
-        result = await session.execute(query)
-        comments = result.scalars().all()
-        return comments
+        return await get_comments_of_user(session, session_user.id)
     except Exception:
         raise HTTPException(status_code=404, detail="Comments not found")
 
@@ -40,10 +29,9 @@ async def create_comment(
 ):
     try:
         new_comment = Comment(description=comment.description, owner_id=session_user.id)
-        session.add(new_comment)
-        await session.commit()
-        return new_comment
-    except Exception:
+        return await add_comment_to_db(comment=new_comment, session=session)
+    except Exception as e:
+        print(str(e))
         raise HTTPException(status_code=500, detail="Could not create comment")
 
 
@@ -58,8 +46,6 @@ async def delete_comment(
             raise HTTPException(status_code=404, detail="Comment not found")
         if comment.owner_id != session_user.id:
             raise HTTPException(status_code=403, detail="Not authorized")
-        await session.delete(comment)
-        await session.commit()
-        return comment
+        return await delete_comment_from_db(comment, session)
     except Exception:
         raise HTTPException(status_code=500, detail="Could not delete comment")
