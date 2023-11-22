@@ -225,20 +225,6 @@ const Profile = () => {
                   </Grid>
                   <Grid item xs={6}>
                     <TextField
-                      name="username"
-                      autoComplete="off"
-                      onChange={(e) => handleChange(e)}
-                      label="Ник"
-                      value={formData.username || ''}
-                      fullWidth
-                      InputLabelProps={{
-                        shrink: true,
-                        style: { zIndex: 1 },
-                      }}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
                       name="email"
                       autoComplete="off"
                       onChange={(e) => handleChange(e)}

@@ -32,7 +32,7 @@ export const addTask = createAsyncThunk(
     commentId: number | null;
   }) => {
     try {
-      const response = await fetch('/api/tasks', {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/tasks`, {
         method: 'POST',
         body: JSON.stringify({
           date,
@@ -45,7 +45,9 @@ export const addTask = createAsyncThunk(
         },
       });
       if (response.ok) {
-        return response.json();
+        const data = await response.json();
+        console.log(data);
+        return data;
       } else {
         return null;
       }

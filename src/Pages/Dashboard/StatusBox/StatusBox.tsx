@@ -8,27 +8,14 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import { ChangeEvent, FormEvent, useCallback, useEffect, useState } from 'react';
-import { Dropdown } from '@mui/base/Dropdown';
-import { Menu } from '@mui/base/Menu';
-import { TriggerButton, StyledListbox, StyledMenuItem, ClearButton } from './DropdownStyle';
-import { Box, Button, TextField } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import BackspaceIcon from '@mui/icons-material/Backspace';
-import AddIcon from '@mui/icons-material/Add';
-import {
-  addComment,
-  deleteComment,
-  setComments,
-} from '../../../features/comments/actions/commentsActions';
+import { ChangeEvent, useEffect } from 'react';
+import { setComments } from '../../../features/comments/actions/commentsActions';
 import { changeStatus } from '../../../features/statuses/slice/statusSlice';
 
 export default function StatusBox() {
   const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useAppDispatch();
   const { socket } = useSocketCtx();
-  const [commentInput, setCommentInput] = useState('');
-  const comments = useSelector((state: RootState) => state.comments.list);
   const status = useSelector((state: RootState) => state.status.value);
 
   useEffect(() => {
@@ -52,17 +39,6 @@ export default function StatusBox() {
     };
   }, [socket, dispatch, user?.statusId]);
 
-  const handlePickComment = useCallback(
-    (commentId: number | null) => {
-      if (user) {
-        dispatch(updateUser({ ...user, commentId })).then(() => {
-          socket.send(JSON.stringify({ userId: user.id, commentId }));
-        });
-      }
-    },
-    [socket, dispatch, user]
-  );
-
   const handleChangeMainStatus = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const statusId = Number(event.target.value);
@@ -70,20 +46,6 @@ export default function StatusBox() {
       dispatch(updateUser({ ...user, statusId })).then(() => {
         socket.send(JSON.stringify({ userId: user.id, statusId }));
       });
-    }
-  };
-  const handleAddComment = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (user?.id) {
-      dispatch(addComment({ comment: commentInput })).then(() => {
-        setCommentInput('');
-      });
-    }
-  };
-
-  const handleDeleteComment = (commentId: number) => {
-    if (user?.id) {
-      dispatch(deleteComment(commentId));
     }
   };
 
@@ -104,65 +66,6 @@ export default function StatusBox() {
         <FormControlLabel value={2} control={<Radio />} label="Занят" />
         <FormControlLabel value={3} control={<Radio />} label="Недоступен" />
       </RadioGroup>
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <Box sx={{ flexGrow: 1 }}>
-          <Dropdown>
-            <TriggerButton>Добавить комментарий</TriggerButton>
-            <Menu slots={{ listbox: StyledListbox }}>
-              {comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    gap: 5,
-                  }}
-                >
-                  <StyledMenuItem
-                    key={comment.id}
-                    onClick={() => handlePickComment(comment.id)}
-                    sx={{
-                      cursor: 'pointer',
-                      width: '100%',
-                    }}
-                  >
-                    {comment.description}
-                  </StyledMenuItem>
-                  <DeleteIcon
-                    onClick={() => handleDeleteComment(comment.id)}
-                    style={{ cursor: 'pointer' }}
-                  />
-                </div>
-              ))}
-              <Box
-                component="form"
-                sx={{ marginY: 1, display: 'flex', gap: 1, justifyContent: 'space-between' }}
-                onSubmit={handleAddComment}
-              >
-                <TextField
-                  name="comment"
-                  required
-                  autoComplete="off"
-                  value={commentInput}
-                  onChange={(e) => setCommentInput(e.target.value)}
-                  inputProps={{
-                    maxLength: 30,
-                  }}
-                  size="small"
-                  style={{ flexGrow: 1 }}
-                />
-                <Button type="submit" variant="outlined">
-                  <AddIcon />
-                </Button>
-              </Box>
-            </Menu>
-          </Dropdown>
-        </Box>
-        <ClearButton disabled={user?.commentId === null} onClick={() => handlePickComment(null)}>
-          <BackspaceIcon />
-        </ClearButton>
-      </Box>
     </FormControl>
   );
 }

@@ -3,7 +3,7 @@ import { Teammate } from '../../../types/Team';
 
 export const setTeam = createAsyncThunk('team/setTeam', async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/team`, {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',

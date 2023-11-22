@@ -3,11 +3,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Stats from './Stats/Stats';
+// import Stats from './Stats/Stats';
 import StatusBox from './StatusBox/StatusBox';
 import TeamTable from './TeamTable/TeamTable';
 import Layout from '../../components/Layout/Layout';
-import Tasks from './Tasks/Tasks';
+import CommentsBox from './CommentsBox/CommentsBox';
+// import Tasks from './Tasks/Tasks';
 
 const Dashboard = () => {
   return (
@@ -37,7 +38,7 @@ const Dashboard = () => {
                 <StatusBox />
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4} lg={4}>
+            <Grid item xs={12} md={4} lg={8}>
               <Paper
                 sx={{
                   p: 2,
@@ -46,10 +47,10 @@ const Dashboard = () => {
                   height: '100%',
                 }}
               >
-                <Stats />
+                <CommentsBox />
               </Paper>
             </Grid>
-            <Grid item xs={12} md={4} lg={4}>
+            {/* <Grid item xs={12} md={4} lg={4}>
               <Paper
                 sx={{
                   p: 2,
@@ -60,7 +61,7 @@ const Dashboard = () => {
               >
                 <Tasks />
               </Paper>
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
               <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                 <TeamTable />

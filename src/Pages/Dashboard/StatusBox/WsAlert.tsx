@@ -26,6 +26,10 @@ const WsAlert = () => {
     const handleStatusChange = (arg: MessageEvent) => {
       const data = JSON.parse(arg.data);
       if (data.userId === userId || !data.statusId) return;
+      const teammateName = team.find((t) => t.id === data.userId)?.firstName;
+      const teammateSurname = team.find((t) => t.id === data.userId)?.secondName;
+      if (!teammateName || !teammateSurname) return;
+
       switch (data.statusId) {
         case 1:
           setAlertType('success');
@@ -42,11 +46,8 @@ const WsAlert = () => {
         default:
           setAlertType('success');
       }
-      setUserName(
-        `${team.find((t) => t.id === data.userId)?.firstName} ${
-          team.find((t) => t.id === data.userId)?.secondName
-        }`
-      );
+
+      setUserName(`${teammateName} ${teammateSurname}`);
       handleOpen();
     };
     socket.addEventListener('message', handleStatusChange);

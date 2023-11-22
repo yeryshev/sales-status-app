@@ -17,16 +17,12 @@ export const handleSubmit = async (
   formData.set('password', event.currentTarget.password.value);
 
   try {
-    const response = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/auth/jwt/login`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: true,
-      }
-    );
+    const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      withCredentials: true,
+    });
 
     if (response.status === 200 || response.status === 204) {
       const user = await dispatch(checkUser());

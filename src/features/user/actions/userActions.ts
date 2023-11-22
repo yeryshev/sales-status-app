@@ -3,7 +3,7 @@ import { User } from '../../../types/User';
 
 export const checkUser = createAsyncThunk('auth/checkUser', async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/check`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/me`, {
       credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ export const checkUser = createAsyncThunk('auth/checkUser', async () => {
 
 export const clearUser = createAsyncThunk('auth/clearUser', async () => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/jwt/logout`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -41,7 +41,7 @@ export const clearUser = createAsyncThunk('auth/clearUser', async () => {
 
 export const updateUser = createAsyncThunk('user/updateUser', async (user: User) => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/${user.id}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/me`, {
       method: 'PATCH',
       credentials: 'include',
       headers: {

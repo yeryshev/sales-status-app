@@ -54,27 +54,28 @@ const Planner = () => {
 
   useEffect(() => {
     if (user?.id) {
-      dispatch(setComments(user?.id));
+      dispatch(setComments());
       dispatch(setTasks());
     }
   }, [dispatch, user?.id]);
 
   useEffect(() => {
-    socket.on('task-is-done', ({ uuid }) => {
-      dispatch(removeTask(uuid));
-    });
+    const handleTaskDone = (event: MessageEvent) => {
+      const data = JSON.parse(event.data);
+      dispatch(removeTask(data.uuid));
+    };
+
+    socket.addEventListener('message', handleTaskDone);
 
     return () => {
-      socket.off('task-is-done', ({ uuid }) => {
-        dispatch(removeTask(uuid));
-      });
+      socket.removeEventListener('message', handleTaskDone);
     };
   }, [dispatch, socket]);
 
   const handleAddComment = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (user?.id) {
-      dispatch(addComment({ comment: commentInput, userId: user?.id })).then(() => {
+      dispatch(addComment({ comment: commentInput })).then(() => {
         setCommentInput('');
       });
     }
@@ -263,7 +264,7 @@ const Planner = () => {
                       <TableBody>
                         {tasks.map((task) => (
                           <TableRow
-                            key={task.id}
+                            key={task.uuid}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                           >
                             <TableCell>{new Date(task.date).toLocaleDateString()}</TableCell>
