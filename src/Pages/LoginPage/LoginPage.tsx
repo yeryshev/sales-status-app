@@ -24,7 +24,7 @@ export default function LoginPage() {
         <Toolbar>
           {/* <HomeIcon sx={{ mr: 2 }} /> */}
           <Typography variant="h6" color="inherit" noWrap>
-            Team Status
+            ДРБ
           </Typography>
         </Toolbar>
       </AppBar>

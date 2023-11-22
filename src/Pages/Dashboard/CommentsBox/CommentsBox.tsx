@@ -19,9 +19,6 @@ import {
   deleteComment,
   setComments,
 } from '../../../features/comments/actions/commentsActions';
-import SendIcon from '@mui/icons-material/Send';
-import DeleteIcon from '@mui/icons-material/Delete';
-import BackspaceIcon from '@mui/icons-material/Backspace';
 import { changeStatus } from '../../../features/statuses/slice/statusSlice';
 import { updateUser } from '../../../features/user/actions/userActions';
 import { Comment } from '../../../types/Comment';
@@ -71,6 +68,7 @@ const CommentsBox = () => {
     if (user?.id) {
       dispatch(deleteComment(commentId)).then(() => {
         setSelectedComment(null);
+        setAge('');
       });
     }
   };
@@ -125,8 +123,7 @@ const CommentsBox = () => {
           type="button"
           onClick={() => handlePickComment(selectedComment?.id || null)}
           disabled={selectedComment === null}
-          variant="contained"
-          endIcon={<SendIcon />}
+          variant="outlined"
           size="small"
           color="success"
         >
@@ -135,9 +132,8 @@ const CommentsBox = () => {
         <Button
           onClick={() => handleDeleteComment(selectedComment?.id || 0)}
           disabled={selectedComment === null}
-          endIcon={<DeleteIcon />}
           color="error"
-          variant="contained"
+          variant="outlined"
           size="small"
         >
           Удалить
@@ -145,8 +141,7 @@ const CommentsBox = () => {
         <Button
           disabled={user?.commentId === null}
           onClick={() => handlePickComment(null)}
-          variant="contained"
-          endIcon={<BackspaceIcon />}
+          variant="outlined"
           size="small"
         >
           Очистить

@@ -1,12 +1,10 @@
 import Layout from '../../components/Layout/Layout';
-import StatusBox from '../../Pages/Dashboard/StatusBox/StatusBox';
-import { CircularProgress, Typography } from '@mui/material';
+import { CircularProgress } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../redux/store';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { updateUser } from '../../features/user/actions/userActions';
 import { User } from '../../types/User';
-import EditIcon from '@mui/icons-material/Edit';
 import {
   Box,
   Toolbar,
@@ -17,8 +15,6 @@ import {
   TextField,
   Switch,
   Button,
-  Badge,
-  IconButton,
 } from '@mui/material';
 import { green } from '@mui/material/colors';
 
@@ -28,6 +24,17 @@ const Profile = () => {
   const [formData, setFormData] = useState<User>(user as User);
   const [loading, setLoading] = useState(false);
   const timer = useRef<number>();
+
+  const compareObjects = (user: User | null, formData: User) => {
+    if (!user) {
+      return false;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isWorkingRemotely: userIsWorkingRemotely, ...userRest } = user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { isWorkingRemotely: formIsWorkingRemotely, ...formDataRest } = formData;
+    return JSON.stringify(userRest) === JSON.stringify(formDataRest);
+  };
 
   useEffect(() => {
     return () => {
@@ -60,37 +67,8 @@ const Profile = () => {
     }, 1000);
   };
 
-  const handleDivClick = () => {
-    const fileInput = document.getElementById('file-input');
-    if (fileInput) {
-      fileInput.click();
-    }
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      sendFile(file);
-    }
-  };
-
-  const sendFile = async (file: File) => {
-    try {
-      const data = new FormData();
-      data.append('avatar', file);
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        credentials: 'include',
-        body: data,
-      });
-      const result = await response.json();
-      if (user) {
-        dispatch(updateUser({ ...user, photoUrl: result.path }));
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const handleReset = () => {
+    setFormData(user as User);
   };
 
   return (
@@ -106,9 +84,9 @@ const Profile = () => {
         }}
       >
         <Toolbar />
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={4} lg={3}>
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }} className="container">
+          <Grid container spacing={3} className="content">
+            <Grid item sm={4} md={4} lg={3} className="avatar-column">
               <Paper
                 sx={{
                   p: 2,
@@ -117,79 +95,45 @@ const Profile = () => {
                   alignItems: 'center',
                   gap: 2,
                   justifyContent: 'center',
+                  height: '100%',
                   marginBottom: (theme) => theme.spacing(2),
                 }}
               >
                 <Grid
                   container
-                  spacing={2}
+                  spacing={4}
+                  display={'flex'}
                   alignItems="center"
                   justifyContent="center"
-                  sx={{ width: '100%' }}
                 >
-                  <Grid item md={6}>
-                    <Badge
-                      overlap="circular"
-                      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                      badgeContent={
-                        <div onClick={handleDivClick} style={{ cursor: 'pointer' }}>
-                          <IconButton
-                            sx={{
-                              position: 'absolute',
-                              top: '0',
-                              left: '0',
-                              backgroundColor: 'white',
-                            }}
-                            aria-label="edit"
-                          >
-                            <EditIcon />
-                          </IconButton>
-                          <input
-                            accept="image/*"
-                            type="file"
-                            id="file-input"
-                            onChange={handleFileSelect}
-                            style={{ display: 'none' }}
-                          />
-                        </div>
-                      }
-                    >
-                      <Avatar
-                        src={user?.photoUrl}
-                        sx={{ width: 100, height: 100 }}
-                        alt={formData.firstName}
-                      />
-                    </Badge>
+                  <Grid item sm={12} md={8} lg={10}>
+                    <Avatar
+                      src={formData.photoUrl}
+                      sx={{ width: '100%', height: '100%' }}
+                      alt={formData.firstName}
+                      className="avatar-container"
+                    />
                   </Grid>
-                  <Grid item md={6}>
-                    <Typography>{user?.firstName}</Typography>
-                    <Typography>{user?.secondName}</Typography>
+                  <Grid item sm={12} md={12} lg={12} className="switch-container">
+                    <Grid container justifyContent="space-between" alignItems="center">
+                      <Grid item>
+                        <span>Удаленная работа</span>
+                      </Grid>
+                      <Grid item>
+                        <Switch
+                          color="primary"
+                          name="isWorkingRemotely"
+                          checked={user?.isWorkingRemotely}
+                          onChange={handleSwitch}
+                        />
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
-                <div>
-                  <span>Удаленная работа</span>
-                  <Switch
-                    color="primary"
-                    name="isWorkingRemotely"
-                    checked={user?.isWorkingRemotely}
-                    onChange={(e) => handleSwitch(e)}
-                  />
-                </div>
-              </Paper>
-              <Paper
-                sx={{
-                  p: 2,
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
-              >
-                <StatusBox />
               </Paper>
             </Grid>
-            <Grid item xs={12} md={8} lg={9}>
+            <Grid item sm={8} md={8} lg={9}>
               <Paper
-                elevation={0}
                 sx={{
                   p: 2,
                   display: 'flex',
@@ -197,12 +141,12 @@ const Profile = () => {
                 }}
               >
                 <Grid container spacing={2}>
-                  <Grid item xs={6}>
+                  <Grid item sm={12} md={6} lg={6}>
                     <TextField
                       name="firstName"
-                      onChange={(e) => handleChange(e)}
+                      onChange={handleChange}
                       label="Имя"
-                      value={formData.firstName || ''}
+                      value={formData.firstName}
                       fullWidth
                       InputLabelProps={{
                         shrink: true,
@@ -210,12 +154,12 @@ const Profile = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item sm={12} md={6} lg={6}>
                     <TextField
                       name="secondName"
-                      onChange={(e) => handleChange(e)}
+                      onChange={handleChange}
                       label="Фамилия"
-                      value={formData.secondName || ''}
+                      value={formData.secondName}
                       fullWidth
                       InputLabelProps={{
                         shrink: true,
@@ -223,13 +167,13 @@ const Profile = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item sm={12} md={6} lg={6}>
                     <TextField
                       name="email"
                       autoComplete="off"
-                      onChange={(e) => handleChange(e)}
+                      onChange={handleChange}
                       label="Email"
-                      value={formData.email || ''}
+                      value={formData.email}
                       fullWidth
                       InputLabelProps={{
                         shrink: true,
@@ -237,12 +181,13 @@ const Profile = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item sm={12} md={6} lg={6}>
                     <TextField
                       name="extNumber"
-                      onChange={(e) => handleChange(e)}
+                      onChange={handleChange}
                       label="Добавочный номер телефона"
-                      value={formData.extNumber || ''}
+                      autoComplete="off"
+                      value={formData.extNumber}
                       fullWidth
                       InputLabelProps={{
                         shrink: true,
@@ -250,12 +195,26 @@ const Profile = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item sm={12} md={6} lg={6}>
                     <TextField
                       name="telegram"
-                      onChange={(e) => handleChange(e)}
+                      onChange={handleChange}
                       label="Telegram"
-                      value={formData.telegram || ''}
+                      value={formData.telegram}
+                      fullWidth
+                      InputLabelProps={{
+                        shrink: true,
+                        style: { zIndex: 1 },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item sm={12} md={6} lg={6}>
+                    <TextField
+                      name="photoUrl"
+                      onChange={handleChange}
+                      autoComplete="off"
+                      label="Ссылка на фото"
+                      value={formData.photoUrl}
                       fullWidth
                       InputLabelProps={{
                         shrink: true,
@@ -264,18 +223,19 @@ const Profile = () => {
                     />
                   </Grid>
                 </Grid>
-                <Box sx={{ mt: 1, position: 'relative', width: '100%' }}>
+                <Box
+                  sx={{
+                    mt: 1,
+                    position: 'relative',
+                    width: '100%',
+                    display: 'flex',
+                    gap: 1,
+                    flexDirection: 'column',
+                  }}
+                >
                   <Button
                     sx={{ width: '100%' }}
-                    disabled={
-                      loading ||
-                      JSON.stringify({
-                        ...formData,
-                        isWorkingRemotely: user?.isWorkingRemotely,
-                        statusId: user?.statusId,
-                        photo: user?.photoUrl,
-                      }) === JSON.stringify(user)
-                    }
+                    disabled={loading || compareObjects(user, formData)}
                     variant="contained"
                     color="primary"
                     onClick={handleUpdateAll}
@@ -295,6 +255,16 @@ const Profile = () => {
                       }}
                     />
                   )}
+                  <Button
+                    type="reset"
+                    sx={{ width: '100%' }}
+                    disabled={compareObjects(user, formData)}
+                    variant="outlined"
+                    color="primary"
+                    onClick={handleReset}
+                  >
+                    Отмена
+                  </Button>
                 </Box>
               </Paper>
             </Grid>

@@ -78,7 +78,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-            Team Status
+            ДРБ
           </Typography>
           <IconButton sx={{ ml: 1 }} onClick={() => handleToggleTheme()} color="inherit">
             {theme.palette.mode === 'dark' ? <DarkModeIcon /> : <LightModeIcon />}

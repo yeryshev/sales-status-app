@@ -10,11 +10,7 @@ import MainPage from './Pages/Dashboard/Dashboard.tsx';
 import SocketCtxProvider from './helpers/contexts/wsContext/provider.tsx';
 import ColorModeCtxProvider from './helpers/contexts/themeContext/provider.tsx';
 import Profile from './Pages/Profile/Profile.tsx';
-import Planner from './Pages/PlannerPage/PlannerPage.tsx';
 import NotFoundPage from './Pages/NotFound/NotFoundPage.tsx';
-import Online from './Pages/TelegramWeb/Online.tsx';
-import Busy from './Pages/TelegramWeb/Busy.tsx';
-import Offline from './Pages/TelegramWeb/Offline.tsx';
 
 const router = createBrowserRouter([
   {
@@ -34,44 +30,12 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/planner',
-    element: (
-      <RequireAuth>
-        <Planner />
-      </RequireAuth>
-    ),
-  },
-  {
     path: '/auth/login',
     element: <LoginPage />,
   },
   {
     path: '/auth/register',
     element: <RegisterPage />,
-  },
-  {
-    path: '/telegram/37f5d5b8',
-    element: (
-      <RequireAuth>
-        <Online />
-      </RequireAuth>
-    ),
-  },
-  {
-    path: '/telegram/14z71ca9',
-    element: (
-      <RequireAuth>
-        <Busy />
-      </RequireAuth>
-    ),
-  },
-  {
-    path: '/telegram/11m093ccv3',
-    element: (
-      <RequireAuth>
-        <Offline />
-      </RequireAuth>
-    ),
   },
   {
     path: '*',

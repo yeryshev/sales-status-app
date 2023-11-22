@@ -4,8 +4,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import ScheduleIcon from '@mui/icons-material/Schedule';
 import { Link } from 'react-router-dom';
+// import ScheduleIcon from '@mui/icons-material/Schedule';
 
 const MainListItems = () => {
   return (
@@ -16,12 +16,12 @@ const MainListItems = () => {
         </ListItemIcon>
         <ListItemText primary="Дашборд" />
       </ListItemButton>
-      <ListItemButton component={Link} to="/planner">
+      {/* <ListItemButton component={Link} to="/planner">
         <ListItemIcon>
           <ScheduleIcon />
         </ListItemIcon>
         <ListItemText primary="Планировщик" />
-      </ListItemButton>
+      </ListItemButton> */}
       <ListItemButton component={Link} to="/profile">
         <ListItemIcon>
           <AccountBoxIcon />
