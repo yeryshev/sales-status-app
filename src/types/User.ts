@@ -8,6 +8,6 @@ export type User = {
   extNumber: string;
   telegram: string;
   isWorkingRemotely: boolean;
-  statusId: number | null;
+  statusId: number;
   commentId: number | null;
 };

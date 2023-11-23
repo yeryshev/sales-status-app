@@ -29,11 +29,25 @@ const Profile = () => {
     if (!user) {
       return false;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isWorkingRemotely: userIsWorkingRemotely, ...userRest } = user;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { isWorkingRemotely: formIsWorkingRemotely, ...formDataRest } = formData;
-    return JSON.stringify(userRest) === JSON.stringify(formDataRest);
+
+    return (
+      JSON.stringify({
+        firstName: user.firstName,
+        secondName: user.secondName,
+        photoUrl: user.photoUrl,
+        extNumber: user.extNumber,
+        telegram: user.telegram,
+        email: user.email,
+      }) ===
+      JSON.stringify({
+        firstName: formData.firstName,
+        secondName: formData.secondName,
+        photoUrl: formData.photoUrl,
+        extNumber: formData.extNumber,
+        telegram: formData.telegram,
+        email: formData.email,
+      })
+    );
   };
 
   useEffect(() => {
@@ -86,7 +100,7 @@ const Profile = () => {
         <Toolbar />
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }} className="container">
           <Grid container spacing={3} className="content">
-            <Grid item sm={4} md={4} lg={3} className="avatar-column">
+            <Grid item sm={12} md={4} lg={3} className="avatar-column">
               <Paper
                 sx={{
                   p: 2,
@@ -106,10 +120,10 @@ const Profile = () => {
                   alignItems="center"
                   justifyContent="center"
                 >
-                  <Grid item sm={12} md={8} lg={10}>
+                  <Grid item xs={4} sm={4} md={8} lg={10}>
                     <Avatar
                       src={formData.photoUrl}
-                      sx={{ width: '100%', height: '100%' }}
+                      sx={{ aspectRatio: '1/1', width: '100%', height: '100%' }}
                       alt={formData.firstName}
                       className="avatar-container"
                     />
@@ -132,7 +146,7 @@ const Profile = () => {
                 </Grid>
               </Paper>
             </Grid>
-            <Grid item sm={8} md={8} lg={9}>
+            <Grid item sm={12} md={8} lg={9}>
               <Paper
                 sx={{
                   p: 2,
@@ -141,7 +155,7 @@ const Profile = () => {
                 }}
               >
                 <Grid container spacing={2}>
-                  <Grid item sm={12} md={6} lg={6}>
+                  <Grid item xs={12} sm={12} md={6} lg={6}>
                     <TextField
                       name="firstName"
                       onChange={handleChange}
@@ -154,7 +168,7 @@ const Profile = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item sm={12} md={6} lg={6}>
+                  <Grid item xs={12} sm={12} md={6} lg={6}>
                     <TextField
                       name="secondName"
                       onChange={handleChange}
@@ -167,7 +181,7 @@ const Profile = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item sm={12} md={6} lg={6}>
+                  <Grid item xs={12} sm={12} md={6} lg={6}>
                     <TextField
                       name="email"
                       autoComplete="off"
@@ -181,7 +195,7 @@ const Profile = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item sm={12} md={6} lg={6}>
+                  <Grid item xs={12} sm={12} md={6} lg={6}>
                     <TextField
                       name="extNumber"
                       onChange={handleChange}
@@ -195,7 +209,7 @@ const Profile = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item sm={12} md={6} lg={6}>
+                  <Grid item xs={12} sm={12} md={6} lg={6}>
                     <TextField
                       name="telegram"
                       onChange={handleChange}
@@ -208,7 +222,7 @@ const Profile = () => {
                       }}
                     />
                   </Grid>
-                  <Grid item sm={12} md={6} lg={6}>
+                  <Grid item xs={12} sm={12} md={6} lg={6}>
                     <TextField
                       name="photoUrl"
                       onChange={handleChange}

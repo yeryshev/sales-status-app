@@ -1,9 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { CommentsState } from '../types';
-import { addComment, deleteComment, setComments } from '../actions/commentsActions';
+import {
+  addComment,
+  deleteComment,
+  setAllComments,
+  setMyComments,
+} from '../actions/commentsActions';
 
 const initialState: CommentsState = {
   list: [],
+  fullList: [],
   loading: false,
   error: null,
 };
@@ -14,15 +20,27 @@ export const commentsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(setComments.pending, (state) => {
+      .addCase(setAllComments.pending, (state) => {
         state.error = null;
         state.loading = true;
       })
-      .addCase(setComments.fulfilled, (state, action) => {
+      .addCase(setAllComments.fulfilled, (state, action) => {
+        state.fullList = action.payload;
+        state.loading = false;
+      })
+      .addCase(setAllComments.rejected, (state, action) => {
+        state.error = action.error.message || 'Error';
+        state.loading = false;
+      })
+      .addCase(setMyComments.pending, (state) => {
+        state.error = null;
+        state.loading = true;
+      })
+      .addCase(setMyComments.fulfilled, (state, action) => {
         state.list = action.payload;
         state.loading = false;
       })
-      .addCase(setComments.rejected, (state, action) => {
+      .addCase(setMyComments.rejected, (state, action) => {
         state.error = action.error.message || 'Error';
         state.loading = false;
       })
@@ -33,6 +51,7 @@ export const commentsSlice = createSlice({
       .addCase(addComment.fulfilled, (state, action) => {
         if (action.payload) {
           state.list.push(action.payload);
+          state.fullList.push(action.payload);
           state.loading = false;
         }
       })
@@ -47,6 +66,7 @@ export const commentsSlice = createSlice({
       .addCase(deleteComment.fulfilled, (state, action) => {
         if (action.payload) {
           state.list = state.list.filter((comment) => comment.id !== action.payload);
+          state.fullList = state.fullList.filter((comment) => comment.id !== action.payload);
           state.loading = false;
         }
       })

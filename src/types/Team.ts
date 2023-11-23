@@ -7,6 +7,7 @@ export type Teammate = {
   extNumber: string;
   telegram: string;
   isWorkingRemotely: boolean;
-  status: string;
+  status: 'online' | 'busy' | 'offline';
   comment: string;
+  updatedAt: string;
 };

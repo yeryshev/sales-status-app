@@ -17,7 +17,7 @@ import { useSocketCtx } from '../../../helpers/contexts/wsContext';
 import {
   addComment,
   deleteComment,
-  setComments,
+  setMyComments,
 } from '../../../features/comments/actions/commentsActions';
 import { changeStatus } from '../../../features/statuses/slice/statusSlice';
 import { updateUser } from '../../../features/user/actions/userActions';
@@ -34,7 +34,7 @@ const CommentsBox = () => {
 
   useEffect(() => {
     if (user?.id) {
-      dispatch(setComments());
+      dispatch(setMyComments(user.id));
       dispatch(changeStatus(user.statusId));
     }
   }, [dispatch, user?.id, user?.statusId]);
@@ -67,6 +67,9 @@ const CommentsBox = () => {
   const handleDeleteComment = (commentId: number) => {
     if (user?.id) {
       dispatch(deleteComment(commentId)).then(() => {
+        if (user.commentId === commentId) {
+          handlePickComment(null);
+        }
         setSelectedComment(null);
         setAge('');
       });
@@ -78,10 +81,11 @@ const CommentsBox = () => {
   };
   return (
     <>
-      <FormLabel id="comments-label">Комментарии</FormLabel>
+      <FormLabel id="comments-label" sx={{ mb: 2 }}>
+        Комментарии
+      </FormLabel>
       <Box component="form" onSubmit={handleAddComment}>
         <TextField
-          margin="dense"
           required
           fullWidth
           name="comments"
@@ -93,7 +97,7 @@ const CommentsBox = () => {
           value={commentInput}
           onChange={(e) => setCommentInput(e.target.value)}
         />
-        <Button type="submit" fullWidth variant="outlined" sx={{ mt: 1, mb: 2 }} size="small">
+        <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 2 }} size="small">
           Добавить
         </Button>
       </Box>
@@ -106,6 +110,7 @@ const CommentsBox = () => {
           value={age}
           label="Выбрать комментарий"
           onChange={handleChange}
+          size="small"
         >
           {comments.map((comment) => (
             <MenuItem
@@ -118,12 +123,12 @@ const CommentsBox = () => {
           ))}
         </Select>
       </FormControl>
-      <Box sx={{ display: 'flex', justifyContent: 'start', mt: 2, gap: 1 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, gap: 1 }}>
         <Button
           type="button"
           onClick={() => handlePickComment(selectedComment?.id || null)}
           disabled={selectedComment === null}
-          variant="outlined"
+          variant="contained"
           size="small"
           color="success"
         >
@@ -133,7 +138,7 @@ const CommentsBox = () => {
           onClick={() => handleDeleteComment(selectedComment?.id || 0)}
           disabled={selectedComment === null}
           color="error"
-          variant="outlined"
+          variant="contained"
           size="small"
         >
           Удалить
@@ -141,7 +146,7 @@ const CommentsBox = () => {
         <Button
           disabled={user?.commentId === null}
           onClick={() => handlePickComment(null)}
-          variant="outlined"
+          variant="contained"
           size="small"
         >
           Очистить

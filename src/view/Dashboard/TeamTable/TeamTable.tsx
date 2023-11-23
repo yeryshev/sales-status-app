@@ -38,7 +38,7 @@ export default function TeamTable() {
           </TableHead>
           <TableBody>
             {team
-              .filter((teammate) => teammate.firstName && teammate.secondName && teammate.telegram)
+              .filter((teammate) => teammate.secondName)
               .map((teammate) => (
                 <Row key={teammate.id} teammate={teammate} />
               ))}
