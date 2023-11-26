@@ -9,12 +9,12 @@ from src.users.service import update_user, get_team
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.get("/team", response_model=list[Teammate], response_model_by_alias=True)
+@router.get("/team",
+            response_model=list[Teammate],
+            response_model_by_alias=True,
+            dependencies=[Depends(current_user)])
 async def get_users_router(
-        session: AsyncSession = Depends(get_async_session),
-        session_user: User = Depends(current_user)):
-    if not session_user:
-        raise HTTPException(status_code=403, detail="Unauthorized")
+        session: AsyncSession = Depends(get_async_session)):
     try:
         team = await get_team(session)
         return team

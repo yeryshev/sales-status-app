@@ -4,9 +4,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.comments.models import Comment
 
 
-async def get_comments_of_user(session: AsyncSession, user_id: int) -> list[Comment]:
+async def get_comments(session: AsyncSession, user: int) -> list[Comment]:
     try:
-        query = select(Comment).filter(Comment.owner_id == user_id).order_by(Comment.created_at.desc())
+        if not user:
+            query = select(Comment).order_by(Comment.created_at.desc())
+        else:
+            query = select(Comment).filter(Comment.owner_id == user).order_by(Comment.created_at.desc())
         result = await session.execute(query)
         comments = result.scalars().all()
         return list(comments)

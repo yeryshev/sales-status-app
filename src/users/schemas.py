@@ -19,6 +19,7 @@ class UserUpdate(BaseModel):
 
 class UserRead(BaseModel):
     id: int
+    email: str
     first_name: Optional[str] = Field(None, serialization_alias="firstName")
     second_name: Optional[str] = Field(None, serialization_alias="secondName")
     photo_url: Optional[str] = Field(None, serialization_alias="photoUrl")
@@ -27,7 +28,7 @@ class UserRead(BaseModel):
     is_working_remotely: Optional[bool] = Field(None, serialization_alias="isWorkingRemotely")
     status_id: int = Field(None, serialization_alias="statusId")
     comment_id: Optional[int] = Field(None, serialization_alias="commentId")
-    updated_at: datetime = Field(None, serialization_alias="updatedAt")
+    # updated_at: datetime = Field(None, serialization_alias="updatedAt")
     is_active: bool = Field(None, serialization_alias="isActive")
     is_superuser: bool = Field(None, serialization_alias="isSuperuser")
     is_verified: bool = Field(None, serialization_alias="isVerified")
@@ -44,3 +45,4 @@ class Teammate(BaseModel):
     is_working_remotely: Optional[bool] = Field(None, serialization_alias="isWorkingRemotely")
     status: Optional[str]
     comment: Optional[str]
+    updated_at: datetime = Field(None, serialization_alias="updatedAt")

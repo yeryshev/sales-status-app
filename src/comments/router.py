@@ -4,19 +4,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.base_config import current_user
 from src.auth.models import User
 from src.comments.schemas import CommentOut, CommentIn
-from src.comments.service import get_comments_of_user, add_comment_to_db, delete_comment_from_db
+from src.comments.service import add_comment_to_db, delete_comment_from_db, get_comments
 from src.database import get_async_session
 from src.comments.models import Comment
 
 router = APIRouter(prefix="/comments", tags=["Comments"])
 
 
-@router.get("/", response_model=list[CommentOut])
-async def get_comments(
+@router.get("/", response_model=list[CommentOut], dependencies=[Depends(current_user)])
+async def get_my_comments(
         session: AsyncSession = Depends(get_async_session),
-        session_user: User = Depends(current_user)):
+        user: int = None):
     try:
-        return await get_comments_of_user(session, session_user.id)
+        return await get_comments(session, user)
     except Exception:
         raise HTTPException(status_code=404, detail="Comments not found")
 
