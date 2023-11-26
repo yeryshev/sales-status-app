@@ -90,21 +90,15 @@ export default function StatusBox() {
         onChange={handleChangeMainStatus}
         sx={{ height: '100%' }}
       >
-        <Grid
-          container
-          direction="row"
-          justifyContent={'space-between'}
-          spacing={1}
-          height={'100%'}
-        >
+        <Grid container direction="row" spacing={1}>
           <Grid item xs={12} sm={12}>
-            <FormControlLabel value={1} control={<Radio />} label="Онлайн" />
+            <FormControlLabel value={1} control={<Radio />} label="На связи" />
           </Grid>
           <Grid item xs={12} sm={12}>
             <FormControlLabel value={2} control={<Radio />} label="Не беспокоить" />
           </Grid>
           <Grid item xs={12} sm={12}>
-            <FormControlLabel value={3} control={<Radio />} label="Оффлайн" />
+            <FormControlLabel value={3} control={<Radio />} label="Не в сети" />
           </Grid>
         </Grid>
       </RadioGroup>

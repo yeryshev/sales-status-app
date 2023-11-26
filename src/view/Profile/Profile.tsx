@@ -239,7 +239,7 @@ const Profile = () => {
                 </Grid>
                 <Box
                   sx={{
-                    mt: 1,
+                    mt: 3,
                     position: 'relative',
                     width: '100%',
                     display: 'flex',

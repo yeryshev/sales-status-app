@@ -12,7 +12,6 @@ import { RootState, useAppDispatch } from '../../../redux/store';
 import { useEffect } from 'react';
 import { setTeam } from '../../../features/team/actions/teamActions';
 import Row from './Row/Row';
-import WsAlert from '../StatusBox/WsAlert';
 
 export default function TeamTable() {
   const team = useSelector((state: RootState) => state.team.list);
@@ -45,7 +44,6 @@ export default function TeamTable() {
           </TableBody>
         </Table>
       </TableContainer>
-      <WsAlert />
     </React.Fragment>
   );
 }

@@ -1,6 +1,6 @@
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSocketCtx } from '../../../helpers/contexts/wsContext';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
@@ -14,16 +14,8 @@ const WsAlert = () => {
   const [message, setMessage] = useState<'на месте' | 'занят' | 'недоступен'>('недоступен');
   const userId = useSelector((state: RootState) => state.user.user?.id);
 
-  const handleOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  useEffect(() => {
-    const handleStatusChange = (arg: MessageEvent) => {
+  const handleStatusChange = useCallback(
+    (arg: MessageEvent) => {
       const data = JSON.parse(arg.data);
       if (data.userId === userId || !data.statusId) return;
       const teammateName = team.find((t) => t.id === data.userId)?.firstName;
@@ -48,24 +40,28 @@ const WsAlert = () => {
       }
 
       setUserName(`${teammateName} ${teammateSurname}`);
-      handleOpen();
-    };
+      setOpen(true);
+    },
+    [team, userId]
+  );
+
+  useEffect(() => {
     socket.addEventListener('message', handleStatusChange);
 
     return () => {
       socket.removeEventListener('message', handleStatusChange);
     };
-  }, [socket, team, userId]);
+  }, [handleStatusChange, socket]);
 
   return (
     <div>
       <Snackbar
         open={open}
         autoHideDuration={2000}
-        onClose={handleClose}
+        onClose={() => setOpen(false)}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Alert onClose={handleClose} severity={alertType}>
+        <Alert onClose={() => setOpen(false)} severity={alertType}>
           {`${userName} ${message}`}
         </Alert>
       </Snackbar>

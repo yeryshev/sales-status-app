@@ -66,6 +66,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
         <Toolbar
           sx={{
             pr: '24px',
+            backgroundColor: 'rgb(39, 39, 39)',
           }}
         >
           <IconButton
@@ -78,7 +79,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
-            ДРБ
+            Selectel - Inbound Sales
           </Typography>
           <IconButton sx={{ ml: 1 }} onClick={() => handleToggleTheme()} color="inherit">
             {theme.palette.mode === 'dark' ? <DarkModeIcon /> : <LightModeIcon />}

@@ -1,9 +1,9 @@
 import {
   Box,
   Button,
-  Divider,
   FormControl,
   FormLabel,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -22,6 +22,7 @@ import {
 import { changeStatus } from '../../../features/statuses/slice/statusSlice';
 import { updateUser } from '../../../features/user/actions/userActions';
 import { Comment } from '../../../types/Comment';
+import AddIcon from '@mui/icons-material/Add';
 
 const CommentsBox = () => {
   const [age, setAge] = useState('');
@@ -84,33 +85,46 @@ const CommentsBox = () => {
       <FormLabel id="comments-label" sx={{ mb: 2 }}>
         Комментарии
       </FormLabel>
-      <Box component="form" onSubmit={handleAddComment}>
-        <TextField
-          required
-          fullWidth
-          name="comments"
-          label="Новый комментарий"
-          size="small"
-          type="text"
-          id="comments"
-          autoComplete="off"
-          value={commentInput}
-          onChange={(e) => setCommentInput(e.target.value)}
-        />
-        <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 2 }} size="small">
-          Добавить
-        </Button>
+      <Box component="form" onSubmit={handleAddComment} mb={2}>
+        <Grid container justifyContent={'space-between'} alignItems={'center'} spacing={{ md: 1 }}>
+          <Grid item xs={10} sm={10} md={10}>
+            <TextField
+              required
+              name="comments"
+              label="Создать новый"
+              fullWidth
+              type="text"
+              id="comments"
+              autoComplete="off"
+              value={commentInput}
+              onChange={(e) => setCommentInput(e.target.value)}
+            />
+          </Grid>
+
+          <Grid
+            item
+            sx={{ height: '100%' }}
+            xs={2}
+            sm={2}
+            md={2}
+            justifyContent={'center'}
+            alignItems={'center'}
+            display={'flex'}
+          >
+            <Button type="submit" sx={{ height: '100%' }}>
+              <AddIcon />
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
-      <Divider sx={{ mb: 2 }} />
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Выбрать комментарий</InputLabel>
+      <FormControl fullWidth sx={{ mb: 2 }}>
+        <InputLabel id="demo-simple-select-label">Выбрать</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={age}
           label="Выбрать комментарий"
           onChange={handleChange}
-          size="small"
         >
           {comments.map((comment) => (
             <MenuItem
@@ -123,35 +137,32 @@ const CommentsBox = () => {
           ))}
         </Select>
       </FormControl>
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, gap: 1 }}>
-        <Button
-          type="button"
-          onClick={() => handlePickComment(selectedComment?.id || null)}
-          disabled={selectedComment === null}
-          variant="contained"
-          size="small"
-          color="success"
-        >
-          Установить
-        </Button>
-        <Button
-          onClick={() => handleDeleteComment(selectedComment?.id || 0)}
-          disabled={selectedComment === null}
-          color="error"
-          variant="contained"
-          size="small"
-        >
-          Удалить
-        </Button>
-        <Button
-          disabled={user?.commentId === null}
-          onClick={() => handlePickComment(null)}
-          variant="contained"
-          size="small"
-        >
-          Очистить
-        </Button>
-      </Box>
+      <Grid container justifyContent={'center'}>
+        <Grid item>
+          <Button
+            type="button"
+            onClick={() => handlePickComment(selectedComment?.id || null)}
+            disabled={selectedComment === null}
+            color="success"
+          >
+            Установить
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            onClick={() => handleDeleteComment(selectedComment?.id || 0)}
+            disabled={selectedComment === null}
+            color="error"
+          >
+            Удалить
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button disabled={user?.commentId === null} onClick={() => handlePickComment(null)}>
+            Очистить
+          </Button>
+        </Grid>
+      </Grid>
     </>
   );
 };

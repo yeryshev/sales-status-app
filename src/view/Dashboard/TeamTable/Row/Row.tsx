@@ -9,12 +9,17 @@ import Collapse from '@mui/material/Collapse';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
-import LanguageIcon from '@mui/icons-material/Language';
 import { Teammate } from '../../../../types/Team';
 import { Avatar, Link, Skeleton } from '@mui/material';
 import styles from './Row.module.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
+
+const statuses: Record<'online' | 'busy' | 'offline', string> = {
+  online: 'онлайн',
+  busy: 'занят',
+  offline: 'оффлайн',
+};
 
 const Row = ({ teammate }: { teammate: Teammate }) => {
   const [open, setOpen] = useState(false);
@@ -23,7 +28,7 @@ const Row = ({ teammate }: { teammate: Teammate }) => {
   return (
     <>
       <TableRow key={teammate.id} hover>
-        <TableCell align="left">
+        <TableCell align="left" sx={{ width: '50px' }}>
           {loading ? (
             <Skeleton variant="circular" width={50} height={50} />
           ) : (
@@ -31,25 +36,23 @@ const Row = ({ teammate }: { teammate: Teammate }) => {
               alt={`${teammate.firstName} ${teammate.secondName}`}
               src={teammate.photoUrl}
               sx={{ width: 50, height: 50 }}
+              className={'' && styles['element-with-border']}
             />
           )}
         </TableCell>
-        <TableCell align="left">
+        <TableCell align="left" sx={{ width: '200px' }}>
           {loading ? (
             <Skeleton variant="text" />
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-              {`${teammate.firstName} ${teammate.secondName}`}
-              {teammate.isWorkingRemotely && <LanguageIcon />}
-            </div>
+            `${teammate.firstName} ${teammate.secondName}`.slice(0, 30)
           )}
         </TableCell>
-        <TableCell align="left">
+        <TableCell align="left" sx={{ width: '190px' }}>
           {loading ? (
             <Skeleton variant="text" />
           ) : (
             <span className={`${styles.status} ${styles[`status--${teammate.status}`]}`}>
-              {teammate.status}
+              {statuses[teammate.status]} {teammate.isWorkingRemotely && 'удалённо'}
             </span>
           )}
         </TableCell>

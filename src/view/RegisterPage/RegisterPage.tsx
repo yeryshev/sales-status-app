@@ -57,7 +57,7 @@ export default function RegisterPage() {
       <AppBar position="relative">
         <Toolbar>
           <Typography variant="h6" color="inherit" noWrap>
-            ДРБ
+            Selectel - Inbound Sales
           </Typography>
         </Toolbar>
       </AppBar>
