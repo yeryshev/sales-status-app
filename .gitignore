@@ -1,5 +1,6 @@
 ### macOS ###
 .env
+.env-non-dev
 .DS_Store
 .AppleDouble
 .LSOverride
