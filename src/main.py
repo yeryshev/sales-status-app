@@ -10,6 +10,8 @@ from src.tasks.router import router as tasks_router
 app = FastAPI(title='Team Status API')
 
 origins = [
+    "https://drb-frontend.onrender.com",
+    "wss://drb-frontend.onrender.com",
     "http://localhost",
     "http://localhost:5173",
     "ws://localhost:5173",
