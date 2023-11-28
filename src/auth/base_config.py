@@ -8,7 +8,7 @@ from config import AUTH_SECRET
 cookie_transport = CookieTransport(
     cookie_name='auth',
     cookie_max_age=360000,
-    cookie_secure=True,
+    cookie_secure=False,
     cookie_httponly=True,
 )
 
