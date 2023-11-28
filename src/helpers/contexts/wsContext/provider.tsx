@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from 'react';
+import { ReactNode } from 'react';
 import { SocketCtx } from './index';
 
 const SocketCtxProvider = (props: { children?: ReactNode }) => {

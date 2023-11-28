@@ -34,7 +34,7 @@ import { User } from '../../types/User';
 import {
   addComment,
   deleteComment,
-  setAllComments,
+  // setAllComments,
 } from '../../features/comments/actions/commentsActions';
 import { addTask, deleteTask, setTasks } from '../../features/tasks/actions/tasksActions';
 import { useSocketCtx } from '../../helpers/contexts/wsContext';
@@ -54,7 +54,7 @@ const Planner = () => {
 
   useEffect(() => {
     if (user?.id) {
-      dispatch(setAllComments(user.id));
+      // dispatch(setAllComments(user.id));
       dispatch(setTasks());
     }
   }, [dispatch, user?.id]);
