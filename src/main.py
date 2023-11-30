@@ -5,17 +5,21 @@ from src.comments.router import router as comments_router
 from src.websockets.router import router as websocket_router
 from fastapi.middleware.cors import CORSMiddleware
 from src.tasks.router import router as tasks_router
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN")
 
 
 app = FastAPI(title='Team Status API')
 
 origins = [
+    FRONTEND_ORIGIN,
     "https://drb-frontend.onrender.com",
-    "wss://drb-frontend.onrender.com",
     "http://localhost",
     "http://localhost:5173",
-    "ws://localhost:5173",
-    "http://localhost:3000",
 ]
 
 app.add_middleware(
