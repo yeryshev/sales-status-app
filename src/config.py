@@ -8,6 +8,11 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     DB_NAME: str
     AUTH_SECRET: str
+    FRONTEND_ORIGIN: str
+
+    @property
+    def DATABASE_URL(self):
+        return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     @property
     def DATABASE_URL_asyncpg(self):
