@@ -52,7 +52,7 @@ const Dashboard = () => {
               </Grid>
             </Grid>
 
-            <Grid item sm={12} md={9}>
+            <Grid item xs={12} md={9}>
               <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                 <TeamTable />
               </Paper>

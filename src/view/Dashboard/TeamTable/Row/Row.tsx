@@ -51,9 +51,9 @@ const Row = ({ teammate }: { teammate: Teammate }) => {
           {loading ? (
             <Skeleton variant="text" />
           ) : (
-            <span className={`${styles.status} ${styles[`status--${teammate.status}`]}`}>
+            <div className={`${styles.status} ${styles[`status--${teammate.status}`]}`}>
               {statuses[teammate.status]} {teammate.isWorkingRemotely && 'удалённо'}
-            </span>
+            </div>
           )}
         </TableCell>
         <TableCell align="left">
