@@ -1,6 +1,6 @@
 FROM node:20 as build
 WORKDIR /app
-COPY package* yarn.lock .
+COPY package* yarn.lock ./
 RUN yarn install
 COPY . .
 RUN yarn run build
