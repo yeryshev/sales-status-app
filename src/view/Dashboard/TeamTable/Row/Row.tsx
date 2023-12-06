@@ -82,14 +82,16 @@ const Row = ({ teammate }: { teammate: Teammate }) => {
                     <TableCell>{teammate.extNumber}</TableCell>
                     <TableCell>{teammate.email}</TableCell>
                     <TableCell align="right">
-                      <Link
-                        underline="none"
-                        color="primary"
-                        href={`http://t.me/${teammate.telegram}`}
-                        target="_blank"
-                      >
-                        Написать
-                      </Link>
+                      {teammate.telegram && (
+                        <Link
+                          underline="none"
+                          color="primary"
+                          href={`http://t.me/${teammate.telegram}`}
+                          target="_blank"
+                        >
+                          Написать
+                        </Link>
+                      )}
                     </TableCell>
                   </TableRow>
                 </TableBody>
