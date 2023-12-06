@@ -15,12 +15,7 @@ FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN")
 
 app = FastAPI(title='Team Status API')
 
-origins = [
-    FRONTEND_ORIGIN,
-    "https://drb-frontend.onrender.com",
-    "http://localhost",
-    "http://localhost:5173",
-]
+origins = [FRONTEND_ORIGIN]
 
 app.add_middleware(
     CORSMiddleware,
