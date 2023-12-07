@@ -16,6 +16,7 @@ import { useColorModeCtx } from '../../helpers/contexts/themeContext';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { Link } from 'react-router-dom';
+import { useSocketCtx } from '../../helpers/contexts/wsContext';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
@@ -23,6 +24,23 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const colorMode = useColorModeCtx();
+  const { socket } = useSocketCtx();
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        if (socket && socket.readyState !== WebSocket.OPEN) {
+          window.location.reload();
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [socket]);
 
   const handleLogout = async () => {
     await dispatch(clearUser());
