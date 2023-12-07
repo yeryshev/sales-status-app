@@ -25,7 +25,7 @@ const Dashboard = () => {
         <Toolbar />
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
           <Grid container spacing={2}>
-            <Grid container item sm={12} md={3} spacing={2}>
+            <Grid container item sm={12} md={3} spacing={2} alignSelf={'flex-start'}>
               <Grid item xs={12} sm={4} md={12} lg={12}>
                 <Paper
                   sx={{
