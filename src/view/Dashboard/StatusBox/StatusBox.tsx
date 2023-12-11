@@ -72,9 +72,10 @@ export default function StatusBox() {
     event.preventDefault();
     const statusId = Number(event.target.value);
     if (user) {
-      dispatch(updateUser({ ...user, statusId })).then(() => {
-        socket.send(JSON.stringify({ userId: user.id, statusId }));
-      });
+      dispatch(updateUser({ ...user, statusId }));
+      // .then(() => {
+      //   socket.send(JSON.stringify({ userId: user.id, statusId }));
+      // });
     }
   };
 

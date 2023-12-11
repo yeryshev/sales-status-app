@@ -7,7 +7,7 @@ import StatusBox from './StatusBox/StatusBox';
 import TeamTable from './TeamTable/TeamTable';
 import Layout from '../../components/Layout/Layout';
 import CommentsBox from './CommentsBox/CommentsBox';
-import WsAlert from './StatusBox/WsAlert';
+// import WsAlert from './StatusBox/WsAlert';
 
 const Dashboard = () => {
   return (
@@ -60,7 +60,7 @@ const Dashboard = () => {
           </Grid>
         </Container>
       </Box>
-      <WsAlert />
+      {/* <WsAlert /> */}
     </Layout>
   );
 };

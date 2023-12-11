@@ -13,7 +13,7 @@ import {
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { RootState, useAppDispatch } from '../../../redux/store';
 import { useSelector } from 'react-redux';
-import { useSocketCtx } from '../../../helpers/contexts/wsContext';
+// import { useSocketCtx } from '../../../helpers/contexts/wsContext';
 import {
   addComment,
   deleteComment,
@@ -31,7 +31,7 @@ const CommentsBox = () => {
   const [commentInput, setCommentInput] = useState('');
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
   const comments = useSelector((state: RootState) => state.comments.list);
-  const { socket } = useSocketCtx();
+  // const { socket } = useSocketCtx();
 
   useEffect(() => {
     if (user?.id) {
@@ -44,16 +44,16 @@ const CommentsBox = () => {
     (commentId: number | null) => {
       if (user) {
         dispatch(updateUser({ ...user, commentId }))
-          .then(() => {
-            socket.send(JSON.stringify({ userId: user.id, commentId }));
-          })
+          // .then(() => {
+          //   socket.send(JSON.stringify({ userId: user.id, commentId }));
+          // })
           .then(() => {
             setSelectedComment(null);
             setAge('');
           });
       }
     },
-    [socket, dispatch, user]
+    [dispatch, user]
   );
 
   const handleAddComment = (event: FormEvent<HTMLFormElement>) => {
