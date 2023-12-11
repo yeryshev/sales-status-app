@@ -1,3 +1,5 @@
+import json
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.models import User
@@ -5,6 +7,7 @@ from src.database import get_async_session
 from src.auth.base_config import current_user
 from src.users.schemas import UserRead, UserUpdate, Teammate
 from src.users.service import update_user, get_team
+from src.websockets.router import manager
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
@@ -41,4 +44,9 @@ async def update_user_router(
         raise HTTPException(status_code=403, detail="Not authorized")
 
     updated_user = await update_user(user_update, session, user)
+    await manager.broadcast(json.dumps({
+        "userId": updated_user.id,
+        "statusId": user.status_id,
+        "commentId": user.comment_id
+    }))
     return updated_user
