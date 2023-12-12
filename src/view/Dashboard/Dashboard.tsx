@@ -7,7 +7,10 @@ import StatusBox from './StatusBox/StatusBox';
 import TeamTable from './TeamTable/TeamTable';
 import Layout from '../../components/Layout/Layout';
 import CommentsBox from './CommentsBox/CommentsBox';
-// import WsAlert from './StatusBox/WsAlert';
+import Title from '../PlannerPage/Title';
+import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import Row from './TeamTable/Row/TeamRow';
+import TablesBox from './TeamTable/TablesBox';
 
 const Dashboard = () => {
   return (
@@ -52,15 +55,12 @@ const Dashboard = () => {
               </Grid>
             </Grid>
 
-            <Grid item xs={12} md={9}>
-              <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                <TeamTable />
-              </Paper>
+            <Grid container item xs={12} md={9} spacing={2}>
+              <TablesBox />
             </Grid>
           </Grid>
         </Container>
       </Box>
-      {/* <WsAlert /> */}
     </Layout>
   );
 };
