@@ -4,19 +4,12 @@ import TableBody from '@mui/material/TableBody';
 import Paper from '@mui/material/Paper';
 import Title from '../../PlannerPage/Title';
 import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '../../../redux/store';
-import { useEffect } from 'react';
-import { setTeam } from '../../../features/team/actions/teamActions';
+import { RootState } from '../../../redux/store';
 import Row from './Row/TeamRow';
-import { Teammate } from '../../../types/Team';
 
-export default function TeamTable({ team }: { team: Teammate[] }) {
-  // const team = useSelector((state: RootState) => state.team.list);
-  // const dispatch = useAppDispatch();
-
-  // useEffect(() => {
-  //   dispatch(setTeam());
-  // }, [dispatch]);
+export default function TeamTable() {
+  const team = useSelector((state: RootState) => state.team.list);
+  const userdId = useSelector((state: RootState) => state.user.user?.id);
 
   return (
     <>
@@ -25,7 +18,7 @@ export default function TeamTable({ team }: { team: Teammate[] }) {
         <Table size="small">
           <TableBody>
             {team
-              .filter((teammate) => teammate.secondName)
+              .filter((teammate) => teammate.secondName && teammate.id !== userdId)
               .map((teammate) => (
                 <Row key={teammate.id} teammate={teammate} />
               ))}

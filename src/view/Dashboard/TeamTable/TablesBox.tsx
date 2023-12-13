@@ -17,6 +17,7 @@ import { RootState, useAppDispatch } from '../../../redux/store';
 
 const TablesBox = () => {
   const team = useSelector((state: RootState) => state.team.list);
+  const teamLoading = useSelector((state: RootState) => state.team.loading);
   const userId = useSelector((state: RootState) => state.user.user?.id);
   const teammate = team.find((t) => t.id === userId);
   const dispatch = useAppDispatch();
@@ -41,7 +42,7 @@ const TablesBox = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <Row key={teammate?.id} teammate={teammate} />
+                {teammate ? <Row key={teammate.id} teammate={teammate} /> : <div>Загрузка</div>}
               </TableBody>
             </Table>
           </TableContainer>
@@ -49,7 +50,7 @@ const TablesBox = () => {
       </Grid>
       <Grid item xs={12}>
         <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-          <TeamTable team={team} />
+          {teamLoading ? <div>Загрузка</div> : <TeamTable />}
         </Paper>
       </Grid>
     </>
