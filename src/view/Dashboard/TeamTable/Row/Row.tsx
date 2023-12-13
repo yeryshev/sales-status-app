@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import TableCell from '@mui/material/TableCell';
@@ -10,7 +11,7 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { Teammate } from '../../../../types/Team';
-import { Avatar, Link, Skeleton } from '@mui/material';
+import { Avatar, Link, Skeleton, Tooltip } from '@mui/material';
 import styles from './Row.module.scss';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
@@ -24,6 +25,8 @@ const statuses: Record<'online' | 'busy' | 'offline', string> = {
 const Row = ({ teammate }: { teammate: Teammate }) => {
   const [open, setOpen] = useState(false);
   const loading = useSelector((state: RootState) => state.team.loading);
+  const updateTimeMsk = moment.utc(teammate.updatedAt).utcOffset('+0300').format('HH:mm');
+  const updateDateMsk = moment.utc(teammate.updatedAt).utcOffset('+0300').format('DD.MM');
 
   return (
     <>
@@ -51,9 +54,14 @@ const Row = ({ teammate }: { teammate: Teammate }) => {
           {loading ? (
             <Skeleton variant="text" />
           ) : (
-            <div className={`${styles.status} ${styles[`status--${teammate.status}`]}`}>
-              {statuses[teammate.status]} {teammate.isWorkingRemotely && 'удалённо'}
-            </div>
+            <Tooltip
+              disableFocusListener
+              title={`Последнее обновление в ${updateTimeMsk}, дата: ${updateDateMsk}`}
+            >
+              <div className={`${styles.status} ${styles[`status--${teammate.status}`]}`}>
+                {statuses[teammate.status]} {teammate.isWorkingRemotely && 'удалённо'}
+              </div>
+            </Tooltip>
           )}
         </TableCell>
         <TableCell align="left">
