@@ -41,9 +41,7 @@ export default function StatusBox() {
 
       if ('statusId' in dataFromSocket && user) {
         const { statusId } = dataFromSocket;
-        dispatch(
-          setTeamLocal({ userId, status: Statuses[statusId], updatedAt, isWorkingRemotely })
-        );
+        dispatch(setTeamLocal({ userId, status: Statuses[statusId], updatedAt, isWorkingRemotely }));
         dispatch(changeStatus(user.statusId));
       }
 
