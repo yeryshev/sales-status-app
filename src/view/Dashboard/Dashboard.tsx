@@ -4,13 +4,9 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import StatusBox from './StatusBox/StatusBox';
-import TeamTable from './TeamTable/TeamTable';
 import Layout from '../../components/Layout/Layout';
 import CommentsBox from './CommentsBox/CommentsBox';
-import Title from '../PlannerPage/Title';
-import { TableContainer, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
-import Row from './TeamTable/Row/TeamRow';
-import TablesBox from './TeamTable/TablesBox';
+import TablesBox from './Tables/TablesBox';
 
 const Dashboard = () => {
   return (
@@ -55,7 +51,7 @@ const Dashboard = () => {
               </Grid>
             </Grid>
 
-            <Grid container item xs={12} md={9} spacing={2}>
+            <Grid container item xs={12} md={9} spacing={2} alignSelf={'flex-start'}>
               <TablesBox />
             </Grid>
           </Grid>

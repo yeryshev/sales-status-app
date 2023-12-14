@@ -2,10 +2,10 @@ import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import Paper from '@mui/material/Paper';
-import Title from '../../PlannerPage/Title';
+import Title from '../../../PlannerPage/Title';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import Row from './Row/TeamRow';
+import { RootState } from '../../../../redux/store';
+import Row from '../Row/Row';
 
 export default function TeamTable() {
   const team = useSelector((state: RootState) => state.team.list);
@@ -18,9 +18,11 @@ export default function TeamTable() {
         <Table size="small">
           <TableBody>
             {team
-              .filter((teammate) => teammate.secondName && teammate.id !== userdId)
+              .filter(
+                (teammate) => teammate.secondName && teammate.firstName && teammate.id !== userdId
+              )
               .map((teammate) => (
-                <Row key={teammate.id} teammate={teammate} />
+                <Row key={teammate.id} teammate={teammate} expanded={true} />
               ))}
           </TableBody>
         </Table>

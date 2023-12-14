@@ -37,11 +37,11 @@ export default function StatusBox() {
     (event: MessageEvent) => {
       dispatch(checkUser());
       const dataFromSocket = JSON.parse(event.data);
-      const { userId } = dataFromSocket;
+      const { userId, isWorkingRemotely } = dataFromSocket;
 
       if ('statusId' in dataFromSocket && user) {
         const { statusId } = dataFromSocket;
-        dispatch(setTeamLocal({ userId, status: Statuses[statusId] }));
+        dispatch(setTeamLocal({ userId, status: Statuses[statusId], isWorkingRemotely }));
         dispatch(changeStatus(user.statusId));
       }
 
@@ -49,9 +49,9 @@ export default function StatusBox() {
         const { commentId } = dataFromSocket;
         const comment = allComments.find((comment) => comment.id === Number(commentId));
         if (comment) {
-          dispatch(setTeamLocal({ userId, comment: comment.description }));
+          dispatch(setTeamLocal({ userId, comment: comment.description, isWorkingRemotely }));
         } else if (commentId === null) {
-          dispatch(setTeamLocal({ userId, comment: null }));
+          dispatch(setTeamLocal({ userId, comment: null, isWorkingRemotely }));
         } else {
           dispatch(setTeam());
         }
