@@ -4,10 +4,9 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import StatusBox from './StatusBox/StatusBox';
-import TeamTable from './TeamTable/TeamTable';
 import Layout from '../../components/Layout/Layout';
 import CommentsBox from './CommentsBox/CommentsBox';
-// import WsAlert from './StatusBox/WsAlert';
+import TablesBox from './Tables/TablesBox';
 
 const Dashboard = () => {
   return (
@@ -52,15 +51,12 @@ const Dashboard = () => {
               </Grid>
             </Grid>
 
-            <Grid item xs={12} md={9}>
-              <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                <TeamTable />
-              </Paper>
+            <Grid container item xs={12} md={9} spacing={2} alignSelf={'flex-start'}>
+              <TablesBox />
             </Grid>
           </Grid>
         </Container>
       </Box>
-      {/* <WsAlert /> */}
     </Layout>
   );
 };

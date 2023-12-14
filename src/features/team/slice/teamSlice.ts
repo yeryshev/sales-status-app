@@ -23,6 +23,7 @@ export const teamSlice = createSlice({
               teammate.comment = action.payload.comment;
             }
             teammate.updatedAt = action.payload.updatedAt;
+            teammate.isWorkingRemotely = action.payload.isWorkingRemotely;
           }
           return teammate;
         })
