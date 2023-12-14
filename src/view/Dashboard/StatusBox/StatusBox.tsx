@@ -37,11 +37,13 @@ export default function StatusBox() {
     (event: MessageEvent) => {
       dispatch(checkUser());
       const dataFromSocket = JSON.parse(event.data);
-      const { userId, isWorkingRemotely } = dataFromSocket;
+      const { userId, updatedAt, isWorkingRemotely } = dataFromSocket;
 
       if ('statusId' in dataFromSocket && user) {
         const { statusId } = dataFromSocket;
-        dispatch(setTeamLocal({ userId, status: Statuses[statusId], isWorkingRemotely }));
+        dispatch(
+          setTeamLocal({ userId, status: Statuses[statusId], updatedAt, isWorkingRemotely })
+        );
         dispatch(changeStatus(user.statusId));
       }
 
@@ -49,9 +51,11 @@ export default function StatusBox() {
         const { commentId } = dataFromSocket;
         const comment = allComments.find((comment) => comment.id === Number(commentId));
         if (comment) {
-          dispatch(setTeamLocal({ userId, comment: comment.description, isWorkingRemotely }));
+          dispatch(
+            setTeamLocal({ userId, comment: comment.description, updatedAt, isWorkingRemotely })
+          );
         } else if (commentId === null) {
-          dispatch(setTeamLocal({ userId, comment: null, isWorkingRemotely }));
+          dispatch(setTeamLocal({ userId, comment: null, updatedAt, isWorkingRemotely }));
         } else {
           dispatch(setTeam());
         }
@@ -93,13 +97,13 @@ export default function StatusBox() {
       >
         <Grid container direction="row" spacing={1}>
           <Grid item xs={12} sm={12}>
-            <FormControlLabel value={1} control={<Radio />} label="На связи" />
+            <FormControlLabel value={1} control={<Radio />} label="Онлайн" />
           </Grid>
           <Grid item xs={12} sm={12}>
-            <FormControlLabel value={2} control={<Radio />} label="Не беспокоить" />
+            <FormControlLabel value={2} control={<Radio />} label="Занят" />
           </Grid>
           <Grid item xs={12} sm={12}>
-            <FormControlLabel value={3} control={<Radio />} label="Не в сети" />
+            <FormControlLabel value={3} control={<Radio />} label="Оффлайн" />
           </Grid>
         </Grid>
       </RadioGroup>
