@@ -47,6 +47,7 @@ async def update_user_router(
     await manager.broadcast(json.dumps({
         "userId": updated_user.id,
         "statusId": updated_user.status_id,
-        "commentId": updated_user.comment_id
+        "commentId": updated_user.comment_id,
+        "isWorkingRemotely": updated_user.is_working_remotely
     }))
     return updated_user
