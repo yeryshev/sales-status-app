@@ -1,16 +1,12 @@
 from fastapi import FastAPI
+
+from config import FRONTEND_ORIGIN
 from src.users.router import router as users_router
 from src.auth.router import router as auth_router
 from src.comments.router import router as comments_router
 from src.websockets.router import router as websocket_router
 from fastapi.middleware.cors import CORSMiddleware
 from src.tasks.router import router as tasks_router
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-
-FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN")
 
 
 app = FastAPI(title='Team Status API')

@@ -8,3 +8,4 @@
 /usage_logs
 /venv
 __pycache__
+celerybeat-schedule.db

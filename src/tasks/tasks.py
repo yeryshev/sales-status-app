@@ -1,27 +1,27 @@
 from celery import Celery
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from celery.schedules import crontab
+from sqlalchemy import select
+from config import REDIS_URL
 from src.auth.models import User
-from src.database import get_async_session
-from src.users.schemas import UserUpdate
-from src.users.service import update_user
-from src.websockets.router import manager
+from src.database import sync_session_factory
 
-celery = Celery('tasks', broker='redis://localhost:6379')
+
+celery = Celery('tasks', broker=REDIS_URL)
+
+
+@celery.on_after_configure.connect
+def setup_periodic_tasks(sender, **kwargs):
+    sender.add_periodic_task(
+        crontab(hour='17', minute='00'),
+        set_offline_users.s(),
+        name='set_offline_users_every_day_at_17_00_UTC',
+    )
 
 
 @celery.task
-async def create_celery_task(
-        status_id: int,
-        comment_id: int,
-        user_id: int,
-        session: AsyncSession = Depends(get_async_session)):
-    try:
-        print('Hello from creating task')
-        user = await session.get(User, user_id)
-        user_update = UserUpdate(status_id=status_id, comment_id=comment_id)
-        await update_user(user_update, session, user)
-        await manager.broadcast({"userId": user.id, "statusId": status_id, "commentId": comment_id})
-    except Exception:
-        raise Exception('Could not create celery task')
+def set_offline_users():
+    with sync_session_factory() as session:
+        users_to_update = session.query(User).filter(User.status_id != 3).all()
+        for user in users_to_update:
+            user.status_id = 3
+        session.commit()
