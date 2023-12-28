@@ -9,3 +9,5 @@
 /venv
 __pycache__
 celerybeat-schedule.db
+compose.yml
+celerybeat-schedule
