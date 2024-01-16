@@ -1,0 +1,88 @@
+services:
+
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  nginx-proxy-acme:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - acme:/etc/acme.sh
+    volumes_from:
+      - nginx-proxy
+    environment:
+      DEFAULT_EMAIL: 'example@gmail.com'
+    depends_on:
+      - nginx-proxy
+
+  celery:
+    build: .
+    command: celery -A src.tasks.tasks:celery worker -B --loglevel=info
+    volumes:
+      - ./:/usr/src/app
+    environment:
+      CELERY_BROKER_URL: 'redis://redis:6379/0'
+      CELERY_RESULT_BACKEND: 'redis://redis:6379/0'
+    depends_on:
+      - backend
+      - redis
+
+  redis:
+    image: redis:7
+
+  flower:
+    build: .
+    command: celery --broker=redis://redis:6379/0 flower --port=5555
+    environment:
+      CELERY_BROKER_URL: 'redis://redis:6379/0'
+      CELERY_RESULT_BACKEND: 'redis://redis:6379/0'
+      VIRTUAL_PORT: 5555
+      VIRTUAL_HOST: 'flower.example.com'
+      LETSENCRYPT_HOST: 'flower.example.com'
+      LETSENCRYPT_EMAIL: 'example@gmail.com'
+    depends_on:
+      - celery
+
+  backend:
+    build: .
+    command: gunicorn src.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./:/usr/src/app
+    environment:
+      CELERY_BROKER_URL: 'redis://redis:6379/0'
+      CELERY_RESULT_BACKEND: 'redis://redis:6379/0'
+      VIRTUAL_HOST: 'api.example.com'
+      VIRTUAL_PORT: 8000
+      LETSENCRYPT_HOST: 'api.example.com'
+      LETSENCRYPT_EMAIL: 'example@gmail.com'
+    depends_on:
+      - redis
+      - nginx-proxy
+
+  frontend:
+    build: ../frontend
+    environment:
+      VIRTUAL_HOST: 'example.com'
+      LETSENCRYPT_HOST: 'example.com'
+      LETSENCRYPT_EMAIL: 'example@gmail.com'
+    depends_on:
+      - backend
+      - nginx-proxy
+
+volumes:
+  certs:
+  vhost:
+  html:
+  acme:
