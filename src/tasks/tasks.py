@@ -18,8 +18,6 @@ def setup_periodic_tasks(sender, **kwargs):
         name='set_offline_users_every_day_at_17_00_UTC',
     )
 
-    # sender.add_periodic_task(10.0, toggle_users_status.s(), name='add every 10')
-
 
 @celery.task(name='set_offline_users')
 def set_offline_users():
@@ -27,25 +25,4 @@ def set_offline_users():
         users_to_update = session.query(User).filter(User.status_id != 3).all()
         for user in users_to_update:
             user.status_id = 3
-        session.commit()
-
-
-@celery.task(name='set_online_users')
-def set_online_users():
-    with sync_session_factory() as session:
-        users_to_update = session.query(User).filter(User.status_id != 1).all()
-        for user in users_to_update:
-            user.status_id = 1
-        session.commit()
-
-
-@celery.task(name='toggle_users_status')
-def toggle_users_status():
-    with sync_session_factory() as session:
-        users_to_update = session.query(User).all()
-        for user in users_to_update:
-            if user.status_id != 3:
-                user.status_id = 3
-            else:
-                user.status_id = 1
         session.commit()
