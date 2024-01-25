@@ -6,10 +6,10 @@ router = APIRouter(prefix="/mango", tags=["Mango"])
 #
 #
 # @router.get("/")
-# async def get_mango():
-#     return r.get('foo')
+# async def get_mango(key: str):
+#     return r.get(key)
 #
 #
-# @router.get("/set")
-# async def set_mango():
-#     return r.set('foo', 'bar')
+# @router.post("/")
+# async def set_mango(key: str, value: str):
+#     return r.set(key, value)

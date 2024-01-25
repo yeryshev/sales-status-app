@@ -39,6 +39,9 @@ services:
 
   redis:
     image: redis:7
+    restart: always
+    volumes:
+      - redis-data:/data
 
   flower:
     build: .
@@ -86,3 +89,4 @@ volumes:
   vhost:
   html:
   acme:
+  redis-data:

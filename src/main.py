@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-
 from config import FRONTEND_ORIGIN
 from src.users.router import router as users_router
 from src.auth.router import router as auth_router
