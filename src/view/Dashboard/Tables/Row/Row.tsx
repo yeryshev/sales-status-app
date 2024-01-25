@@ -23,11 +23,18 @@ const statuses: Record<'online' | 'busy' | 'offline', string> = {
   offline: 'оффлайн',
 };
 
-const Row = ({ teammate, expanded }: { teammate: Teammate; expanded: boolean }) => {
+const Row = ({
+  teammate,
+  expanded,
+  mango,
+}: {
+  teammate: Teammate;
+  expanded: boolean;
+  mango: boolean;
+}) => {
   const [open, setOpen] = useState(false);
   const loading = useSelector((state: RootState) => state.team.loading);
   const updateTimeMsk = moment.utc(teammate.updatedAt).utcOffset('+0300').format('HH:mm');
-  // const updateDateMsk = moment.utc(teammate.updatedAt).utcOffset('+0300').format('DD.MM');
   const user = useSelector((state: RootState) => state.user.user);
   const dispatch = useAppDispatch();
 
@@ -70,7 +77,8 @@ const Row = ({ teammate, expanded }: { teammate: Teammate; expanded: boolean }) 
           ) : (
             <Tooltip disableFocusListener title={`Последнее обновление в ${updateTimeMsk}`}>
               <div className={`${styles.status} ${styles[`status--${teammate.status}`]}`}>
-                {statuses[teammate.status]} {teammate.isWorkingRemotely && 'удалённо'}
+                {mango ? <b>на звонке 📞</b> : statuses[teammate.status]}{' '}
+                {teammate.isWorkingRemotely && 'удалённо'}
               </div>
             </Tooltip>
           )}
