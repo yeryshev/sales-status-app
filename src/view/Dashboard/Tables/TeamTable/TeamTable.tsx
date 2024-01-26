@@ -6,8 +6,9 @@ import Title from '../../../PlannerPage/Title';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
 import Row from '../Row/Row';
+import { MangoRedisData } from '../../../../types/Mango';
 
-export default function TeamTable() {
+const TeamTable = ({ mango }: { mango: MangoRedisData }) => {
   const team = useSelector((state: RootState) => state.team.list);
   const userdId = useSelector((state: RootState) => state.user.user?.id);
 
@@ -22,11 +23,18 @@ export default function TeamTable() {
                 (teammate) => teammate.secondName && teammate.firstName && teammate.id !== userdId
               )
               .map((teammate) => (
-                <Row key={teammate.id} teammate={teammate} expanded={true} />
+                <Row
+                  key={teammate.id}
+                  teammate={teammate}
+                  expanded={true}
+                  mango={mango[teammate.extNumber]}
+                />
               ))}
           </TableBody>
         </Table>
       </TableContainer>
     </>
   );
-}
+};
+
+export default TeamTable;
