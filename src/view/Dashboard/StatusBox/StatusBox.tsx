@@ -41,7 +41,9 @@ export default function StatusBox() {
 
       if ('statusId' in dataFromSocket && user) {
         const { statusId } = dataFromSocket;
-        dispatch(setTeamLocal({ userId, status: Statuses[statusId], updatedAt, isWorkingRemotely }));
+        dispatch(
+          setTeamLocal({ userId, status: Statuses[statusId], updatedAt, isWorkingRemotely })
+        );
         dispatch(changeStatus(user.statusId));
       }
 
@@ -75,9 +77,6 @@ export default function StatusBox() {
     const statusId = Number(event.target.value);
     if (user) {
       dispatch(updateUser({ ...user, statusId }));
-      // .then(() => {
-      //   socket.send(JSON.stringify({ userId: user.id, statusId }));
-      // });
     }
   };
 

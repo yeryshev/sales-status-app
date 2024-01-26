@@ -24,12 +24,17 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const colorMode = useColorModeCtx();
-  const { socket } = useSocketCtx();
+  const { socket, mangoSocket } = useSocketCtx();
 
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        if (socket && socket.readyState !== WebSocket.OPEN) {
+        if (
+          socket &&
+          socket.readyState !== WebSocket.OPEN &&
+          mangoSocket &&
+          mangoSocket.readyState !== WebSocket.OPEN
+        ) {
           window.location.reload();
         }
       }
@@ -40,7 +45,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [socket]);
+  }, [socket, mangoSocket]);
 
   const handleLogout = async () => {
     await dispatch(clearUser());
