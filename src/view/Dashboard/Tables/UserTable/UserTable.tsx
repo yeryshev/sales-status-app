@@ -9,8 +9,9 @@ import {
 } from '@mui/material';
 import { Teammate } from '../../../../types/Team';
 import Row from '../Row/Row';
+import { MangoRedisData } from '../../../../types/Mango';
 
-const UserTable = ({ teammate }: { teammate: Teammate }) => {
+const UserTable = ({ teammate, mango }: { teammate: Teammate; mango: MangoRedisData }) => {
   return (
     <TableContainer component={Paper} style={{ overflowX: 'auto' }}>
       <Table size="small">
@@ -24,7 +25,12 @@ const UserTable = ({ teammate }: { teammate: Teammate }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          <Row key={teammate.id} teammate={teammate} expanded={false} />
+          <Row
+            key={teammate.id}
+            teammate={teammate}
+            expanded={false}
+            mango={mango[teammate.extNumber]}
+          />
         </TableBody>
       </Table>
     </TableContainer>
