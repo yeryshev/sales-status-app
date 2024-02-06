@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     DB_NAME: str
     AUTH_SECRET: str
     FRONTEND_ORIGIN: str
+    TELEGRAM_BOT_SECRET: str
 
     @property
     def DATABASE_URL(self):
