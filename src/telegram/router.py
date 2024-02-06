@@ -1,7 +1,7 @@
 import json
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.models import User
@@ -27,10 +27,9 @@ async def get_first_name(
         username: str,
         session: AsyncSession = Depends(get_async_session)
         ):
-        query = select(User).where(User.telegram == username)
+        query = select(User).where(func.lower(User.telegram) == username.lower())
         result = await session.execute(query)
         user = result.scalar_one_or_none()
-        print(user)
         if user is None:
             raise HTTPException(status_code=404, detail="Пользователь не найден. Убедись, что верно указал(а) свой телеграм-логин в профиле приложения ДРБ Статус.")
         return {'name': user.first_name, 'status': user.status_id}
@@ -43,7 +42,7 @@ async def update_telegram(
         ):
     if request.secret != secret_key:
         raise HTTPException(status_code=403, detail="Неверный секретный ключ. Пожалуйста, обновите страницу.")
-    query = select(User).where(User.telegram == request.username)
+    query = select(User).where(func.lower(User.telegram) == request.username.lower())
     result = await session.execute(query)
     user = result.scalar_one_or_none()
     if user is None:
