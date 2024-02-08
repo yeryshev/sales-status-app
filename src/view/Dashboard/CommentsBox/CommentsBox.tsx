@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   FormControl,
@@ -8,12 +9,12 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  Snackbar,
   TextField,
 } from '@mui/material';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { RootState, useAppDispatch } from '../../../redux/store';
 import { useSelector } from 'react-redux';
-// import { useSocketCtx } from '../../../helpers/contexts/wsContext';
 import {
   addComment,
   deleteComment,
@@ -31,7 +32,7 @@ const CommentsBox = () => {
   const [commentInput, setCommentInput] = useState('');
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
   const comments = useSelector((state: RootState) => state.comments.list);
-  // const { socket } = useSocketCtx();
+  const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
 
   useEffect(() => {
     if (user?.id) {
@@ -43,14 +44,10 @@ const CommentsBox = () => {
   const handlePickComment = useCallback(
     (commentId: number | null) => {
       if (user) {
-        dispatch(updateUser({ ...user, commentId }))
-          // .then(() => {
-          //   socket.send(JSON.stringify({ userId: user.id, commentId }));
-          // })
-          .then(() => {
-            setSelectedComment(null);
-            setAge('');
-          });
+        dispatch(updateUser({ ...user, commentId })).then(() => {
+          setSelectedComment(null);
+          setAge('');
+        });
       }
     },
     [dispatch, user]
@@ -61,6 +58,7 @@ const CommentsBox = () => {
     if (user?.id) {
       dispatch(addComment({ comment: commentInput })).then(() => {
         setCommentInput('');
+        setSnackBarIsOpen(true);
       });
     }
   };
@@ -82,87 +80,97 @@ const CommentsBox = () => {
   };
   return (
     <>
-      <FormLabel id="comments-label" sx={{ mb: 2 }}>
+      <FormLabel id="comments-label">
         Комментарии
-      </FormLabel>
-      <Box component="form" onSubmit={handleAddComment} mb={2}>
-        <Grid container justifyContent={'space-between'} alignItems={'center'} spacing={{ md: 1 }}>
-          <Grid item xs={10} sm={10} md={10}>
-            <TextField
-              required
-              name="comments"
-              label="Создать новый"
-              fullWidth
-              type="text"
-              id="comments"
-              autoComplete="off"
-              value={commentInput}
-              onChange={(e) => setCommentInput(e.target.value)}
-            />
-          </Grid>
-
+        <Box component="form" onSubmit={handleAddComment} my={2}>
           <Grid
-            item
-            sx={{ height: '100%' }}
-            xs={2}
-            sm={2}
-            md={2}
-            justifyContent={'center'}
+            container
+            justifyContent={'space-between'}
             alignItems={'center'}
-            display={'flex'}
+            spacing={{ md: 1 }}
           >
-            <Button type="submit" sx={{ height: '100%' }}>
-              <AddIcon />
+            <Grid item xs={10} sm={10} md={10}>
+              <TextField
+                required
+                name="comments"
+                label="Создать новый"
+                fullWidth
+                type="text"
+                id="comments"
+                autoComplete="off"
+                value={commentInput}
+                onChange={(e) => setCommentInput(e.target.value)}
+              />
+            </Grid>
+
+            <Grid item xs={2} justifyContent={'center'} alignItems={'start'} display={'flex'}>
+              <Button type="submit">
+                <AddIcon />
+              </Button>
+            </Grid>
+          </Grid>
+          <Snackbar
+            open={snackBarIsOpen}
+            autoHideDuration={2000}
+            onClose={() => setSnackBarIsOpen(false)}
+          >
+            <Alert
+              onClose={() => setSnackBarIsOpen(false)}
+              severity="success"
+              variant="filled"
+              sx={{ width: '100%' }}
+            >
+              Комментарий добавлен в твой список
+            </Alert>
+          </Snackbar>
+        </Box>
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel id="demo-simple-select-label">Выбрать</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select-vadim"
+            value={age}
+            label="Выбрать комментарий"
+            onChange={handleChange}
+          >
+            {comments.map((comment) => (
+              <MenuItem
+                key={comment.id}
+                value={comment.id}
+                onClick={() => setSelectedComment(comment)}
+              >
+                {comment.description}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Grid container justifyContent={'center'}>
+          <Grid item>
+            <Button
+              type="button"
+              onClick={() => handlePickComment(selectedComment?.id || null)}
+              disabled={selectedComment === null}
+              color="success"
+            >
+              Установить
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              onClick={() => handleDeleteComment(selectedComment?.id || 0)}
+              disabled={selectedComment === null}
+              color="error"
+            >
+              Удалить
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button disabled={user?.commentId === null} onClick={() => handlePickComment(null)}>
+              Очистить
             </Button>
           </Grid>
         </Grid>
-      </Box>
-      <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel id="demo-simple-select-label">Выбрать</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={age}
-          label="Выбрать комментарий"
-          onChange={handleChange}
-        >
-          {comments.map((comment) => (
-            <MenuItem
-              key={comment.id}
-              value={comment.id}
-              onClick={() => setSelectedComment(comment)}
-            >
-              {comment.description}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <Grid container justifyContent={'center'}>
-        <Grid item>
-          <Button
-            type="button"
-            onClick={() => handlePickComment(selectedComment?.id || null)}
-            disabled={selectedComment === null}
-            color="success"
-          >
-            Установить
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button
-            onClick={() => handleDeleteComment(selectedComment?.id || 0)}
-            disabled={selectedComment === null}
-            color="error"
-          >
-            Удалить
-          </Button>
-        </Grid>
-        <Grid item>
-          <Button disabled={user?.commentId === null} onClick={() => handlePickComment(null)}>
-            Очистить
-          </Button>
-        </Grid>
-      </Grid>
+      </FormLabel>
     </>
   );
 };
