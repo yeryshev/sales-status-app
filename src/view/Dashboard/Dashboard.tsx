@@ -7,8 +7,12 @@ import StatusBox from './StatusBox/StatusBox';
 import Layout from '../../components/Layout/Layout';
 import CommentsBox from './CommentsBox/CommentsBox';
 import TablesBox from './Tables/TablesBox';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 const Dashboard = () => {
+  const user = useSelector((state: RootState) => state.user.user);
+
   return (
     <Layout>
       <Box
@@ -24,34 +28,43 @@ const Dashboard = () => {
         <Toolbar />
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
           <Grid container spacing={2}>
-            <Grid container item sm={12} md={3} spacing={2} alignSelf={'flex-start'}>
-              <Grid item xs={12} sm={4} md={12} lg={12}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '100%',
-                  }}
-                >
-                  <StatusBox />
-                </Paper>
+            {user?.firstName && user?.secondName && (
+              <Grid container item sm={12} md={3} spacing={2} alignSelf={'flex-start'}>
+                <Grid item xs={12} sm={4} md={12} lg={12}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      height: '100%',
+                    }}
+                  >
+                    <StatusBox />
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} sm={8} md={12}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      height: '100%',
+                    }}
+                  >
+                    <CommentsBox />
+                  </Paper>
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={8} md={12}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '100%',
-                  }}
-                >
-                  <CommentsBox />
-                </Paper>
-              </Grid>
-            </Grid>
+            )}
 
-            <Grid container item xs={12} md={9} spacing={2} alignSelf={'flex-start'}>
+            <Grid
+              container
+              item
+              xs={12}
+              md={user?.firstName && user?.secondName ? 9 : 12}
+              spacing={2}
+              alignSelf={'flex-start'}
+            >
               <TablesBox />
             </Grid>
           </Grid>

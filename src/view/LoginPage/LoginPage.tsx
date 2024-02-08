@@ -2,16 +2,17 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Link as MuiLink } from '@mui/material';
 import { AppBar, Toolbar } from '@mui/material';
 import { useAppDispatch } from '../../redux/store';
 import { handleSubmit } from './handleSubmit';
+import { useNavigate } from 'react-router-dom';
+// import Grid from '@mui/material/Grid';
+// import { Link as RouterLink, useNavigate } from 'react-router-dom';
+// import { Link as MuiLink } from '@mui/material';
 
 export default function LoginPage() {
   const dispatch = useAppDispatch();
@@ -72,13 +73,13 @@ export default function LoginPage() {
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Войти
             </Button>
-            <Grid container justifyContent="center">
+            {/* <Grid container justifyContent="center">
               <Grid item>
                 <MuiLink variant="body2" component={RouterLink} to="/auth/register">
                   {'Нет аккаунта? Зарегистрироваться'}
                 </MuiLink>
               </Grid>
-            </Grid>
+            </Grid> */}
           </Box>
         </Box>
       </Container>
