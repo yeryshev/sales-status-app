@@ -1,4 +1,4 @@
-import { Grid, Paper } from '@mui/material';
+import { Grid, LinearProgress, Paper } from '@mui/material';
 import TeamTable from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { useCallback, useEffect, useState } from 'react';
@@ -7,9 +7,12 @@ import { RootState, useAppDispatch } from '../../../redux/store';
 import UserTable from './UserTable/UserTable';
 import { useSocketCtx } from '../../../helpers/contexts/wsContext';
 import { MangoRedisData, MangoWsData } from '../../../types/Mango';
+import { Link as RouterLink } from 'react-router-dom';
+import { Link as MuiLink } from '@mui/material';
 
 const TablesBox = () => {
   const team = useSelector((state: RootState) => state.team.list);
+  const teamLoading = useSelector((state: RootState) => state.team.loading);
   const userId = useSelector((state: RootState) => state.user.user?.id);
   const teammate = team.find((t) => t.id === userId && t.secondName && t.firstName);
   const dispatch = useAppDispatch();
@@ -56,13 +59,22 @@ const TablesBox = () => {
 
   return (
     <>
-      {teammate && (
-        <Grid item xs={12}>
-          <Paper sx={{ p: 2 }}>
+      <Grid item xs={12}>
+        <Paper sx={{ p: 2 }}>
+          {teammate ? (
             <UserTable teammate={teammate} mango={mango} />
-          </Paper>
-        </Grid>
-      )}
+          ) : teamLoading ? (
+            <LinearProgress />
+          ) : (
+            <div>
+              Чтобы принять участие, необходимо указать имя и фамилию в{' '}
+              <MuiLink component={RouterLink} to="/profile">
+                {'профиле'}
+              </MuiLink>
+            </div>
+          )}
+        </Paper>
+      </Grid>
       {team && (
         <Grid item xs={12}>
           <Paper sx={{ p: 2 }}>
