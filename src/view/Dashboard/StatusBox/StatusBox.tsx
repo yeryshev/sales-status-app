@@ -82,28 +82,28 @@ export default function StatusBox() {
 
   return (
     <>
-      <FormLabel id="main-radio-label" sx={{ mb: 2 }}>
+      <FormLabel id="main-radio-label">
         Мой статус
+        <RadioGroup
+          aria-labelledby="main-radio-label"
+          value={status}
+          name="main-status-radio"
+          onChange={handleChangeMainStatus}
+          sx={{ height: '100%', mt: 1 }}
+        >
+          <Grid container direction="row" spacing={1}>
+            <Grid item xs={12} sm={12}>
+              <FormControlLabel value={1} control={<Radio />} label="Онлайн" />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <FormControlLabel value={2} control={<Radio />} label="Занят" />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <FormControlLabel value={3} control={<Radio />} label="Оффлайн" />
+            </Grid>
+          </Grid>
+        </RadioGroup>
       </FormLabel>
-      <RadioGroup
-        aria-labelledby="main-radio-label"
-        value={status}
-        name="main-status-radio"
-        onChange={handleChangeMainStatus}
-        sx={{ height: '100%' }}
-      >
-        <Grid container direction="row" spacing={1}>
-          <Grid item xs={12} sm={12}>
-            <FormControlLabel value={1} control={<Radio />} label="Онлайн" />
-          </Grid>
-          <Grid item xs={12} sm={12}>
-            <FormControlLabel value={2} control={<Radio />} label="Занят" />
-          </Grid>
-          <Grid item xs={12} sm={12}>
-            <FormControlLabel value={3} control={<Radio />} label="Оффлайн" />
-          </Grid>
-        </Grid>
-      </RadioGroup>
     </>
   );
 }
