@@ -1,5 +1,4 @@
 services:
-
   nginx-proxy:
     image: nginxproxy/nginx-proxy
     container_name: nginx-proxy
@@ -84,9 +83,17 @@ services:
       - backend
       - nginx-proxy
 
+    telegram-bot:
+      build: ../drb-status-bot
+      volumes:
+        - telegram-data:/app/
+      depends_on:
+        - backend
+
 volumes:
   certs:
   vhost:
   html:
   acme:
   redis-data:
+  telegram-data:

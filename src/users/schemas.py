@@ -28,7 +28,6 @@ class UserRead(BaseModel):
     is_working_remotely: Optional[bool] = Field(None, serialization_alias="isWorkingRemotely")
     status_id: int = Field(None, serialization_alias="statusId")
     comment_id: Optional[int] = Field(None, serialization_alias="commentId")
-    # updated_at: datetime = Field(None, serialization_alias="updatedAt")
     is_active: bool = Field(None, serialization_alias="isActive")
     is_superuser: bool = Field(None, serialization_alias="isSuperuser")
     is_verified: bool = Field(None, serialization_alias="isVerified")
