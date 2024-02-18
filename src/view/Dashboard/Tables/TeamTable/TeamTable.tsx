@@ -2,7 +2,7 @@ import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import Paper from '@mui/material/Paper';
-import Title from '../../../PlannerPage/Title';
+import Title from './Title';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
 import Row from '../Row/Row';
