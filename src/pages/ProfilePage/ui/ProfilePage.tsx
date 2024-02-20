@@ -1,10 +1,11 @@
-import Layout from '../../Layout/Layout';
+import Layout from '@/pages/components/Layout/Layout';
 import { CircularProgress } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { RootState, useAppDispatch } from '../../../app/redux/store';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { updateUser } from '../../../features/user/actions/userActions';
-import { User } from '../../../app/types/User';
+import { green } from '@mui/material/colors';
+import { User } from '@/app/types/User';
+import { updateUser } from '@/features/user/actions/userActions';
+import { RootState, useAppDispatch } from '@/app/redux/store';
 import {
   Box,
   Toolbar,
@@ -16,7 +17,6 @@ import {
   Switch,
   Button,
 } from '@mui/material';
-import { green } from '@mui/material/colors';
 
 const Profile = () => {
   const user = useSelector((state: RootState) => state.user.user);
