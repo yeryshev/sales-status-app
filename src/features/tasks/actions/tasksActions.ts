@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { Task } from '../../../types/Task';
+import { Task } from '../../../app/types/Task';
 
 export const setTasks = createAsyncThunk('tasks/setTasks', async () => {
   try {

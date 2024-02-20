@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { Comment } from '../../../types/Comment';
+import { Comment } from '../../../app/types/Comment';
 
 export const setAllComments = createAsyncThunk('comments/setAllComments', async () => {
   try {
