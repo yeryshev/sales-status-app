@@ -11,19 +11,18 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { clearUser } from '../../features/user/actions/userActions';
 import { useAppDispatch } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '@mui/material/styles';
-import { useColorModeCtx } from '../../helpers/contexts/themeContext';
+import useTheme from '../../theme/useTheme.ts';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { Link } from 'react-router-dom';
 import { useSocketCtx } from '../../helpers/contexts/wsContext';
+import { Theme } from '../../theme/ThemeContext.ts';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const theme = useTheme();
-  const colorMode = useColorModeCtx();
+  const { theme, toggleTheme } = useTheme();
   const { socket, mangoSocket } = useSocketCtx();
 
   useEffect(() => {
@@ -50,25 +49,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const handleLogout = async () => {
     await dispatch(clearUser());
     navigate('/');
-  };
-
-  useEffect(() => {
-    const existingPreference = localStorage.getItem('themeState');
-    if (existingPreference) {
-      existingPreference === 'light'
-        ? colorMode.setColorMode('light')
-        : colorMode.setColorMode('dark');
-    } else {
-      colorMode.setColorMode('light');
-      localStorage.setItem('themeState', 'light');
-    }
-  }, [colorMode]);
-
-  const handleToggleTheme = () => {
-    const prevTheme = localStorage.getItem('themeState');
-    const newTheme = prevTheme === 'light' ? 'dark' : 'light';
-    colorMode.toggleColorMode();
-    localStorage.setItem('themeState', newTheme);
   };
 
   const toggleDrawer = () => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -107,8 +87,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
               Inbound Sales
             </Link>
           </Typography>
-          <IconButton sx={{ ml: 1 }} onClick={() => handleToggleTheme()} color="inherit">
-            {theme.palette.mode === 'dark' ? <DarkModeIcon /> : <LightModeIcon />}
+          <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
+            {theme.palette.mode === Theme.DARK ? <DarkModeIcon /> : <LightModeIcon />}
           </IconButton>
           <IconButton color="inherit" onClick={handleLogout}>
             <LogoutIcon />

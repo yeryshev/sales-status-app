@@ -7,10 +7,9 @@ import { store } from './redux/store.ts';
 import LoginPage from './view/LoginPage/LoginPage.tsx';
 import MainPage from './view/Dashboard/Dashboard.tsx';
 import SocketCtxProvider from './helpers/contexts/wsContext/provider.tsx';
-import ColorModeCtxProvider from './helpers/contexts/themeContext/provider.tsx';
+import ColorModeCtxProvider from './theme/ThemeProvider.tsx';
 import Profile from './view/Profile/Profile.tsx';
 import NotFoundPage from './view/NotFound/NotFoundPage.tsx';
-// import RegisterPage from './view/RegisterPage/RegisterPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -33,10 +32,6 @@ const router = createBrowserRouter([
     path: '/auth/login',
     element: <LoginPage />,
   },
-  // {
-  //   path: '/auth/register',
-  //   element: <RegisterPage />,
-  // },
   {
     path: '*',
     element: <NotFoundPage />,
