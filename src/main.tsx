@@ -1,15 +1,16 @@
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import RequireAuth from './helpers/RequireAuth.tsx';
+import RequireAuth from './shared/RequireAuth.tsx';
 import { Provider } from 'react-redux';
-import { store } from './redux/store.ts';
-import LoginPage from './view/LoginPage/LoginPage.tsx';
-import MainPage from './view/Dashboard/Dashboard.tsx';
-import SocketCtxProvider from './helpers/contexts/wsContext/provider.tsx';
-import ColorModeCtxProvider from './theme/ThemeProvider.tsx';
-import Profile from './view/Profile/Profile.tsx';
-import NotFoundPage from './view/NotFound/NotFoundPage.tsx';
+import { store } from './app/redux/store.ts';
+import MainPage from './pages/Dashboard/Dashboard.tsx';
+import { Suspense } from 'react';
+import { ProfilePage } from './pages/ProfilePage';
+import { NotFoundPage } from './pages/NotFoundPage';
+import { LoginPage } from './pages/LoginPage/index.ts';
+import { SocketCtxProvider } from './app/providers/WsProvider/index.ts';
+import { ColorModeCtxProvider } from './app/providers/ThemeProvider/index.ts';
+import Loader from './shared/Loader.tsx';
 
 const router = createBrowserRouter([
   {
@@ -24,17 +25,27 @@ const router = createBrowserRouter([
     path: '/profile',
     element: (
       <RequireAuth>
-        <Profile />
+        <Suspense fallback={<Loader />}>
+          <ProfilePage />
+        </Suspense>
       </RequireAuth>
     ),
   },
   {
     path: '/auth/login',
-    element: <LoginPage />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <LoginPage />
+      </Suspense>
+    ),
   },
   {
     path: '*',
-    element: <NotFoundPage />,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <NotFoundPage />
+      </Suspense>
+    ),
   },
 ]);
 

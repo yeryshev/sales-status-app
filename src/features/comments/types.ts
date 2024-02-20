@@ -1,4 +1,4 @@
-import { Comment } from '../../types/Comment';
+import { Comment } from '../../app/types/Comment';
 
 export type CommentsState = {
   list: Comment[];

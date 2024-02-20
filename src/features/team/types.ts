@@ -1,4 +1,4 @@
-import { Teammate } from './../../types/Team';
+import { Teammate } from '../../app/types/Team';
 export type TeamState = {
   list: Teammate[];
   loading: boolean;

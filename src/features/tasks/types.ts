@@ -1,4 +1,4 @@
-import { Task } from '../../types/Task';
+import { Task } from '../../app/types/Task';
 
 export type TasksState = {
   list: Task[];

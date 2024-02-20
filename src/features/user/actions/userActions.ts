@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { User } from '../../../types/User';
+import { User } from '../../../app/types/User';
 
 export const checkUser = createAsyncThunk('auth/checkUser', async () => {
   try {
