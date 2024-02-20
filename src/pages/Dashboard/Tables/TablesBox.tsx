@@ -1,12 +1,12 @@
-import { Grid, LinearProgress, Paper } from '@mui/material';
+import { Grid, Paper } from '@mui/material';
 import TeamTable from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { useCallback, useEffect, useState } from 'react';
-import { setTeam } from '../../../features/team/actions/teamActions';
-import { RootState, useAppDispatch } from '../../../app/redux/store';
+import { setTeam } from '@/features/team/actions/teamActions';
+import { RootState, useAppDispatch } from '@/app/redux/store';
 import UserTable from './UserTable/UserTable';
-import { useSocketCtx } from '../../../app/providers/WsProvider/lib/WsContext';
-import { MangoRedisData, MangoWsData } from '../../../app/types/Mango';
+import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
+import { MangoRedisData, MangoWsData } from '@/app/types/Mango';
 import { Link as RouterLink } from 'react-router-dom';
 import { Link as MuiLink } from '@mui/material';
 
@@ -60,20 +60,20 @@ const TablesBox = () => {
   return (
     <>
       <Grid item xs={12}>
-        <Paper sx={{ p: 2 }}>
-          {teammate ? (
-            <UserTable teammate={teammate} mango={mango} />
-          ) : teamLoading ? (
-            <LinearProgress />
-          ) : (
-            <div>
-              Чтобы принять участие, необходимо указать имя и фамилию в{' '}
-              <MuiLink component={RouterLink} to="/profile">
-                {'профиле'}
-              </MuiLink>
-            </div>
-          )}
-        </Paper>
+        {!teamLoading && (
+          <Paper sx={{ p: 2 }}>
+            {teammate ? (
+              <UserTable teammate={teammate} mango={mango} />
+            ) : (
+              <div>
+                Чтобы принять участие, необходимо указать имя и фамилию в{' '}
+                <MuiLink component={RouterLink} to="/profile">
+                  {'профиле'}
+                </MuiLink>
+              </div>
+            )}
+          </Paper>
+        )}
       </Grid>
       {team && (
         <Grid item xs={12}>

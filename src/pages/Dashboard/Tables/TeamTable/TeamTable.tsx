@@ -4,10 +4,10 @@ import TableBody from '@mui/material/TableBody';
 import Paper from '@mui/material/Paper';
 import Title from './Title';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../../app/redux/store';
+import { RootState } from '@/app/redux/store';
 import Row from '../Row/Row';
-import { MangoRedisData } from '../../../../app/types/Mango';
-import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
+import { MangoRedisData } from '@/app/types/Mango';
+import LinearProgress from '@mui/material/LinearProgress';
 
 const TeamTable = ({ mango }: { mango: MangoRedisData }) => {
   const team = useSelector((state: RootState) => state.team.list);
