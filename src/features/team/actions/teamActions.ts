@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { Teammate } from '../../../types/Team';
+import { Teammate } from '../../../app/types/Team';
 
 export const setTeam = createAsyncThunk('team/setTeam', async () => {
   try {

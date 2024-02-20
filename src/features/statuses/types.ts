@@ -1,4 +1,4 @@
-import { Status } from '../../types/Status';
+import { Status } from '../../app/types/Status';
 
 export type StatusState = {
   value: Status | null;
