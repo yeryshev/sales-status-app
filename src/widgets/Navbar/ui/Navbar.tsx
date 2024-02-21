@@ -5,8 +5,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -16,14 +14,12 @@ import { NavbarItems } from './NavbarItems';
 import { useState, KeyboardEvent, MouseEvent } from 'react';
 import { useAppDispatch } from '@/app/redux/store';
 import { clearUser } from '@/features/user/actions/userActions';
-import { useTheme } from '@/app/providers/ThemeProvider';
-import { Theme } from '@/app/providers/ThemeProvider/lib/ThemeContext';
+import { ThemeSwitcher } from '@/widgets/ThemeSwitcher';
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
 
   const handleLogout = async () => {
     await dispatch(clearUser());
@@ -63,9 +59,7 @@ export const Navbar = () => {
               Inbound Sales
             </Link>
           </Typography>
-          <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
-            {theme.palette.mode === Theme.DARK ? <DarkModeIcon /> : <LightModeIcon />}
-          </IconButton>
+          <ThemeSwitcher />
           <IconButton color="inherit" onClick={handleLogout}>
             <LogoutIcon />
           </IconButton>
