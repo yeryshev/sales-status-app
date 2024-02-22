@@ -1,29 +1,26 @@
-import {
-  Alert,
-  Box,
-  Button,
-  FormControl,
-  FormLabel,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  Snackbar,
-  TextField,
-} from '@mui/material';
 import { FormEvent, useCallback, useEffect, useState } from 'react';
-import { RootState, useAppDispatch } from '../../../app/redux/store';
+import { RootState, useAppDispatch } from '@/app/redux/store';
 import { useSelector } from 'react-redux';
+import { changeStatus } from '@/features/statuses/slice/statusSlice';
+import { updateUser } from '@/features/user/actions/userActions';
+import { Comment } from '@/app/types/Comment';
+import AddIcon from '@mui/icons-material/Add';
+import Box from '@mui/system/Box';
+import TextField from '@mui/material/TextField';
+import Grid from '@mui/material/Grid';
+import FormLabel from '@mui/material/FormLabel';
+import Button from '@mui/material/Button';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import {
   addComment,
   deleteComment,
   setMyComments,
-} from '../../../features/comments/actions/commentsActions';
-import { changeStatus } from '../../../features/statuses/slice/statusSlice';
-import { updateUser } from '../../../features/user/actions/userActions';
-import { Comment } from '../../../app/types/Comment';
-import AddIcon from '@mui/icons-material/Add';
+} from '@/features/comments/actions/commentsActions';
 
 const CommentsBox = () => {
   const [age, setAge] = useState('');

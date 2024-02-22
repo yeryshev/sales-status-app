@@ -8,7 +8,7 @@ import { RootState } from '@/app/redux/store';
 import StatusBox from './StatusBox/StatusBox';
 import CommentsBox from './CommentsBox/CommentsBox';
 import TablesBox from './Tables/TablesBox';
-import Layout from '../components/Layout/Layout';
+import { Layout } from '@/widgets/Layout';
 
 const Dashboard = () => {
   const user = useSelector((state: RootState) => state.user.user);
