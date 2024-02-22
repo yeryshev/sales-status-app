@@ -5,35 +5,22 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import { NavbarItems } from './NavbarItems';
-import { useState, KeyboardEvent, MouseEvent } from 'react';
 import { useAppDispatch } from '@/app/redux/store';
 import { clearUser } from '@/features/user/actions/userActions';
 import { ThemeSwitcher } from '@/widgets/ThemeSwitcher';
+import { memo } from 'react';
 
-export const Navbar = () => {
-  const [open, setOpen] = useState(false);
+interface NavbarProps {
+  toggleSideBar: () => () => void;
+}
+
+export const Navbar = memo(({ toggleSideBar }: NavbarProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
     await dispatch(clearUser());
     navigate('/');
-  };
-
-  const toggleDrawer = () => (event: KeyboardEvent | MouseEvent) => {
-    if (
-      event.type === 'keydown' &&
-      ((event as KeyboardEvent).key === 'Tab' || (event as KeyboardEvent).key === 'Shift')
-    ) {
-      return;
-    }
-    setOpen(!open);
   };
 
   return (
@@ -49,7 +36,7 @@ export const Navbar = () => {
             edge="start"
             color="inherit"
             aria-label="open drawer"
-            onClick={toggleDrawer()}
+            onClick={toggleSideBar()}
             sx={{ marginRight: '36px' }}
           >
             <MenuIcon />
@@ -65,32 +52,6 @@ export const Navbar = () => {
           </IconButton>
         </Toolbar>
       </AppBar>
-
-      <Drawer open={open} onClose={toggleDrawer()}>
-        <Box
-          sx={{ width: 250 }}
-          role="presentation"
-          onClick={toggleDrawer()}
-          onKeyDown={toggleDrawer()}
-        >
-          <Toolbar
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              px: [1],
-            }}
-          >
-            <IconButton onClick={toggleDrawer}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </Toolbar>
-          <Divider />
-          <List component="nav">
-            <NavbarItems />
-          </List>
-        </Box>
-      </Drawer>
     </>
   );
-};
+});
