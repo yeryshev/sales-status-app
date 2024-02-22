@@ -1,4 +1,4 @@
-import './Row.scss';
+import styles from './Row.module.scss';
 import moment from 'moment';
 import { ChangeEvent, memo, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
@@ -69,7 +69,7 @@ const Row = memo(
               <Skeleton variant="text" />
             ) : (
               <Tooltip disableFocusListener title={`Последнее обновление в ${updateTimeMsk}`}>
-                <div className={classNames('status', {}, [`status--${teammate.status}`])}>
+                <div className={classNames(styles.status, {}, [styles[teammate.status]])}>
                   {mango ? <a>на звонке 📞</a> : statuses[teammate.status]}{' '}
                   {teammate.isWorkingRemotely && 'удалённо'}
                 </div>

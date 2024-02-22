@@ -1,4 +1,4 @@
-import Layout from '@/pages/components/Layout/Layout';
+import { Layout } from '@/widgets/Layout';
 import { CircularProgress } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
@@ -160,7 +160,7 @@ const Profile = () => {
                       name="firstName"
                       onChange={handleChange}
                       label="Имя"
-                      value={formData.firstName}
+                      value={formData.firstName || ''}
                       fullWidth
                       InputLabelProps={{
                         shrink: true,
@@ -173,7 +173,7 @@ const Profile = () => {
                       name="secondName"
                       onChange={handleChange}
                       label="Фамилия"
-                      value={formData.secondName}
+                      value={formData.secondName || ''}
                       fullWidth
                       InputLabelProps={{
                         shrink: true,
@@ -187,7 +187,7 @@ const Profile = () => {
                       autoComplete="off"
                       onChange={handleChange}
                       label="Email"
-                      value={formData.email}
+                      value={formData.email || ''}
                       fullWidth
                       InputLabelProps={{
                         shrink: true,
@@ -201,7 +201,7 @@ const Profile = () => {
                       onChange={handleChange}
                       label="Добавочный номер телефона"
                       autoComplete="off"
-                      value={formData.extNumber}
+                      value={formData.extNumber || ''}
                       fullWidth
                       InputLabelProps={{
                         shrink: true,
@@ -214,7 +214,7 @@ const Profile = () => {
                       name="telegram"
                       onChange={handleChange}
                       label="Telegram"
-                      value={formData.telegram}
+                      value={formData.telegram || ''}
                       fullWidth
                       InputLabelProps={{
                         shrink: true,
@@ -228,7 +228,7 @@ const Profile = () => {
                       onChange={handleChange}
                       autoComplete="off"
                       label="Ссылка на фото"
-                      value={formData.photoUrl}
+                      value={formData.photoUrl || ''}
                       fullWidth
                       InputLabelProps={{
                         shrink: true,
