@@ -1,8 +1,8 @@
-import { Comment } from '../../app/types/Comment';
+import { type Comment } from '../../app/types/Comment'
 
-export type CommentsState = {
-  list: Comment[];
-  fullList: Comment[];
-  loading: boolean;
-  error: string | null;
-};
+export interface CommentsState {
+  list: Comment[]
+  fullList: Comment[]
+  loading: boolean
+  error: string | null
+}

@@ -1,1 +1,1 @@
-export type Status = number;
+export type Status = number

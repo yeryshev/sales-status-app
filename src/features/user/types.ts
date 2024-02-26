@@ -1,3 +1,3 @@
-import { User } from '../../app/types/User';
+import { type User } from '../../app/types/User'
 
-export type UserState = { user: User | null; loading: boolean; error: null | string };
+export interface UserState { user: User | null, loading: boolean, error: null | string }

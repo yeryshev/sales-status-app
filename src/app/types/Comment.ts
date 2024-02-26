@@ -1,4 +1,4 @@
-export type Comment = {
-  id: number;
-  description: string;
-};
+export interface Comment {
+  id: number
+  description: string
+}

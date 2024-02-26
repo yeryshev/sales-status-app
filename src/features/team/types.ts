@@ -1,6 +1,6 @@
-import { Teammate } from '../../app/types/Team';
-export type TeamState = {
-  list: Teammate[];
-  loading: boolean;
-  error: string | null;
-};
+import { type Teammate } from '../../app/types/Team'
+export interface TeamState {
+  list: Teammate[]
+  loading: boolean
+  error: string | null
+}
