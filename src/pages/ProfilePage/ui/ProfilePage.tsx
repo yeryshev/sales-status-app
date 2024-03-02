@@ -1,22 +1,34 @@
 import { Layout } from '@/widgets/Layout';
-import {
-    CircularProgress,
-    Box,
-    Toolbar,
-    Container,
-    Grid,
-    Paper,
-    Avatar,
-    TextField,
-    Switch,
-    Button,
-} from '@mui/material';
 import { useSelector } from 'react-redux';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 import { green } from '@mui/material/colors';
 import { type User } from '@/app/types/User';
 import { updateUser } from '@/features/user/actions/userActions';
 import { type RootState, useAppDispatch } from '@/app/redux/store';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Avatar from '@mui/material/Avatar';
+import Switch from '@mui/material/Switch';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+
+type texstFieldType = {
+    name: keyof User;
+    label: string;
+};
+
+const textFields: texstFieldType[] = [
+    { name: 'firstName', label: 'Имя' },
+    { name: 'secondName', label: 'Фамилия' },
+    { name: 'email', label: 'Email' },
+    { name: 'extNumber', label: 'Добавочный номер телефона' },
+    { name: 'telegram', label: 'Telegram' },
+    { name: 'photoUrl', label: 'Ссылка на фото' },
+];
 
 const Profile = () => {
     const user = useSelector((state: RootState) => state.user.user);
@@ -165,87 +177,25 @@ const Profile = () => {
                                 }}
                             >
                                 <Grid container spacing={2}>
-                                    <Grid item xs={12} sm={12} md={6} lg={6}>
-                                        <TextField
-                                            name="firstName"
-                                            onChange={handleChange}
-                                            label="Имя"
-                                            value={formData.firstName || ''}
-                                            fullWidth
-                                            InputLabelProps={{
-                                                shrink: true,
-                                                style: { zIndex: 1 },
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={12} md={6} lg={6}>
-                                        <TextField
-                                            name="secondName"
-                                            onChange={handleChange}
-                                            label="Фамилия"
-                                            value={formData.secondName || ''}
-                                            fullWidth
-                                            InputLabelProps={{
-                                                shrink: true,
-                                                style: { zIndex: 1 },
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={12} md={6} lg={6}>
-                                        <TextField
-                                            name="email"
-                                            autoComplete="off"
-                                            onChange={handleChange}
-                                            label="Email"
-                                            value={formData.email || ''}
-                                            fullWidth
-                                            InputLabelProps={{
-                                                shrink: true,
-                                                style: { zIndex: 1 },
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={12} md={6} lg={6}>
-                                        <TextField
-                                            name="extNumber"
-                                            onChange={handleChange}
-                                            label="Добавочный номер телефона"
-                                            autoComplete="off"
-                                            value={formData.extNumber || ''}
-                                            fullWidth
-                                            InputLabelProps={{
-                                                shrink: true,
-                                                style: { zIndex: 1 },
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={12} md={6} lg={6}>
-                                        <TextField
-                                            name="telegram"
-                                            onChange={handleChange}
-                                            label="Telegram"
-                                            value={formData.telegram || ''}
-                                            fullWidth
-                                            InputLabelProps={{
-                                                shrink: true,
-                                                style: { zIndex: 1 },
-                                            }}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12} sm={12} md={6} lg={6}>
-                                        <TextField
-                                            name="photoUrl"
-                                            onChange={handleChange}
-                                            autoComplete="off"
-                                            label="Ссылка на фото"
-                                            value={formData.photoUrl || ''}
-                                            fullWidth
-                                            InputLabelProps={{
-                                                shrink: true,
-                                                style: { zIndex: 1 },
-                                            }}
-                                        />
-                                    </Grid>
+                                    {textFields.map((field, index) => (
+                                        <Grid key={index} item xs={12} sm={12} md={6} lg={6}>
+                                            <TextField
+                                                name={field.name}
+                                                onChange={handleChange}
+                                                label={field.label}
+                                                value={
+                                                    field.name in formData
+                                                        ? formData[field.name]
+                                                        : ''
+                                                }
+                                                fullWidth
+                                                InputLabelProps={{
+                                                    shrink: true,
+                                                    style: { zIndex: 1 },
+                                                }}
+                                            />
+                                        </Grid>
+                                    ))}
                                 </Grid>
                                 <Box
                                     sx={{

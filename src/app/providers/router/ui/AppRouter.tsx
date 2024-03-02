@@ -1,7 +1,7 @@
-import Loader from '@/shared/Loader'
-import { routeConfig } from '@/shared/config/routeConfig/routeConfig'
-import { Suspense } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import Loader from '@/shared/ui/Loader/Loader';
+import { routeConfig } from '@/shared/config/routeConfig/routeConfig';
+import { Suspense } from 'react';
+import { Route, Routes } from 'react-router-dom';
 
 const AppRouter = () => {
     return (
@@ -12,7 +12,7 @@ const AppRouter = () => {
                 ))}
             </Routes>
         </Suspense>
-    )
-}
+    );
+};
 
-export default AppRouter
+export default AppRouter;

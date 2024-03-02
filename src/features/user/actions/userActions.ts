@@ -1,24 +1,24 @@
-import { createAsyncThunk } from '@reduxjs/toolkit'
-import { type User } from '../../../app/types/User'
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { type User } from '../../../app/types/User';
 
 export const checkUser = createAsyncThunk('auth/checkUser', async () => {
     try {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/me`, {
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+                'Content-Type': 'application/json',
+            },
+        });
         if (response.ok) {
-            const user: User = await response.json()
-            return user
+            const user: User = await response.json();
+            return user;
         } else {
-            return null
+            return null;
         }
     } catch (error) {
-        return null
+        return null;
     }
-})
+});
 
 export const clearUser = createAsyncThunk('auth/clearUser', async () => {
     try {
@@ -26,18 +26,18 @@ export const clearUser = createAsyncThunk('auth/clearUser', async () => {
             method: 'POST',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+                'Content-Type': 'application/json',
+            },
+        });
         if (response.ok) {
-            return true
+            return true;
         } else {
-            return false
+            return false;
         }
     } catch (error) {
-        return false
+        return false;
     }
-})
+});
 
 export const updateUser = createAsyncThunk('user/updateUser', async (user: User) => {
     try {
@@ -45,19 +45,19 @@ export const updateUser = createAsyncThunk('user/updateUser', async (user: User)
             method: 'PATCH',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                ...user
-            })
-        })
+                ...user,
+            }),
+        });
         if (response.ok) {
-            const user: User = await response.json()
-            return user
+            const user: User = await response.json();
+            return user;
         } else {
-            return null
+            return null;
         }
     } catch (error) {
-        return null
+        return null;
     }
-})
+});
