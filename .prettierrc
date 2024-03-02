@@ -6,7 +6,7 @@
   "singleQuote": true,
   "overrides": [
     {
-      "files": "*.{ts,tsx}",
+      "files": "*.{js,jsx,ts,tsx,scss}",
       "options": {
         "tabWidth": 4
       }
