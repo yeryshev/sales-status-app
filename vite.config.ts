@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
 import react from '@vitejs/plugin-react-swc';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
     resolve: {
@@ -8,5 +9,5 @@ export default defineConfig({
             '@': resolve(__dirname, 'src'),
         },
     },
-    plugins: [react()],
+    plugins: [react(), tsconfigPaths()],
 });
