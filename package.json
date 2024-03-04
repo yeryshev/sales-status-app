@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "lint:ts": "eslint \"**/*.{ts,tsx}\"",
     "lint:ts:fix": "eslint \"**/*.{ts,tsx}\" --fix",
-    "unit": "vitest --config ./config/vitest/vitest.config.ts"
+    "test:unit": "vitest --config ./config/vitest/vitest.config.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
