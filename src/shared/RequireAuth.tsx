@@ -1,9 +1,9 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { type RootState, useAppDispatch } from '../app/redux/store';
-import { checkUser } from '../features/user/actions/userActions';
+import { checkUser } from '../entities/user/model/actions/userActions';
 import Loader from '@/shared/ui/Loader/Loader';
+import { useAppDispatch, RootState } from '@/app/providers/StoreProvider/config/store';
 
 const RequireAuth = ({ children }: { children: ReactNode }) => {
     const dispatch = useAppDispatch();
