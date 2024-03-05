@@ -1,20 +1,18 @@
 import teamReducer from '@/entities/team/model/slice/teamSlice';
 import userReducer from '@/entities/user/model/slice/userSlice';
 import commentsReducer from '@/entities/comments/model/slice/commentsSlice';
-import tasksReducer from '@/entities/tasks/model/slice/tasksSlice';
 import { statusReducer } from '@/entities/Status';
 import { configureStore } from '@reduxjs/toolkit';
-import { StateSchema } from './StateSchema';
+import { RootState } from './RootState';
 import { useDispatch } from 'react-redux';
 
-export function createReduxStore(initialState?: StateSchema) {
+export function createReduxStore(initialState?: RootState) {
     return configureStore({
         reducer: {
-            team: teamReducer,
             user: userReducer,
-            comments: commentsReducer,
-            tasks: tasksReducer,
+            team: teamReducer,
             status: statusReducer,
+            comments: commentsReducer,
         },
         devTools: import.meta.env.DEV,
         preloadedState: initialState,
@@ -22,6 +20,5 @@ export function createReduxStore(initialState?: StateSchema) {
 }
 
 const store = createReduxStore();
-export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch: () => AppDispatch = useDispatch;

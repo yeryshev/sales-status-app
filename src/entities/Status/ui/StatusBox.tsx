@@ -9,8 +9,9 @@ import { type ChangeEvent, useEffect } from 'react';
 import { setAllComments } from '../../comments/model/actions/commentsActions';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { Grid } from '@mui/material';
-import { RootState, useAppDispatch } from '@/app/providers/StoreProvider/config/store';
+import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
 import { getStatusValue } from '@/entities/Status/model/selectors/getStatusValue/getStatusValue';
+import { RootState } from '@/app/providers/StoreProvider';
 
 export const StatusBox = () => {
     const user = useSelector((state: RootState) => state.user.user);

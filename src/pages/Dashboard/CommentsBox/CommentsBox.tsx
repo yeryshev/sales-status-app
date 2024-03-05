@@ -20,7 +20,8 @@ import {
     deleteComment,
     setMyComments,
 } from '@/entities/comments/model/actions/commentsActions';
-import { RootState, useAppDispatch } from '@/app/providers/StoreProvider/config/store';
+import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
+import { RootState } from '@/app/providers/StoreProvider';
 
 const CommentsBox = () => {
     const [age, setAge] = useState('');

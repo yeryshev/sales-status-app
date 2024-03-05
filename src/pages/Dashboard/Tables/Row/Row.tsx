@@ -16,7 +16,8 @@ import { useSelector } from 'react-redux';
 import { type Teammate } from '../../../../entities/team/model/types/Team';
 import { updateUser } from '../../../../entities/user/model/actions/userActions';
 import { classNames } from '../../../../shared/lib/classNames/classNames';
-import { RootState, useAppDispatch } from '@/app/providers/StoreProvider/config/store';
+import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
+import { RootState } from '@/app/providers/StoreProvider';
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
     online: 'онлайн',
