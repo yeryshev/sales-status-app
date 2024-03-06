@@ -1,10 +1,6 @@
-export type MangoRedisData = {
-  [key: string]: boolean;
-};
+export type MangoRedisData = Record<string, boolean>
 
-export type MangoWsData = {
-  type: 'mango' | 'tasks';
-  data: {
-    [key: string]: boolean;
-  };
-};
+export interface MangoWsData {
+  type: 'mango' | 'tasks'
+  data: Record<string, boolean>
+}
