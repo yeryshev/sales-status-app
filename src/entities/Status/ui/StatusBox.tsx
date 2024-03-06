@@ -1,6 +1,6 @@
 import { useSocketCtx } from '../../../app/providers/WsProvider/lib/WsContext';
 import { useSelector } from 'react-redux';
-import { updateUser } from '../../user/model/actions/userActions';
+import { updateUser } from '../../Users/model/actions/userActions';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';

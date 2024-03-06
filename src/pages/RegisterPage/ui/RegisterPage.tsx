@@ -11,7 +11,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Link as MuiLink, AppBar, Toolbar } from '@mui/material';
 import { type FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../../entities/user/model/slice/userSlice';
+import { setUser } from '../../../entities/Users/model/slice/userSlice';
 
 export default function RegisterPage() {
     const dispatch = useDispatch();

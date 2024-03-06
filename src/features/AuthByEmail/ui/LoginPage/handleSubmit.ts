@@ -1,8 +1,8 @@
 import { type FormEvent } from 'react';
 import axios, { type AxiosError } from 'axios';
 import { type ValidationError } from './types';
-import { checkUser } from '../../../entities/user/model/actions/userActions';
-import { setUser } from '../../../entities/user/model/slice/userSlice';
+import { checkUser } from '../../../../entities/Users/model/actions/userActions';
+import { setUser } from '../../../../entities/Users/model/slice/userSlice';
 import { type NavigateFunction } from 'react-router-dom';
 import { AppDispatch } from '@/app/providers/StoreProvider';
 

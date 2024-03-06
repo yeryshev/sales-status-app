@@ -1,7 +1,7 @@
 import { type FormEvent, useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
-import { updateUser } from '@/entities/user/model/actions/userActions';
+import { updateUser } from '@/entities/Users/model/actions/userActions';
 import { type Comment } from '@/entities/comments/model/types/Comment';
 import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/system/Box';

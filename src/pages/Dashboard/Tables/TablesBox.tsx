@@ -7,7 +7,7 @@ import UserTable from './UserTable/UserTable';
 import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
 import { type MangoRedisData, type MangoWsData } from '@/app/types/Mango';
 import { Link as RouterLink } from 'react-router-dom';
-import { checkUser } from '@/entities/user/model/actions/userActions';
+import { checkUser } from '@/entities/Users/model/actions/userActions';
 import { setTeamLocal } from '@/entities/team/model/slice/teamSlice';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
