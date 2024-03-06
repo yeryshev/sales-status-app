@@ -5,7 +5,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { clearUser } from '@/entities/Users/model/actions/userActions';
+import { clearUser } from '@/entities/User/model/actions/userActions';
 import { ThemeSwitcher } from '@/widgets/ThemeSwitcher';
 import { memo } from 'react';
 import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';

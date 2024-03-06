@@ -13,10 +13,10 @@ import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { Avatar, Link, Skeleton, Switch, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { type Teammate } from '../../../../entities/team/model/types/Team';
-import { updateUser } from '../../../../entities/Users/model/actions/userActions';
-import { classNames } from '../../../../shared/lib/classNames/classNames';
-import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
+import { Teammate } from '@/entities/Teammate';
+import { updateUser } from '@/entities/User/model/actions/userActions';
+import { classNames } from '@/shared/lib/classNames/classNames';
+import { useAppDispatch } from '@/app/providers/StoreProvider';
 import { RootState } from '@/app/providers/StoreProvider';
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {

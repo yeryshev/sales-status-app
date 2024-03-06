@@ -60,5 +60,4 @@ export const teamSlice = createSlice({
 });
 
 export const { setTeamLocal } = teamSlice.actions;
-
-export default teamSlice.reducer;
+export const { reducer: teamReducer } = teamSlice;

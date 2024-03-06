@@ -1,12 +1,12 @@
-import { useSocketCtx } from '../../../app/providers/WsProvider/lib/WsContext';
+import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
 import { useSelector } from 'react-redux';
-import { updateUser } from '../../Users/model/actions/userActions';
+import { updateUser } from '@/entities/User/model/actions/userActions';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import { type ChangeEvent, useEffect } from 'react';
-import { setAllComments } from '../../comments/model/actions/commentsActions';
+import { setAllComments } from '@/entities/Comment/model/actions/commentsActions';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { Grid } from '@mui/material';
 import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';

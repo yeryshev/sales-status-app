@@ -1,6 +1,6 @@
-import teamReducer from '@/entities/team/model/slice/teamSlice';
-import userReducer from '@/entities/Users/model/slice/userSlice';
-import commentsReducer from '@/entities/comments/model/slice/commentsSlice';
+import { teamReducer } from '@/entities/Teammate';
+import { userReducer } from '@/entities/User';
+import { commentsReducer } from '@/entities/Comment/model/slice/commentsSlice';
 import { statusReducer } from '@/entities/Status';
 import { ReducersMapObject, configureStore } from '@reduxjs/toolkit';
 import { RootState } from './RootState';

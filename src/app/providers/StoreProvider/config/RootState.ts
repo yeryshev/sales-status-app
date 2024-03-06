@@ -1,7 +1,7 @@
-import { CommentsState } from '@/entities/comments/model/types/CommentsState';
+import { CommentsState } from '@/entities/Comment';
 import { StatusState } from '@/entities/Status';
-import { TeamState } from '@/entities/team/model/types/TeamState';
-import { UserState } from '@/entities/Users/model/types/UserState';
+import { TeamState } from '@/entities/Teammate';
+import { UserState } from '@/entities/User';
 
 export interface RootState {
     team: TeamState;

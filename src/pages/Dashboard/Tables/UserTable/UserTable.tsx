@@ -1,15 +1,13 @@
-import {
-    TableContainer,
-    Paper,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
-} from '@mui/material';
-import { type Teammate } from '../../../../entities/team/model/types/Team';
+import Paper from '@mui/material/Paper';
+import TableContainer from '@mui/material/TableContainer';
+import Table from '@mui/material/Table';
+import TableHead from '@mui/material/TableHead';
+import TableBody from '@mui/material/TableBody';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
+import { type MangoRedisData } from '@/app/types/Mango';
+import { Teammate } from '@/entities/Teammate';
 import Row from '../Row/Row';
-import { type MangoRedisData } from '../../../../app/types/Mango';
 
 const UserTable = ({ teammate, mango }: { teammate: Teammate; mango: MangoRedisData }) => {
     return (

@@ -1,8 +1,8 @@
 import { type FormEvent, useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
-import { updateUser } from '@/entities/Users/model/actions/userActions';
-import { type Comment } from '@/entities/comments/model/types/Comment';
+import { updateUser } from '@/entities/User/model/actions/userActions';
+import { Comment } from '@/entities/Comment';
 import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/system/Box';
 import TextField from '@mui/material/TextField';
@@ -19,7 +19,7 @@ import {
     addComment,
     deleteComment,
     setMyComments,
-} from '@/entities/comments/model/actions/commentsActions';
+} from '@/entities/Comment/model/actions/commentsActions';
 import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
 import { RootState } from '@/app/providers/StoreProvider';
 
