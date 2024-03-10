@@ -11,17 +11,28 @@ import Typography from '@mui/material/Typography';
 import { FormEvent, memo, useCallback, useEffect } from 'react';
 import { loginByUsername } from '../../model/services/loginByUsername/loginByUsername';
 import { useSelector } from 'react-redux';
-import { getLoginState } from '../../model/selectors/getLoginState/getLoginState';
 import Alert from '@mui/material/Alert';
-import { loginActions } from '../../model/slice/loginSlice';
+import { loginActions, loginReducer } from '../../model/slice/loginSlice';
 import { useNavigate } from 'react-router-dom';
 import { getUserAuthData } from '@/entities/User';
+import { getLoginUsername } from '../../model/selectors/getLoginUsername/getLoginUsername';
+import { getLoginPassword } from '../../model/selectors/getLoginPassword/getLoginPassword';
+import { getLoginIsLoading } from '../../model/selectors/getLoginIsLoading/getLoginIsLoading';
+import { getLoginError } from '../../model/selectors/getLoginError/getLoginError';
+import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 
-export const LoginPage = memo(() => {
+const initialReducers: ReducersList = {
+    loginForm: loginReducer,
+};
+
+const LoginPage = memo(() => {
     const dispatch = useAppDispatch();
-    const { username, password, isLoading, error } = useSelector(getLoginState)
     const authData = useSelector(getUserAuthData);
     const navigate = useNavigate()
+    const username = useSelector(getLoginUsername)
+    const password = useSelector(getLoginPassword)
+    const isLoading = useSelector(getLoginIsLoading)
+    const error = useSelector(getLoginError)
 
     useEffect(() => {
         if (authData) navigate('/')
@@ -44,72 +55,79 @@ export const LoginPage = memo(() => {
     }, [dispatch])
 
     return (
-        <>
-            <CssBaseline />
-            <AppBar position="relative">
-                <Toolbar>
-                    <Typography variant="h6" color="inherit" noWrap>
+        <DynamicModuleLoader
+            removeAfterUnmount
+            reducers={initialReducers}
+        >
+            <>
+                <CssBaseline />
+                <AppBar position="relative">
+                    <Toolbar>
+                        <Typography variant="h6" color="inherit" noWrap>
                             Selectel - Inbound Sales
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-            <Container component="main" maxWidth="xs">
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                            Авторизация
-                    </Typography>
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+                <Container component="main" maxWidth="xs">
                     <Box
-                        component="form"
-                        noValidate
-                        sx={{ mt: 1 }}
-                        onSubmit={(e) => onSubmitForm(e)}
+                        sx={{
+                            marginTop: 8,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
                     >
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Почта"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
-                            value={username}
-                            onChange={(e) => onChangeUsername(e.target.value)}
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Пароль"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                            value={password}
-                            onChange={(e) => onChangePassword(e.target.value)}
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            disabled={isLoading}>
+                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+                            <LockOutlinedIcon />
+                        </Avatar>
+                        <Typography component="h1" variant="h5">
+                            Авторизация
+                        </Typography>
+                        <Box
+                            component="form"
+                            noValidate
+                            sx={{ mt: 1 }}
+                            onSubmit={(e) => onSubmitForm(e)}
+                        >
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Почта"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
+                                value={username}
+                                onChange={(e) => onChangeUsername(e.target.value)}
+                            />
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Пароль"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                value={password}
+                                onChange={(e) => onChangePassword(e.target.value)}
+                            />
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                                disabled={isLoading}>
                                 Войти
-                        </Button>
-                        {error && <Alert severity="error">{error}</Alert>}
+                            </Button>
+                            {error && <Alert severity="error">{error}</Alert>}
+                        </Box>
                     </Box>
-                </Box>
-            </Container>
-        </>
+                </Container>
+            </>
+        </DynamicModuleLoader>
     );
-})
+});
+
+export default LoginPage

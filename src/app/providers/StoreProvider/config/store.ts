@@ -5,22 +5,33 @@ import { userReducer } from '@/entities/User';
 import { ReducersMapObject, configureStore } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
 import { StateSchema } from './StateSchema.ts';
-import { loginReducer } from '@/features/AuthByEmail';
+import { createReducerManager } from './reducerManager';
 
-export function createReduxStore(initialState?: StateSchema) {
+export function createReduxStore(
+    initialState?: StateSchema,
+    asyncReducers?: ReducersMapObject<StateSchema>
+) {
     const rootReducers: ReducersMapObject<StateSchema> = {
+        ...asyncReducers,
         user: userReducer,
         team: teamReducer,
         status: statusReducer,
         comments: commentsReducer,
-        loginForm: loginReducer
     };
 
-    return configureStore({
-        reducer: rootReducers,
+    const reducerManager = createReducerManager(rootReducers)
+
+    const store = configureStore({
+    // @ts-expect-error временно
+        reducer: reducerManager.reduce,
         devTools: import.meta.env.DEV,
         preloadedState: initialState,
     });
+
+    // @ts-expect-error временно
+    store.reducerManager = reducerManager;
+
+    return store
 }
 
 const store = createReduxStore();

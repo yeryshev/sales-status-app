@@ -1,6 +1,5 @@
 import { LoginSchema } from './model/types/loginSchema';
-import { LoginPage } from './ui/LoginPage/LoginPage';
-import { loginReducer } from './model/slice/loginSlice';
+import { LoginPageAsync } from './ui/LoginPage/LoginPage.async';
 
-export { type LoginSchema, LoginPage, loginReducer }
+export { type LoginSchema, LoginPageAsync as LoginPage }
 

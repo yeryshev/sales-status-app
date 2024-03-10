@@ -9,8 +9,9 @@ import Toolbar from '@mui/material/Toolbar';
 import { useSelector } from 'react-redux';
 import { CommentsBox } from './CommentsBox/CommentsBox';
 import TablesBox from './Tables/TablesBox';
+import { memo } from 'react';
 
-const Dashboard = () => {
+const Dashboard = memo(() => {
     const user = useSelector((state: StateSchema) => state.user.user);
 
     return (
@@ -81,6 +82,6 @@ const Dashboard = () => {
             </Box>
         </Layout>
     );
-};
+});
 
 export default Dashboard;

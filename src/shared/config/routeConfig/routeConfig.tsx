@@ -1,4 +1,4 @@
-import Dashboard from '@/pages/Dashboard/Dashboard';
+import { Dashboard } from '@/pages/Dashboard';
 import { LoginPage } from '@/features/AuthByEmail';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProfilePage } from '@/pages/ProfilePage';
