@@ -1,6 +1,6 @@
 import { type Status } from './Status';
 
-export interface StatusState {
+export interface StatusSchema {
     value: Status | null;
     loading: boolean;
     error: null | string;

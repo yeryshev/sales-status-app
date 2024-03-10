@@ -1,6 +1,6 @@
+import { componentRender } from '@/shared/lib/tests/componentRender/componentRender';
 import { screen } from '@testing-library/react';
 import { StatusBox } from './StatusBox';
-import { componentRender } from '@/shared/lib/tests/componentRender/componentRender';
 
 describe('StatusBox', () => {
     test('тест отрисовки группы радиокнопок', () => {

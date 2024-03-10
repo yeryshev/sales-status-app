@@ -11,10 +11,10 @@ import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { Grid } from '@mui/material';
 import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
 import { getStatusValue } from '@/entities/Status/model/selectors/getStatusValue/getStatusValue';
-import { RootState } from '@/app/providers/StoreProvider';
+import { StateSchema } from '@/app/providers/StoreProvider';
 
 export const StatusBox = () => {
-    const user = useSelector((state: RootState) => state.user.user);
+    const user = useSelector((state: StateSchema) => state.user.user);
     const dispatch = useAppDispatch();
     const { socket } = useSocketCtx();
     const status = useSelector(getStatusValue);

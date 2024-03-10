@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { StatusState } from '../..';
+import { StatusSchema } from '../..';
 
-const initialState: StatusState = {
+const initialState: StatusSchema = {
     value: null,
     loading: false,
     error: null,

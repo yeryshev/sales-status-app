@@ -17,7 +17,7 @@ import { Teammate } from '@/entities/Teammate';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { classNames } from '@/shared/lib/classNames/classNames';
 import { useAppDispatch } from '@/app/providers/StoreProvider';
-import { RootState } from '@/app/providers/StoreProvider';
+import { StateSchema } from '@/app/providers/StoreProvider';
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
     online: 'онлайн',
@@ -28,8 +28,8 @@ const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'заня
 const Row = memo(
     ({ teammate, expanded, mango }: { teammate: Teammate; expanded: boolean; mango: boolean }) => {
         const [expandRow, setExpandRow] = useState(false);
-        const loading = useSelector((state: RootState) => state.team.loading);
-        const user = useSelector((state: RootState) => state.user.user);
+        const loading = useSelector((state: StateSchema) => state.team.loading);
+        const user = useSelector((state: StateSchema) => state.user.user);
         const dispatch = useAppDispatch();
         const updateTimeMsk = moment.utc(teammate.updatedAt).utcOffset('+0300').format('HH:mm');
 

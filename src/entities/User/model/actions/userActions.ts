@@ -12,11 +12,9 @@ export const checkUser = createAsyncThunk('auth/checkUser', async () => {
         if (response.ok) {
             const user: User = await response.json();
             return user;
-        } else {
-            return null;
         }
     } catch (error) {
-        return null;
+        return undefined;
     }
 });
 
@@ -29,11 +27,7 @@ export const clearUser = createAsyncThunk('auth/clearUser', async () => {
                 'Content-Type': 'application/json',
             },
         });
-        if (response.ok) {
-            return true;
-        } else {
-            return false;
-        }
+        return response.ok;
     } catch (error) {
         return false;
     }

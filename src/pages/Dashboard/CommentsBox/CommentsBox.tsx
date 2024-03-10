@@ -1,4 +1,4 @@
-import { type FormEvent, useCallback, useEffect, useState } from 'react';
+import { type FormEvent, memo, useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { updateUser } from '@/entities/User/model/actions/userActions';
@@ -21,15 +21,15 @@ import {
     setMyComments,
 } from '@/entities/Comment/model/actions/commentsActions';
 import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
-import { RootState } from '@/app/providers/StoreProvider';
+import { StateSchema } from '@/app/providers/StoreProvider';
 
-const CommentsBox = () => {
+export const CommentsBox = memo(() => {
     const [age, setAge] = useState('');
-    const user = useSelector((state: RootState) => state.user.user);
+    const user = useSelector((state: StateSchema) => state.user.user);
     const dispatch = useAppDispatch();
     const [commentInput, setCommentInput] = useState('');
     const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
-    const comments = useSelector((state: RootState) => state.comments.list);
+    const comments = useSelector((state: StateSchema) => state.comments.list);
     const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
 
     useEffect(() => {
@@ -51,7 +51,7 @@ const CommentsBox = () => {
         [dispatch, user]
     );
 
-    const handleAddComment = (event: FormEvent<HTMLFormElement>) => {
+    const handleAddComment = useCallback((event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (user?.id) {
             dispatch(addComment({ comment: commentInput })).then(() => {
@@ -59,9 +59,9 @@ const CommentsBox = () => {
                 setSnackBarIsOpen(true);
             });
         }
-    };
+    }, [commentInput, dispatch, user?.id]);
 
-    const handleDeleteComment = (commentId: number) => {
+    const handleDeleteComment = useCallback((commentId: number) => {
         if (user?.id) {
             dispatch(deleteComment(commentId)).then(() => {
                 if (user.commentId === commentId) {
@@ -71,11 +71,12 @@ const CommentsBox = () => {
                 setAge('');
             });
         }
-    };
+    }, [dispatch, handlePickComment, user?.commentId, user?.id]);
 
-    const handleChange = (event: SelectChangeEvent) => {
+    const handleChange = useCallback((event: SelectChangeEvent) => {
         setAge(event.target.value);
-    };
+    }, []);
+
     return (
         <>
             <FormLabel id="comments-label">
@@ -194,6 +195,5 @@ const CommentsBox = () => {
             </FormLabel>
         </>
     );
-};
+});
 
-export default CommentsBox;

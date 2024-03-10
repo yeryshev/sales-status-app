@@ -1,6 +1,7 @@
 import { type Theme as MuiTheme, useTheme as useMuiTheme } from '@mui/material/styles'
 import { useContext } from 'react'
-import { ThemeContext, Theme, LOCAL_STORAGE_THEME_KEY } from './ThemeContext'
+import { ThemeContext, Theme } from './ThemeContext'
+import { LOCAL_STORAGE_THEME_KEY } from '@/shared/const/localStorage';
 
 interface UseThemeResult {
   theme: MuiTheme

@@ -1,17 +1,17 @@
-import { useSelector } from 'react-redux';
+import { StateSchema } from '@/app/providers/StoreProvider';
+import { StatusBox } from '@/entities/Status';
+import { Layout } from '@/widgets/Layout';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { RootState } from '@/app/providers/StoreProvider';
-import { StatusBox } from '@/entities/Status';
-import CommentsBox from './CommentsBox/CommentsBox';
+import Toolbar from '@mui/material/Toolbar';
+import { useSelector } from 'react-redux';
+import { CommentsBox } from './CommentsBox/CommentsBox';
 import TablesBox from './Tables/TablesBox';
-import { Layout } from '@/widgets/Layout';
 
 const Dashboard = () => {
-    const user = useSelector((state: RootState) => state.user.user);
+    const user = useSelector((state: StateSchema) => state.user.user);
 
     return (
         <Layout>

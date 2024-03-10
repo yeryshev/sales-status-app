@@ -1,9 +1,9 @@
-import { StatusState, statusReducer } from '../..';
+import { StatusSchema, statusReducer } from '../..';
 import { statusActions } from './statusSlice';
 
 describe('statusSlice', () => {
     test('доолжно менять статус', () => {
-        const state: StatusState = { value: 1, loading: false, error: null };
+        const state: StatusSchema = { value: 1, loading: false, error: null };
 
         expect(statusReducer(state, statusActions.changeStatus(3))).toEqual({
             value: 3,
@@ -13,7 +13,7 @@ describe('statusSlice', () => {
     });
 
     test('ничего не делать, если статус меньше 1 или больше 3', () => {
-        const state: StatusState = { value: 1, loading: false, error: null };
+        const state: StatusSchema = { value: 1, loading: false, error: null };
 
         expect(statusReducer(state, statusActions.changeStatus(5))).toEqual({
             value: 1,

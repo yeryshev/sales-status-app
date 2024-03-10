@@ -1,27 +1,27 @@
-import { Layout } from '@/widgets/Layout';
-import { useSelector } from 'react-redux';
-import { type ChangeEvent, useEffect, useRef, useState } from 'react';
-import { green } from '@mui/material/colors';
-import { type User } from '@/entities/User/model/types/User';
+import { StateSchema, useAppDispatch } from '@/app/providers/StoreProvider';
 import { updateUser } from '@/entities/User/model/actions/userActions';
-import { RootState, useAppDispatch } from '@/app/providers/StoreProvider';
+import { type User } from '@/entities/User/model/types/User';
+import { Layout } from '@/widgets/Layout';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Avatar from '@mui/material/Avatar';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
+import Toolbar from '@mui/material/Toolbar';
+import { green } from '@mui/material/colors';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useSelector } from 'react-redux';
 
-type texstFieldType = {
+type textFieldType = {
     name: keyof User;
     label: string;
 };
 
-const textFields: texstFieldType[] = [
+const textFields: textFieldType[] = [
     { name: 'firstName', label: 'Имя' },
     { name: 'secondName', label: 'Фамилия' },
     { name: 'email', label: 'Email' },
@@ -31,13 +31,13 @@ const textFields: texstFieldType[] = [
 ];
 
 const Profile = () => {
-    const user = useSelector((state: RootState) => state.user.user);
+    const user = useSelector((state: StateSchema) => state.user.user);
     const dispatch = useAppDispatch();
     const [formData, setFormData] = useState<User>(user!);
     const [loading, setLoading] = useState(false);
     const timer = useRef<number>();
 
-    const compareObjects = (user: User | null, formData: User) => {
+    const compareObjects = (user: User | undefined, formData: User) => {
         if (!user) {
             return false;
         }

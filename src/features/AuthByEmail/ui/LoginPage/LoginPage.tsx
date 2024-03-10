@@ -1,31 +1,55 @@
+import { useAppDispatch } from '@/app/providers/StoreProvider';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { AppBar, Toolbar } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { AppBar, Toolbar } from '@mui/material';
-import { handleSubmit } from './handleSubmit';
+import { FormEvent, memo, useCallback, useEffect } from 'react';
+import { loginByUsername } from '../../model/services/loginByUsername/loginByUsername';
+import { useSelector } from 'react-redux';
+import { getLoginState } from '../../model/selectors/getLoginState/getLoginState';
+import Alert from '@mui/material/Alert';
+import { loginActions } from '../../model/slice/loginSlice';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
-// import Grid from '@mui/material/Grid';
-// import { Link as RouterLink, useNavigate } from 'react-router-dom';
-// import { Link as MuiLink } from '@mui/material';
+import { getUserAuthData } from '@/entities/User';
 
-export default function LoginPage() {
+export const LoginPage = memo(() => {
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
+    const { username, password, isLoading, error } = useSelector(getLoginState)
+    const authData = useSelector(getUserAuthData);
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (authData) navigate('/')
+    }, [authData, navigate]);
+
+    const onChangeUsername = useCallback((value: string) => {
+        dispatch(loginActions.setUsername(value));
+    }, [dispatch]);
+
+    const onChangePassword = useCallback((value: string) => {
+        dispatch(loginActions.setPassword(value));
+    }, [dispatch]);
+
+    const onSubmitForm = useCallback((event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const username = event.currentTarget.email.value;
+        const password = event.currentTarget.password.value;
+
+        dispatch(loginByUsername({ username, password }))
+    }, [dispatch])
 
     return (
         <>
             <CssBaseline />
             <AppBar position="relative">
                 <Toolbar>
-                    {/* <HomeIcon sx={{ mr: 2 }} /> */}
                     <Typography variant="h6" color="inherit" noWrap>
-                        Selectel - Inbound Sales
+                            Selectel - Inbound Sales
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -42,15 +66,13 @@ export default function LoginPage() {
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Авторизация
+                            Авторизация
                     </Typography>
                     <Box
                         component="form"
-                        onSubmit={async (e) => {
-                            await handleSubmit(e, dispatch, navigate);
-                        }}
                         noValidate
                         sx={{ mt: 1 }}
+                        onSubmit={(e) => onSubmitForm(e)}
                     >
                         <TextField
                             margin="normal"
@@ -61,6 +83,8 @@ export default function LoginPage() {
                             name="email"
                             autoComplete="email"
                             autoFocus
+                            value={username}
+                            onChange={(e) => onChangeUsername(e.target.value)}
                         />
                         <TextField
                             margin="normal"
@@ -71,20 +95,21 @@ export default function LoginPage() {
                             type="password"
                             id="password"
                             autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => onChangePassword(e.target.value)}
                         />
-                        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
-                            Войти
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                            disabled={isLoading}>
+                                Войти
                         </Button>
-                        {/* <Grid container justifyContent="center">
-              <Grid item>
-                <MuiLink variant="body2" component={RouterLink} to="/auth/register">
-                  {'Нет аккаунта? Зарегистрироваться'}
-                </MuiLink>
-              </Grid>
-            </Grid> */}
+                        {error && <Alert severity="error">{error}</Alert>}
                     </Box>
                 </Box>
             </Container>
         </>
     );
-}
+})

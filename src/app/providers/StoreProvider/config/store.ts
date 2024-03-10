@@ -1,17 +1,19 @@
+import { commentsReducer } from '@/entities/Comment';
+import { statusReducer } from '@/entities/Status';
 import { teamReducer } from '@/entities/Teammate';
 import { userReducer } from '@/entities/User';
-import { commentsReducer } from '@/entities/Comment/model/slice/commentsSlice';
-import { statusReducer } from '@/entities/Status';
 import { ReducersMapObject, configureStore } from '@reduxjs/toolkit';
-import { RootState } from './RootState';
 import { useDispatch } from 'react-redux';
+import { StateSchema } from './StateSchema.ts';
+import { loginReducer } from '@/features/AuthByEmail';
 
-export function createReduxStore(initialState?: RootState) {
-    const rootReducers: ReducersMapObject<RootState> = {
+export function createReduxStore(initialState?: StateSchema) {
+    const rootReducers: ReducersMapObject<StateSchema> = {
         user: userReducer,
         team: teamReducer,
         status: statusReducer,
         comments: commentsReducer,
+        loginForm: loginReducer
     };
 
     return configureStore({

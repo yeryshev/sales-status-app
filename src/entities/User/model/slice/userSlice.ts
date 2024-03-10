@@ -1,9 +1,8 @@
 import { checkUser, clearUser, updateUser } from '../actions/userActions';
-import { createSlice } from '@reduxjs/toolkit';
-import { type UserState } from '../types/UserState';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { User, UserSchema } from '../types/User';
 
-const userInitialState: UserState = {
-    user: null,
+const userInitialState: UserSchema = {
     loading: false,
     error: null,
 };
@@ -12,29 +11,36 @@ export const userSlice = createSlice({
     name: 'user',
     initialState: userInitialState,
     reducers: {
-        setUser: (state, action) => void (state.user = action.payload),
+        setAuthData: (state, action: PayloadAction<User>) => void (state.user = action.payload),
     },
     extraReducers: (builder) => {
         builder
             .addCase(checkUser.pending, (state) => {
                 state.error = null;
+                state.loading = true;
             })
             .addCase(checkUser.fulfilled, (state, action) => {
                 state.user = action.payload;
+                state.authData = action.payload;
                 state.error = null;
+                state.loading = false;
             })
             .addCase(checkUser.rejected, (state, action) => {
-                state.user = null;
+                state.user = undefined;
                 state.error = action.error.message || 'Error';
+                state.loading = false;
             })
             .addCase(clearUser.pending, (state) => {
-                state.user = null;
+                state.user = undefined;
+                state.authData = undefined;
             })
             .addCase(clearUser.fulfilled, (state) => {
-                state.user = null;
+                state.user = undefined;
+                state.authData = undefined;
             })
             .addCase(clearUser.rejected, (state, action) => {
-                state.user = null;
+                state.user = undefined;
+                state.authData = undefined;
                 state.error = action.error.message || 'Error';
             })
             .addCase(updateUser.pending, (state) => {
@@ -54,5 +60,5 @@ export const userSlice = createSlice({
     },
 });
 
-export const { setUser } = userSlice.actions;
+export const { actions: userActions } = userSlice;
 export const { reducer: userReducer } = userSlice;

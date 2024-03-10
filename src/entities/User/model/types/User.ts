@@ -11,3 +11,10 @@ export interface User {
   statusId: number
   commentId: number | null
 }
+
+export interface UserSchema {
+  user?: User
+  loading: boolean;
+  error: null | string;
+  authData?: User
+}

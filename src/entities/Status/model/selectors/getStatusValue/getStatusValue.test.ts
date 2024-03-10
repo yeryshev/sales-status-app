@@ -1,14 +1,14 @@
-import { RootState } from '@/app/providers/StoreProvider';
+import { StateSchema } from '@/app/providers/StoreProvider';
 import { DeepPartial } from '@reduxjs/toolkit';
 import { getStatusValue } from './getStatusValue';
 
 describe('getStatusValue', () => {
     test('должно вернуть значение статуса', () => {
-        const state: DeepPartial<RootState> = {
+        const state: DeepPartial<StateSchema> = {
             status: {
                 value: 1,
             },
         };
-        expect(getStatusValue(state as RootState)).toBe(1);
+        expect(getStatusValue(state as StateSchema)).toBe(1);
     });
 });

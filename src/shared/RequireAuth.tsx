@@ -4,11 +4,11 @@ import { useSelector } from 'react-redux';
 import { checkUser } from '../entities/User/model/actions/userActions';
 import Loader from '@/shared/ui/Loader/Loader';
 import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
-import { RootState } from '@/app/providers/StoreProvider';
+import { StateSchema } from '@/app/providers/StoreProvider';
 
 const RequireAuth = ({ children }: { children: ReactNode }) => {
     const dispatch = useAppDispatch();
-    const user = useSelector((state: RootState) => state.user.user);
+    const user = useSelector((state: StateSchema) => state.user.user);
     const [authLoading, setAuthLoading] = useState(true);
 
     useEffect(() => {
