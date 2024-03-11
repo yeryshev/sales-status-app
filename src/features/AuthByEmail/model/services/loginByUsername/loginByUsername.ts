@@ -8,7 +8,7 @@ interface LoginByUsernameProps {
   password: string
 }
 
-enum LoginStatusCodes {
+const enum LoginStatusCodes {
     BAD_CREDENTIALS = 400,
     VALIDATION_ERROR = 422,
 }
@@ -24,9 +24,7 @@ export const loginByUsername = createAsyncThunk<string, LoginByUsernameProps, { 
             formData.set('password', authData.password);
 
             const requestConfig: AxiosRequestConfig = {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+                headers: { 'Content-Type': 'multipart/form-data' },
                 withCredentials: true
             }
 
