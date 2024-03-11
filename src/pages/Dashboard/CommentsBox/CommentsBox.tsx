@@ -20,7 +20,7 @@ import {
     deleteComment,
     setMyComments,
 } from '@/entities/Comment/model/actions/commentsActions';
-import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
+import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
 
 export const CommentsBox = memo(() => {

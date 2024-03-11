@@ -8,8 +8,9 @@ import TableCell from '@mui/material/TableCell';
 import { type MangoRedisData } from '@/app/types/Mango';
 import { Teammate } from '@/entities/Teammate';
 import Row from '../Row/Row';
+import { memo } from 'react';
 
-const UserTable = ({ teammate, mango }: { teammate: Teammate; mango: MangoRedisData }) => {
+const UserTable = memo(({ teammate, mango }: { teammate: Teammate; mango: MangoRedisData }) => {
     return (
         <TableContainer component={Paper} style={{ overflowX: 'auto' }}>
             <Table size="small">
@@ -33,6 +34,6 @@ const UserTable = ({ teammate, mango }: { teammate: Teammate; mango: MangoRedisD
             </Table>
         </TableContainer>
     );
-};
+});
 
 export default UserTable;

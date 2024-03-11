@@ -8,7 +8,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { clearUser } from '@/entities/User/model/actions/userActions';
 import { ThemeSwitcher } from '@/widgets/ThemeSwitcher';
 import { memo } from 'react';
-import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
+import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 
 interface NavbarProps {
     toggleSideBar: () => () => void;

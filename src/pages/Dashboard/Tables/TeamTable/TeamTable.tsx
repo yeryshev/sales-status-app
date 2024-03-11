@@ -8,11 +8,12 @@ import { type StateSchema } from '@/app/providers/StoreProvider';
 import Row from '../Row/Row';
 import { type MangoRedisData } from '@/app/types/Mango';
 import LinearProgress from '@mui/material/LinearProgress';
+import { memo } from 'react';
 
-const TeamTable = ({ mango }: { mango: MangoRedisData }) => {
+const TeamTable = memo(({ mango }: { mango: MangoRedisData }) => {
     const team = useSelector((state: StateSchema) => state.team.list);
     const teamLoading = useSelector((state: StateSchema) => state.team.loading);
-    const userdId = useSelector((state: StateSchema) => state.user.user?.id);
+    const userId = useSelector((state: StateSchema) => state.user.user?.id);
 
     return (
         <>
@@ -28,7 +29,7 @@ const TeamTable = ({ mango }: { mango: MangoRedisData }) => {
                                     (teammate) =>
                                         teammate.secondName &&
                                         teammate.firstName &&
-                                        teammate.id !== userdId
+                                        teammate.id !== userId
                                 )
                                 .map((teammate) => (
                                     <Row
@@ -44,6 +45,6 @@ const TeamTable = ({ mango }: { mango: MangoRedisData }) => {
             )}
         </>
     );
-};
+});
 
 export default TeamTable;

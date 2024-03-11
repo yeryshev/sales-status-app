@@ -9,7 +9,7 @@ import { type ChangeEvent, useEffect } from 'react';
 import { setAllComments } from '@/entities/Comment/model/actions/commentsActions';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { Grid } from '@mui/material';
-import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
+import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { getStatusValue } from '@/entities/Status/model/selectors/getStatusValue/getStatusValue';
 import { StateSchema } from '@/app/providers/StoreProvider';
 

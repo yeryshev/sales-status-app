@@ -2,8 +2,7 @@ import { commentsReducer } from '@/entities/Comment';
 import { statusReducer } from '@/entities/Status';
 import { teamReducer } from '@/entities/Teammate';
 import { userReducer } from '@/entities/User';
-import { ReducersMapObject, configureStore } from '@reduxjs/toolkit';
-import { useDispatch } from 'react-redux';
+import { configureStore, ReducersMapObject } from '@reduxjs/toolkit';
 import { StateSchema } from './StateSchema.ts';
 import { createReducerManager } from './reducerManager';
 
@@ -34,6 +33,4 @@ export function createReduxStore(
     return store
 }
 
-const store = createReduxStore();
-export type AppDispatch = typeof store.dispatch;
-export const useAppDispatch: () => AppDispatch = useDispatch;
+export type AppDispatch = ReturnType<typeof createReduxStore>['dispatch'];

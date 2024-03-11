@@ -10,7 +10,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { checkUser } from '@/entities/User/model/actions/userActions';
 import { setTeamLocal } from '@/entities/Teammate/model/slice/teamSlice';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
-import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
+import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
 
 const Statuses: Record<number, string> = {

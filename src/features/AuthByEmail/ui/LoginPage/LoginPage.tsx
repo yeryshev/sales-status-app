@@ -1,4 +1,4 @@
-import { useAppDispatch } from '@/app/providers/StoreProvider';
+import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { AppBar, Toolbar } from '@mui/material';
 import Avatar from '@mui/material/Avatar';

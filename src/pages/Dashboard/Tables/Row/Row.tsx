@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 import { Teammate } from '@/entities/Teammate';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { classNames } from '@/shared/lib/classNames/classNames';
-import { useAppDispatch } from '@/app/providers/StoreProvider';
+import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
