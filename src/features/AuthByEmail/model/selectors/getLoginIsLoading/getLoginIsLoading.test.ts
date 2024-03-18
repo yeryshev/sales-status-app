@@ -7,8 +7,8 @@ describe('getLoginIsLoading.test', () => {
         const state: DeepPartial<StateSchema> = {
             // @ts-expect-error test
             loginForm: {
-                isLoading: true,
-            },
+                isLoading: true
+            }
         };
         expect(getLoginIsLoading(state as StateSchema)).toEqual(true);
     });

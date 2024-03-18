@@ -22,20 +22,20 @@ import { getLoginError } from '../../model/selectors/getLoginError/getLoginError
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 
 const initialReducers: ReducersList = {
-    loginForm: loginReducer,
+    loginForm: loginReducer
 };
 
 const LoginPage = memo(() => {
     const dispatch = useAppDispatch();
     const authData = useSelector(getUserAuthData);
-    const navigate = useNavigate()
-    const username = useSelector(getLoginUsername)
-    const password = useSelector(getLoginPassword)
-    const isLoading = useSelector(getLoginIsLoading)
-    const error = useSelector(getLoginError)
+    const navigate = useNavigate();
+    const username = useSelector(getLoginUsername);
+    const password = useSelector(getLoginPassword);
+    const isLoading = useSelector(getLoginIsLoading);
+    const error = useSelector(getLoginError);
 
     useEffect(() => {
-        if (authData) navigate('/')
+        if (authData) navigate('/');
     }, [authData, navigate]);
 
     const onChangeUsername = useCallback((value: string) => {
@@ -51,8 +51,8 @@ const LoginPage = memo(() => {
         const username = event.currentTarget.email.value;
         const password = event.currentTarget.password.value;
 
-        dispatch(loginByUsername({ username, password }))
-    }, [dispatch])
+        dispatch(loginByUsername({ username, password }));
+    }, [dispatch]);
 
     return (
         <DynamicModuleLoader
@@ -74,7 +74,7 @@ const LoginPage = memo(() => {
                             marginTop: 8,
                             display: 'flex',
                             flexDirection: 'column',
-                            alignItems: 'center',
+                            alignItems: 'center'
                         }}
                     >
                         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
@@ -130,4 +130,4 @@ const LoginPage = memo(() => {
     );
 });
 
-export default LoginPage
+export default LoginPage;

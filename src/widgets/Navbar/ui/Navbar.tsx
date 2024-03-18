@@ -29,7 +29,7 @@ export const Navbar = memo(({ toggleSideBar }: NavbarProps) => {
                 <Toolbar
                     sx={{
                         pr: '24px',
-                        backgroundColor: 'rgb(39, 39, 39)',
+                        backgroundColor: 'rgb(39, 39, 39)'
                     }}
                 >
                     <IconButton

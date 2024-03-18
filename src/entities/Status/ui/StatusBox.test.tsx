@@ -10,7 +10,7 @@ describe('StatusBox', () => {
 
     test('выбран вариант "Занят", если в стейте значение статуса равно 2', () => {
         componentRender(<StatusBox />, {
-            initialState: { status: { value: 2 } },
+            initialState: { status: { value: 2 } }
         });
         expect(screen.getByTestId('status-radio-group')).toBeInTheDocument();
         const radioButtons = screen.getAllByRole('radio');

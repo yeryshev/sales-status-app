@@ -7,8 +7,8 @@ describe('getLoginUsername.test', () => {
         const state: DeepPartial<StateSchema> = {
             // @ts-expect-error test
             loginForm: {
-                username: '123123',
-            },
+                username: '123123'
+            }
         };
         expect(getLoginUsername(state as StateSchema)).toEqual('123123');
     });

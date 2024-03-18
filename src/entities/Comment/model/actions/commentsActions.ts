@@ -6,7 +6,7 @@ export const setAllComments = createAsyncThunk('comments/setAllComments', async 
         const url = `${import.meta.env.VITE_BACKEND_URL}/comments/`;
         const response = await fetch(url, {
             credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' }
         });
         if (response.ok) {
             const comments: Comment[] = await response.json();
@@ -24,7 +24,7 @@ export const setMyComments = createAsyncThunk('comments/setMyComments', async (u
         const url = `${import.meta.env.VITE_BACKEND_URL}/comments/?user=${userId}`;
         const response = await fetch(url, {
             credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' }
         });
         if (response.ok) {
             const comments: Comment[] = await response.json();
@@ -45,9 +45,9 @@ export const addComment = createAsyncThunk(
                 method: 'POST',
                 credentials: 'include',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ description: comment }),
+                body: JSON.stringify({ description: comment })
             });
             if (response.ok) {
                 const comments: Comment = await response.json();
@@ -71,8 +71,8 @@ export const deleteComment = createAsyncThunk(
                     method: 'DELETE',
                     credentials: 'include',
                     headers: {
-                        'Content-Type': 'application/json',
-                    },
+                        'Content-Type': 'application/json'
+                    }
                 }
             );
             if (response.ok) {

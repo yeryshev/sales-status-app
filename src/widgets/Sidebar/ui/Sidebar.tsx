@@ -44,5 +44,5 @@ export const Sidebar = memo(({ sideBarOpen, toggleSideBar }: SidebarProps) => {
                 </List>
             </Box>
         </Drawer>
-    )
-})
+    );
+});

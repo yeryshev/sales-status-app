@@ -21,4 +21,4 @@ export const SidebarItemsList: Array<SidebarItemType> = [
         text: 'Профиль',
         Icon: AccountBoxIcon
     }
-]
+];

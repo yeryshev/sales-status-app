@@ -6,4 +6,4 @@ export {
     type ProfileSchema,
     profileActions,
     profileReducer
-}
+};

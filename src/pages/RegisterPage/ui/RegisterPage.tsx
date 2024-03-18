@@ -24,8 +24,8 @@ export default function RegisterPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 email: data.get('email'),
-                password: data.get('password'),
-            }),
+                password: data.get('password')
+            })
         });
 
         let detail;
@@ -65,7 +65,7 @@ export default function RegisterPage() {
                         marginTop: 8,
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'center',
+                        alignItems: 'center'
                     }}
                 >
                     <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>

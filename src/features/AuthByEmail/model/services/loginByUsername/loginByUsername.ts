@@ -17,7 +17,7 @@ export const loginByUsername = createAsyncThunk<string, LoginByUsernameProps, { 
     'login/loginByUsername',
     async (authData, thunkAPI) => {
         try {
-            const url = `${import.meta.env.VITE_BACKEND_URL}/auth/login`
+            const url = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
 
             const formData = new FormData();
             formData.set('username', authData.username);
@@ -26,7 +26,7 @@ export const loginByUsername = createAsyncThunk<string, LoginByUsernameProps, { 
             const requestConfig: AxiosRequestConfig = {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 withCredentials: true
-            }
+            };
 
             const response = await axios.post(
                 url,
@@ -52,4 +52,4 @@ export const loginByUsername = createAsyncThunk<string, LoginByUsernameProps, { 
             return thunkAPI.rejectWithValue('Что-то пошло не так');
         }
     }
-)
+);

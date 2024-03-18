@@ -8,7 +8,7 @@ describe('statusSlice', () => {
         expect(statusReducer(state, statusActions.changeStatus(3))).toEqual({
             value: 3,
             loading: false,
-            error: null,
+            error: null
         });
     });
 
@@ -18,14 +18,14 @@ describe('statusSlice', () => {
         expect(statusReducer(state, statusActions.changeStatus(5))).toEqual({
             value: 1,
             loading: false,
-            error: null,
+            error: null
         });
     });
     test('должно работать с пустым стейтом', () => {
         expect(statusReducer(undefined, statusActions.changeStatus(3))).toEqual({
             value: 3,
             loading: false,
-            error: null,
+            error: null
         });
     });
 });

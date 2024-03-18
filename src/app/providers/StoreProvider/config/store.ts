@@ -15,22 +15,22 @@ export function createReduxStore(
         user: userReducer,
         team: teamReducer,
         status: statusReducer,
-        comments: commentsReducer,
+        comments: commentsReducer
     };
 
-    const reducerManager = createReducerManager(rootReducers)
+    const reducerManager = createReducerManager(rootReducers);
 
     const store = configureStore({
     // @ts-expect-error временно
         reducer: reducerManager.reduce,
         devTools: import.meta.env.DEV,
-        preloadedState: initialState,
+        preloadedState: initialState
     });
 
     // @ts-expect-error временно
     store.reducerManager = reducerManager;
 
-    return store
+    return store;
 }
 
 export type AppDispatch = ReturnType<typeof createReduxStore>['dispatch'];

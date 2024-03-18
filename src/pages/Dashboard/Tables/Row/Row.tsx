@@ -22,7 +22,7 @@ import { StateSchema } from '@/app/providers/StoreProvider';
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
     online: 'онлайн',
     busy: 'занят',
-    offline: 'оффлайн',
+    offline: 'оффлайн'
 };
 
 const Row = memo(
@@ -38,7 +38,7 @@ const Row = memo(
                 dispatch(
                     updateUser({
                         ...user,
-                        isWorkingRemotely: e.target.checked,
+                        isWorkingRemotely: e.target.checked
                     })
                 );
             }
@@ -75,7 +75,7 @@ const Row = memo(
                             >
                                 <div
                                     className={classNames(styles.status, {}, [
-                                        styles[teammate.status],
+                                        styles[teammate.status]
                                     ])}
                                 >
                                     {mango ? <a>на звонке 📞</a> : statuses[teammate.status]}{' '}

@@ -21,7 +21,7 @@ import { profileReducer } from '@/entities/Profile';
 
 const reducers: ReducersList = {
     profile: profileReducer
-}
+};
 
 type textFieldType = {
     name: keyof User;
@@ -34,7 +34,7 @@ const textFields: textFieldType[] = [
     { name: 'email', label: 'Email' },
     { name: 'extNumber', label: 'Добавочный номер телефона' },
     { name: 'telegram', label: 'Telegram' },
-    { name: 'photoUrl', label: 'Ссылка на фото' },
+    { name: 'photoUrl', label: 'Ссылка на фото' }
 ];
 
 const Profile = () => {
@@ -56,7 +56,7 @@ const Profile = () => {
                 photoUrl: user.photoUrl,
                 extNumber: user.extNumber,
                 telegram: user.telegram,
-                email: user.email,
+                email: user.email
             }) ===
             JSON.stringify({
                 firstName: formData.firstName,
@@ -64,7 +64,7 @@ const Profile = () => {
                 photoUrl: formData.photoUrl,
                 extNumber: formData.extNumber,
                 telegram: formData.telegram,
-                email: formData.email,
+                email: formData.email
             })
         );
     };
@@ -84,7 +84,7 @@ const Profile = () => {
             dispatch(
                 updateUser({
                     ...user,
-                    isWorkingRemotely: e.target.checked,
+                    isWorkingRemotely: e.target.checked
                 })
             );
         }
@@ -116,7 +116,7 @@ const Profile = () => {
                                 : theme.palette.grey[900],
                         flexGrow: 1,
                         height: '100vh',
-                        overflow: 'auto',
+                        overflow: 'auto'
                     }}
                 >
                     <Toolbar />
@@ -132,7 +132,7 @@ const Profile = () => {
                                         gap: 2,
                                         justifyContent: 'center',
                                         height: '100%',
-                                        marginBottom: (theme) => theme.spacing(2),
+                                        marginBottom: (theme) => theme.spacing(2)
                                     }}
                                 >
                                     <Grid
@@ -148,7 +148,7 @@ const Profile = () => {
                                                 sx={{
                                                     aspectRatio: '1/1',
                                                     width: '100%',
-                                                    height: '100%',
+                                                    height: '100%'
                                                 }}
                                                 alt={formData.firstName}
                                                 className="avatar-container"
@@ -181,7 +181,7 @@ const Profile = () => {
                                     sx={{
                                         p: 2,
                                         display: 'flex',
-                                        flexDirection: 'column',
+                                        flexDirection: 'column'
                                     }}
                                 >
                                     <Grid container spacing={2}>
@@ -199,7 +199,7 @@ const Profile = () => {
                                                     fullWidth
                                                     InputLabelProps={{
                                                         shrink: true,
-                                                        style: { zIndex: 1 },
+                                                        style: { zIndex: 1 }
                                                     }}
                                                 />
                                             </Grid>
@@ -212,7 +212,7 @@ const Profile = () => {
                                             width: '100%',
                                             display: 'flex',
                                             gap: 1,
-                                            flexDirection: 'column',
+                                            flexDirection: 'column'
                                         }}
                                     >
                                         <Button
@@ -233,7 +233,7 @@ const Profile = () => {
                                                     top: '50%',
                                                     left: '50%',
                                                     marginTop: '-12px',
-                                                    marginLeft: '-12px',
+                                                    marginLeft: '-12px'
                                                 }}
                                             />
                                         )}

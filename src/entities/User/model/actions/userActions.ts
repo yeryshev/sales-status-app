@@ -6,8 +6,8 @@ export const checkUser = createAsyncThunk('auth/checkUser', async () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/me`, {
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json',
-            },
+                'Content-Type': 'application/json'
+            }
         });
         if (response.ok) {
             const user: User = await response.json();
@@ -24,8 +24,8 @@ export const clearUser = createAsyncThunk('auth/clearUser', async () => {
             method: 'POST',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json',
-            },
+                'Content-Type': 'application/json'
+            }
         });
         return response.ok;
     } catch (error) {
@@ -39,11 +39,11 @@ export const updateUser = createAsyncThunk('user/updateUser', async (user: User)
             method: 'PATCH',
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                ...user,
-            }),
+                ...user
+            })
         });
         if (response.ok) {
             const user: User = await response.json();

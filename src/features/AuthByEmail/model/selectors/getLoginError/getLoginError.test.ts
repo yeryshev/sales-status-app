@@ -7,8 +7,8 @@ describe('getLoginError', () => {
         const state: DeepPartial<StateSchema> = {
             // @ts-expect-error test
             loginForm: {
-                error: 'error',
-            },
+                error: 'error'
+            }
         };
         expect(getLoginError(state as StateSchema)).toEqual('error');
     });

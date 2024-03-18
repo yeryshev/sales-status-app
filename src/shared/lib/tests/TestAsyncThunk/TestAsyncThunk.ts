@@ -7,7 +7,7 @@ type ActionCreatorType<Return, Arg, RejectedValue>
   = (arg: Arg) => AsyncThunkAction<Return, Arg, { rejectValue: RejectedValue }>;
 
 export class TestAsyncThunk<Return, Arg, RejectedValue> {
-    dispatch: Dispatch
+    dispatch: Dispatch;
     getState: () => StateSchema;
     actionCreator: ActionCreatorType<Return, Arg, RejectedValue>;
 

@@ -17,4 +17,4 @@ describe('loginByUsername', () => {
         expect(result.meta.requestStatus).toBe('rejected');
         expect(result.payload).toBe('Что-то пошло не так');
     });
-})
+});

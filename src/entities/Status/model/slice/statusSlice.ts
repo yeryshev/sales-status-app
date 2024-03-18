@@ -4,7 +4,7 @@ import { StatusSchema } from '../..';
 const initialState: StatusSchema = {
     value: null,
     loading: false,
-    error: null,
+    error: null
 };
 
 export const statusSlice = createSlice({
@@ -15,8 +15,8 @@ export const statusSlice = createSlice({
             if (state.value === action.payload) return;
             if (action.payload < 1 || action.payload > 3) return;
             state.value = action.payload;
-        },
-    },
+        }
+    }
 });
 
 export const { actions: statusActions } = statusSlice;
