@@ -1,7 +1,7 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { checkUser } from '../entities/User/model/actions/userActions';
+import { checkUser } from '@/entities/User/model/actions/userActions';
 import Loader from '@/shared/ui/Loader/Loader';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';

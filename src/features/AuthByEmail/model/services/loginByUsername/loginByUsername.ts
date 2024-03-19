@@ -1,7 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { checkUser } from '@/entities/User/model/actions/userActions.ts';
+import { AxiosError, AxiosRequestConfig } from 'axios';
+import { checkUser } from '@/entities/User/model/actions/userActions';
 import { userActions } from '@/entities/User';
+import { ThunkConfig } from '@/app/providers/StoreProvider';
 
 interface LoginByUsernameProps {
   username: string
@@ -13,11 +14,13 @@ const enum LoginStatusCodes {
     VALIDATION_ERROR = 422,
 }
 
-export const loginByUsername = createAsyncThunk<string, LoginByUsernameProps, { rejectValue: string }>(
+export const loginByUsername = createAsyncThunk<string, LoginByUsernameProps, ThunkConfig<string>>(
     'login/loginByUsername',
     async (authData, thunkAPI) => {
+        const { extra, rejectWithValue, dispatch } = thunkAPI;
+
         try {
-            const url = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
+            const url = '/auth/login';
 
             const formData = new FormData();
             formData.set('username', authData.username);
@@ -25,17 +28,18 @@ export const loginByUsername = createAsyncThunk<string, LoginByUsernameProps, { 
 
             const requestConfig: AxiosRequestConfig = {
                 headers: { 'Content-Type': 'multipart/form-data' },
-                withCredentials: true
+                withCredentials: true,
             };
 
-            const response = await axios.post(
+            const response = await extra.api.post(
                 url,
                 formData,
-                requestConfig
+                requestConfig,
             );
 
-            const user = await thunkAPI.dispatch(checkUser()).unwrap();
-            user && thunkAPI.dispatch(userActions.setAuthData(user));
+            const user = await dispatch(checkUser()).unwrap();
+            user && dispatch(userActions.setAuthData(user));
+            extra.navigate && extra.navigate('/');
 
             return response.data;
 
@@ -43,13 +47,13 @@ export const loginByUsername = createAsyncThunk<string, LoginByUsernameProps, { 
             if (error instanceof AxiosError) {
                 const status = error.response?.status;
                 if (status === LoginStatusCodes.VALIDATION_ERROR) {
-                    return thunkAPI.rejectWithValue('Некорректно заполнены обязательные поля');
+                    return rejectWithValue('Некорректно заполнены обязательные поля');
                 }
                 if (status === LoginStatusCodes.BAD_CREDENTIALS) {
-                    return thunkAPI.rejectWithValue('Неверный логин или пароль');
+                    return rejectWithValue('Неверный логин или пароль');
                 }
             }
-            return thunkAPI.rejectWithValue('Что-то пошло не так');
+            return rejectWithValue('Что-то пошло не так');
         }
-    }
+    },
 );

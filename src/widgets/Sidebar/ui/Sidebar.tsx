@@ -6,8 +6,8 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import { memo } from 'react';
-import { SidebarItemsList } from '@/widgets/Sidebar/model/items.ts';
-import { SidebarItem } from '@/widgets/Sidebar/ui/SidebarItem/SidebarItem.tsx';
+import { SidebarItemsList } from '@/widgets/Sidebar/model/items';
+import { SidebarItem } from '@/widgets/Sidebar/ui/SidebarItem/SidebarItem';
 
 interface SidebarProps {
   sideBarOpen: boolean
@@ -29,7 +29,7 @@ export const Sidebar = memo(({ sideBarOpen, toggleSideBar }: SidebarProps) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'flex-end',
-                        px: [1]
+                        px: [1],
                     }}
                 >
                     <IconButton onClick={toggleSideBar}>

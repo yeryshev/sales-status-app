@@ -4,14 +4,14 @@ import { User, UserSchema } from '../types/User';
 
 const userInitialState: UserSchema = {
     loading: false,
-    error: null
+    error: null,
 };
 
 export const userSlice = createSlice({
     name: 'user',
     initialState: userInitialState,
     reducers: {
-        setAuthData: (state, action: PayloadAction<User>) => void (state.user = action.payload)
+        setAuthData: (state, action: PayloadAction<User>) => void (state.user = action.payload),
     },
     extraReducers: (builder) => {
         builder
@@ -57,7 +57,7 @@ export const userSlice = createSlice({
                 state.error = action.error.message || 'Error';
                 state.loading = false;
             });
-    }
+    },
 });
 
 export const { actions: userActions } = userSlice;

@@ -18,7 +18,7 @@ import MenuItem from '@mui/material/MenuItem';
 import {
     addComment,
     deleteComment,
-    setMyComments
+    setMyComments,
 } from '@/entities/Comment/model/actions/commentsActions';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
@@ -48,7 +48,7 @@ export const CommentsBox = memo(() => {
                 });
             }
         },
-        [dispatch, user]
+        [dispatch, user],
     );
 
     const handleAddComment = useCallback((event: FormEvent<HTMLFormElement>) => {

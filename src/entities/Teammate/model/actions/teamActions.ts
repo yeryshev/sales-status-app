@@ -6,8 +6,8 @@ export const setTeam = createAsyncThunk('team/setTeam', async () => {
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/team`, {
             credentials: 'include',
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+            },
         });
         if (response.ok) {
             const team: Teammate[] = await response.json();

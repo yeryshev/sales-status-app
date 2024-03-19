@@ -29,7 +29,7 @@ const TeamTable = memo(({ mango }: { mango: MangoRedisData }) => {
                                     (teammate) =>
                                         teammate.secondName &&
                                         teammate.firstName &&
-                                        teammate.id !== userId
+                                        teammate.id !== userId,
                                 )
                                 .map((teammate) => (
                                     <Row

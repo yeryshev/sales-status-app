@@ -2,7 +2,7 @@ import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { SvgIconTypeMap } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import { RoutePath } from '@/shared/config/routeConfig/routeConfig.tsx';
+import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
 
 export type SidebarItemType = {
   path: string
@@ -14,11 +14,11 @@ export const SidebarItemsList: Array<SidebarItemType> = [
     {
         path: RoutePath.main,
         text: 'Дашборд',
-        Icon: DashboardIcon
+        Icon: DashboardIcon,
     },
     {
         path: RoutePath.profile,
         text: 'Профиль',
-        Icon: AccountBoxIcon
-    }
+        Icon: AccountBoxIcon,
+    },
 ];

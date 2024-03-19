@@ -10,5 +10,5 @@ export interface ThemeContextProps {
 }
 
 export const ThemeContext = createContext<ThemeContextProps>({
-    setTheme: () => {}
+    setTheme: () => {},
 });

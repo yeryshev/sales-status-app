@@ -5,7 +5,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState: TeamState = {
     list: [],
     loading: false,
-    error: null
+    error: null,
 };
 
 export const teamSlice = createSlice({
@@ -31,7 +31,7 @@ export const teamSlice = createSlice({
                     const statusOrder = {
                         online: 1,
                         busy: 2,
-                        offline: 3
+                        offline: 3,
                     };
 
                     if (statusOrder[a.status] !== statusOrder[b.status]) {
@@ -40,7 +40,7 @@ export const teamSlice = createSlice({
                         return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
                     }
                 });
-        }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -56,7 +56,7 @@ export const teamSlice = createSlice({
                 state.error = action.error.message || 'Error';
                 state.loading = false;
             });
-    }
+    },
 });
 
 export const { setTeamLocal } = teamSlice.actions;

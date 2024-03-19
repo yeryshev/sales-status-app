@@ -25,7 +25,7 @@ const Dashboard = memo(() => {
                             : theme.palette.grey[900],
                     flexGrow: 1,
                     height: '100vh',
-                    overflow: 'auto'
+                    overflow: 'auto',
                 }}
             >
                 <Toolbar />
@@ -46,7 +46,7 @@ const Dashboard = memo(() => {
                                             p: 2,
                                             display: 'flex',
                                             flexDirection: 'column',
-                                            height: '100%'
+                                            height: '100%',
                                         }}
                                     >
                                         <StatusBox />
@@ -58,7 +58,7 @@ const Dashboard = memo(() => {
                                             p: 2,
                                             display: 'flex',
                                             flexDirection: 'column',
-                                            height: '100%'
+                                            height: '100%',
                                         }}
                                     >
                                         <CommentsBox />

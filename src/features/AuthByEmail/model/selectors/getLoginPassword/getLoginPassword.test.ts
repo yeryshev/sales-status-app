@@ -1,14 +1,12 @@
-import { DeepPartial } from '@reduxjs/toolkit';
 import { StateSchema } from '@/app/providers/StoreProvider';
 import { getLoginPassword } from './getLoginPassword';
 
 describe('getLoginPassword', () => {
     test('should return value', () => {
         const state: DeepPartial<StateSchema> = {
-            // @ts-expect-error test
             loginForm: {
-                password: '123123'
-            }
+                password: '123123',
+            },
         };
         expect(getLoginPassword(state as StateSchema)).toEqual('123123');
     });

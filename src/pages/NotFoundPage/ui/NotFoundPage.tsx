@@ -18,7 +18,7 @@ export default function NotFoundPage() {
                         'url(https://planetofhotels.com/guide/sites/default/files/styles/paragraph__hero_banner__hb_image__1280bp/public/hero_banner/Sahara.jpg)',
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'cover',
-                    backgroundPosition: 'center'
+                    backgroundPosition: 'center',
                 }}
             />
             <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
@@ -28,7 +28,7 @@ export default function NotFoundPage() {
                         mx: 4,
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'center'
+                        alignItems: 'center',
                     }}
                 >
                     <Typography component="h1" variant="h5">

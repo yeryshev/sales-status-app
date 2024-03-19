@@ -17,7 +17,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             }
             setSideBarOpen(!sideBarOpen);
         },
-        [setSideBarOpen, sideBarOpen]
+        [setSideBarOpen, sideBarOpen],
     );
 
     return (

@@ -16,7 +16,7 @@ export const RoutePath: Record<AppRoutes, string> = {
     [AppRoutes.MAIN]: '/',
     [AppRoutes.PROFILE]: '/profile',
     [AppRoutes.LOGIN]: '/auth/login',
-    [AppRoutes.NOT_FOUND]: '*'
+    [AppRoutes.NOT_FOUND]: '*',
 };
 
 export const routeConfig: Record<AppRoutes, RouteProps> = {
@@ -26,7 +26,7 @@ export const routeConfig: Record<AppRoutes, RouteProps> = {
             <RequireAuth>
                 <Dashboard />
             </RequireAuth>
-        )
+        ),
     },
     [AppRoutes.PROFILE]: {
         path: RoutePath.profile,
@@ -34,14 +34,14 @@ export const routeConfig: Record<AppRoutes, RouteProps> = {
             <RequireAuth>
                 <ProfilePage />
             </RequireAuth>
-        )
+        ),
     },
     [AppRoutes.LOGIN]: {
         path: RoutePath.login,
-        element: <LoginPage />
+        element: <LoginPage />,
     },
     [AppRoutes.NOT_FOUND]: {
         path: RoutePath.error,
-        element: <NotFoundPage />
-    }
+        element: <NotFoundPage />,
+    },
 };

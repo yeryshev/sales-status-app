@@ -11,13 +11,13 @@ describe('Тест функции classNames', () => {
     test('С модами', () => {
         const expected = 'class1 class2 class3 hovered scrollable';
         expect(
-            classNames('class1', { hovered: true, scrollable: true }, ['class2', 'class3'])
+            classNames('class1', { hovered: true, scrollable: true }, ['class2', 'class3']),
         ).toBe(expected);
     });
     test('С модами false', () => {
         const expected = 'class1 class2 class3 hovered';
         expect(
-            classNames('class1', { hovered: true, scrollable: false }, ['class2', 'class3'])
+            classNames('class1', { hovered: true, scrollable: false }, ['class2', 'class3']),
         ).toBe(expected);
     });
 });

@@ -20,7 +20,7 @@ module.exports = {
       },
     ],
     'semi': ['error', 'always', { 'omitLastInOneLineBlock': false }],
-    'comma-dangle': ['error', 'never'],
+    'comma-dangle': ['error', 'always-multiline'],
     'quotes': ['error', 'single'],
   },
 };

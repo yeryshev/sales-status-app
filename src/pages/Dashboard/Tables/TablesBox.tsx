@@ -16,7 +16,7 @@ import { StateSchema } from '@/app/providers/StoreProvider';
 const Statuses: Record<number, string> = {
     1: 'online',
     2: 'busy',
-    3: 'offline'
+    3: 'offline',
 };
 
 const TablesBox = () => {
@@ -43,8 +43,8 @@ const TablesBox = () => {
                         userId,
                         status: Statuses[statusId],
                         updatedAt,
-                        isWorkingRemotely
-                    })
+                        isWorkingRemotely,
+                    }),
                 );
                 dispatch(statusActions.changeStatus(user.statusId));
             }
@@ -58,8 +58,8 @@ const TablesBox = () => {
                             userId,
                             comment: comment.description,
                             updatedAt,
-                            isWorkingRemotely
-                        })
+                            isWorkingRemotely,
+                        }),
                     );
                 } else if (commentId === null) {
                     dispatch(setTeamLocal({ userId, comment: null, updatedAt, isWorkingRemotely }));
@@ -68,7 +68,7 @@ const TablesBox = () => {
                 }
             }
         },
-        [dispatch, user, allComments]
+        [dispatch, user, allComments],
     );
 
     const handleMangoChange = useCallback((event: MessageEvent) => {
@@ -83,8 +83,8 @@ const TablesBox = () => {
         fetch(import.meta.env.VITE_MANGO_REDIS_URL, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
-            }
+                'Content-Type': 'application/json',
+            },
         })
             .then(async (res) => {
                 return await res.json();

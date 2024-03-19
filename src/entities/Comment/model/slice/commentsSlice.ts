@@ -4,14 +4,14 @@ import {
     addComment,
     deleteComment,
     setAllComments,
-    setMyComments
+    setMyComments,
 } from '../actions/commentsActions';
 
 const initialState: CommentsSchema = {
     list: [],
     fullList: [],
     loading: false,
-    error: null
+    error: null,
 };
 
 export const commentsSlice = createSlice({
@@ -67,7 +67,7 @@ export const commentsSlice = createSlice({
                 if (action.payload) {
                     state.list = state.list.filter((comment) => comment.id !== action.payload);
                     state.fullList = state.fullList.filter(
-                        (comment) => comment.id !== action.payload
+                        (comment) => comment.id !== action.payload,
                     );
                     state.loading = false;
                 }
@@ -76,7 +76,7 @@ export const commentsSlice = createSlice({
                 state.error = action.error.message || 'Error';
                 state.loading = false;
             });
-    }
+    },
 });
 
 export const { reducer: commentsReducer } = commentsSlice;
