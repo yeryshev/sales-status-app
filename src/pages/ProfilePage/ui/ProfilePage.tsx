@@ -1,113 +1,129 @@
-import { StateSchema } from '@/app/providers/StoreProvider';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { updateUser } from '@/entities/User/model/actions/userActions';
-import { type User } from '@/entities/User/model/types/User';
 import { Layout } from '@/widgets/Layout';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Switch from '@mui/material/Switch';
-import TextField from '@mui/material/TextField';
 import Toolbar from '@mui/material/Toolbar';
-import { green } from '@mui/material/colors';
-import { type ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
-import { fetchProfileData, profileReducer } from '@/entities/Profile';
-// import { ProfileCard } from '@/entities/Profile';
+import { ProfileCard } from '@/entities/Profile';
+import { fetchProfileData } from '../model/services/fetchProfileData/fetchProfileData';
+import { profileActions, profileReducer } from '../model/slice/profileSlice';
+import { getProfileIsLoading } from '../model/selectors/getProfileIsLoading/getProfileIsLoading';
+import { getProfileError } from '../model/selectors/getProfileError/getProfileError';
+import { getProfileForm } from '../model/selectors/getProfileForm/getProfileForm';
+import { updateProfileData } from '../model/services/updateProfileData/updateProfileData';
 
 const reducers: ReducersList = {
     profile: profileReducer,
 };
 
-type textFieldType = {
-    name: keyof User;
-    label: string;
-};
-
-const textFields: textFieldType[] = [
-    { name: 'firstName', label: 'Имя' },
-    { name: 'secondName', label: 'Фамилия' },
-    { name: 'email', label: 'Email' },
-    { name: 'extNumber', label: 'Добавочный номер телефона' },
-    { name: 'telegram', label: 'Telegram' },
-    { name: 'photoUrl', label: 'Ссылка на фото' },
-];
-
 const Profile = () => {
-    const user = useSelector((state: StateSchema) => state.user.user);
+    // const user = useSelector((state: StateSchema) => state.user.user);
     const dispatch = useAppDispatch();
-    const [formData, setFormData] = useState<User>(user!);
-    const [loading, setLoading] = useState(false);
-    const timer = useRef<number>();
+    // const [formData, setFormData] = useState<User>(user!);
+    // const [loading, setLoading] = useState(false);
+    // const timer = useRef<number>();
 
+    const fromData = useSelector(getProfileForm);
+    const isLoading = useSelector(getProfileIsLoading);
+    const error = useSelector(getProfileError);
+  
     useEffect(() => {
         dispatch(fetchProfileData());
     }, [dispatch]);
 
-    const compareObjects = (user: User | undefined, formData: User) => {
-        if (!user) {
-            return false;
-        }
+    const onChangeFirstName = useCallback((value?: string) => {
+        dispatch(profileActions.updateProfile({ firstName: value }));
+    }, [dispatch]);
 
-        return (
-            JSON.stringify({
-                firstName: user.firstName,
-                secondName: user.secondName,
-                photoUrl: user.photoUrl,
-                extNumber: user.extNumber,
-                telegram: user.telegram,
-                email: user.email,
-            }) ===
-            JSON.stringify({
-                firstName: formData.firstName,
-                secondName: formData.secondName,
-                photoUrl: formData.photoUrl,
-                extNumber: formData.extNumber,
-                telegram: formData.telegram,
-                email: formData.email,
-            })
-        );
-    };
+    const onChangeSecondName = useCallback((value?: string) => {
+        dispatch(profileActions.updateProfile({ secondName: value }));
+    }, [dispatch]);
 
-    useEffect(() => {
-        return () => {
-            clearTimeout(timer.current);
-        };
-    }, []);
+    const onChangeEmail = useCallback((value?: string) => {
+        dispatch(profileActions.updateProfile({ email: value }));
+    }, [dispatch]);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    const onChangeExtNumber = useCallback((value?: string) => {
+        dispatch(profileActions.updateProfile({ extNumber: value }));
+    }, [dispatch]);
 
-    const handleSwitch = (e: ChangeEvent<HTMLInputElement>) => {
-        if (user) {
-            dispatch(
-                updateUser({
-                    ...user,
-                    isWorkingRemotely: e.target.checked,
-                }),
-            );
-        }
-    };
+    const onChangeTelegram = useCallback((value?: string) => {
+        dispatch(profileActions.updateProfile({ telegram: value }));
+    }, [dispatch]);
 
-    const handleUpdateAll = async () => {
-        if (user) {
-            dispatch(updateUser({ ...formData, id: user.id }));
-        }
-        setLoading(true);
-        timer.current = window.setTimeout(() => {
-            setLoading(false);
-        }, 1000);
-    };
+    const onChangePhotoUrl = useCallback((value?: string) => {
+        dispatch(profileActions.updateProfile({ photoUrl: value }));
+    }, [dispatch]);
 
-    const handleReset = () => {
-        setFormData(user!);
-    };
+    const onCancelEdit = useCallback(() => {
+        dispatch(profileActions.cancelEdit());
+    }, [dispatch]);
+
+    const onSave = useCallback(() => {
+        dispatch(updateProfileData());
+    }, [dispatch]);
+
+    // const compareObjects = (user: User | undefined, formData: User) => {
+    //     if (!user) {
+    //         return false;
+    //     }
+    //
+    //     return (
+    //         JSON.stringify({
+    //             firstName: user.firstName,
+    //             secondName: user.secondName,
+    //             photoUrl: user.photoUrl,
+    //             extNumber: user.extNumber,
+    //             telegram: user.telegram,
+    //             email: user.email,
+    //         }) ===
+    //         JSON.stringify({
+    //             firstName: formData.firstName,
+    //             secondName: formData.secondName,
+    //             photoUrl: formData.photoUrl,
+    //             extNumber: formData.extNumber,
+    //             telegram: formData.telegram,
+    //             email: formData.email,
+    //         })
+    //     );
+    // };
+
+    // useEffect(() => {
+    //     return () => {
+    //         clearTimeout(timer.current);
+    //     };
+    // }, []);
+
+    // const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    //     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // };
+    //
+    // const handleSwitch = (e: ChangeEvent<HTMLInputElement>) => {
+    //     if (user) {
+    //         dispatch(
+    //             updateUser({
+    //                 ...user,
+    //                 isWorkingRemotely: e.target.checked,
+    //             }),
+    //         );
+    //     }
+    // };
+    //
+    // const handleUpdateAll = async () => {
+    //     if (user) {
+    //         dispatch(updateUser({ ...formData, id: user.id }));
+    //     }
+    //     setLoading(true);
+    //     timer.current = window.setTimeout(() => {
+    //         setLoading(false);
+    //     }, 1000);
+    // };
+    //
+    // const handleReset = () => {
+    //     setFormData(user!);
+    // };
 
     return (
         <DynamicModuleLoader reducers={reducers} removeAfterUnmount={true}>
@@ -125,138 +141,20 @@ const Profile = () => {
                     }}
                 >
                     <Toolbar />
-                    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }} className="container">
-                        {/*<ProfileCard />*/}
-                        <Grid container spacing={3} className="content">
-                            <Grid item sm={12} md={4} lg={3} className="avatar-column">
-                                <Paper
-                                    sx={{
-                                        p: 2,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        gap: 2,
-                                        justifyContent: 'center',
-                                        height: '100%',
-                                        marginBottom: (theme) => theme.spacing(2),
-                                    }}
-                                >
-                                    <Grid
-                                        container
-                                        spacing={4}
-                                        display={'flex'}
-                                        alignItems="center"
-                                        justifyContent="center"
-                                    >
-                                        <Grid item xs={4} sm={4} md={8} lg={10}>
-                                            <Avatar
-                                                src={formData.photoUrl}
-                                                sx={{
-                                                    aspectRatio: '1/1',
-                                                    width: '100%',
-                                                    height: '100%',
-                                                }}
-                                                alt={formData.firstName}
-                                                className="avatar-container"
-                                            />
-                                        </Grid>
-                                        <Grid item sm={12} md={12} lg={12} className="switch-container">
-                                            <Grid
-                                                container
-                                                justifyContent="space-between"
-                                                alignItems="center"
-                                            >
-                                                <Grid item>
-                                                    <span>Удаленная работа</span>
-                                                </Grid>
-                                                <Grid item>
-                                                    <Switch
-                                                        color="primary"
-                                                        name="isWorkingRemotely"
-                                                        checked={user?.isWorkingRemotely}
-                                                        onChange={handleSwitch}
-                                                    />
-                                                </Grid>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-                                </Paper>
-                            </Grid>
-                            <Grid item sm={12} md={8} lg={9}>
-                                <Paper
-                                    sx={{
-                                        p: 2,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                    }}
-                                >
-                                    <Grid container spacing={2}>
-                                        {textFields.map((field, index) => (
-                                            <Grid key={index} item xs={12} sm={12} md={6} lg={6}>
-                                                <TextField
-                                                    name={field.name}
-                                                    onChange={handleChange}
-                                                    label={field.label}
-                                                    value={
-                                                        field.name in formData
-                                                            ? formData[field.name]
-                                                            : ''
-                                                    }
-                                                    fullWidth
-                                                    InputLabelProps={{
-                                                        shrink: true,
-                                                        style: { zIndex: 1 },
-                                                    }}
-                                                />
-                                            </Grid>
-                                        ))}
-                                    </Grid>
-                                    <Box
-                                        sx={{
-                                            mt: 3,
-                                            position: 'relative',
-                                            width: '100%',
-                                            display: 'flex',
-                                            gap: 1,
-                                            flexDirection: 'column',
-                                        }}
-                                    >
-                                        <Button
-                                            sx={{ width: '100%' }}
-                                            disabled={loading || compareObjects(user, formData)}
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={handleUpdateAll}
-                                        >
-                        Сохранить
-                                        </Button>
-                                        {loading && (
-                                            <CircularProgress
-                                                size={24}
-                                                sx={{
-                                                    color: green[500],
-                                                    position: 'absolute',
-                                                    top: '50%',
-                                                    left: '50%',
-                                                    marginTop: '-12px',
-                                                    marginLeft: '-12px',
-                                                }}
-                                            />
-                                        )}
-                                        <Button
-                                            type="reset"
-                                            sx={{ width: '100%' }}
-                                            disabled={compareObjects(user, formData)}
-                                            variant="outlined"
-                                            color="primary"
-                                            onClick={handleReset}
-                                        >
-                        Отмена
-                                        </Button>
-                                    </Box>
-                                </Paper>
-                            </Grid>
-                        </Grid>
+                    <Container maxWidth="lg" className="container">
+                        <ProfileCard
+                            data={fromData}
+                            isLoading={isLoading}
+                            error={error}
+                            onChangeFirstName={onChangeFirstName}
+                            onChangeSecondName={onChangeSecondName}
+                            onChangeEmail={onChangeEmail}
+                            onChangeExtNumber={onChangeExtNumber}
+                            onChangeTelegram={onChangeTelegram}
+                            onChangePhotoUrl={onChangePhotoUrl}
+                            onCancelEdit={onCancelEdit}
+                            onSave={onSave}
+                        />
                     </Container>
                 </Box>
             </Layout>
