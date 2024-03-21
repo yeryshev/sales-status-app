@@ -7,9 +7,11 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
+import { useCallback } from 'react';
 
 interface ProfileCardProps {
-  data?: Profile
+  profileData?: Profile
+  formData?: Profile
   isLoading?: boolean
   error?: string
   onChangeFirstName?: (value?: string) => void
@@ -24,7 +26,8 @@ interface ProfileCardProps {
 
 export const ProfileCard = (props: ProfileCardProps) => {
     const {
-        data,
+        profileData,
+        formData,
         isLoading,
         error,
         onChangeFirstName,
@@ -37,6 +40,13 @@ export const ProfileCard = (props: ProfileCardProps) => {
         onSave,
     } = props;
 
+    const isDataChanged = useCallback((
+        serverData: Profile = {},
+        pageData: Profile = {},
+    ) => {
+        return JSON.stringify(serverData) !== JSON.stringify(pageData);
+    }, []);
+
     if (isLoading) {
         return (
             <Box
@@ -45,6 +55,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     height: '100%',
+                    mt: 20,
                 }}
             >
                 <CircularProgress />
@@ -73,7 +84,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
     }
 
     return (
-        <Grid container spacing={3} my={4}>
+        <Grid container spacing={3} mt={4}>
             <Grid xs={12} sm={4} lg={3} className="avatar-column">
                 <Paper
                     sx={{
@@ -83,30 +94,20 @@ export const ProfileCard = (props: ProfileCardProps) => {
                         alignItems: 'center',
                         gap: 2,
                         justifyContent: 'center',
-                        // height: '100%',
-                        // marginBottom: (theme) => theme.spacing(2),
                     }}
                 >
-                    {/*<Grid*/}
-                    {/*    container*/}
-                    {/*    spacing={4}*/}
-                    {/*    display={'flex'}*/}
-                    {/*    alignItems="center"*/}
-                    {/*    justifyContent="center"*/}
-                    {/*>*/}
                     <Box>
                         <Avatar
-                            src={data?.photoUrl}
+                            src={formData?.photoUrl}
                             sx={{
                                 aspectRatio: '1/1',
                                 width: '100%',
                                 height: '100%',
                             }}
-                            // alt={formData.firstName}
+                            alt={formData?.firstName}
                             className="avatar-container"
                         />
                     </Box>
-                    {/*</Grid>*/}
                 </Paper>
             </Grid>
             <Grid xs={12} sm={8} lg={9} className="form-column">
@@ -121,9 +122,9 @@ export const ProfileCard = (props: ProfileCardProps) => {
                     <Grid container spacing={2} sx={{ flexGrow: 1 }}>
                         <Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={data?.firstName}
+                                value={formData?.firstName}
                                 onChange={(e) => onChangeFirstName?.(e.target.value)}
-                                name={data?.firstName}
+                                name={formData?.firstName}
                                 label={'Имя'}
                                 fullWidth
                                 InputLabelProps={{
@@ -135,9 +136,9 @@ export const ProfileCard = (props: ProfileCardProps) => {
                         </Grid>
                         <Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={data?.secondName}
+                                value={formData?.secondName}
                                 onChange={(e) => onChangeSecondName?.(e.target.value)}
-                                name={data?.secondName}
+                                name={formData?.secondName}
                                 label={'Фамилия'}
                                 fullWidth
                                 InputLabelProps={{
@@ -148,9 +149,10 @@ export const ProfileCard = (props: ProfileCardProps) => {
                             />
                         </Grid><Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={data?.email}
+                                value={formData?.email}
                                 onChange={(e) => onChangeEmail?.(e.target.value)}
-                                name={data?.email}
+                                disabled={true}
+                                name={formData?.email}
                                 label={'Email'}
                                 fullWidth
                                 InputLabelProps={{
@@ -161,9 +163,9 @@ export const ProfileCard = (props: ProfileCardProps) => {
                             />
                         </Grid><Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={data?.extNumber}
+                                value={formData?.extNumber}
                                 onChange={(e) => onChangeExtNumber?.(e.target.value)}
-                                name={data?.extNumber}
+                                name={formData?.extNumber}
                                 label={'Добавочный номер телефона'}
                                 fullWidth
                                 InputLabelProps={{
@@ -174,9 +176,9 @@ export const ProfileCard = (props: ProfileCardProps) => {
                             />
                         </Grid><Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={data?.telegram}
+                                value={formData?.telegram}
                                 onChange={(e) => onChangeTelegram?.(e.target.value)}
-                                name={data?.telegram}
+                                name={formData?.telegram}
                                 label={'Telegram'}
                                 fullWidth
                                 InputLabelProps={{
@@ -187,9 +189,9 @@ export const ProfileCard = (props: ProfileCardProps) => {
                             />
                         </Grid><Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={data?.photoUrl}
+                                value={formData?.photoUrl}
                                 onChange={(e) => onChangePhotoUrl?.(e.target.value)}
-                                name={data?.photoUrl}
+                                name={formData?.photoUrl}
                                 label={'Ссылка на фото'}
                                 fullWidth
                                 InputLabelProps={{
@@ -213,30 +215,17 @@ export const ProfileCard = (props: ProfileCardProps) => {
             >
                 <Button
                     sx={{ width: '100%' }}
-                    // disabled={loading || compareObjects(user, formData)}
+                    disabled={!isDataChanged(profileData, formData)}
                     variant="contained"
                     color="primary"
                     onClick={onSave}
                 >
               Сохранить
                 </Button>
-                {/*{loading && (*/}
-                {/*    <CircularProgress*/}
-                {/*        size={24}*/}
-                {/*        sx={{*/}
-                {/*            color: green[500],*/}
-                {/*            position: 'absolute',*/}
-                {/*            top: '50%',*/}
-                {/*            left: '50%',*/}
-                {/*            marginTop: '-12px',*/}
-                {/*            marginLeft: '-12px',*/}
-                {/*        }}*/}
-                {/*    />*/}
-                {/*)}*/}
                 <Button
                     type="reset"
                     sx={{ width: '100%' }}
-                    // disabled={compareObjects(user, formData)}
+                    disabled={!isDataChanged(profileData, formData)}
                     variant="outlined"
                     color="primary"
                     onClick={onCancelEdit}

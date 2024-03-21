@@ -5,12 +5,17 @@ export const validateProfileData = (data?: Profile) => {
         return [ValidateProfileError.NO_DATA];
     }
 
-    const { telegram } = data;
+    const { telegram, extNumber } = data;
     const errors: ValidateProfileError[] = [];
 
     const telegramRegex = /^[a-zA-Z0-9._]+$/;
     if (telegram && !telegramRegex.test(telegram)) {
         errors.push(ValidateProfileError.INCORRECT_TELEGRAM);
+    }
+
+    const onlyDigitsRegex: RegExp = /^\d+$/;
+    if (extNumber && !onlyDigitsRegex.test(extNumber)) {
+        errors.push(ValidateProfileError.INCORRECT_EXT_NUMBER);
     }
 
     return errors;

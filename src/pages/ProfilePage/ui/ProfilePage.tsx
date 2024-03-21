@@ -16,6 +16,7 @@ import { updateProfileData } from '../model/services/updateProfileData/updatePro
 import { getProfileValidateErrors } from '../model/selectors/getProfileValidateError/getProfileValidateErrors';
 import Alert from '@mui/material/Alert';
 import { ValidateProfileError } from '../model/types/profile';
+import { getProfileData } from '@/pages/ProfilePage/model/selectors/getProfileData/getProfileData';
 
 const reducers: ReducersList = {
     profile: profileReducer,
@@ -23,21 +24,18 @@ const reducers: ReducersList = {
 
 const validateErrorTranslates = {
     [ValidateProfileError.INCORRECT_TELEGRAM]: 'Телеграм: только прописные и строчные латинские буквы, цифры, точки и нижнее подчеркивание.',
+    [ValidateProfileError.INCORRECT_EXT_NUMBER]: 'Добавочный номер телефона: доступны только цифры.',
     [ValidateProfileError.NO_DATA]: 'Данные не указаны',
     [ValidateProfileError.SERVER_ERROR]: 'Серверная ошибка при сохранении',
 };
 
-const Profile = () => {
-    // const user = useSelector((state: StateSchema) => state.user.user);
+const ProfilePage = () => {
     const dispatch = useAppDispatch();
-    // const [formData, setFormData] = useState<User>(user!);
-    // const [loading, setLoading] = useState(false);
-    // const timer = useRef<number>();
-
-    const fromData = useSelector(getProfileForm);
+    const profileData = useSelector(getProfileData);
+    const formData = useSelector(getProfileForm);
     const isLoading = useSelector(getProfileIsLoading);
     const error = useSelector(getProfileError);
-    const vlaidateErrors = useSelector(getProfileValidateErrors);
+    const validateErrors = useSelector(getProfileValidateErrors);
   
     useEffect(() => {
         dispatch(fetchProfileData());
@@ -75,66 +73,6 @@ const Profile = () => {
         dispatch(updateProfileData());
     }, [dispatch]);
 
-    // const compareObjects = (user: User | undefined, formData: User) => {
-    //     if (!user) {
-    //         return false;
-    //     }
-    //
-    //     return (
-    //         JSON.stringify({
-    //             firstName: user.firstName,
-    //             secondName: user.secondName,
-    //             photoUrl: user.photoUrl,
-    //             extNumber: user.extNumber,
-    //             telegram: user.telegram,
-    //             email: user.email,
-    //         }) ===
-    //         JSON.stringify({
-    //             firstName: formData.firstName,
-    //             secondName: formData.secondName,
-    //             photoUrl: formData.photoUrl,
-    //             extNumber: formData.extNumber,
-    //             telegram: formData.telegram,
-    //             email: formData.email,
-    //         })
-    //     );
-    // };
-
-    // useEffect(() => {
-    //     return () => {
-    //         clearTimeout(timer.current);
-    //     };
-    // }, []);
-
-    // const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    //     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // };
-    //
-    // const handleSwitch = (e: ChangeEvent<HTMLInputElement>) => {
-    //     if (user) {
-    //         dispatch(
-    //             updateUser({
-    //                 ...user,
-    //                 isWorkingRemotely: e.target.checked,
-    //             }),
-    //         );
-    //     }
-    // };
-    //
-    // const handleUpdateAll = async () => {
-    //     if (user) {
-    //         dispatch(updateUser({ ...formData, id: user.id }));
-    //     }
-    //     setLoading(true);
-    //     timer.current = window.setTimeout(() => {
-    //         setLoading(false);
-    //     }, 1000);
-    // };
-    //
-    // const handleReset = () => {
-    //     setFormData(user!);
-    // };
-
     return (
         <DynamicModuleLoader reducers={reducers} removeAfterUnmount={true}>
             <Layout>
@@ -153,7 +91,8 @@ const Profile = () => {
                     <Toolbar />
                     <Container maxWidth="lg" className="container">
                         <ProfileCard
-                            data={fromData}
+                            formData={formData}
+                            profileData={profileData}
                             isLoading={isLoading}
                             error={error}
                             onChangeFirstName={onChangeFirstName}
@@ -165,9 +104,9 @@ const Profile = () => {
                             onCancelEdit={onCancelEdit}
                             onSave={onSave}
                         />
-                        {vlaidateErrors?.length && (
-                            vlaidateErrors.map((error) => (
-                                <Alert key={error} severity="error">{validateErrorTranslates[error]}</Alert>
+                        {validateErrors?.length && (
+                            validateErrors.map((error) => (
+                                <Alert key={error} severity="error" sx={{ my: 2 }}>{validateErrorTranslates[error]}</Alert>
                             ))
                         )}
                     </Container>
@@ -177,4 +116,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default ProfilePage;
