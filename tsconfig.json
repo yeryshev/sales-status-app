@@ -17,9 +17,8 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["node"],
+    "types": ["node", "vitest/globals", "vitest/jsdom", "@testing-library/jest-dom"],
     "allowSyntheticDefaultImports": true,
-    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
