@@ -5,7 +5,7 @@ import { UserSchema } from '@/entities/User';
 import { LoginSchema } from '@/features/AuthByEmail';
 import { CombinedState, EnhancedStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
 import { AnyAction } from 'redux';
-import { ProfileSchema } from '@/entities/Profile';
+import { ProfileSchema } from '@/pages/ProfilePage';
 import { NavigateOptions } from 'react-router/dist/lib/context';
 import { To } from '@remix-run/router';
 import { AxiosInstance } from 'axios';

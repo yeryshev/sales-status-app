@@ -13,9 +13,18 @@ import { getProfileIsLoading } from '../model/selectors/getProfileIsLoading/getP
 import { getProfileError } from '../model/selectors/getProfileError/getProfileError';
 import { getProfileForm } from '../model/selectors/getProfileForm/getProfileForm';
 import { updateProfileData } from '../model/services/updateProfileData/updateProfileData';
+import { getProfileValidateErrors } from '../model/selectors/getProfileValidateError/getProfileValidateErrors';
+import Alert from '@mui/material/Alert';
+import { ValidateProfileError } from '../model/types/profile';
 
 const reducers: ReducersList = {
     profile: profileReducer,
+};
+
+const validateErrorTranslates = {
+    [ValidateProfileError.INCORRECT_TELEGRAM]: 'Телеграм: только прописные и строчные латинские буквы, цифры, точки и нижнее подчеркивание.',
+    [ValidateProfileError.NO_DATA]: 'Данные не указаны',
+    [ValidateProfileError.SERVER_ERROR]: 'Серверная ошибка при сохранении',
 };
 
 const Profile = () => {
@@ -28,6 +37,7 @@ const Profile = () => {
     const fromData = useSelector(getProfileForm);
     const isLoading = useSelector(getProfileIsLoading);
     const error = useSelector(getProfileError);
+    const vlaidateErrors = useSelector(getProfileValidateErrors);
   
     useEffect(() => {
         dispatch(fetchProfileData());
@@ -155,6 +165,11 @@ const Profile = () => {
                             onCancelEdit={onCancelEdit}
                             onSave={onSave}
                         />
+                        {vlaidateErrors?.length && (
+                            vlaidateErrors.map((error) => (
+                                <Alert key={error} severity="error">{validateErrorTranslates[error]}</Alert>
+                            ))
+                        )}
                     </Container>
                 </Box>
             </Layout>

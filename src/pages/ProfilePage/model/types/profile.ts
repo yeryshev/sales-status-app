@@ -1,3 +1,9 @@
+export enum ValidateProfileError {
+  INCORRECT_TELEGRAM = 'INCORRECT_TELEGRAM',
+  NO_DATA = 'NO_DATA',
+  SERVER_ERROR = 'SERVER_ERROR',
+}
+
 export interface Profile {
   firstName?: string
   secondName?: string
@@ -14,4 +20,5 @@ export interface ProfileSchema {
   isLoading: boolean
   error?: string
   readonly: boolean
+  validateErrors?: ValidateProfileError[]
 }

@@ -1,6 +1,6 @@
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Profile } from '../../model/types/profile';
+import { Profile } from '@/pages/ProfilePage/model/types/profile';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -96,7 +96,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                     {/*>*/}
                     <Box>
                         <Avatar
-                            // src={formData.photoUrl}
+                            src={data?.photoUrl}
                             sx={{
                                 aspectRatio: '1/1',
                                 width: '100%',
