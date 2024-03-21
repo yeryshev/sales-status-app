@@ -5,6 +5,7 @@ import { User, UserSchema } from '../types/User';
 const userInitialState: UserSchema = {
     loading: false,
     error: null,
+    mounted: false,
 };
 
 export const userSlice = createSlice({
@@ -22,6 +23,7 @@ export const userSlice = createSlice({
             .addCase(checkUser.fulfilled, (state, action) => {
                 state.user = action.payload;
                 state.authData = action.payload;
+                state.mounted = true;
                 state.error = null;
                 state.loading = false;
             })
@@ -37,6 +39,7 @@ export const userSlice = createSlice({
             .addCase(clearUser.fulfilled, (state) => {
                 state.user = undefined;
                 state.authData = undefined;
+                state.mounted = false;
             })
             .addCase(clearUser.rejected, (state, action) => {
                 state.user = undefined;

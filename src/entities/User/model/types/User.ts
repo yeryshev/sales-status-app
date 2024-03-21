@@ -17,4 +17,5 @@ export interface UserSchema {
   loading: boolean;
   error: null | string;
   authData?: User
+  mounted: boolean
 }

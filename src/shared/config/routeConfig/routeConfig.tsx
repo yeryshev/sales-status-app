@@ -2,8 +2,11 @@ import { Dashboard } from '@/pages/Dashboard';
 import { LoginPage } from '@/features/AuthByEmail';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProfilePage } from '@/pages/ProfilePage';
-import RequireAuth from '@/shared/RequireAuth';
 import { type RouteProps } from 'react-router-dom';
+
+export type AppRouteProps = RouteProps & {
+  authOnly?: boolean;
+}
 
 export enum AppRoutes {
     MAIN = 'main',
@@ -19,22 +22,16 @@ export const RoutePath: Record<AppRoutes, string> = {
     [AppRoutes.NOT_FOUND]: '*',
 };
 
-export const routeConfig: Record<AppRoutes, RouteProps> = {
+export const routeConfig: Record<AppRoutes, AppRouteProps> = {
     [AppRoutes.MAIN]: {
         path: RoutePath.main,
-        element: (
-            <RequireAuth>
-                <Dashboard />
-            </RequireAuth>
-        ),
+        element: <Dashboard />,
+        authOnly: true,
     },
     [AppRoutes.PROFILE]: {
         path: RoutePath.profile,
-        element: (
-            <RequireAuth>
-                <ProfilePage />
-            </RequireAuth>
-        ),
+        element: <ProfilePage />,
+        authOnly: true,
     },
     [AppRoutes.LOGIN]: {
         path: RoutePath.login,

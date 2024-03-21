@@ -1,36 +1,23 @@
 import { useEffect } from 'react';
 import { AppRouter } from './providers/router';
-import { useSocketCtx } from './providers/WsProvider';
-
-const handleVisibilityChange = (socket: WebSocket, mangoSocket: WebSocket) => {
-    if (!document.hidden) {
-        if (
-            socket &&
-            socket.readyState !== WebSocket.OPEN &&
-            mangoSocket &&
-            mangoSocket.readyState !== WebSocket.OPEN
-        ) {
-            window.location.reload();
-        }
-    }
-};
+import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { checkUser } from '@/entities/User/model/actions/userActions';
+import { useSelector } from 'react-redux';
+import { getUserMounted } from '@/entities/User';
 
 const App = () => {
-    const { socket, mangoSocket } = useSocketCtx();
+    const dispatch = useAppDispatch();
+    const userMounted = useSelector(getUserMounted);
 
     useEffect(() => {
-        document.addEventListener('visibilitychange', () => {
-            handleVisibilityChange(socket, mangoSocket);
-        });
+        dispatch(checkUser());
+    }, [dispatch]);
 
-        return () => {
-            document.removeEventListener('visibilitychange', () => {
-                handleVisibilityChange(socket, mangoSocket);
-            });
-        };
-    }, [socket, mangoSocket]);
-
-    return <AppRouter />;
+    return (
+        userMounted && (
+            <AppRouter />
+        )
+    );
 };
 
 export default App;

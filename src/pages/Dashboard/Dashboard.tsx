@@ -9,10 +9,37 @@ import Toolbar from '@mui/material/Toolbar';
 import { useSelector } from 'react-redux';
 import { CommentsBox } from './CommentsBox/CommentsBox';
 import TablesBox from './Tables/TablesBox';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
+import { useSocketCtx } from '@/app/providers/WsProvider';
+
+const handleVisibilityChange = (socket: WebSocket, mangoSocket: WebSocket) => {
+    if (!document.hidden) {
+        if (
+            socket &&
+      socket.readyState !== WebSocket.OPEN &&
+      mangoSocket &&
+      mangoSocket.readyState !== WebSocket.OPEN
+        ) {
+            window.location.reload();
+        }
+    }
+};
 
 const Dashboard = memo(() => {
+    const { socket, mangoSocket } = useSocketCtx();
     const user = useSelector((state: StateSchema) => state.user.user);
+
+    useEffect(() => {
+        document.addEventListener('visibilitychange', () => {
+            handleVisibilityChange(socket, mangoSocket);
+        });
+
+        return () => {
+            document.removeEventListener('visibilitychange', () => {
+                handleVisibilityChange(socket, mangoSocket);
+            });
+        };
+    }, [socket, mangoSocket]);
 
     return (
         <Layout>
