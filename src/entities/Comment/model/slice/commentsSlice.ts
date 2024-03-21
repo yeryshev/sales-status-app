@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { type CommentsState } from '../types/CommentsState';
+import { type CommentsSchema } from '../types/CommentsSchema';
 import {
     addComment,
     deleteComment,
@@ -7,7 +7,7 @@ import {
     setMyComments,
 } from '../actions/commentsActions';
 
-const initialState: CommentsState = {
+const initialState: CommentsSchema = {
     list: [],
     fullList: [],
     loading: false,
@@ -67,7 +67,7 @@ export const commentsSlice = createSlice({
                 if (action.payload) {
                     state.list = state.list.filter((comment) => comment.id !== action.payload);
                     state.fullList = state.fullList.filter(
-                        (comment) => comment.id !== action.payload
+                        (comment) => comment.id !== action.payload,
                     );
                     state.loading = false;
                 }

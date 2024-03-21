@@ -11,7 +11,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Link as MuiLink, AppBar, Toolbar } from '@mui/material';
 import { type FormEvent } from 'react';
 import { useDispatch } from 'react-redux';
-import { setUser } from '../../../entities/User/model/slice/userSlice';
+import { userActions } from '@/entities/User';
 
 export default function RegisterPage() {
     const dispatch = useDispatch();
@@ -41,7 +41,7 @@ export default function RegisterPage() {
             return;
         case 201:
             user = await response.json();
-            dispatch(setUser(user));
+            dispatch(userActions.setAuthData(user));
             navigate('/');
             return;
         default:

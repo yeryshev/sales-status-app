@@ -1,4 +1,4 @@
-import SocketCtxProvider from './ui/WsProvider'
-import { useSocketCtx } from './lib/WsContext'
+import SocketCtxProvider from './ui/WsProvider';
+import { useSocketCtx } from './lib/WsContext';
 
-export { SocketCtxProvider, useSocketCtx }
+export { SocketCtxProvider, useSocketCtx };

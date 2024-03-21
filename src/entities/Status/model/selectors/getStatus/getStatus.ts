@@ -1,3 +1,3 @@
-import { RootState } from '@/app/providers/StoreProvider';
+import { StateSchema } from '@/app/providers/StoreProvider';
 
-export const getStatus = (state: RootState) => state.status;
+export const getStatus = (state: StateSchema) => state.status;

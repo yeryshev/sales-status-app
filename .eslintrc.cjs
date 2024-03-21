@@ -19,5 +19,9 @@ module.exports = {
         patterns: ['@mui/*/*/*'],
       },
     ],
+    'semi': ['error', 'always', { 'omitLastInOneLineBlock': false }],
+    'comma-dangle': ['error', 'always-multiline'],
+    'quotes': ['error', 'single'],
+    'object-curly-spacing': ['error', 'always'],
   },
 };

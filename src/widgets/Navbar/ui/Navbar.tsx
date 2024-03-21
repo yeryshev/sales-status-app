@@ -8,7 +8,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { clearUser } from '@/entities/User/model/actions/userActions';
 import { ThemeSwitcher } from '@/widgets/ThemeSwitcher';
 import { memo } from 'react';
-import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
+import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
 
 interface NavbarProps {
     toggleSideBar: () => () => void;
@@ -48,7 +49,7 @@ export const Navbar = memo(({ toggleSideBar }: NavbarProps) => {
                         noWrap
                         sx={{ flexGrow: 1 }}
                     >
-                        <Link to={'/'} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <Link to={RoutePath.main} style={{ textDecoration: 'none', color: 'inherit' }}>
                             Inbound Sales
                         </Link>
                     </Typography>

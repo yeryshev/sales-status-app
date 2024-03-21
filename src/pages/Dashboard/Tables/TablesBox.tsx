@@ -10,8 +10,8 @@ import { Link as RouterLink } from 'react-router-dom';
 import { checkUser } from '@/entities/User/model/actions/userActions';
 import { setTeamLocal } from '@/entities/Teammate/model/slice/teamSlice';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
-import { useAppDispatch } from '@/app/providers/StoreProvider/config/store';
-import { RootState } from '@/app/providers/StoreProvider';
+import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { StateSchema } from '@/app/providers/StoreProvider';
 
 const Statuses: Record<number, string> = {
     1: 'online',
@@ -20,12 +20,12 @@ const Statuses: Record<number, string> = {
 };
 
 const TablesBox = () => {
-    const user = useSelector((state: RootState) => state.user.user);
-    const team = useSelector((state: RootState) => state.team.list);
-    const teamLoading = useSelector((state: RootState) => state.team.loading);
-    const userId = useSelector((state: RootState) => state.user.user?.id);
+    const user = useSelector((state: StateSchema) => state.user.user);
+    const team = useSelector((state: StateSchema) => state.team.list);
+    const teamLoading = useSelector((state: StateSchema) => state.team.loading);
+    const userId = useSelector((state: StateSchema) => state.user.user?.id);
     const teammate = team.find((t) => t.id === userId && t.secondName && t.firstName);
-    const allComments = useSelector((state: RootState) => state.comments.fullList);
+    const allComments = useSelector((state: StateSchema) => state.comments.fullList);
     const dispatch = useAppDispatch();
     const { socket, mangoSocket } = useSocketCtx();
     const [mango, setMango] = useState<MangoRedisData>({});
@@ -44,7 +44,7 @@ const TablesBox = () => {
                         status: Statuses[statusId],
                         updatedAt,
                         isWorkingRemotely,
-                    })
+                    }),
                 );
                 dispatch(statusActions.changeStatus(user.statusId));
             }
@@ -59,7 +59,7 @@ const TablesBox = () => {
                             comment: comment.description,
                             updatedAt,
                             isWorkingRemotely,
-                        })
+                        }),
                     );
                 } else if (commentId === null) {
                     dispatch(setTeamLocal({ userId, comment: null, updatedAt, isWorkingRemotely }));
@@ -68,7 +68,7 @@ const TablesBox = () => {
                 }
             }
         },
-        [dispatch, user, allComments]
+        [dispatch, user, allComments],
     );
 
     const handleMangoChange = useCallback((event: MessageEvent) => {

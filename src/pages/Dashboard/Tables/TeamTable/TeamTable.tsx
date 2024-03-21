@@ -4,15 +4,16 @@ import TableBody from '@mui/material/TableBody';
 import Paper from '@mui/material/Paper';
 import Title from './Title';
 import { useSelector } from 'react-redux';
-import { type RootState } from '@/app/providers/StoreProvider';
+import { type StateSchema } from '@/app/providers/StoreProvider';
 import Row from '../Row/Row';
 import { type MangoRedisData } from '@/app/types/Mango';
 import LinearProgress from '@mui/material/LinearProgress';
+import { memo } from 'react';
 
-const TeamTable = ({ mango }: { mango: MangoRedisData }) => {
-    const team = useSelector((state: RootState) => state.team.list);
-    const teamLoading = useSelector((state: RootState) => state.team.loading);
-    const userdId = useSelector((state: RootState) => state.user.user?.id);
+const TeamTable = memo(({ mango }: { mango: MangoRedisData }) => {
+    const team = useSelector((state: StateSchema) => state.team.list);
+    const teamLoading = useSelector((state: StateSchema) => state.team.loading);
+    const userId = useSelector((state: StateSchema) => state.user.user?.id);
 
     return (
         <>
@@ -28,7 +29,7 @@ const TeamTable = ({ mango }: { mango: MangoRedisData }) => {
                                     (teammate) =>
                                         teammate.secondName &&
                                         teammate.firstName &&
-                                        teammate.id !== userdId
+                                        teammate.id !== userId,
                                 )
                                 .map((teammate) => (
                                     <Row
@@ -44,6 +45,6 @@ const TeamTable = ({ mango }: { mango: MangoRedisData }) => {
             )}
         </>
     );
-};
+});
 
 export default TeamTable;

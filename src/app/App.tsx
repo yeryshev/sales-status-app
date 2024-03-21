@@ -1,44 +1,23 @@
 import { useEffect } from 'react';
 import { AppRouter } from './providers/router';
-import { useSocketCtx } from './providers/WsProvider';
-
-/**
- * Handles the visibility change event of the document.
- * If the document is no longer hidden and both the `socket` and `mangoSocket` are not open,
- * it reloads the window.
- *
- * @param socket - передаёт информацию о смене статусов и комментариев
- * @param mangoSocket - передаёт информацию о телефоонных разговорах из Mango Office
- */
-const handleVisibilityChange = (socket: WebSocket, mangoSocket: WebSocket) => {
-    if (!document.hidden) {
-        if (
-            socket &&
-            socket.readyState !== WebSocket.OPEN &&
-            mangoSocket &&
-            mangoSocket.readyState !== WebSocket.OPEN
-        ) {
-            window.location.reload();
-        }
-    }
-};
+import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { checkUser } from '@/entities/User/model/actions/userActions';
+import { useSelector } from 'react-redux';
+import { getUserMounted } from '@/entities/User';
 
 const App = () => {
-    const { socket, mangoSocket } = useSocketCtx();
+    const dispatch = useAppDispatch();
+    const userMounted = useSelector(getUserMounted);
 
     useEffect(() => {
-        document.addEventListener('visibilitychange', () => {
-            handleVisibilityChange(socket, mangoSocket);
-        });
+        dispatch(checkUser());
+    }, [dispatch]);
 
-        return () => {
-            document.removeEventListener('visibilitychange', () => {
-                handleVisibilityChange(socket, mangoSocket);
-            });
-        };
-    }, [socket, mangoSocket]);
-
-    return <AppRouter />;
+    return (
+        userMounted && (
+            <AppRouter />
+        )
+    );
 };
 
 export default App;

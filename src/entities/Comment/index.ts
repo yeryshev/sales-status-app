@@ -1,5 +1,5 @@
 import { commentsReducer } from './model/slice/commentsSlice';
-import { CommentsState } from './model/types/CommentsState';
+import { CommentsSchema } from './model/types/CommentsSchema';
 import { Comment } from './model/types/Comment';
 
-export { commentsReducer, type CommentsState, type Comment };
+export { commentsReducer, type CommentsSchema, type Comment };

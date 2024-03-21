@@ -1,17 +1,45 @@
-import { useSelector } from 'react-redux';
+import { StateSchema } from '@/app/providers/StoreProvider';
+import { StatusBox } from '@/entities/Status';
+import { Layout } from '@/widgets/Layout';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import { RootState } from '@/app/providers/StoreProvider';
-import { StatusBox } from '@/entities/Status';
-import CommentsBox from './CommentsBox/CommentsBox';
+import Toolbar from '@mui/material/Toolbar';
+import { useSelector } from 'react-redux';
+import { CommentsBox } from './CommentsBox/CommentsBox';
 import TablesBox from './Tables/TablesBox';
-import { Layout } from '@/widgets/Layout';
+import { memo, useEffect } from 'react';
+import { useSocketCtx } from '@/app/providers/WsProvider';
 
-const Dashboard = () => {
-    const user = useSelector((state: RootState) => state.user.user);
+const handleVisibilityChange = (socket: WebSocket, mangoSocket: WebSocket) => {
+    if (!document.hidden) {
+        if (
+            socket &&
+      socket.readyState !== WebSocket.OPEN &&
+      mangoSocket &&
+      mangoSocket.readyState !== WebSocket.OPEN
+        ) {
+            window.location.reload();
+        }
+    }
+};
+
+const Dashboard = memo(() => {
+    const { socket, mangoSocket } = useSocketCtx();
+    const user = useSelector((state: StateSchema) => state.user.user);
+
+    useEffect(() => {
+        document.addEventListener('visibilitychange', () => {
+            handleVisibilityChange(socket, mangoSocket);
+        });
+
+        return () => {
+            document.removeEventListener('visibilitychange', () => {
+                handleVisibilityChange(socket, mangoSocket);
+            });
+        };
+    }, [socket, mangoSocket]);
 
     return (
         <Layout>
@@ -81,6 +109,6 @@ const Dashboard = () => {
             </Box>
         </Layout>
     );
-};
+});
 
 export default Dashboard;

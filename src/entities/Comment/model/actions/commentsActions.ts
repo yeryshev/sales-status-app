@@ -58,7 +58,7 @@ export const addComment = createAsyncThunk(
         } catch (error) {
             return null;
         }
-    }
+    },
 );
 
 export const deleteComment = createAsyncThunk(
@@ -73,7 +73,7 @@ export const deleteComment = createAsyncThunk(
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                }
+                },
             );
             if (response.ok) {
                 return commentId;
@@ -83,5 +83,5 @@ export const deleteComment = createAsyncThunk(
         } catch (error) {
             return null;
         }
-    }
+    },
 );

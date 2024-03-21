@@ -1,12 +1,13 @@
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import Drawer from '@mui/material/Drawer'
-import List from '@mui/material/List'
-import Box from '@mui/material/Box'
-import Divider from '@mui/material/Divider'
-import IconButton from '@mui/material/IconButton'
-import Toolbar from '@mui/material/Toolbar'
-import { NavbarItems } from './SidebarItems'
-import { memo } from 'react'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import IconButton from '@mui/material/IconButton';
+import Toolbar from '@mui/material/Toolbar';
+import { memo } from 'react';
+import { SidebarItemsList } from '@/widgets/Sidebar/model/items';
+import { SidebarItem } from '@/widgets/Sidebar/ui/SidebarItem/SidebarItem';
 
 interface SidebarProps {
   sideBarOpen: boolean
@@ -28,7 +29,7 @@ export const Sidebar = memo(({ sideBarOpen, toggleSideBar }: SidebarProps) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'flex-end',
-                        px: [1]
+                        px: [1],
                     }}
                 >
                     <IconButton onClick={toggleSideBar}>
@@ -37,9 +38,11 @@ export const Sidebar = memo(({ sideBarOpen, toggleSideBar }: SidebarProps) => {
                 </Toolbar>
                 <Divider />
                 <List component="nav">
-                    <NavbarItems />
+                    {SidebarItemsList.map((item) => (
+                        <SidebarItem key={item.path} item={item} />
+                    ))}
                 </List>
             </Box>
         </Drawer>
-    )
-})
+    );
+});

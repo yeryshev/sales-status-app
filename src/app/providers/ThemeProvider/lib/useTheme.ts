@@ -1,6 +1,7 @@
-import { type Theme as MuiTheme, useTheme as useMuiTheme } from '@mui/material/styles'
-import { useContext } from 'react'
-import { ThemeContext, Theme, LOCAL_STORAGE_THEME_KEY } from './ThemeContext'
+import { type Theme as MuiTheme, useTheme as useMuiTheme } from '@mui/material/styles';
+import { useContext } from 'react';
+import { ThemeContext, Theme } from './ThemeContext';
+import { LOCAL_STORAGE_THEME_KEY } from '@/shared/const/localStorage';
 
 interface UseThemeResult {
   theme: MuiTheme
@@ -8,13 +9,13 @@ interface UseThemeResult {
 }
 
 export function useTheme (): UseThemeResult {
-    const theme = useMuiTheme<MuiTheme>()
-    const { setTheme } = useContext(ThemeContext)
+    const theme = useMuiTheme<MuiTheme>();
+    const { setTheme } = useContext(ThemeContext);
     const toggleTheme = () => {
-        const newTheme = theme.palette.mode === Theme.LIGHT ? Theme.DARK : Theme.LIGHT
-        setTheme(newTheme)
-        localStorage.setItem(LOCAL_STORAGE_THEME_KEY, newTheme)
-    }
+        const newTheme = theme.palette.mode === Theme.LIGHT ? Theme.DARK : Theme.LIGHT;
+        setTheme(newTheme);
+        localStorage.setItem(LOCAL_STORAGE_THEME_KEY, newTheme);
+    };
 
-    return { theme, toggleTheme }
+    return { theme, toggleTheme };
 }

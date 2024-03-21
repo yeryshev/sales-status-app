@@ -1,5 +1,13 @@
-import { userReducer } from './model/slice/userSlice';
-import { UserState } from './model/types/UserState';
-import { User } from './model/types/User';
+import { userActions, userReducer } from './model/slice/userSlice';
+import { User, UserSchema } from './model/types/User';
+import { getUserAuthData } from './model/selectors/getUserAuthData/getUserAuthData';
+import { getUserMounted } from './model/selectors/getUserMounted/getUserMounted';
 
-export { userReducer, type UserState, type User };
+export {
+    userReducer,
+    userActions,
+    type UserSchema,
+    type User,
+    getUserAuthData,
+    getUserMounted,
+};
