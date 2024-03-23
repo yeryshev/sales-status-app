@@ -9,6 +9,7 @@ class UserUpdate(BaseModel):
     photo_url: Optional[str] = Field(None, alias="photoUrl")
     ext_number: Optional[str] = Field(None, alias="extNumber")
     telegram: Optional[str] = Field(None, alias="telegram")
+    inside_id: Optional[int] = Field(None, alias="insideId")
     is_working_remotely: Optional[bool] = Field(None, alias="isWorkingRemotely")
     status_id: Optional[int] = Field(None, alias="statusId")
     comment_id: Optional[int] = Field(None, alias="commentId")
@@ -25,6 +26,7 @@ class UserRead(BaseModel):
     photo_url: Optional[str] = Field(None, serialization_alias="photoUrl")
     ext_number: Optional[str] = Field(None, serialization_alias="extNumber")
     telegram: Optional[str] = Field(None, serialization_alias="telegram")
+    inside_id: Optional[int] = Field(None, serialization_alias="insideId")
     is_working_remotely: Optional[bool] = Field(None, serialization_alias="isWorkingRemotely")
     status_id: int = Field(None, serialization_alias="statusId")
     comment_id: Optional[int] = Field(None, serialization_alias="commentId")
@@ -41,6 +43,7 @@ class Teammate(BaseModel):
     photo_url: Optional[str] = Field(None, serialization_alias="photoUrl")
     ext_number: Optional[str] = Field(None, serialization_alias="extNumber")
     telegram: Optional[str] = Field(None, serialization_alias="telegram")
+    inside_id: Optional[int] = Field(None, serialization_alias="insideId")
     is_working_remotely: Optional[bool] = Field(None, serialization_alias="isWorkingRemotely")
     status: Optional[str]
     comment: Optional[str]

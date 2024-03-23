@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin, exceptions, models, schemas
@@ -29,8 +29,8 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         )
         password = user_dict.pop("password")
         user_dict["hashed_password"] = self.password_helper.hash(password)
-        user_dict['created_at'] = datetime.utcnow()
-        user_dict['updated_at'] = datetime.utcnow()
+        user_dict['created_at'] = datetime.now(timezone.utc)
+        user_dict['updated_at'] = datetime.now(timezone.utc)
 
         created_user = await self.user_db.create(user_dict)
 
@@ -40,6 +40,14 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
 
     async def on_after_register(self, user: User, request: Optional[Request] = None):
         pass
+
+    async def on_after_forgot_password(
+            self, user: User, token: str, request: Optional[Request] = None
+    ):
+        print(f"User {user.id} has forgot their password. Reset token: {token}")
+
+    async def on_after_reset_password(self, user: User, request: Optional[Request] = None):
+        print(f"User {user.id} has reset their password.")
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):

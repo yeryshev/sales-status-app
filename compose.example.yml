@@ -1,99 +1,104 @@
 services:
+
   nginx-proxy:
     image: nginxproxy/nginx-proxy
     container_name: nginx-proxy
+    restart: always
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
     volumes:
-      - certs:/etc/nginx/certs
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs:ro
 
-  nginx-proxy-acme:
-    image: nginxproxy/acme-companion
-    container_name: nginx-proxy-acme
+  lego-acme:
+    image: cilenco/lego-cron-wrapper
+    container_name: lego-acme
+    restart: always
+    command: >
+      --accept-tos --email=example@gmail.com --dns selectel
+      --domains=*.status.sales.example.org --domains=status.sales.example.org
+    environment:
+      - RUN_ARGUMENTS=--run-hook=/app/deploy
+      - RENEW_ARGUMENTS=--renew-hook=/app/deploy
+      - SELECTEL_API_TOKEN=ENTER_TOKEN_HERE
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - acme:/etc/acme.sh
-    volumes_from:
-      - nginx-proxy
-    environment:
-      DEFAULT_EMAIL: 'example@gmail.com'
-    depends_on:
-      - nginx-proxy
+      - certs:/app/certificates
+      - ../deploy.sh:/app/deploy
 
-  celery:
-    build: .
-    command: celery -A src.tasks.tasks:celery worker -B --loglevel=info
-    volumes:
-      - ./:/usr/src/app
+  frontend:
+    build: ../frontend
+    container_name: frontend
+    restart: always
     environment:
-      CELERY_BROKER_URL: 'redis://redis:6379/0'
-      CELERY_RESULT_BACKEND: 'redis://redis:6379/0'
+      - VIRTUAL_HOST=status.sales.example.org
     depends_on:
       - backend
-      - redis
-
-  redis:
-    image: redis:7
-    restart: always
-    volumes:
-      - redis-data:/data
-
-  flower:
-    build: .
-    command: celery --broker=redis://redis:6379/0 flower --port=5555
-    environment:
-      CELERY_BROKER_URL: 'redis://redis:6379/0'
-      CELERY_RESULT_BACKEND: 'redis://redis:6379/0'
-      VIRTUAL_PORT: 5555
-      VIRTUAL_HOST: 'flower.example.com'
-      LETSENCRYPT_HOST: 'flower.example.com'
-      LETSENCRYPT_EMAIL: 'example@gmail.com'
-    depends_on:
-      - celery
+      - nginx-proxy
 
   backend:
     build: .
+    container_name: backend
+    restart: always
     command: gunicorn src.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000
     ports:
       - '8000:8000'
     volumes:
       - ./:/usr/src/app
     environment:
-      CELERY_BROKER_URL: 'redis://redis:6379/0'
-      CELERY_RESULT_BACKEND: 'redis://redis:6379/0'
-      VIRTUAL_HOST: 'api.example.com'
-      VIRTUAL_PORT: 8000
-      LETSENCRYPT_HOST: 'api.example.com'
-      LETSENCRYPT_EMAIL: 'example@gmail.com'
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - VIRTUAL_PORT=8000
+      - VIRTUAL_HOST=api.status.sales.example.org
     depends_on:
       - redis
       - nginx-proxy
 
-  frontend:
-    build: ../frontend
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    volumes:
+      - redis-data:/data
+
+  celery:
+    build: .
+    container_name: celery
+    restart: always
+    command: celery -A src.tasks.tasks:celery worker -B --loglevel=info
+    volumes:
+      - ./:/usr/src/app
     environment:
-      VIRTUAL_HOST: 'example.com'
-      LETSENCRYPT_HOST: 'example.com'
-      LETSENCRYPT_EMAIL: 'example@gmail.com'
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     depends_on:
       - backend
-      - nginx-proxy
+      - redis
 
-    telegram-bot:
-      build: ../drb-status-bot
-      volumes:
-        - telegram-data:/app/
-      depends_on:
-        - backend
+  flower:
+    build: .
+    container_name: flower
+    restart: always
+    command: celery --broker=redis://redis:6379/0 flower --port=5555
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - VIRTUAL_PORT=5555
+      - VIRTUAL_HOST=flower.status.sales.example.org
+    depends_on:
+      - celery
+
+  telegram-bot:
+    build: ../telegram
+    restart: always
+    container_name: telegram-bot
+    volumes:
+      - telegram-data:/app/
+    depends_on:
+      - backend
 
 volumes:
   certs:
-  vhost:
-  html:
-  acme:
   redis-data:
   telegram-data:

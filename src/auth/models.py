@@ -22,6 +22,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     second_name: Mapped[Optional[str]]
     photo_url: Mapped[Optional[str]]
     ext_number: Mapped[Optional[str]]
+    inside_id: Mapped[Optional[int]] = mapped_column(unique=True, nullable=True)
     telegram: Mapped[Optional[str]]
     is_working_remotely: Mapped[bool] = mapped_column(default=False)
     status_id: Mapped[int] = mapped_column(default=3)

@@ -5,7 +5,7 @@ Revises:
 Create Date: 2023-10-30 19:54:03.316163
 
 """
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Sequence, Union
 
 from alembic import op
@@ -30,7 +30,7 @@ def upgrade() -> None:
             'updated_at',
             sa.DateTime,
             server_default=text("TIMEZONE('utc', now())"),
-            onupdate=datetime.utcnow,),
+            onupdate=datetime.now(timezone.utc)),
     )
 
     op.create_table(
