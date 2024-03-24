@@ -1,4 +1,3 @@
-import styles from './Row.module.scss';
 import moment from 'moment';
 import { type ChangeEvent, memo, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
@@ -11,19 +10,32 @@ import Collapse from '@mui/material/Collapse';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
-import { Avatar, Link, Skeleton, Switch, Tooltip } from '@mui/material';
+import { Avatar, Chip, Link, Skeleton, Switch, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { Teammate } from '@/entities/Teammate';
 import { updateUser } from '@/entities/User/model/actions/userActions';
-import { classNames } from '@/shared/lib/classNames/classNames';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
+import { OverridableStringUnion } from '@mui/types';
+import { ChipPropsColorOverrides } from '@mui/material/Chip';
+import PhoneIcon from '@mui/icons-material/Phone';
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
     online: 'онлайн',
     busy: 'занят',
     offline: 'оффлайн',
 };
+
+const StatusColors: Record<
+  'online' | 'busy' | 'offline',
+  OverridableStringUnion<
+    'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning',
+  ChipPropsColorOverrides
+  >> = {
+      'online': 'success',
+      'busy': 'primary',
+      'offline': 'default',
+  };
 
 const Row = memo(
     ({ teammate, expanded, mango }: { teammate: Teammate; expanded: boolean; mango: boolean }) => {
@@ -73,15 +85,28 @@ const Row = memo(
                                 disableFocusListener
                                 title={`Последнее обновление в ${updateTimeMsk}`}
                             >
-                                <div
-                                    className={classNames(styles.status, {}, [
-                                        styles[teammate.status],
-                                    ])}
-                                >
-                                    {mango ? <a>на звонке 📞</a> : statuses[teammate.status]}{' '}
-                                    {teammate.isWorkingRemotely && 'удалённо'}
-                                </div>
+                                <Chip
+                                    label={
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                            {
+                                                mango ?
+                                                    <div
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: 4,
+                                                        }}>
+                                                        <PhoneIcon /> на звонке
+                                                    </div> : statuses[teammate.status]
+                                            }
+                                            {' '}
+                                            {teammate.isWorkingRemotely && 'удалённо'}
+                                        </div>
+                                    }
+                                    color={StatusColors[teammate.status]}
+                                />
                             </Tooltip>
+
                         )}
                     </TableCell>
                     <TableCell align="left">
