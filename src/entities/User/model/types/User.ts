@@ -6,6 +6,7 @@ export interface User {
   secondName: string
   photoUrl: string
   extNumber: string
+  insideId: number
   telegram: string
   isWorkingRemotely: boolean
   statusId: number

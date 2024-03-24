@@ -27,7 +27,7 @@ const TablesBox = () => {
     const teammate = team.find((t) => t.id === userId && t.secondName && t.firstName);
     const allComments = useSelector((state: StateSchema) => state.comments.fullList);
     const dispatch = useAppDispatch();
-    const { socket, mangoSocket } = useSocketCtx();
+    const [ socket, mangoSocket, tasksSocket ] = useSocketCtx();
     const [mango, setMango] = useState<MangoRedisData>({});
 
     const handleStatusChange = useCallback(
@@ -73,10 +73,16 @@ const TablesBox = () => {
 
     const handleMangoChange = useCallback((event: MessageEvent) => {
         const dataFromSocket: MangoWsData = JSON.parse(event.data);
+        console.log(dataFromSocket);
         if (dataFromSocket.type === 'mango') {
             const key = Object.keys(dataFromSocket.data)[0];
             setMango((prev) => ({ ...prev, [key]: dataFromSocket.data[key] }));
         }
+    }, []);
+
+    const handleTasksChange = useCallback((event: MessageEvent) => {
+        const dataFromSocket = JSON.parse(event.data);
+        console.log(dataFromSocket);
     }, []);
 
     useEffect(() => {
@@ -98,14 +104,23 @@ const TablesBox = () => {
     }, []);
 
     useEffect(() => {
-        socket.addEventListener('message', handleStatusChange);
-        mangoSocket.addEventListener('message', handleMangoChange);
+        socket?.addEventListener('message', handleStatusChange);
+        mangoSocket?.addEventListener('message', handleMangoChange);
+        tasksSocket?.addEventListener('message', handleTasksChange);
 
         return () => {
-            socket.removeEventListener('message', handleStatusChange);
-            mangoSocket.removeEventListener('message', handleMangoChange);
+            socket?.removeEventListener('message', handleStatusChange);
+            mangoSocket?.removeEventListener('message', handleMangoChange);
+            tasksSocket?.removeEventListener('message', handleTasksChange);
         };
-    }, [socket, mangoSocket, handleStatusChange, handleMangoChange]);
+    }, [
+        socket,
+        mangoSocket,
+        tasksSocket,
+        handleStatusChange, 
+        handleMangoChange,
+        handleTasksChange,
+    ]);
 
     useEffect(() => {
         dispatch(setTeam());
