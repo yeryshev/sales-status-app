@@ -5,10 +5,18 @@ from sqlalchemy.orm import Mapped, mapped_column
 from src.database import Base
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
-created_at = Annotated[datetime, mapped_column(server_default=text("TIMEZONE('utc', now())"))]
-updated_at = Annotated[datetime, mapped_column(
+
+created_at = Annotated[
+    datetime,
+    mapped_column(
+        server_default=text("TIMEZONE('utc', now())")
+    )]
+
+updated_at = Annotated[
+    datetime,
+    mapped_column(
         server_default=text("TIMEZONE('utc', now())"),
-        onupdate=datetime.now(timezone.utc),
+        onupdate=text("TIMEZONE('utc', now())")
     )]
 
 

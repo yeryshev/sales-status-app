@@ -5,7 +5,7 @@ Revises:
 Create Date: 2023-10-30 19:54:03.316163
 
 """
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Sequence, Union
 
 from alembic import op
@@ -30,7 +30,7 @@ def upgrade() -> None:
             'updated_at',
             sa.DateTime,
             server_default=text("TIMEZONE('utc', now())"),
-            onupdate=datetime.now(timezone.utc)),
+            onupdate=datetime.utcnow,),
     )
 
     op.create_table(
@@ -54,7 +54,7 @@ def upgrade() -> None:
         sa.Column('is_superuser', sa.Boolean, default=False),
         sa.Column('is_verified', sa.Boolean, default=False),
         sa.Column('created_at', sa.DateTime),
-        sa.Column('updated_at', sa.DateTime),
+        sa.Column('updated_at', sa.DateTime)
     )
 
     op.create_table(

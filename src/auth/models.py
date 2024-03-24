@@ -29,7 +29,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     comment_id: Mapped[Optional[int]] = mapped_column(ForeignKey(
         Comment.id,
         name="users_comment_id_fkey",
-        ondelete="SET NULL"
+        ondelete="SET NULL",
     ))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_superuser: Mapped[bool] = mapped_column(
