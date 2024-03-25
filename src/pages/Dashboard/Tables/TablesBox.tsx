@@ -1,7 +1,7 @@
 import { Grid, Paper, Link as MuiLink } from '@mui/material';
 import TeamTable from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setTeam } from '@/entities/Teammate/model/actions/teamActions';
 import UserTable from './UserTable/UserTable';
 import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
@@ -28,9 +28,13 @@ const TablesBox = () => {
     const teammate = team.find((t) => t.id === userId && t.secondName && t.firstName);
     const allComments = useSelector((state: StateSchema) => state.comments.fullList);
     const dispatch = useAppDispatch();
-    const [ socket, mangoSocket, tasksSocket ] = useSocketCtx();
+    const [ socket, mangoSocket ] = useSocketCtx();
     const [ mango, setMango ] = useState<MangoRedisData>({});
     const [ tasks, setTasks ] = useState<UsersTasks>({});
+
+    const tasksSocket = useMemo(() => {
+        return new WebSocket(`${import.meta.env.VITE_TASKS_SOCKET_URL}`);
+    }, []);
 
     const handleStatusChange = useCallback(
         (event: MessageEvent) => {
