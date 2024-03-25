@@ -56,6 +56,7 @@ const Row = (
     const user = useSelector((state: StateSchema) => state.user.user);
     const dispatch = useAppDispatch();
     const updateTimeMsk = moment.utc(teammate.updatedAt).utcOffset('+0300').format('HH:mm');
+    console.log('STATE FROM ROW', tasks);
 
     const handleSwitch = (e: ChangeEvent<HTMLInputElement>) => {
         if (user) {

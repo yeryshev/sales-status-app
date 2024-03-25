@@ -31,6 +31,7 @@ const TablesBox = () => {
     const [ socket, mangoSocket, tasksSocket ] = useSocketCtx();
     const [ mango, setMango ] = useState<MangoRedisData>({});
     const [ tasks, setTasks ] = useState<UsersTasks>({});
+    console.log('STATE FROM TABLES BOX', tasks);
 
     const handleStatusChange = useCallback(
         (event: MessageEvent) => {
@@ -83,6 +84,7 @@ const TablesBox = () => {
 
     const handleTasksChange = useCallback((event: MessageEvent) => {
         const dataFromSocket = JSON.parse(event.data);
+        console.log('DATA FROM SOCKET', dataFromSocket);
         if (dataFromSocket.type === 'tasks') {
             setTasks(dataFromSocket.data);
         }
