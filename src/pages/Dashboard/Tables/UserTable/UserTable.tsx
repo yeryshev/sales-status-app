@@ -9,8 +9,21 @@ import { type MangoRedisData } from '@/app/types/Mango';
 import { Teammate } from '@/entities/Teammate';
 import Row from '../Row/Row';
 import { memo } from 'react';
+import { UsersTasks } from '@/app/types/Tasks';
 
-const UserTable = memo(({ teammate, mango }: { teammate: Teammate; mango: MangoRedisData }) => {
+const UserTable = memo((
+    {
+        teammate,
+        mango,
+        tasks,
+        // tasksAreLoading,
+    }: {
+        teammate: Teammate;
+        mango: MangoRedisData;
+        tasks: UsersTasks
+        // tasksAreLoading: boolean
+    },
+) => {
     return (
         <TableContainer component={Paper} style={{ overflowX: 'auto' }}>
             <Table size="small">
@@ -20,6 +33,9 @@ const UserTable = memo(({ teammate, mango }: { teammate: Teammate; mango: MangoR
                         <TableCell align="left">Имя</TableCell>
                         <TableCell align="left">Статус</TableCell>
                         <TableCell align="left">Комментарий</TableCell>
+                        <TableCell align="right">Первичка</TableCell>
+                        <TableCell align="right">Просрочка</TableCell>
+                        <TableCell align="right">Чаты</TableCell>
                         <TableCell align="right">Удалёнка</TableCell>
                     </TableRow>
                 </TableHead>
@@ -29,6 +45,7 @@ const UserTable = memo(({ teammate, mango }: { teammate: Teammate; mango: MangoR
                         teammate={teammate}
                         expanded={false}
                         mango={mango[teammate.extNumber]}
+                        tasks={tasks[teammate.insideId]}
                     />
                 </TableBody>
             </Table>

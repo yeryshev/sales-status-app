@@ -12,6 +12,7 @@ import { setTeamLocal } from '@/entities/Teammate/model/slice/teamSlice';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
+import { UsersTasks } from '@/app/types/Tasks';
 
 const Statuses: Record<number, string> = {
     1: 'online',
@@ -28,7 +29,8 @@ const TablesBox = () => {
     const allComments = useSelector((state: StateSchema) => state.comments.fullList);
     const dispatch = useAppDispatch();
     const [ socket, mangoSocket, tasksSocket ] = useSocketCtx();
-    const [mango, setMango] = useState<MangoRedisData>({});
+    const [ mango, setMango ] = useState<MangoRedisData>({});
+    const [ tasks, setTasks ] = useState<UsersTasks>({});
 
     const handleStatusChange = useCallback(
         (event: MessageEvent) => {
@@ -73,7 +75,6 @@ const TablesBox = () => {
 
     const handleMangoChange = useCallback((event: MessageEvent) => {
         const dataFromSocket: MangoWsData = JSON.parse(event.data);
-        console.log(dataFromSocket);
         if (dataFromSocket.type === 'mango') {
             const key = Object.keys(dataFromSocket.data)[0];
             setMango((prev) => ({ ...prev, [key]: dataFromSocket.data[key] }));
@@ -82,7 +83,9 @@ const TablesBox = () => {
 
     const handleTasksChange = useCallback((event: MessageEvent) => {
         const dataFromSocket = JSON.parse(event.data);
-        console.log(dataFromSocket);
+        if (dataFromSocket.type === 'tasks') {
+            setTasks(dataFromSocket.data);
+        }
     }, []);
 
     useEffect(() => {
@@ -132,7 +135,7 @@ const TablesBox = () => {
                 {!teamLoading && (
                     <Paper sx={{ p: 2 }}>
                         {teammate ? (
-                            <UserTable teammate={teammate} mango={mango} />
+                            <UserTable teammate={teammate} mango={mango} tasks={tasks} />
                         ) : (
                             <div>
                                 Чтобы принять участие, необходимо указать имя и фамилию в{' '}
@@ -147,7 +150,7 @@ const TablesBox = () => {
             {team && (
                 <Grid item xs={12}>
                     <Paper sx={{ p: 2 }}>
-                        <TeamTable mango={mango} />
+                        <TeamTable mango={mango} tasks={tasks} />
                     </Paper>
                 </Grid>
             )}

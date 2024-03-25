@@ -9,8 +9,20 @@ import Row from '../Row/Row';
 import { type MangoRedisData } from '@/app/types/Mango';
 import LinearProgress from '@mui/material/LinearProgress';
 import { memo } from 'react';
+import { UsersTasks } from '@/app/types/Tasks';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import TableCell from '@mui/material/TableCell';
 
-const TeamTable = memo(({ mango }: { mango: MangoRedisData }) => {
+const TeamTable = memo((
+    {
+        mango,
+        tasks,
+    }: {
+        mango: MangoRedisData,
+        tasks: UsersTasks,
+    },
+) => {
     const team = useSelector((state: StateSchema) => state.team.list);
     const teamLoading = useSelector((state: StateSchema) => state.team.loading);
     const userId = useSelector((state: StateSchema) => state.user.user?.id);
@@ -23,6 +35,18 @@ const TeamTable = memo(({ mango }: { mango: MangoRedisData }) => {
             ) : (
                 <TableContainer component={Paper} style={{ overflowX: 'auto' }}>
                     <Table size="small">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell></TableCell>
+                                <TableCell align="left"></TableCell>
+                                <TableCell align="left"></TableCell>
+                                <TableCell align="left"></TableCell>
+                                <TableCell align="right">Первичка</TableCell>
+                                <TableCell align="right">Просрочка</TableCell>
+                                <TableCell align="right">Чаты</TableCell>
+                                <TableCell align="right"></TableCell>
+                            </TableRow>
+                        </TableHead>
                         <TableBody>
                             {team
                                 .filter(
@@ -37,6 +61,7 @@ const TeamTable = memo(({ mango }: { mango: MangoRedisData }) => {
                                         teammate={teammate}
                                         expanded={true}
                                         mango={mango[teammate.extNumber]}
+                                        tasks={tasks[teammate.insideId]}
                                     />
                                 ))}
                         </TableBody>
