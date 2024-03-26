@@ -124,21 +124,21 @@ const Row = (
                 <TableCell align="left">
                     {loading ? <Skeleton variant="text" /> : teammate.comment}
                 </TableCell>
-                <TableCell align="center" sx={{ width: '50px' }}>
+                <TableCell align="center" sx={{ width: '105px' }}>
                     {!tasks && !loading ? <Skeleton variant="text" /> : <Chip
                         label={tasks.leads}
                         variant={'outlined'}
                         color={tasks.leads > 20 ? 'error' : (tasks.leads === 0 ? 'success' : 'primary')}
                     ></Chip>}
                 </TableCell>
-                <TableCell align="center" sx={{ width: '50px' }}>
+                <TableCell align="center" sx={{ width: '105px' }}>
                     {!tasks && !loading ? <Skeleton variant="text" /> : <Chip
                         label={tasks.tasks}
                         variant={'outlined'}
                         color={tasks.tasks > 20 ? 'error' : (tasks.tasks === 0 ? 'success' : 'primary')}
                     ></Chip>}
                 </TableCell>
-                <TableCell align="center" sx={{ width: '50px' }}>
+                <TableCell align="center" sx={{ width: '105px' }}>
                     {!tasks && !loading ? <Skeleton variant="text" /> : <Chip
                         label={tasks.conversations}
                         variant={'outlined'}

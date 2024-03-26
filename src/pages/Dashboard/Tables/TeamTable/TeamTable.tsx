@@ -41,9 +41,9 @@ const TeamTable = memo((
                                 <TableCell align="left"></TableCell>
                                 <TableCell align="left"></TableCell>
                                 <TableCell align="left"></TableCell>
-                                <TableCell align="right">Первичка</TableCell>
-                                <TableCell align="right">Просрочка</TableCell>
-                                <TableCell align="right">Чаты</TableCell>
+                                <TableCell align="center">Первичка</TableCell>
+                                <TableCell align="center">Просрочка</TableCell>
+                                <TableCell align="center">Чаты</TableCell>
                                 <TableCell align="right"></TableCell>
                             </TableRow>
                         </TableHead>

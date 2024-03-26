@@ -30,12 +30,12 @@ const UserTable = memo((
                 <TableHead>
                     <TableRow>
                         <TableCell></TableCell>
-                        <TableCell align="left">Имя</TableCell>
-                        <TableCell align="left">Статус</TableCell>
+                        <TableCell align="left"></TableCell>
+                        <TableCell align="left"></TableCell>
                         <TableCell align="left">Комментарий</TableCell>
-                        <TableCell align="right">Первичка</TableCell>
-                        <TableCell align="right">Просрочка</TableCell>
-                        <TableCell align="right">Чаты</TableCell>
+                        <TableCell align="center">Первичка</TableCell>
+                        <TableCell align="center">Просрочка</TableCell>
+                        <TableCell align="center">Чаты</TableCell>
                         <TableCell align="right">Удалёнка</TableCell>
                     </TableRow>
                 </TableHead>
