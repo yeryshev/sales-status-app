@@ -11,3 +11,12 @@ export interface TasksWs {
   type: 'tasks'
   data: UsersTasks
 }
+
+export type UserTickets = string | number
+
+export type UsersTickets = Record<number, UserTickets>
+
+export interface TicketsWs {
+  type: 'tickets'
+  data: UsersTickets
+}

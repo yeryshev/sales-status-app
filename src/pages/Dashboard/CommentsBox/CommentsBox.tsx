@@ -97,6 +97,10 @@ export const CommentsBox = memo(() => {
                                 type="text"
                                 id="comments"
                                 autoComplete="off"
+                                size={'small'}
+                                inputProps={{
+                                    maxLength: 40,
+                                }}
                                 value={commentInput}
                                 onChange={(e) => {
                                     setCommentInput(e.target.value);
@@ -136,12 +140,13 @@ export const CommentsBox = memo(() => {
                     </Snackbar>
                 </Box>
                 <FormControl fullWidth sx={{ mb: 2 }}>
-                    <InputLabel id="demo-simple-select-label">Выбрать</InputLabel>
+                    <InputLabel id="demo-simple-select-label" size={'small'}>Выбрать</InputLabel>
                     <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select-vadim"
                         value={age}
                         label="Выбрать комментарий"
+                        size={'small'}
                         onChange={handleChange}
                     >
                         {comments.map((comment) => (
@@ -166,6 +171,7 @@ export const CommentsBox = memo(() => {
                             }}
                             disabled={selectedComment === null}
                             color="success"
+                            size={'small'}
                         >
                             Установить
                         </Button>
@@ -177,6 +183,7 @@ export const CommentsBox = memo(() => {
                             }}
                             disabled={selectedComment === null}
                             color="error"
+                            size={'small'}
                         >
                             Удалить
                         </Button>
@@ -184,6 +191,7 @@ export const CommentsBox = memo(() => {
                     <Grid item>
                         <Button
                             disabled={user?.commentId === null}
+                            size={'small'}
                             onClick={() => {
                                 handlePickComment(null);
                             }}

@@ -12,7 +12,7 @@ import { setTeamLocal } from '@/entities/Teammate/model/slice/teamSlice';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
-import { UsersTasks } from '@/app/types/Tasks';
+import { UsersTasks, UsersTickets } from '@/app/types/Tasks';
 
 const Statuses: Record<number, string> = {
     1: 'online',
@@ -31,6 +31,7 @@ const TablesBox = () => {
     const [ socket, mangoSocket ] = useSocketCtx();
     const [ mango, setMango ] = useState<MangoRedisData>({});
     const [ tasks, setTasks ] = useState<UsersTasks>({});
+    const [ tickets, setTickets ] = useState<UsersTickets>({});
 
     const tasksSocket = useMemo(() => {
         return new WebSocket(`${import.meta.env.VITE_TASKS_SOCKET_URL}`);
@@ -90,6 +91,9 @@ const TablesBox = () => {
         if (dataFromSocket.type === 'tasks') {
             setTasks(dataFromSocket.data);
         }
+        if (dataFromSocket.type === 'tickets') {
+            setTickets(dataFromSocket.data);
+        }
     }, []);
 
     useEffect(() => {
@@ -139,7 +143,12 @@ const TablesBox = () => {
                 {!teamLoading && (
                     <Paper sx={{ p: 2 }}>
                         {teammate ? (
-                            <UserTable teammate={teammate} mango={mango} tasks={tasks} />
+                            <UserTable
+                                teammate={teammate}
+                                mango={mango}
+                                tasks={tasks}
+                                tickets={tickets}
+                            />
                         ) : (
                             <div>
                                 Чтобы принять участие, необходимо указать имя и фамилию в{' '}
@@ -154,7 +163,11 @@ const TablesBox = () => {
             {team && (
                 <Grid item xs={12}>
                     <Paper sx={{ p: 2 }}>
-                        <TeamTable mango={mango} tasks={tasks} />
+                        <TeamTable
+                            mango={mango}
+                            tasks={tasks}
+                            tickets={tickets}
+                        />
                     </Paper>
                 </Grid>
             )}

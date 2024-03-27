@@ -1,15 +1,13 @@
 import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import Paper from '@mui/material/Paper';
-import Title from './Title';
 import { useSelector } from 'react-redux';
 import { type StateSchema } from '@/app/providers/StoreProvider';
 import Row from '../Row/Row';
 import { type MangoRedisData } from '@/app/types/Mango';
 import LinearProgress from '@mui/material/LinearProgress';
 import { memo } from 'react';
-import { UsersTasks } from '@/app/types/Tasks';
+import { UsersTasks, UsersTickets } from '@/app/types/Tasks';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
@@ -18,9 +16,11 @@ const TeamTable = memo((
     {
         mango,
         tasks,
+        tickets,
     }: {
         mango: MangoRedisData,
         tasks: UsersTasks,
+        tickets: UsersTickets
     },
 ) => {
     const team = useSelector((state: StateSchema) => state.team.list);
@@ -29,11 +29,10 @@ const TeamTable = memo((
 
     return (
         <>
-            <Title>Мои коллеги</Title>
             {teamLoading ? (
                 <LinearProgress />
             ) : (
-                <TableContainer component={Paper} style={{ overflowX: 'auto' }}>
+                <TableContainer style={{ overflowX: 'auto' }}>
                     <Table size="small">
                         <TableHead>
                             <TableRow>
@@ -41,10 +40,9 @@ const TeamTable = memo((
                                 <TableCell align="left"></TableCell>
                                 <TableCell align="left"></TableCell>
                                 <TableCell align="left"></TableCell>
-                                <TableCell align="center">Первичка</TableCell>
-                                <TableCell align="center">Просрочка</TableCell>
-                                <TableCell align="center">Чаты</TableCell>
-                                <TableCell align="right"></TableCell>
+                                <TableCell align="center">{'Первичка' + '\n' + 'Просрочка'}</TableCell>
+                                <TableCell align="center">{'Чаты' + '\n' + 'Тикеты'}</TableCell>
+                                <TableCell align="center"></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -62,6 +60,7 @@ const TeamTable = memo((
                                         expanded={true}
                                         mango={mango[teammate.extNumber]}
                                         tasks={tasks[teammate.insideId]}
+                                        tickets={tickets[teammate.insideId]}
                                     />
                                 ))}
                         </TableBody>

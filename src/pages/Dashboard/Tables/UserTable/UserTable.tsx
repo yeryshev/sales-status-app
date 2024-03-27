@@ -1,4 +1,3 @@
-import Paper from '@mui/material/Paper';
 import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
 import TableHead from '@mui/material/TableHead';
@@ -9,23 +8,23 @@ import { type MangoRedisData } from '@/app/types/Mango';
 import { Teammate } from '@/entities/Teammate';
 import Row from '../Row/Row';
 import { memo } from 'react';
-import { UsersTasks } from '@/app/types/Tasks';
+import { UsersTasks, UsersTickets } from '@/app/types/Tasks';
 
 const UserTable = memo((
     {
         teammate,
         mango,
         tasks,
-        // tasksAreLoading,
+        tickets,
     }: {
         teammate: Teammate;
         mango: MangoRedisData;
-        tasks: UsersTasks
-        // tasksAreLoading: boolean
+        tasks: UsersTasks;
+        tickets: UsersTickets;
     },
 ) => {
     return (
-        <TableContainer component={Paper} style={{ overflowX: 'auto' }}>
+        <TableContainer style={{ overflowX: 'auto' }}>
             <Table size="small">
                 <TableHead>
                     <TableRow>
@@ -33,10 +32,9 @@ const UserTable = memo((
                         <TableCell align="left"></TableCell>
                         <TableCell align="left"></TableCell>
                         <TableCell align="left">Комментарий</TableCell>
-                        <TableCell align="center">Первичка</TableCell>
-                        <TableCell align="center">Просрочка</TableCell>
-                        <TableCell align="center">Чаты</TableCell>
-                        <TableCell align="right">Удалёнка</TableCell>
+                        <TableCell align="center">Первичка Просрочка</TableCell>
+                        <TableCell align="center">Чаты Тикеты</TableCell>
+                        <TableCell align="center">Удалёнка</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -46,6 +44,7 @@ const UserTable = memo((
                         expanded={false}
                         mango={mango[teammate.extNumber]}
                         tasks={tasks[teammate.insideId]}
+                        tickets={tickets[teammate.insideId]}
                     />
                 </TableBody>
             </Table>

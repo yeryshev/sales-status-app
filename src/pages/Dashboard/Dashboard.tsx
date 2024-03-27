@@ -64,11 +64,11 @@ const Dashboard = memo(() => {
                                 container
                                 item
                                 sm={12}
-                                md={3}
+                                lg={2}
                                 spacing={2}
                                 alignSelf={'flex-start'}
                             >
-                                <Grid item xs={12} sm={4} md={12} lg={12}>
+                                <Grid item xs={12} sm={4} lg={12}>
                                     <Paper
                                         sx={{
                                             p: 2,
@@ -80,7 +80,7 @@ const Dashboard = memo(() => {
                                         <StatusBox />
                                     </Paper>
                                 </Grid>
-                                <Grid item xs={12} sm={8} md={12}>
+                                <Grid item xs={12} sm={8} lg={12}>
                                     <Paper
                                         sx={{
                                             p: 2,
@@ -99,7 +99,7 @@ const Dashboard = memo(() => {
                             container
                             item
                             xs={12}
-                            md={user?.firstName && user?.secondName ? 9 : 12}
+                            lg={user?.firstName && user?.secondName ? 10 : 12}
                             spacing={2}
                             alignSelf={'flex-start'}
                         >
