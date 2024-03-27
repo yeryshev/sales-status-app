@@ -20,6 +20,8 @@ import { OverridableStringUnion } from '@mui/types';
 import { ChipPropsColorOverrides } from '@mui/material/Chip';
 import PhoneIcon from '@mui/icons-material/Phone';
 import { UserTasks, UserTickets } from '@/app/types/Tasks';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
     online: 'онлайн',
@@ -84,14 +86,27 @@ const Row = (
                         />
                     )}
                 </TableCell>
-                <TableCell align="left" sx={{ width: '130px' }}>
+                <TableCell align="left" sx={{ width: '180px' }}>
                     {loading ? (
                         <Skeleton variant="text" />
                     ) : (
-                        `${teammate.firstName} ${teammate.secondName}`.slice(0, 30)
+                        <Box
+                            display={'flex'}
+                            alignItems={'center'}
+                            gap={1}
+                        >
+                            {teammate.firstName} {teammate.secondName}
+                            {' '}
+                            {teammate.isWorkingRemotely &&
+                            <Tooltip title={'Работаю из дома'}>
+                                <HomeOutlinedIcon fontSize={'small'} />
+                            </Tooltip>
+                            }
+                        </Box>
+
                     )}
                 </TableCell>
-                <TableCell align="left" sx={{ width: '166px' }}>
+                <TableCell align="left" sx={{ width: '110px' }}>
                     {loading ? (
                         <Skeleton variant="text" />
                     ) : (
@@ -101,21 +116,15 @@ const Row = (
                         >
                             <Chip
                                 label={
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                                        {
-                                            mango ?
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: 4,
-                                                    }}>
-                                                    <PhoneIcon fontSize={'small'} /> на звонке
-                                                </div> : statuses[teammate.status]
-                                        }
-                                        {' '}
-                                        {teammate.isWorkingRemotely && 'удалённо'}
-                                    </div>
+                                    mango ?
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 4,
+                                            }}>
+                                            <PhoneIcon fontSize={'small'} /> на звонке
+                                        </div> : statuses[teammate.status]
                                 }
                                 color={StatusColors[teammate.status]}
                                 size={'small'}
@@ -176,7 +185,7 @@ const Row = (
                     }
                 </TableCell>
                 {expanded ? (
-                    <TableCell align="center" sx={{ width: '98px' }}>
+                    <TableCell align="center" sx={{ width: '72px' }}>
                         <IconButton
                             aria-label="expand row"
                             size="small"

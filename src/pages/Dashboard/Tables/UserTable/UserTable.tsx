@@ -13,6 +13,7 @@ import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { Tooltip } from '@mui/material';
 
 const UserTable = memo((
@@ -36,7 +37,7 @@ const UserTable = memo((
                         <TableCell></TableCell>
                         <TableCell align="left"></TableCell>
                         <TableCell align="left"></TableCell>
-                        <TableCell align="left">Комментарий</TableCell>
+                        <TableCell align="left"></TableCell>
                         <Tooltip title={'Первичные обращения'}>
                             <TableCell align="center"><RequestQuoteOutlinedIcon fontSize={'small'} /></TableCell>
                         </Tooltip>
@@ -49,7 +50,9 @@ const UserTable = memo((
                         <Tooltip title={'Назначенные тикеты'}>
                             <TableCell align="center"><FeedbackOutlinedIcon fontSize={'small'}/></TableCell>
                         </Tooltip>
-                        <TableCell align="center">Удалёнка</TableCell>
+                        <Tooltip title={'Работаю из дома'}>
+                            <TableCell align="center"><HomeOutlinedIcon fontSize={'small'} /></TableCell>
+                        </Tooltip>
                     </TableRow>
                 </TableHead>
                 <TableBody>
