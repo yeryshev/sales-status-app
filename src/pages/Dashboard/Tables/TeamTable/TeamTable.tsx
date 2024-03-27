@@ -11,6 +11,11 @@ import { UsersTasks, UsersTickets } from '@/app/types/Tasks';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
+import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
+import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
+import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
+import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
+import { Tooltip } from '@mui/material';
 
 const TeamTable = memo((
     {
@@ -40,8 +45,18 @@ const TeamTable = memo((
                                 <TableCell align="left"></TableCell>
                                 <TableCell align="left"></TableCell>
                                 <TableCell align="left"></TableCell>
-                                <TableCell align="center">{'Первичка' + '\n' + 'Просрочка'}</TableCell>
-                                <TableCell align="center">{'Чаты' + '\n' + 'Тикеты'}</TableCell>
+                                <Tooltip title={'Первичные обращения'}>
+                                    <TableCell align="center"><RequestQuoteOutlinedIcon fontSize={'small'} /></TableCell>
+                                </Tooltip>
+                                <Tooltip title={'Просроченные задачи'}>
+                                    <TableCell align="center"><HourglassBottomOutlinedIcon fontSize={'small'} /></TableCell>
+                                </Tooltip>
+                                <Tooltip title={'Количество открытых чатов'}>
+                                    <TableCell align="center"><QuestionAnswerOutlinedIcon fontSize={'small'}/></TableCell>
+                                </Tooltip>
+                                <Tooltip title={'Назначенные тикеты'}>
+                                    <TableCell align="center"><FeedbackOutlinedIcon fontSize={'small'}/></TableCell>
+                                </Tooltip>
                                 <TableCell align="center"></TableCell>
                             </TableRow>
                         </TableHead>

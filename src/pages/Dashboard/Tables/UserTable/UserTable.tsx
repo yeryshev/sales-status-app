@@ -9,6 +9,11 @@ import { Teammate } from '@/entities/Teammate';
 import Row from '../Row/Row';
 import { memo } from 'react';
 import { UsersTasks, UsersTickets } from '@/app/types/Tasks';
+import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
+import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
+import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
+import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
+import { Tooltip } from '@mui/material';
 
 const UserTable = memo((
     {
@@ -32,8 +37,18 @@ const UserTable = memo((
                         <TableCell align="left"></TableCell>
                         <TableCell align="left"></TableCell>
                         <TableCell align="left">Комментарий</TableCell>
-                        <TableCell align="center">Первичка Просрочка</TableCell>
-                        <TableCell align="center">Чаты Тикеты</TableCell>
+                        <Tooltip title={'Первичные обращения'}>
+                            <TableCell align="center"><RequestQuoteOutlinedIcon fontSize={'small'} /></TableCell>
+                        </Tooltip>
+                        <Tooltip title={'Просроченные задачи'}>
+                            <TableCell align="center"><HourglassBottomOutlinedIcon fontSize={'small'} /></TableCell>
+                        </Tooltip>
+                        <Tooltip title={'Количество открытых чатов'}>
+                            <TableCell align="center"><QuestionAnswerOutlinedIcon fontSize={'small'}/></TableCell>
+                        </Tooltip>
+                        <Tooltip title={'Назначенные тикеты'}>
+                            <TableCell align="center"><FeedbackOutlinedIcon fontSize={'small'}/></TableCell>
+                        </Tooltip>
                         <TableCell align="center">Удалёнка</TableCell>
                     </TableRow>
                 </TableHead>

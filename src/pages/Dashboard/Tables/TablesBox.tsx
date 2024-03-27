@@ -1,11 +1,11 @@
-import { Grid, Paper, Link as MuiLink } from '@mui/material';
+import { Grid, Link as MuiLink, Paper } from '@mui/material';
 import TeamTable from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setTeam } from '@/entities/Teammate/model/actions/teamActions';
 import UserTable from './UserTable/UserTable';
 import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
-import { type MangoRedisData, type MangoWsData } from '@/app/types/Mango';
+import { type MangoRedisData } from '@/app/types/Mango';
 import { Link as RouterLink } from 'react-router-dom';
 import { checkUser } from '@/entities/User/model/actions/userActions';
 import { setTeamLocal } from '@/entities/Teammate/model/slice/teamSlice';
@@ -79,15 +79,11 @@ const TablesBox = () => {
     );
 
     const handleMangoChange = useCallback((event: MessageEvent) => {
-        const dataFromSocket: MangoWsData = JSON.parse(event.data);
+        const dataFromSocket = JSON.parse(event.data);
         if (dataFromSocket.type === 'mango') {
             const key = Object.keys(dataFromSocket.data)[0];
             setMango((prev) => ({ ...prev, [key]: dataFromSocket.data[key] }));
         }
-    }, []);
-
-    const handleTasksChange = useCallback((event: MessageEvent) => {
-        const dataFromSocket = JSON.parse(event.data);
         if (dataFromSocket.type === 'tasks') {
             setTasks(dataFromSocket.data);
         }
@@ -117,12 +113,12 @@ const TablesBox = () => {
     useEffect(() => {
         socket?.addEventListener('message', handleStatusChange);
         mangoSocket?.addEventListener('message', handleMangoChange);
-        tasksSocket?.addEventListener('message', handleTasksChange);
+        tasksSocket?.addEventListener('message', handleMangoChange);
 
         return () => {
             socket?.removeEventListener('message', handleStatusChange);
             mangoSocket?.removeEventListener('message', handleMangoChange);
-            tasksSocket?.removeEventListener('message', handleTasksChange);
+            tasksSocket?.removeEventListener('message', handleMangoChange);
         };
     }, [
         socket,
@@ -130,7 +126,6 @@ const TablesBox = () => {
         tasksSocket,
         handleStatusChange, 
         handleMangoChange,
-        handleTasksChange,
     ]);
 
     useEffect(() => {

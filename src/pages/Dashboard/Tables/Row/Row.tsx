@@ -127,53 +127,53 @@ const Row = (
                 <TableCell align="left">
                     {loading ? <Skeleton variant="text" /> : teammate.comment}
                 </TableCell>
-                <TableCell align="center" sx={{ width: '105px' }}>
-                    {!tasks && !tickets && !loading ? <Skeleton variant="text" /> : <Box
-                        display={'flex'}
-                        justifyContent={'center'}
-                        gap={1}
-                    >
-                        <Tooltip title={'Сделки на этапе "Первичное обращение"'}>
+                <TableCell align="center" sx={{ width: '60px' }}>
+                    {!loading && tasks && Boolean(tasks.leads) &&
+                        <Tooltip title={'Первичные обращения'}>
                             <Chip
                                 label={tasks.leads}
                                 variant={'outlined'}
                                 size={'small'}
-                                color={tasks.leads >= 10 ? 'error' : (tasks.leads === 0 ? 'success' : 'primary')}
+                                color={tasks.leads >= 5 ? 'error' : (tasks.leads === 0 ? 'success' : 'primary')}
                             ></Chip>
                         </Tooltip>
-                        <Tooltip title={'Количество просроченных задач'}>
+                    }
+                </TableCell>
+                <TableCell align="center" sx={{ width: '60px' }}>
+                    {!loading && tasks && Boolean(tasks.tasks) &&
+                        <Tooltip title={'Просроченные задачи'}>
                             <Chip
                                 label={tasks.tasks}
                                 variant={'outlined'}
                                 size={'small'}
-                                color={tasks.tasks >= 10 ? 'error' : (tasks.tasks === 0 ? 'success' : 'primary')}
+                                color={tasks.tasks >= 5 ? 'error' : (tasks.tasks === 0 ? 'success' : 'primary')}
                             ></Chip>
                         </Tooltip>
-                    </Box>}
+                    }
                 </TableCell>
-                <TableCell align="center" sx={{ width: '105px' }}>
-                    {!tasks && !tickets && !loading ? <Skeleton variant="text" /> : <Box
-                        display={'flex'}
-                        justifyContent={'center'}
-                        gap={1}
-                    >
+                <TableCell align="center" sx={{ width: '60px' }}>
+                    {!loading && tasks && Boolean(tasks.conversations) &&
                         <Tooltip title={'Количество открытых чатов'}>
                             <Chip
                                 label={tasks.conversations}
                                 variant={'outlined'}
                                 size={'small'}
-                                color={tasks.conversations >= 20 ? 'error' : (tasks.conversations === 0 ? 'success' : 'primary')}
+                                color={tasks.conversations === 0 ? 'success' : 'primary'}
                             ></Chip>
                         </Tooltip>
-                        <Tooltip title={'Ожидающие тикеты'}>
+                    }
+                </TableCell>
+                <TableCell align="center" sx={{ width: '60px' }}>
+                    {!loading && Boolean(tickets) &&
+                        <Tooltip title={'Назначенные тикеты'}>
                             <Chip
                                 label={tickets}
                                 variant={'outlined'}
                                 size={'small'}
-                                color={Number(tickets) >= 5 ? 'error' : (Number(tickets) === 0 ? 'success' : 'primary')}
+                                color={Number(tickets) >= 3 ? 'error' : (Number(tickets) === 0 ? 'success' : 'primary')}
                             ></Chip>
                         </Tooltip>
-                    </Box>}
+                    }
                 </TableCell>
                 {expanded ? (
                     <TableCell align="center" sx={{ width: '98px' }}>
@@ -200,7 +200,7 @@ const Row = (
             </TableRow>
             {expanded && (
                 <TableRow>
-                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
+                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
                         <Collapse in={expandRow} timeout="auto" unmountOnExit>
                             <Box sx={{ margin: 1 }}>
                                 <Table size="small" aria-label="purchases">
