@@ -16,7 +16,7 @@ import { StateSchema } from '@/app/providers/StoreProvider';
 export const StatusBox = () => {
     const user = useSelector((state: StateSchema) => state.user.user);
     const dispatch = useAppDispatch();
-    const { socket } = useSocketCtx();
+    const [ socket ] = useSocketCtx();
     const status = useSelector(getStatusValue);
 
     useEffect(() => {

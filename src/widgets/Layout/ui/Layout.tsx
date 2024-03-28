@@ -1,7 +1,7 @@
+import CssBaseline from '@mui/material/CssBaseline';
 import { type ReactNode, useCallback, useState } from 'react';
 import { Navbar } from '@/widgets/Navbar';
 import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
 import { Sidebar } from '@/widgets/Sidebar';
 
 export const Layout = ({ children }: { children: ReactNode }) => {

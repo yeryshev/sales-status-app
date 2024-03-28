@@ -11,35 +11,36 @@ import { CommentsBox } from './CommentsBox/CommentsBox';
 import TablesBox from './Tables/TablesBox';
 import { memo, useEffect } from 'react';
 import { useSocketCtx } from '@/app/providers/WsProvider';
+import { SocketCtxState } from '@/app/providers/WsProvider/lib/WsContext';
 
-const handleVisibilityChange = (socket: WebSocket, mangoSocket: WebSocket) => {
+const handleVisibilityChange = (websockets: SocketCtxState) => {
     if (!document.hidden) {
-        if (
-            socket &&
-      socket.readyState !== WebSocket.OPEN &&
-      mangoSocket &&
-      mangoSocket.readyState !== WebSocket.OPEN
-        ) {
-            window.location.reload();
+
+        const isOpen = WebSocket.OPEN;
+
+        for (const socket of websockets) {
+            if (socket?.readyState !== isOpen) {
+                window.location.reload();
+            }
         }
     }
 };
 
 const Dashboard = memo(() => {
-    const { socket, mangoSocket } = useSocketCtx();
+    const websockets = useSocketCtx();
     const user = useSelector((state: StateSchema) => state.user.user);
 
     useEffect(() => {
         document.addEventListener('visibilitychange', () => {
-            handleVisibilityChange(socket, mangoSocket);
+            handleVisibilityChange(websockets);
         });
 
         return () => {
             document.removeEventListener('visibilitychange', () => {
-                handleVisibilityChange(socket, mangoSocket);
+                handleVisibilityChange(websockets);
             });
         };
-    }, [socket, mangoSocket]);
+    }, [websockets]);
 
     return (
         <Layout>
@@ -63,11 +64,11 @@ const Dashboard = memo(() => {
                                 container
                                 item
                                 sm={12}
-                                md={3}
+                                lg={2}
                                 spacing={2}
                                 alignSelf={'flex-start'}
                             >
-                                <Grid item xs={12} sm={4} md={12} lg={12}>
+                                <Grid item xs={12} sm={4} lg={12}>
                                     <Paper
                                         sx={{
                                             p: 2,
@@ -79,7 +80,7 @@ const Dashboard = memo(() => {
                                         <StatusBox />
                                     </Paper>
                                 </Grid>
-                                <Grid item xs={12} sm={8} md={12}>
+                                <Grid item xs={12} sm={8} lg={12}>
                                     <Paper
                                         sx={{
                                             p: 2,
@@ -98,7 +99,7 @@ const Dashboard = memo(() => {
                             container
                             item
                             xs={12}
-                            md={user?.firstName && user?.secondName ? 9 : 12}
+                            lg={user?.firstName && user?.secondName ? 10 : 12}
                             spacing={2}
                             alignSelf={'flex-start'}
                         >
