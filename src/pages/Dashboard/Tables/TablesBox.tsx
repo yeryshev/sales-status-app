@@ -1,17 +1,18 @@
-import { Grid, Paper, Link as MuiLink } from '@mui/material';
+import { Grid, Link as MuiLink, Paper } from '@mui/material';
 import TeamTable from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { setTeam } from '@/entities/Teammate/model/actions/teamActions';
 import UserTable from './UserTable/UserTable';
 import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
-import { type MangoRedisData, type MangoWsData } from '@/app/types/Mango';
+import { type MangoRedisData } from '@/app/types/Mango';
 import { Link as RouterLink } from 'react-router-dom';
 import { checkUser } from '@/entities/User/model/actions/userActions';
 import { setTeamLocal } from '@/entities/Teammate/model/slice/teamSlice';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
+import { UsersTasks, UsersTickets } from '@/app/types/Tasks';
 
 const Statuses: Record<number, string> = {
     1: 'online',
@@ -27,8 +28,14 @@ const TablesBox = () => {
     const teammate = team.find((t) => t.id === userId && t.secondName && t.firstName);
     const allComments = useSelector((state: StateSchema) => state.comments.fullList);
     const dispatch = useAppDispatch();
-    const { socket, mangoSocket } = useSocketCtx();
-    const [mango, setMango] = useState<MangoRedisData>({});
+    const [ socket, mangoSocket ] = useSocketCtx();
+    const [ mango, setMango ] = useState<MangoRedisData>({});
+    const [ tasks, setTasks ] = useState<UsersTasks>({});
+    const [ tickets, setTickets ] = useState<UsersTickets>({});
+
+    const tasksSocket = useMemo(() => {
+        return new WebSocket(`${import.meta.env.VITE_TASKS_SOCKET_URL}`);
+    }, []);
 
     const handleStatusChange = useCallback(
         (event: MessageEvent) => {
@@ -72,10 +79,16 @@ const TablesBox = () => {
     );
 
     const handleMangoChange = useCallback((event: MessageEvent) => {
-        const dataFromSocket: MangoWsData = JSON.parse(event.data);
+        const dataFromSocket = JSON.parse(event.data);
         if (dataFromSocket.type === 'mango') {
             const key = Object.keys(dataFromSocket.data)[0];
             setMango((prev) => ({ ...prev, [key]: dataFromSocket.data[key] }));
+        }
+        if (dataFromSocket.type === 'tasks') {
+            setTasks(dataFromSocket.data);
+        }
+        if (dataFromSocket.type === 'tickets') {
+            setTickets(dataFromSocket.data);
         }
     }, []);
 
@@ -98,14 +111,22 @@ const TablesBox = () => {
     }, []);
 
     useEffect(() => {
-        socket.addEventListener('message', handleStatusChange);
-        mangoSocket.addEventListener('message', handleMangoChange);
+        socket?.addEventListener('message', handleStatusChange);
+        mangoSocket?.addEventListener('message', handleMangoChange);
+        tasksSocket?.addEventListener('message', handleMangoChange);
 
         return () => {
-            socket.removeEventListener('message', handleStatusChange);
-            mangoSocket.removeEventListener('message', handleMangoChange);
+            socket?.removeEventListener('message', handleStatusChange);
+            mangoSocket?.removeEventListener('message', handleMangoChange);
+            tasksSocket?.removeEventListener('message', handleMangoChange);
         };
-    }, [socket, mangoSocket, handleStatusChange, handleMangoChange]);
+    }, [
+        socket,
+        mangoSocket,
+        tasksSocket,
+        handleStatusChange, 
+        handleMangoChange,
+    ]);
 
     useEffect(() => {
         dispatch(setTeam());
@@ -117,7 +138,12 @@ const TablesBox = () => {
                 {!teamLoading && (
                     <Paper sx={{ p: 2 }}>
                         {teammate ? (
-                            <UserTable teammate={teammate} mango={mango} />
+                            <UserTable
+                                teammate={teammate}
+                                mango={mango}
+                                tasks={tasks}
+                                tickets={tickets}
+                            />
                         ) : (
                             <div>
                                 Чтобы принять участие, необходимо указать имя и фамилию в{' '}
@@ -132,7 +158,11 @@ const TablesBox = () => {
             {team && (
                 <Grid item xs={12}>
                     <Paper sx={{ p: 2 }}>
-                        <TeamTable mango={mango} />
+                        <TeamTable
+                            mango={mango}
+                            tasks={tasks}
+                            tickets={tickets}
+                        />
                     </Paper>
                 </Grid>
             )}

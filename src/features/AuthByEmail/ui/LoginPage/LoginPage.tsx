@@ -1,3 +1,4 @@
+import CssBaseline from '@mui/material/CssBaseline';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { AppBar, Toolbar } from '@mui/material';
@@ -5,7 +6,6 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { FormEvent, memo, useCallback } from 'react';

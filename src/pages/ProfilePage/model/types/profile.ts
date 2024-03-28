@@ -11,6 +11,7 @@ export interface Profile {
   email?: string
   photoUrl?: string
   extNumber?: string
+  insideId?: number | null
   telegram?: string
   isWorkingRemotely?: boolean
 }

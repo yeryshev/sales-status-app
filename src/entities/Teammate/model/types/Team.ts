@@ -5,6 +5,7 @@ export interface Teammate {
   secondName: string
   photoUrl: string
   extNumber: string
+  insideId: number
   telegram: string
   isWorkingRemotely: boolean
   status: 'online' | 'busy' | 'offline'
