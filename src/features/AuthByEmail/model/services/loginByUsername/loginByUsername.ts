@@ -14,7 +14,11 @@ const enum LoginStatusCodes {
     VALIDATION_ERROR = 422,
 }
 
-export const loginByUsername = createAsyncThunk<string, LoginByUsernameProps, ThunkConfig<string>>(
+export const loginByUsername = createAsyncThunk<
+  string,
+  LoginByUsernameProps,
+  ThunkConfig<string>
+>(
     'login/loginByUsername',
     async (authData, thunkAPI) => {
         const { extra, rejectWithValue, dispatch } = thunkAPI;

@@ -10,6 +10,11 @@ export const fetchProfileData = createAsyncThunk<Profile, void, ThunkConfig<stri
 
         try {
             const response = await extra.api.get<Profile>('/users/me');
+
+            if (!response.data) {
+                throw new Error();
+            }
+
             return response.data;
         } catch (error) {
             if (error instanceof AxiosError) {

@@ -17,10 +17,13 @@ export class TestAsyncThunk<Return, Arg, RejectedValue> {
     api: MockedFunction<AxiosStatic>;
     navigate: MockedFunction<() => void>;
 
-    constructor(actionCreator: ActionCreatorType<Return, Arg, RejectedValue>) {
+    constructor(
+        actionCreator: ActionCreatorType<Return, Arg, RejectedValue>,
+        state?: DeepPartial<StateSchema>,
+    ) {
         this.actionCreator = actionCreator;
         this.dispatch = vi.fn();
-        this.getState = vi.fn();
+        this.getState = vi.fn(() => state as StateSchema);
 
         this.api = mockedAxios;
         this.navigate = vi.fn();

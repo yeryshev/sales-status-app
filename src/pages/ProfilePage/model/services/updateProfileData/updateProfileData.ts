@@ -23,10 +23,13 @@ export const updateProfileData = createAsyncThunk<Profile, void, ThunkConfig<Val
                 formData,
             );
 
+            if (!response.data) {
+                throw new Error();
+            }
+
             return response.data;
         } catch (error) {
             if (error instanceof AxiosError) {
-                // return rejectWithValue(error.response?.data.message);
                 return rejectWithValue([ValidateProfileError.SERVER_ERROR]);
             }
             return rejectWithValue([ValidateProfileError.SERVER_ERROR]);
