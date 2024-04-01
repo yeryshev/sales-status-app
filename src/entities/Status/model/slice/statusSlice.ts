@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { StatusSchema } from '../..';
+import { StatusSchema } from '../types/StatusSchema';
 
 const initialState: StatusSchema = {
     value: null,

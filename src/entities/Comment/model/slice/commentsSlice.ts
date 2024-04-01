@@ -1,11 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { type CommentsSchema } from '../types/CommentsSchema';
-import {
-    addComment,
-    deleteComment,
-    setAllComments,
-    setMyComments,
-} from '../actions/commentsActions';
+import { addComment, deleteComment } from '../services/commentsActions';
+import { fetchAllComments } from '../services/fetchAllComments/fetchAllComments';
+import { fetchCommentsByUserId } from '../services/fetchCommentsByUserId/fetchCommentsByUserId';
 
 const initialState: CommentsSchema = {
     list: [],
@@ -20,27 +17,27 @@ export const commentsSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(setAllComments.pending, (state) => {
+            .addCase(fetchAllComments.pending, (state) => {
                 state.error = null;
                 state.loading = true;
             })
-            .addCase(setAllComments.fulfilled, (state, action) => {
+            .addCase(fetchAllComments.fulfilled, (state, action) => {
                 state.fullList = action.payload;
                 state.loading = false;
             })
-            .addCase(setAllComments.rejected, (state, action) => {
+            .addCase(fetchAllComments.rejected, (state, action) => {
                 state.error = action.error.message || 'Error';
                 state.loading = false;
             })
-            .addCase(setMyComments.pending, (state) => {
+            .addCase(fetchCommentsByUserId.pending, (state) => {
                 state.error = null;
                 state.loading = true;
             })
-            .addCase(setMyComments.fulfilled, (state, action) => {
+            .addCase(fetchCommentsByUserId.fulfilled, (state, action) => {
                 state.list = action.payload;
                 state.loading = false;
             })
-            .addCase(setMyComments.rejected, (state, action) => {
+            .addCase(fetchCommentsByUserId.rejected, (state, action) => {
                 state.error = action.error.message || 'Error';
                 state.loading = false;
             })

@@ -1,8 +1,3 @@
-import { type FormEvent, memo, useCallback, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { statusActions } from '@/entities/Status/model/slice/statusSlice';
-import { updateUser } from '@/entities/User/model/actions/userActions';
-import { Comment } from '@/entities/Comment';
 import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/system/Box';
 import TextField from '@mui/material/TextField';
@@ -15,13 +10,16 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { type SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import {
-    addComment,
-    deleteComment,
-    setMyComments,
-} from '@/entities/Comment/model/actions/commentsActions';
+import { type FormEvent, memo, useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { statusActions } from '@/entities/Status/model/slice/statusSlice';
+import { updateUser } from '@/entities/User/model/actions/userActions';
+import { Comment } from '../../model/types/Comment';
+import { addComment, deleteComment } from '../../model/services/commentsActions';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
+import { fetchCommentsByUserId } from '../../model/services/fetchCommentsByUserId/fetchCommentsByUserId';
+import { getUserComments } from '../../model/selectors/commentSelectors';
 
 export const CommentsBox = memo(() => {
     const [age, setAge] = useState('');
@@ -29,12 +27,12 @@ export const CommentsBox = memo(() => {
     const dispatch = useAppDispatch();
     const [commentInput, setCommentInput] = useState('');
     const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
-    const comments = useSelector((state: StateSchema) => state.comments.list);
+    const userComments = useSelector(getUserComments);
     const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
 
     useEffect(() => {
         if (user?.id) {
-            dispatch(setMyComments(user.id));
+            dispatch(fetchCommentsByUserId(user.id));
             dispatch(statusActions.changeStatus(user.statusId));
         }
     }, [dispatch, user?.id, user?.statusId]);
@@ -149,7 +147,7 @@ export const CommentsBox = memo(() => {
                         size={'small'}
                         onChange={handleChange}
                     >
-                        {comments.map((comment) => (
+                        {userComments.map((comment) => (
                             <MenuItem
                                 key={comment.id}
                                 value={comment.id}

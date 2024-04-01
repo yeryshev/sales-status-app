@@ -1,4 +1,4 @@
-import { Dashboard } from '@/pages/Dashboard';
+import { MainPage } from 'src/pages/MainPage';
 import { LoginPage } from '@/features/AuthByEmail';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProfilePage } from '@/pages/ProfilePage';
@@ -25,7 +25,7 @@ export const RoutePath: Record<AppRoutes, string> = {
 export const routeConfig: Record<AppRoutes, AppRouteProps> = {
     [AppRoutes.MAIN]: {
         path: RoutePath.main,
-        element: <Dashboard />,
+        element: <MainPage />,
         authOnly: true,
     },
     [AppRoutes.PROFILE]: {

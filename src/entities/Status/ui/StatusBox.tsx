@@ -5,12 +5,11 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
-import { type ChangeEvent, useEffect } from 'react';
-import { setAllComments } from '@/entities/Comment/model/actions/commentsActions';
-import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { Grid } from '@mui/material';
+import { type ChangeEvent, useEffect } from 'react';
+import { statusActions } from '../model/slice/statusSlice';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { getStatusValue } from '@/entities/Status/model/selectors/getStatusValue/getStatusValue';
+import { getStatusValue } from '../model/selectors/getStatusValue/getStatusValue';
 import { StateSchema } from '@/app/providers/StoreProvider';
 
 export const StatusBox = () => {
@@ -21,7 +20,6 @@ export const StatusBox = () => {
 
     useEffect(() => {
         if (user?.id) {
-            dispatch(setAllComments());
             dispatch(statusActions.changeStatus(user.statusId));
         }
     }, [dispatch, user?.id, user?.statusId, socket]);

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { type ChangeEvent, useState } from 'react';
+import { type ChangeEvent, memo, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
@@ -40,7 +40,7 @@ const StatusColors: Record<
       'offline': 'default',
   };
 
-const Row = (
+export const Row = memo((
     {
         teammate,
         expanded,
@@ -246,7 +246,4 @@ const Row = (
             )}
         </>
     );
-};
-
-
-export default Row;
+});

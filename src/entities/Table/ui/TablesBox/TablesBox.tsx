@@ -1,9 +1,9 @@
 import { Grid, Link as MuiLink, Paper } from '@mui/material';
-import TeamTable from './TeamTable/TeamTable';
+import { TeamTable } from '../TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { setTeam } from '@/entities/Teammate/model/actions/teamActions';
-import UserTable from './UserTable/UserTable';
+import { UserTable } from '../UserTable/UserTable';
 import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
 import { type MangoRedisData } from '@/app/types/Mango';
 import { Link as RouterLink } from 'react-router-dom';
@@ -13,6 +13,9 @@ import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
 import { UsersTasks, UsersTickets } from '@/app/types/Tasks';
+import { fetchAllComments, getAllComments } from '@/entities/Comment';
+import Box from '@mui/material/Box';
+import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
 
 const Statuses: Record<number, string> = {
     1: 'online',
@@ -20,15 +23,15 @@ const Statuses: Record<number, string> = {
     3: 'offline',
 };
 
-const TablesBox = () => {
+export const TablesBox = memo(() => {
     const user = useSelector((state: StateSchema) => state.user.user);
     const team = useSelector((state: StateSchema) => state.team.list);
     const teamLoading = useSelector((state: StateSchema) => state.team.loading);
     const userId = useSelector((state: StateSchema) => state.user.user?.id);
     const teammate = team.find((t) => t.id === userId && t.secondName && t.firstName);
-    const allComments = useSelector((state: StateSchema) => state.comments.fullList);
+    const allComments = useSelector(getAllComments);
     const dispatch = useAppDispatch();
-    const [ socket, mangoSocket ] = useSocketCtx();
+    const [ socket ] = useSocketCtx();
     const [ mango, setMango ] = useState<MangoRedisData>({});
     const [ tasks, setTasks ] = useState<UsersTasks>({});
     const [ tickets, setTickets ] = useState<UsersTickets>({});
@@ -78,8 +81,9 @@ const TablesBox = () => {
         [dispatch, user, allComments],
     );
 
-    const handleMangoChange = useCallback((event: MessageEvent) => {
+    const handleTasksChange = useCallback((event: MessageEvent) => {
         const dataFromSocket = JSON.parse(event.data);
+
         if (dataFromSocket.type === 'mango') {
             const key = Object.keys(dataFromSocket.data)[0];
             setMango((prev) => ({ ...prev, [key]: dataFromSocket.data[key] }));
@@ -112,24 +116,22 @@ const TablesBox = () => {
 
     useEffect(() => {
         socket?.addEventListener('message', handleStatusChange);
-        mangoSocket?.addEventListener('message', handleMangoChange);
-        tasksSocket?.addEventListener('message', handleMangoChange);
+        tasksSocket?.addEventListener('message', handleTasksChange);
 
         return () => {
             socket?.removeEventListener('message', handleStatusChange);
-            mangoSocket?.removeEventListener('message', handleMangoChange);
-            tasksSocket?.removeEventListener('message', handleMangoChange);
+            tasksSocket?.removeEventListener('message', handleTasksChange);
         };
     }, [
         socket,
-        mangoSocket,
         tasksSocket,
         handleStatusChange, 
-        handleMangoChange,
+        handleTasksChange,
     ]);
 
     useEffect(() => {
         dispatch(setTeam());
+        dispatch(fetchAllComments());
     }, [dispatch]);
 
     return (
@@ -145,12 +147,12 @@ const TablesBox = () => {
                                 tickets={tickets}
                             />
                         ) : (
-                            <div>
+                            <Box>
                                 Чтобы принять участие, необходимо указать имя и фамилию в{' '}
-                                <MuiLink component={RouterLink} to="/profile">
+                                <MuiLink component={RouterLink} to={RoutePath.profile}>
                                     {'профиле'}
                                 </MuiLink>
-                            </div>
+                            </Box>
                         )}
                     </Paper>
                 )}
@@ -168,6 +170,4 @@ const TablesBox = () => {
             )}
         </>
     );
-};
-
-export default TablesBox;
+});

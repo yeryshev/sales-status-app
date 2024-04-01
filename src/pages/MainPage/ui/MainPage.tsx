@@ -1,15 +1,15 @@
-import { StateSchema } from '@/app/providers/StoreProvider';
-import { StatusBox } from '@/entities/Status';
-import { Layout } from '@/widgets/Layout';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Toolbar from '@mui/material/Toolbar';
-import { useSelector } from 'react-redux';
-import { CommentsBox } from './CommentsBox/CommentsBox';
-import TablesBox from './Tables/TablesBox';
+import { StateSchema } from '@/app/providers/StoreProvider';
+import { StatusBox } from '@/entities/Status';
+import { Layout } from '@/widgets/Layout';
 import { memo, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { CommentsBox } from '@/entities/Comment/ui/CommentsBox/CommentsBox';
+import { TablesBox } from '@/entities/Table';
 import { useSocketCtx } from '@/app/providers/WsProvider';
 import { SocketCtxState } from '@/app/providers/WsProvider/lib/WsContext';
 
@@ -26,7 +26,7 @@ const handleVisibilityChange = (websockets: SocketCtxState) => {
     }
 };
 
-const Dashboard = memo(() => {
+const MainPage = memo(() => {
     const websockets = useSocketCtx();
     const user = useSelector((state: StateSchema) => state.user.user);
 
@@ -112,4 +112,4 @@ const Dashboard = memo(() => {
     );
 });
 
-export default Dashboard;
+export default MainPage;

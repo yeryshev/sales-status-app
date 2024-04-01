@@ -3,7 +3,7 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import { useSelector } from 'react-redux';
 import { type StateSchema } from '@/app/providers/StoreProvider';
-import Row from '../Row/Row';
+import { Row } from '../Row/Row';
 import { type MangoRedisData } from '@/app/types/Mango';
 import LinearProgress from '@mui/material/LinearProgress';
 import { memo } from 'react';
@@ -17,7 +17,7 @@ import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import { Tooltip } from '@mui/material';
 
-const TeamTable = memo((
+export const TeamTable = memo((
     {
         mango,
         tasks,
@@ -85,5 +85,3 @@ const TeamTable = memo((
         </>
     );
 });
-
-export default TeamTable;

@@ -1,5 +1,6 @@
-import { commentsReducer } from './model/slice/commentsSlice';
-import { CommentsSchema } from './model/types/CommentsSchema';
-import { Comment } from './model/types/Comment';
-
-export { commentsReducer, type CommentsSchema, type Comment };
+export { type Comment } from './model/types/Comment';
+export { type CommentsSchema } from './model/types/CommentsSchema';
+export { CommentsBox } from './ui/CommentsBox/CommentsBox';
+export { commentsReducer } from './model/slice/commentsSlice';
+export { getAllComments } from './model/selectors/commentSelectors';
+export { fetchAllComments } from './model/services/fetchAllComments/fetchAllComments';

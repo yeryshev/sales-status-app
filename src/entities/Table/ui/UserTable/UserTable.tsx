@@ -6,7 +6,7 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import { type MangoRedisData } from '@/app/types/Mango';
 import { Teammate } from '@/entities/Teammate';
-import Row from '../Row/Row';
+import { Row } from '../Row/Row';
 import { memo } from 'react';
 import { UsersTasks, UsersTickets } from '@/app/types/Tasks';
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
@@ -16,7 +16,7 @@ import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { Tooltip } from '@mui/material';
 
-const UserTable = memo((
+export const UserTable = memo((
     {
         teammate,
         mango,
@@ -69,5 +69,3 @@ const UserTable = memo((
         </TableContainer>
     );
 });
-
-export default UserTable;
