@@ -19,8 +19,8 @@ import { StateSchema } from '@/app/providers/StoreProvider';
 import { OverridableStringUnion } from '@mui/types';
 import { ChipPropsColorOverrides } from '@mui/material/Chip';
 import PhoneIcon from '@mui/icons-material/Phone';
-import { UserTasks, UserTickets } from '@/app/types/Tasks';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import { UserTasks, UserTickets } from '../../model/types/tasksWebsocket';
 
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {

@@ -1,8 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { type CommentsSchema } from '../types/CommentsSchema';
-import { addComment, deleteComment } from '../services/commentsActions';
+import { deleteComment } from '../services/commentsActions';
 import { fetchAllComments } from '../services/fetchAllComments/fetchAllComments';
 import { fetchCommentsByUserId } from '../services/fetchCommentsByUserId/fetchCommentsByUserId';
+import { addComment } from '@/features/AddCommentForm/model/services/addComment/addComment';
 
 const initialState: CommentsSchema = {
     list: [],

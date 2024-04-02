@@ -9,6 +9,7 @@ import { ProfileSchema } from '@/pages/ProfilePage';
 import { NavigateOptions } from 'react-router/dist/lib/context';
 import { To } from '@remix-run/router';
 import { AxiosInstance } from 'axios';
+import { AddCommentFormSchema } from '@/features/AddCommentForm/model/types/addCommentForm';
 
 export interface StateSchema {
     team: TeamState;
@@ -19,6 +20,7 @@ export interface StateSchema {
     // Асинхронные редюсеры
     loginForm?: LoginSchema;
     profile?: ProfileSchema;
+    addCommentForm?: AddCommentFormSchema;
 }
 
 export type StateSchemaKey = keyof StateSchema;

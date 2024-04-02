@@ -4,10 +4,8 @@ import TableBody from '@mui/material/TableBody';
 import { useSelector } from 'react-redux';
 import { type StateSchema } from '@/app/providers/StoreProvider';
 import { Row } from '../Row/Row';
-import { type MangoRedisData } from '@/app/types/Mango';
 import LinearProgress from '@mui/material/LinearProgress';
 import { memo } from 'react';
-import { UsersTasks, UsersTickets } from '@/app/types/Tasks';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
@@ -16,6 +14,7 @@ import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlin
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import { Tooltip } from '@mui/material';
+import { MangoRedisData, UsersTasks, UsersTickets } from '@/entities/Table/model/types/tasksWebsocket';
 
 export const TeamTable = memo((
     {

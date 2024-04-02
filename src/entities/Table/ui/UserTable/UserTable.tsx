@@ -4,17 +4,16 @@ import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import { type MangoRedisData } from '@/app/types/Mango';
 import { Teammate } from '@/entities/Teammate';
 import { Row } from '../Row/Row';
 import { memo } from 'react';
-import { UsersTasks, UsersTickets } from '@/app/types/Tasks';
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { Tooltip } from '@mui/material';
+import { MangoRedisData, UsersTasks, UsersTickets } from '@/entities/Table/model/types/tasksWebsocket';
 
 export const UserTable = memo((
     {

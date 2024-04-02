@@ -1,21 +1,20 @@
 import { Grid, Link as MuiLink, Paper } from '@mui/material';
+import Box from '@mui/material/Box';
 import { TeamTable } from '../TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { setTeam } from '@/entities/Teammate/model/actions/teamActions';
 import { UserTable } from '../UserTable/UserTable';
 import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
-import { type MangoRedisData } from '@/app/types/Mango';
 import { Link as RouterLink } from 'react-router-dom';
 import { checkUser } from '@/entities/User/model/actions/userActions';
 import { setTeamLocal } from '@/entities/Teammate/model/slice/teamSlice';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
-import { UsersTasks, UsersTickets } from '@/app/types/Tasks';
 import { fetchAllComments, getAllComments } from '@/entities/Comment';
-import Box from '@mui/material/Box';
 import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
+import { MangoRedisData, UsersTasks, UsersTickets, WsTasksData, WsTypes } from '../../model/types/tasksWebsocket';
 
 const Statuses: Record<number, string> = {
     1: 'online',
@@ -82,16 +81,16 @@ export const TablesBox = memo(() => {
     );
 
     const handleTasksChange = useCallback((event: MessageEvent) => {
-        const dataFromSocket = JSON.parse(event.data);
+        const dataFromSocket: WsTasksData = JSON.parse(event.data);
 
-        if (dataFromSocket.type === 'mango') {
+        if (dataFromSocket.type === WsTypes.MANGO) {
             const key = Object.keys(dataFromSocket.data)[0];
             setMango((prev) => ({ ...prev, [key]: dataFromSocket.data[key] }));
         }
-        if (dataFromSocket.type === 'tasks') {
+        if (dataFromSocket.type === WsTypes.TASKS) {
             setTasks(dataFromSocket.data);
         }
-        if (dataFromSocket.type === 'tickets') {
+        if (dataFromSocket.type === WsTypes.TICKETS) {
             setTickets(dataFromSocket.data);
         }
     }, []);

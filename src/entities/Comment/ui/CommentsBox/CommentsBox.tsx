@@ -1,34 +1,28 @@
-import AddIcon from '@mui/icons-material/Add';
-import Box from '@mui/system/Box';
-import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import FormLabel from '@mui/material/FormLabel';
 import Button from '@mui/material/Button';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { type SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { type FormEvent, memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { Comment } from '../../model/types/Comment';
-import { addComment, deleteComment } from '../../model/services/commentsActions';
+import { deleteComment } from '../../model/services/commentsActions';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
 import { fetchCommentsByUserId } from '../../model/services/fetchCommentsByUserId/fetchCommentsByUserId';
 import { getUserComments } from '../../model/selectors/commentSelectors';
+import { AddCommentForm } from '@/features/AddCommentForm';
 
 export const CommentsBox = memo(() => {
     const [age, setAge] = useState('');
     const user = useSelector((state: StateSchema) => state.user.user);
     const dispatch = useAppDispatch();
-    const [commentInput, setCommentInput] = useState('');
     const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
     const userComments = useSelector(getUserComments);
-    const [snackBarIsOpen, setSnackBarIsOpen] = useState(false);
 
     useEffect(() => {
         if (user?.id) {
@@ -48,16 +42,6 @@ export const CommentsBox = memo(() => {
         },
         [dispatch, user],
     );
-
-    const handleAddComment = useCallback((event: FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        if (user?.id) {
-            dispatch(addComment({ comment: commentInput })).then(() => {
-                setCommentInput('');
-                setSnackBarIsOpen(true);
-            });
-        }
-    }, [commentInput, dispatch, user?.id]);
 
     const handleDeleteComment = useCallback((commentId: number) => {
         if (user?.id) {
@@ -79,64 +63,7 @@ export const CommentsBox = memo(() => {
         <>
             <FormLabel id="comments-label">
                 Комментарии
-                <Box component="form" onSubmit={handleAddComment} my={2}>
-                    <Grid
-                        container
-                        justifyContent={'space-between'}
-                        alignItems={'center'}
-                        spacing={{ md: 1 }}
-                    >
-                        <Grid item xs={10} sm={10} md={10}>
-                            <TextField
-                                required
-                                name="comments"
-                                label="Создать новый"
-                                fullWidth
-                                type="text"
-                                id="comments"
-                                autoComplete="off"
-                                size={'small'}
-                                inputProps={{
-                                    maxLength: 40,
-                                }}
-                                value={commentInput}
-                                onChange={(e) => {
-                                    setCommentInput(e.target.value);
-                                }}
-                            />
-                        </Grid>
-
-                        <Grid
-                            item
-                            xs={2}
-                            justifyContent={'center'}
-                            alignItems={'start'}
-                            display={'flex'}
-                        >
-                            <Button type="submit">
-                                <AddIcon />
-                            </Button>
-                        </Grid>
-                    </Grid>
-                    <Snackbar
-                        open={snackBarIsOpen}
-                        autoHideDuration={2000}
-                        onClose={() => {
-                            setSnackBarIsOpen(false);
-                        }}
-                    >
-                        <Alert
-                            onClose={() => {
-                                setSnackBarIsOpen(false);
-                            }}
-                            severity="success"
-                            variant="filled"
-                            sx={{ width: '100%' }}
-                        >
-                            Комментарий добавлен в твой список
-                        </Alert>
-                    </Snackbar>
-                </Box>
+                <AddCommentForm />
                 <FormControl fullWidth sx={{ mb: 2 }}>
                     <InputLabel id="demo-simple-select-label" size={'small'}>Выбрать</InputLabel>
                     <Select
