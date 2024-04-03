@@ -8,7 +8,7 @@ import { StatusBox } from '@/entities/Status';
 import { Layout } from '@/widgets/Layout';
 import { memo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { CommentsBox } from '@/entities/Comment/ui/CommentsBox/CommentsBox';
+import { CommentsBox } from '@/widgets/CommentsBox';
 import { TablesBox } from '@/entities/Table';
 import { useSocketCtx } from '@/app/providers/WsProvider';
 import { SocketCtxState } from '@/app/providers/WsProvider/lib/WsContext';
