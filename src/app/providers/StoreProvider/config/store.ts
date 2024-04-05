@@ -1,4 +1,4 @@
-import { commentsReducer } from '@/entities/Comment';
+import { commentsReducer } from '@/widgets/CommentBox';
 import { statusReducer } from '@/entities/Status';
 import { teamReducer } from '@/entities/Teammate';
 import { userReducer } from '@/entities/User';

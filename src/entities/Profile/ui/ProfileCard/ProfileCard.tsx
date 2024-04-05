@@ -122,7 +122,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                     <Grid container spacing={2} sx={{ flexGrow: 1 }}>
                         <Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={formData?.firstName}
+                                value={formData?.firstName ?? ''}
                                 onChange={(e) => onChangeFirstName?.(e.target.value)}
                                 name={formData?.firstName}
                                 label={'Имя'}
@@ -136,7 +136,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                         </Grid>
                         <Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={formData?.secondName}
+                                value={formData?.secondName ?? ''}
                                 onChange={(e) => onChangeSecondName?.(e.target.value)}
                                 name={formData?.secondName}
                                 label={'Фамилия'}
@@ -164,7 +164,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                         </Grid>
                         <Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={formData?.email}
+                                value={formData?.email ?? ''}
                                 onChange={(e) => onChangeEmail?.(e.target.value)}
                                 disabled={true}
                                 name={formData?.email}
@@ -179,7 +179,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                         </Grid>
                         <Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={formData?.extNumber}
+                                value={formData?.extNumber ?? ''}
                                 onChange={(e) => onChangeExtNumber?.(e.target.value)}
                                 disabled={true}
                                 name={formData?.extNumber}
@@ -194,7 +194,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                         </Grid>
                         <Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={formData?.telegram}
+                                value={formData?.telegram ?? ''}
                                 onChange={(e) => onChangeTelegram?.(e.target.value)}
                                 name={formData?.telegram}
                                 label={'Telegram'}
@@ -208,7 +208,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                         </Grid>
                         <Grid xs={12} sm={12} md={6} lg={6}>
                             <TextField
-                                value={formData?.photoUrl}
+                                value={formData?.photoUrl ?? ''}
                                 onChange={(e) => onChangePhotoUrl?.(e.target.value)}
                                 name={formData?.photoUrl}
                                 label={'Ссылка на фото'}

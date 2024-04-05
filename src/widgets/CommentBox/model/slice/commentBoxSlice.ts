@@ -1,9 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { type CommentsSchema } from '../types/CommentsSchema';
-import { deleteComment } from '../services/commentsActions';
-import { fetchAllComments } from '../services/fetchAllComments/fetchAllComments';
-import { fetchCommentsByUserId } from '../services/fetchCommentsByUserId/fetchCommentsByUserId';
-import { addComment } from '@/features/AddCommentForm/model/services/addComment/addComment';
+import { type CommentsSchema, fetchAllComments, fetchCommentsByUserId } from '@/entities/Comment';
+import { addComment } from '@/features/AddCommentForm';
+import { deleteComment } from '@/features/SelectCommentForm';
 
 const initialState: CommentsSchema = {
     list: [],
@@ -12,7 +10,7 @@ const initialState: CommentsSchema = {
     error: null,
 };
 
-export const commentsSlice = createSlice({
+export const commentBoxSlice = createSlice({
     name: 'comments',
     initialState,
     reducers: {},
@@ -63,9 +61,9 @@ export const commentsSlice = createSlice({
             })
             .addCase(deleteComment.fulfilled, (state, action) => {
                 if (action.payload) {
-                    state.list = state.list.filter((comment) => comment.id !== action.payload);
+                    state.list = state.list.filter((comment) => comment.id !== action.payload.id);
                     state.fullList = state.fullList.filter(
-                        (comment) => comment.id !== action.payload,
+                        (comment) => comment.id !== action.payload.id,
                     );
                     state.loading = false;
                 }
@@ -77,4 +75,4 @@ export const commentsSlice = createSlice({
     },
 });
 
-export const { reducer: commentsReducer } = commentsSlice;
+export const { reducer: commentsReducer } = commentBoxSlice;
