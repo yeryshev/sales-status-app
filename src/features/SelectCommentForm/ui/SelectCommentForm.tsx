@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { updateUser } from '@/entities/User/model/actions/userActions';
-import { Comment, fetchCommentsByUserId, getUserComments } from '@/entities/Comment';
+import { fetchCommentsByUserId, getUserComments } from '@/entities/Comment';
 import { useSelector } from 'react-redux';
 import { StateSchema } from '@/app/providers/StoreProvider';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
@@ -16,7 +16,7 @@ import {
     selectCommentFormActions,
     selectCommentFormReducer,
 } from '../model/slices/selectCommentSlice/selectCommentFormSlice';
-import { getCommentItem, getCommentSelectValue } from '../model/selectors/selectCommentFormSelectors';
+import { getCommentSelectItem } from '../model/selectors/selectCommentFormSelectors';
 
 const reducers: ReducersList = {
     selectComment: selectCommentFormReducer,
@@ -26,35 +26,29 @@ export const SelectCommentForm = memo(() => {
     const user = useSelector((state: StateSchema) => state.user.user);
     const dispatch = useAppDispatch();
     const userComments = useSelector(getUserComments);
-    const commentItem = useSelector(getCommentItem);
-    const commentSelectValue = useSelector(getCommentSelectValue);
+    const comment = useSelector(getCommentSelectItem);
 
     useEffect(() => {
         user && dispatch(fetchCommentsByUserId(user.id));
     }, [dispatch, user]);
 
-    const handlePickComment = useCallback((commentId: number | null) => {
-        user && dispatch(updateUser({ ...user, commentId }));
-        dispatch(selectCommentFormActions.setCommentSelectValue(''));
-        dispatch(selectCommentFormActions.setCommentItem(undefined));
+    const handlePickComment = useCallback(() => {
+        user && dispatch(updateUser({ ...user, commentId: comment?.id || null }));
+        comment && dispatch(selectCommentFormActions.setCommentItem(undefined));
     },
-    [dispatch, user],
+    [comment, dispatch, user],
     );
 
-    const handleDeleteComment = useCallback((commentId: number) => {
-        dispatch(deleteComment(commentId));
-        user?.commentId === commentId && handlePickComment(null);
-        dispatch(selectCommentFormActions.setCommentSelectValue(''));
+    const handleDeleteComment = useCallback(() => {
+        comment && dispatch(deleteComment(comment?.id));
         dispatch(selectCommentFormActions.setCommentItem(undefined));
-    }, [dispatch, handlePickComment, user]);
 
-    const handleClickMenuItem = useCallback((comment: Comment) => {
-        dispatch(selectCommentFormActions.setCommentItem(comment));
-    }, [dispatch]);
+    }, [comment, dispatch]);
 
     const handleChange = useCallback((event: SelectChangeEvent) => {
-        dispatch(selectCommentFormActions.setCommentSelectValue(event.target.value));
-    }, [dispatch]);
+        const comment = userComments.find((comment) => comment.id === Number(event.target.value));
+        dispatch(selectCommentFormActions.setCommentItem(comment));
+    }, [dispatch, userComments]);
 
     return (
         <DynamicModuleLoader reducers={reducers}>
@@ -67,7 +61,7 @@ export const SelectCommentForm = memo(() => {
                 <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select-vadim"
-                    value={commentSelectValue}
+                    value={comment ? String(comment.id) : ''}
                     onChange={handleChange}
                     label="Выбрать комментарий"
                     size={'small'}
@@ -76,7 +70,6 @@ export const SelectCommentForm = memo(() => {
                         <MenuItem
                             key={comment.id}
                             value={comment.id}
-                            onClick={() => handleClickMenuItem(comment)}
                             disabled={user?.commentId === comment.id}
                         >
                             {comment.description}
@@ -88,8 +81,8 @@ export const SelectCommentForm = memo(() => {
                 <Grid item>
                     <Button
                         type="button"
-                        onClick={() => handlePickComment(commentItem?.id || null)}
-                        disabled={!commentSelectValue}
+                        onClick={handlePickComment}
+                        disabled={!comment}
                         color="success"
                         size={'small'}
                     >
@@ -98,8 +91,8 @@ export const SelectCommentForm = memo(() => {
                 </Grid>
                 <Grid item>
                     <Button
-                        onClick={() => commentItem && handleDeleteComment(commentItem.id)}
-                        disabled={!commentSelectValue}
+                        onClick={handleDeleteComment}
+                        disabled={!comment}
                         color="error"
                         size={'small'}
                     >
@@ -110,7 +103,7 @@ export const SelectCommentForm = memo(() => {
                     <Button
                         disabled={user?.commentId === null}
                         size={'small'}
-                        onClick={() => handlePickComment(null)}
+                        onClick={handlePickComment}
                     >
                 Очистить
                     </Button>

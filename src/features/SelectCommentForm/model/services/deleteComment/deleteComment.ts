@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from '@/app/providers/StoreProvider';
 import { Comment } from '@/entities/Comment';
-import { selectCommentFormActions } from '../../slices/selectCommentSlice/selectCommentFormSlice';
+import { commentsActions } from '@/widgets/CommentBox/model/slice/commentBoxSlice';
 
 export const deleteComment = createAsyncThunk<
   Comment,
@@ -23,7 +23,7 @@ export const deleteComment = createAsyncThunk<
                 throw new Error('Произошла ошибка при удалении комментария');
             }
 
-            dispatch(selectCommentFormActions.setCommentSelectValue(''));
+            dispatch(commentsActions.deleteComment(commentId));
 
             return response.data;
         } catch (error) {

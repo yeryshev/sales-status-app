@@ -3,8 +3,7 @@ import { SelectCommentFromSchema } from '../../types/selectCommentForm';
 import { Comment } from '@/entities/Comment';
 
 const initialState: SelectCommentFromSchema = {
-    commentItem: undefined,
-    commentSelectValue: '',
+    commentSelectItem: undefined,
 };
 
 export const selectCommentFormSlice = createSlice({
@@ -12,10 +11,7 @@ export const selectCommentFormSlice = createSlice({
     initialState,
     reducers: {
         setCommentItem: (state, action: PayloadAction<Comment | undefined>) => {
-            state.commentItem = action.payload;
-        },
-        setCommentSelectValue: (state, action: PayloadAction<string>) => {
-            state.commentSelectValue = action.payload;
+            state.commentSelectItem = action.payload;
         },
     },
 });

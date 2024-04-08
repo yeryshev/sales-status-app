@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { type CommentsSchema, fetchAllComments, fetchCommentsByUserId } from '@/entities/Comment';
 import { addComment } from '@/features/AddCommentForm';
 import { deleteComment } from '@/features/SelectCommentForm';
@@ -13,7 +13,16 @@ const initialState: CommentsSchema = {
 export const commentBoxSlice = createSlice({
     name: 'comments',
     initialState,
-    reducers: {},
+    reducers: {
+        setComments: (state, action: PayloadAction<CommentsSchema>) => {
+            state.list = action.payload.list;
+            state.fullList = action.payload.fullList;
+        },
+        deleteComment: (state, action: PayloadAction<number>) => {
+            state.list = state.list.filter((comment) => comment.id !== action.payload);
+            state.fullList = state.fullList.filter((comment) => comment.id !== action.payload);
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchAllComments.pending, (state) => {
@@ -76,3 +85,4 @@ export const commentBoxSlice = createSlice({
 });
 
 export const { reducer: commentsReducer } = commentBoxSlice;
+export const { actions: commentsActions } = commentBoxSlice;
