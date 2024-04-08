@@ -1,18 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from '@/app/providers/StoreProvider';
 import { Comment } from '@/entities/Comment';
-import { getAddCommentFormText } from '../../selectors/addCommentFormSelectors';
-import { addCommentFormActions } from '../../slices/addCommentFormSlice';
 
 export const addComment = createAsyncThunk<
   Comment,
-  void,
+  Comment['description'],
   ThunkConfig<string>
 >(
-    'addCommentForm/addComment',
-    async (_, thunkAPI) => {
-        const { extra, rejectWithValue, dispatch, getState } = thunkAPI;
-        const text = getAddCommentFormText(getState());
+    'comments/addComment',
+    async (text, thunkAPI) => {
+        const { extra, rejectWithValue } = thunkAPI;
 
         if (!text) {
             return rejectWithValue('Не заполнено обязательное поле');
@@ -27,8 +24,6 @@ export const addComment = createAsyncThunk<
             if (!response.data) {
                 throw new Error('Произошла ошибка при добавлении комментария');
             }
-
-            dispatch(addCommentFormActions.setText(''));
 
             return response.data;
         } catch (error) {

@@ -10,12 +10,12 @@ import { fetchCommentsByUserId, getUserComments } from '@/entities/Comment';
 import { useSelector } from 'react-redux';
 import { StateSchema } from '@/app/providers/StoreProvider';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { deleteComment } from '../model/services/deleteComment/deleteComment';
+import { deleteComment } from '@/entities/Comment/model/services/deleteComment/deleteComment';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import {
     selectCommentFormActions,
     selectCommentFormReducer,
-} from '../model/slices/selectCommentSlice/selectCommentFormSlice';
+} from '../model/slices/selectCommentFormSlice';
 import { getCommentSelectItem } from '../model/selectors/selectCommentFormSelectors';
 
 const reducers: ReducersList = {
@@ -36,8 +36,11 @@ export const SelectCommentForm = memo(() => {
         user && dispatch(updateUser({ ...user, commentId: comment?.id || null }));
         comment && dispatch(selectCommentFormActions.setCommentItem(undefined));
     },
-    [comment, dispatch, user],
-    );
+    [comment, dispatch, user]);
+
+    const handleClearComment = useCallback(() => {
+        user && dispatch(updateUser({ ...user, commentId: null }));
+    }, [dispatch, user]);
 
     const handleDeleteComment = useCallback(() => {
         comment && dispatch(deleteComment(comment?.id));
@@ -103,7 +106,7 @@ export const SelectCommentForm = memo(() => {
                     <Button
                         disabled={user?.commentId === null}
                         size={'small'}
-                        onClick={handlePickComment}
+                        onClick={handleClearComment}
                     >
                 Очистить
                     </Button>

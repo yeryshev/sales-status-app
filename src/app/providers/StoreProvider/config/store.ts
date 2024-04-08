@@ -1,7 +1,7 @@
-import { commentsReducer } from '@/widgets/CommentBox';
-import { statusReducer } from '@/entities/Status';
-import { teamReducer } from '@/entities/Teammate';
 import { userReducer } from '@/entities/User';
+import { statusReducer } from '@/entities/Status';
+import { commentReducer } from '@/entities/Comment';
+import { teamReducer } from '@/entities/Teammate';
 import { CombinedState, configureStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
 import { StateSchema, ThunkExtraArg } from './StateSchema';
 import { createReducerManager } from './reducerManager';
@@ -17,9 +17,9 @@ export function createReduxStore(
     const rootReducers: ReducersMapObject<StateSchema> = {
         ...asyncReducers,
         user: userReducer,
-        team: teamReducer,
         status: statusReducer,
-        comments: commentsReducer,
+        comments: commentReducer,
+        team: teamReducer,
     };
 
     const reducerManager = createReducerManager(rootReducers);

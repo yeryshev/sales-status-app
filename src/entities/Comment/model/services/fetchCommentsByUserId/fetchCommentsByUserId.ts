@@ -1,20 +1,27 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { Comment } from '../../types/Comment';
+import { ThunkConfig } from '@/app/providers/StoreProvider';
+import { User } from '@/entities/User';
 
-export const fetchCommentsByUserId = createAsyncThunk('comments/fetchCommentsByUserId', async (userId: number) => {
-    try {
-        const url = `${import.meta.env.VITE_BACKEND_URL}/comments/?user=${userId}`;
-        const response = await fetch(url, {
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-        });
-        if (response.ok) {
-            const comments: Comment[] = await response.json();
-            return comments;
-        } else {
-            return [];
+export const fetchCommentsByUserId = createAsyncThunk<
+  Comment[],
+  User['id'],
+  ThunkConfig<string>
+>(
+    'comments/fetchCommentsByUserId',
+    async (userId, thunkAPI) => {
+        const { extra, rejectWithValue } = thunkAPI;
+
+        try {
+            const response = await extra.api.get<Comment[]>(`/comments/?user=${userId}`);
+
+            if (!response.data) {
+                throw new Error('Произошла ошибка при загрузке комментариев');
+            }
+
+            return response.data;
+        } catch (error) {
+            return rejectWithValue('Что-то пошло не так');
         }
-    } catch (error: unknown) {
-        return [];
-    }
-});
+    },
+);

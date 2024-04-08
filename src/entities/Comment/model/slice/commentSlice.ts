@@ -1,7 +1,9 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { type CommentsSchema, fetchAllComments, fetchCommentsByUserId } from '@/entities/Comment';
-import { addComment } from '@/features/AddCommentForm';
-import { deleteComment } from '@/features/SelectCommentForm';
+import { createSlice } from '@reduxjs/toolkit';
+import { type CommentsSchema } from '../types/CommentsSchema';
+import { fetchAllComments } from '../services/fetchAllComments/fetchAllComments';
+import { fetchCommentsByUserId } from '../services/fetchCommentsByUserId/fetchCommentsByUserId';
+import { addComment } from '../services/addComment/addComment';
+import { deleteComment } from '../services/deleteComment/deleteComment';
 
 const initialState: CommentsSchema = {
     list: [],
@@ -10,19 +12,10 @@ const initialState: CommentsSchema = {
     error: null,
 };
 
-export const commentBoxSlice = createSlice({
+export const commentSlice = createSlice({
     name: 'comments',
     initialState,
-    reducers: {
-        setComments: (state, action: PayloadAction<CommentsSchema>) => {
-            state.list = action.payload.list;
-            state.fullList = action.payload.fullList;
-        },
-        deleteComment: (state, action: PayloadAction<number>) => {
-            state.list = state.list.filter((comment) => comment.id !== action.payload);
-            state.fullList = state.fullList.filter((comment) => comment.id !== action.payload);
-        },
-    },
+    reducers: {},
     extraReducers: (builder) => {
         builder
             .addCase(fetchAllComments.pending, (state) => {
@@ -71,9 +64,7 @@ export const commentBoxSlice = createSlice({
             .addCase(deleteComment.fulfilled, (state, action) => {
                 if (action.payload) {
                     state.list = state.list.filter((comment) => comment.id !== action.payload.id);
-                    state.fullList = state.fullList.filter(
-                        (comment) => comment.id !== action.payload.id,
-                    );
+                    state.fullList = state.fullList.filter((comment) => comment.id !== action.payload.id);
                     state.loading = false;
                 }
             })
@@ -84,5 +75,5 @@ export const commentBoxSlice = createSlice({
     },
 });
 
-export const { reducer: commentsReducer } = commentBoxSlice;
-export const { actions: commentsActions } = commentBoxSlice;
+export const { reducer: commentReducer } = commentSlice;
+export const { actions: commentActions } = commentSlice;

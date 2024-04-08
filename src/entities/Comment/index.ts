@@ -4,3 +4,7 @@ export { getAllComments } from './model/selectors/commentSelectors';
 export { getUserComments } from './model/selectors/commentSelectors';
 export { fetchAllComments } from './model/services/fetchAllComments/fetchAllComments';
 export { fetchCommentsByUserId } from './model/services/fetchCommentsByUserId/fetchCommentsByUserId';
+export { addComment } from './model/services/addComment/addComment';
+export { deleteComment } from './model/services/deleteComment/deleteComment';
+export { commentActions } from './model/slice/commentSlice';
+export { commentReducer } from './model/slice/commentSlice';

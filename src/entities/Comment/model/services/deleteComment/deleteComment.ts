@@ -1,16 +1,15 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from '@/app/providers/StoreProvider';
 import { Comment } from '@/entities/Comment';
-import { commentsActions } from '@/widgets/CommentBox/model/slice/commentBoxSlice';
 
 export const deleteComment = createAsyncThunk<
   Comment,
   Comment['id'],
   ThunkConfig<string>
 >(
-    'manageComment/deleteComment',
+    'comments/deleteComment',
     async (commentId, thunkAPI) => {
-        const { extra, rejectWithValue, dispatch } = thunkAPI;
+        const { extra, rejectWithValue } = thunkAPI;
 
         if (!commentId) {
             return rejectWithValue('Не заполнено обязательное поле');
@@ -22,8 +21,6 @@ export const deleteComment = createAsyncThunk<
             if (!response.data) {
                 throw new Error('Произошла ошибка при удалении комментария');
             }
-
-            dispatch(commentsActions.deleteComment(commentId));
 
             return response.data;
         } catch (error) {

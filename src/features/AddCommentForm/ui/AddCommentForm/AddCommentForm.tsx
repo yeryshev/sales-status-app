@@ -11,7 +11,7 @@ import { addCommentFormActions, addCommentFormReducer } from '../../model/slices
 import { getAddCommentFormText } from '../../model/selectors/addCommentFormSelectors';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { addComment } from '../../model/services/addComment/addComment';
+import { addComment } from '@/entities/Comment';
 
 const reducers: ReducersList = {
     addCommentForm: addCommentFormReducer,
@@ -28,9 +28,10 @@ const AddCommentForm = memo(() => {
 
     const onSendComment = useCallback((event: FormEvent) => {
         event.preventDefault();
-        dispatch(addComment());
+        dispatch(addComment(text));
+        dispatch(addCommentFormActions.setText(''));
         setSnackBarIsOpen(true);
-    }, [dispatch]);
+    }, [dispatch, text]);
 
     return (
         <DynamicModuleLoader reducers={reducers}>

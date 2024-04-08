@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { SelectCommentFromSchema } from '../../types/selectCommentForm';
+import { SelectCommentFromSchema } from '../types/selectCommentForm';
 import { Comment } from '@/entities/Comment';
 
 const initialState: SelectCommentFromSchema = {
