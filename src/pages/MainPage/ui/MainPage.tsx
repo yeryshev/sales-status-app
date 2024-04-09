@@ -1,8 +1,6 @@
-import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Toolbar from '@mui/material/Toolbar';
 import { StateSchema } from '@/app/providers/StoreProvider';
 import { StatusBox } from '@/entities/Status';
 import { Layout } from '@/widgets/Layout';
@@ -12,6 +10,7 @@ import { CommentBox } from '@/widgets/CommentBox';
 import { TablesBox } from '@/entities/Table';
 import { useSocketCtx } from '@/app/providers/WsProvider';
 import { SocketCtxState } from '@/app/providers/WsProvider/lib/WsContext';
+import { PageWrapper } from '@/shared/ui/PageWrapper/PageWrapper';
 
 const handleVisibilityChange = (websockets: SocketCtxState) => {
     if (!document.hidden) {
@@ -44,19 +43,7 @@ const MainPage = memo(() => {
 
     return (
         <Layout>
-            <Box
-                component="main"
-                sx={{
-                    backgroundColor: (theme) =>
-                        theme.palette.mode === 'light'
-                            ? theme.palette.grey[100]
-                            : theme.palette.grey[900],
-                    flexGrow: 1,
-                    height: '100vh',
-                    overflow: 'auto',
-                }}
-            >
-                <Toolbar />
+            <PageWrapper>
                 <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
                     <Grid container spacing={2}>
                         {user?.firstName && user?.secondName && (
@@ -107,7 +94,7 @@ const MainPage = memo(() => {
                         </Grid>
                     </Grid>
                 </Container>
-            </Box>
+            </PageWrapper>
         </Layout>
     );
 });

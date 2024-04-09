@@ -4,7 +4,11 @@ import { Navbar } from '@/widgets/Navbar';
 import Box from '@mui/material/Box';
 import { Sidebar } from '@/widgets/Sidebar';
 
-export const Layout = ({ children }: { children: ReactNode }) => {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+export const Layout = ({ children }: LayoutProps) => {
     const [sideBarOpen, setSideBarOpen] = useState(false);
 
     const toggleSideBar = useCallback(

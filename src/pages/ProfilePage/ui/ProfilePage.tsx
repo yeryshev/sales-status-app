@@ -1,8 +1,6 @@
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { Layout } from '@/widgets/Layout';
-import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
-import Toolbar from '@mui/material/Toolbar';
 import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
@@ -16,7 +14,8 @@ import { updateProfileData } from '../model/services/updateProfileData/updatePro
 import { getProfileValidateErrors } from '../model/selectors/getProfileValidateError/getProfileValidateErrors';
 import Alert from '@mui/material/Alert';
 import { ValidateProfileError } from '../model/types/profile';
-import { getProfileData } from '@/pages/ProfilePage/model/selectors/getProfileData/getProfileData';
+import { getProfileData } from '../model/selectors/getProfileData/getProfileData';
+import { PageWrapper } from '@/shared/ui/PageWrapper/PageWrapper';
 
 const reducers: ReducersList = {
     profile: profileReducer,
@@ -76,19 +75,7 @@ const ProfilePage = () => {
     return (
         <DynamicModuleLoader reducers={reducers} removeAfterUnmount={true}>
             <Layout>
-                <Box
-                    component="main"
-                    sx={{
-                        backgroundColor: (theme) =>
-                            theme.palette.mode === 'light'
-                                ? theme.palette.grey[100]
-                                : theme.palette.grey[900],
-                        flexGrow: 1,
-                        height: '100vh',
-                        overflow: 'auto',
-                    }}
-                >
-                    <Toolbar />
+                <PageWrapper>
                     <Container maxWidth="lg" className="container">
                         <ProfileCard
                             formData={formData}
@@ -106,11 +93,17 @@ const ProfilePage = () => {
                         />
                         {validateErrors?.length && (
                             validateErrors.map((error) => (
-                                <Alert key={error} severity="error" sx={{ my: 2 }}>{validateErrorTranslates[error]}</Alert>
+                                <Alert
+                                    key={error}
+                                    severity="error"
+                                    sx={{ my: 2 }}
+                                >
+                                    {validateErrorTranslates[error]}
+                                </Alert>
                             ))
                         )}
                     </Container>
-                </Box>
+                </PageWrapper>
             </Layout>
         </DynamicModuleLoader>
     );

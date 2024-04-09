@@ -14,7 +14,9 @@ interface SidebarProps {
   toggleSideBar: () => () => void
 }
 
-export const Sidebar = memo(({ sideBarOpen, toggleSideBar }: SidebarProps) => {
+export const Sidebar = memo((props: SidebarProps) => {
+    const { sideBarOpen, toggleSideBar } = props;
+  
     return (
         <Drawer open={sideBarOpen} onClose={toggleSideBar()}>
             <Box
