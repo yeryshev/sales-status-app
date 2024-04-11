@@ -1,8 +1,8 @@
-import { type TeamState } from '../types/TeamState';
-import { setTeam } from '../actions/teamActions';
+import { type TeamTableSchema } from '../types/teamTableSchema';
 import { createSlice } from '@reduxjs/toolkit';
+import { fetchTeamList } from '../services/fetchTeamList/fetchTeamList';
 
-const initialState: TeamState = {
+const initialState: TeamTableSchema = {
     list: [],
     loading: false,
     error: null,
@@ -44,15 +44,15 @@ export const teamSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(setTeam.pending, (state) => {
+            .addCase(fetchTeamList.pending, (state) => {
                 state.error = null;
                 state.loading = true;
             })
-            .addCase(setTeam.fulfilled, (state, action) => {
+            .addCase(fetchTeamList.fulfilled, (state, action) => {
                 state.list = action.payload;
                 state.loading = false;
             })
-            .addCase(setTeam.rejected, (state, action) => {
+            .addCase(fetchTeamList.rejected, (state, action) => {
                 state.error = action.error.message || 'Error';
                 state.loading = false;
             });

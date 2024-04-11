@@ -1,33 +1,55 @@
 import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
-import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
+import { useSelector } from 'react-redux';
+import { type StateSchema } from '@/app/providers/StoreProvider';
+import { TeamRow } from '@/entities/Team/ui/TeamRow/TeamRow';
+import { memo } from 'react';
+import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import { Teammate } from '@/entities/Teammate';
-import { Row } from '../Row/Row';
-import { memo } from 'react';
+import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
+import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
-import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
-import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { Tooltip } from '@mui/material';
-import { MangoRedisData, UsersTasks, UsersTickets } from '@/entities/Table/model/types/tasksWebsocket';
+import { MangoRedisData, UsersTasks, UsersTickets } from '../../model/types/tasksWebsocket';
+import { Teammate } from '../../model/types/teammate';
+import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 
-export const UserTable = memo((
-    {
-        teammate,
-        mango,
-        tasks,
-        tickets,
-    }: {
-        teammate: Teammate;
-        mango: MangoRedisData;
-        tasks: UsersTasks;
-        tickets: UsersTickets;
-    },
-) => {
+interface TeamTableProps {
+  teamList: Teammate[];
+  mango: MangoRedisData;
+  tasks: UsersTasks;
+  tickets: UsersTickets;
+  teamIsLoading: boolean;
+}
+
+const getSkeletons = () => new Array(10)
+    .fill(0)
+    .map((_, index) => (
+        <RowSkeleton key={index} />
+    ));
+
+export const TeamTable = memo((props: TeamTableProps) => {
+    const { mango, tasks, tickets, teamIsLoading, teamList } = props;
+    const userId = useSelector((state: StateSchema) => state.user.user?.id);
+
+    const filterTeamList = ((teammate: Teammate) => {
+        return teammate.secondName && teammate.firstName && teammate.id !== userId;
+    });
+
+    const renderTeamList = (teammate: Teammate) => (
+        <TeamRow
+            key={teammate.id}
+            teammate={teammate}
+            mango={mango[teammate.extNumber]}
+            tasks={tasks[teammate.insideId]}
+            tickets={tickets[teammate.insideId]}
+            teamIsLoading={teamIsLoading}
+        />
+    );
+
     return (
         <TableContainer style={{ overflowX: 'auto' }}>
             <Table size="small">
@@ -49,20 +71,14 @@ export const UserTable = memo((
                         <Tooltip title={'Назначенные тикеты'}>
                             <TableCell align="center"><FeedbackOutlinedIcon fontSize={'small'}/></TableCell>
                         </Tooltip>
-                        <Tooltip title={'Работаю из дома'}>
-                            <TableCell align="center"><HomeOutlinedIcon fontSize={'small'} /></TableCell>
-                        </Tooltip>
+                        <TableCell align="center"></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    <Row
-                        key={teammate.id}
-                        teammate={teammate}
-                        expanded={false}
-                        mango={mango[teammate.extNumber]}
-                        tasks={tasks[teammate.insideId]}
-                        tickets={tickets[teammate.insideId]}
-                    />
+                    {teamList.length > 0
+                        ? teamList.filter(filterTeamList).map(renderTeamList)
+                        : null}
+                    {teamIsLoading && getSkeletons()}
                 </TableBody>
             </Table>
         </TableContainer>

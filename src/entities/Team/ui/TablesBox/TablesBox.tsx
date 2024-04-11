@@ -1,20 +1,22 @@
 import { Grid, Link as MuiLink, Paper } from '@mui/material';
-import Box from '@mui/material/Box';
 import { TeamTable } from '../TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { setTeam } from '@/entities/Teammate/model/actions/teamActions';
 import { UserTable } from '../UserTable/UserTable';
 import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
-import { Link as RouterLink } from 'react-router-dom';
 import { checkUser } from '@/entities/User/model/actions/userActions';
-import { setTeamLocal } from '@/entities/Teammate/model/slice/teamSlice';
+import { setTeamLocal, teamReducer } from '../../model/slice/teamSlice';
 import { statusActions } from '@/entities/Status/model/slice/statusSlice';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { StateSchema } from '@/app/providers/StoreProvider';
 import { fetchAllComments, getAllComments } from '@/entities/Comment';
-import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
 import { MangoRedisData, UsersTasks, UsersTickets, WsTasksData, WsTypes } from '../../model/types/tasksWebsocket';
+import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
+import { getTeamIsLoading, getTeamList, getTeammate } from '../../model/selectors/teamSelectors';
+import { fetchTeamList } from '../../model/services/fetchTeamList/fetchTeamList';
+import Box from '@mui/system/Box';
+import { Link as RouterLink } from 'react-router-dom';
+import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
+import { getUserData } from '@/entities/User/model/selectors/userSelectors';
 
 const Statuses: Record<number, string> = {
     1: 'online',
@@ -22,12 +24,15 @@ const Statuses: Record<number, string> = {
     3: 'offline',
 };
 
+const reducers: ReducersList = {
+    teamTable: teamReducer,
+};
+
 export const TablesBox = memo(() => {
-    const user = useSelector((state: StateSchema) => state.user.user);
-    const team = useSelector((state: StateSchema) => state.team.list);
-    const teamLoading = useSelector((state: StateSchema) => state.team.loading);
-    const userId = useSelector((state: StateSchema) => state.user.user?.id);
-    const teammate = team.find((t) => t.id === userId && t.secondName && t.firstName);
+    const user = useSelector(getUserData);
+    const teamList = useSelector(getTeamList);
+    const teammate = useSelector(getTeammate);
+    const teamIsLoading = useSelector(getTeamIsLoading);
     const allComments = useSelector(getAllComments);
     const dispatch = useAppDispatch();
     const [ socket ] = useSocketCtx();
@@ -73,7 +78,7 @@ export const TablesBox = memo(() => {
                 } else if (commentId === null) {
                     dispatch(setTeamLocal({ userId, comment: null, updatedAt, isWorkingRemotely }));
                 } else {
-                    dispatch(setTeam());
+                    dispatch(fetchTeamList());
                 }
             }
         },
@@ -129,14 +134,14 @@ export const TablesBox = memo(() => {
     ]);
 
     useEffect(() => {
-        dispatch(setTeam());
+        dispatch(fetchTeamList());
         dispatch(fetchAllComments());
     }, [dispatch]);
 
     return (
-        <>
-            <Grid item xs={12}>
-                {!teamLoading && (
+        <DynamicModuleLoader reducers={reducers}>
+            {!teamIsLoading && (
+                <Grid item xs={12}>
                     <Paper sx={{ p: 2 }}>
                         {teammate ? (
                             <UserTable
@@ -144,29 +149,30 @@ export const TablesBox = memo(() => {
                                 mango={mango}
                                 tasks={tasks}
                                 tickets={tickets}
+                                teamIsLoading={teamIsLoading}
                             />
                         ) : (
                             <Box>
-                                Чтобы принять участие, необходимо указать имя и фамилию в{' '}
+                              Чтобы принять участие, необходимо указать имя и фамилию в{' '}
                                 <MuiLink component={RouterLink} to={RoutePath.profile}>
                                     {'профиле'}
                                 </MuiLink>
                             </Box>
                         )}
                     </Paper>
-                )}
-            </Grid>
-            {team && (
-                <Grid item xs={12}>
-                    <Paper sx={{ p: 2 }}>
-                        <TeamTable
-                            mango={mango}
-                            tasks={tasks}
-                            tickets={tickets}
-                        />
-                    </Paper>
                 </Grid>
             )}
-        </>
+            <Grid item xs={12}>
+                <Paper sx={{ p: 2 }}>
+                    <TeamTable
+                        teamList={teamList}
+                        mango={mango}
+                        tasks={tasks}
+                        tickets={tickets}
+                        teamIsLoading={teamIsLoading}
+                    />
+                </Paper>
+            </Grid>
+        </DynamicModuleLoader>
     );
 });

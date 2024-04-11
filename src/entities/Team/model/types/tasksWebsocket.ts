@@ -1,4 +1,4 @@
-import { Teammate } from '@/entities/Teammate';
+import { Teammate } from '@/entities/Team';
 
 export type MangoRedisData = Record<string, boolean>
 

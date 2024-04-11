@@ -1,6 +1,6 @@
 import { CommentsSchema } from '@/entities/Comment';
 import { StatusSchema } from '@/entities/Status';
-import { TeamState } from '@/entities/Teammate';
+import { TeamTableSchema } from 'src/entities/Team';
 import { UserSchema } from '@/entities/User';
 import { LoginSchema } from '@/features/AuthByEmail';
 import { CombinedState, EnhancedStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
@@ -13,7 +13,6 @@ import { AddCommentFormSchema } from '@/features/AddCommentForm/model/types/addC
 import { SelectCommentFromSchema } from '@/features/SelectCommentForm/model/types/selectCommentForm';
 
 export interface StateSchema {
-    team: TeamState;
     user: UserSchema;
     comments: CommentsSchema;
     status: StatusSchema;
@@ -23,6 +22,7 @@ export interface StateSchema {
     profile?: ProfileSchema;
     addCommentForm?: AddCommentFormSchema;
     selectComment?: SelectCommentFromSchema;
+    teamTable?: TeamTableSchema;
 }
 
 export type StateSchemaKey = keyof StateSchema;

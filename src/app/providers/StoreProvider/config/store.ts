@@ -1,7 +1,6 @@
 import { userReducer } from '@/entities/User';
 import { statusReducer } from '@/entities/Status';
 import { commentReducer } from '@/entities/Comment';
-import { teamReducer } from '@/entities/Teammate';
 import { CombinedState, configureStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
 import { StateSchema, ThunkExtraArg } from './StateSchema';
 import { createReducerManager } from './reducerManager';
@@ -19,7 +18,6 @@ export function createReduxStore(
         user: userReducer,
         status: statusReducer,
         comments: commentReducer,
-        team: teamReducer,
     };
 
     const reducerManager = createReducerManager(rootReducers);

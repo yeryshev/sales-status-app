@@ -7,7 +7,7 @@ import { Layout } from '@/widgets/Layout';
 import { memo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { CommentBox } from '@/widgets/CommentBox';
-import { TablesBox } from '@/entities/Table';
+import { TablesBox } from '@/entities/Team';
 import { useSocketCtx } from '@/app/providers/WsProvider';
 import { SocketCtxState } from '@/app/providers/WsProvider/lib/WsContext';
 import { PageWrapper } from '@/shared/ui/PageWrapper/PageWrapper';
