@@ -46,7 +46,7 @@ const LoginPage = memo(() => {
         const username = event.currentTarget.email.value;
         const password = event.currentTarget.password.value;
         dispatch(loginByUsername({ username, password }))
-            .then(() => navigate(RoutePath.main));
+            .then((data) => !data.payload && navigate(RoutePath.main));
     }, [dispatch, navigate]);
 
     return (
