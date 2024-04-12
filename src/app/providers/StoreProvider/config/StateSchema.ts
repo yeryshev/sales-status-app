@@ -6,8 +6,6 @@ import { LoginSchema } from '@/features/AuthByEmail';
 import { CombinedState, EnhancedStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
 import { AnyAction } from 'redux';
 import { ProfileSchema } from '@/pages/ProfilePage';
-import { NavigateOptions } from 'react-router/dist/lib/context';
-import { To } from '@remix-run/router';
 import { AxiosInstance } from 'axios';
 import { AddCommentFormSchema } from '@/features/AddCommentForm/model/types/addCommentForm';
 import { SelectCommentFromSchema } from '@/features/SelectCommentForm/model/types/selectCommentForm';
@@ -40,7 +38,6 @@ export interface ReduxStoreWithManager extends EnhancedStore<StateSchema> {
 
 export interface ThunkExtraArg {
     api: AxiosInstance
-    navigate?: (to: To, options?: NavigateOptions) => void
 }
 
 export interface ThunkConfig<T> {

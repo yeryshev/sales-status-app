@@ -39,7 +39,6 @@ export const userSlice = createSlice({
             .addCase(clearUser.fulfilled, (state) => {
                 state.user = undefined;
                 state.authData = undefined;
-                state.mounted = false;
             })
             .addCase(clearUser.rejected, (state, action) => {
                 state.user = undefined;

@@ -7,7 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { clearUser } from '@/entities/User/model/actions/userActions';
 import { ThemeSwitcher } from '@/widgets/ThemeSwitcher';
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
 
@@ -19,10 +19,9 @@ export const Navbar = memo(({ toggleSideBar }: NavbarProps) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const handleLogout = async () => {
-        await dispatch(clearUser());
-        navigate('/');
-    };
+    const handleLogout = useCallback(() => {
+        dispatch(clearUser()).then(() => navigate(RoutePath.login));
+    }, [dispatch, navigate]);
 
     return (
         <>

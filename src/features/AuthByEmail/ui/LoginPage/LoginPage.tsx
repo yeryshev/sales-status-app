@@ -18,6 +18,8 @@ import { getLoginPassword } from '../../model/selectors/getLoginPassword/getLogi
 import { getLoginIsLoading } from '../../model/selectors/getLoginIsLoading/getLoginIsLoading';
 import { getLoginError } from '../../model/selectors/getLoginError/getLoginError';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
+import { useNavigate } from 'react-router-dom';
+import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
 
 const initialReducers: ReducersList = {
     loginForm: loginReducer,
@@ -29,6 +31,7 @@ const LoginPage = memo(() => {
     const password = useSelector(getLoginPassword);
     const isLoading = useSelector(getLoginIsLoading);
     const error = useSelector(getLoginError);
+    const navigate = useNavigate();
 
     const onChangeUsername = useCallback((value: string) => {
         dispatch(loginActions.setUsername(value));
@@ -42,13 +45,13 @@ const LoginPage = memo(() => {
         event.preventDefault();
         const username = event.currentTarget.email.value;
         const password = event.currentTarget.password.value;
-        dispatch(loginByUsername({ username, password }));
-    }, [dispatch]);
+        dispatch(loginByUsername({ username, password }))
+            .then(() => navigate(RoutePath.main));
+    }, [dispatch, navigate]);
 
     return (
         <DynamicModuleLoader
             reducers={initialReducers}
-            removeAfterUnmount={true}
         >
             <>
                 <CssBaseline />

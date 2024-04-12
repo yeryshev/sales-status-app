@@ -43,7 +43,6 @@ export const loginByUsername = createAsyncThunk<
 
             const user = await dispatch(checkUser()).unwrap();
             user && dispatch(userActions.setAuthData(user));
-            extra.navigate && extra.navigate('/');
 
             return response.data;
 
