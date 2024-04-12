@@ -1,22 +1,29 @@
 import { Grid, Link as MuiLink, Paper } from '@mui/material';
 import { TeamTable } from '../TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { UserTable } from '../UserTable/UserTable';
 import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
-import { checkUser } from '@/entities/User/model/actions/userActions';
-import { setTeamLocal, teamReducer } from '../../model/slice/teamSlice';
-import { statusActions } from '@/entities/Status/model/slice/statusSlice';
+import { checkUser, getUserData } from '@/entities/User';
+import { teamActions, teamReducer } from '../../model/slice/teamSlice';
+import { statusActions } from '@/entities/Status';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { fetchAllComments, getAllComments } from '@/entities/Comment';
-import { MangoRedisData, UsersTasks, UsersTickets, WsTasksData, WsTypes } from '../../model/types/tasksWebsocket';
+import { WsTasksData, WsTypes } from '../../model/types/tasksWebsocket';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
-import { getTeamIsLoading, getTeamList, getTeammate } from '../../model/selectors/teamSelectors';
+import {
+    getMangoStates,
+    getTasksStates,
+    getTeamIsLoading,
+    getTeamList,
+    getTeammate,
+    getTicketsStates,
+} from '../../model/selectors/teamSelectors';
 import { fetchTeamList } from '../../model/services/fetchTeamList/fetchTeamList';
 import Box from '@mui/system/Box';
 import { Link as RouterLink } from 'react-router-dom';
 import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
-import { getUserData } from '@/entities/User/model/selectors/userSelectors';
+import { fetchMangoStates } from '../../model/services/fetchMangoStates/fetchMangoStates';
 
 const Statuses: Record<number, string> = {
     1: 'online',
@@ -34,11 +41,11 @@ export const TablesBox = memo(() => {
     const teammate = useSelector(getTeammate);
     const teamIsLoading = useSelector(getTeamIsLoading);
     const allComments = useSelector(getAllComments);
+    const mango = useSelector(getMangoStates);
+    const tickets = useSelector(getTicketsStates);
+    const tasks = useSelector(getTasksStates);
     const dispatch = useAppDispatch();
     const [ socket ] = useSocketCtx();
-    const [ mango, setMango ] = useState<MangoRedisData>({});
-    const [ tasks, setTasks ] = useState<UsersTasks>({});
-    const [ tickets, setTickets ] = useState<UsersTickets>({});
 
     const tasksSocket = useMemo(() => {
         return new WebSocket(`${import.meta.env.VITE_TASKS_SOCKET_URL}`);
@@ -53,7 +60,7 @@ export const TablesBox = memo(() => {
             if ('statusId' in dataFromSocket && user) {
                 const { statusId } = dataFromSocket;
                 dispatch(
-                    setTeamLocal({
+                    teamActions.setTeamLocal({
                         userId,
                         status: Statuses[statusId],
                         updatedAt,
@@ -68,7 +75,7 @@ export const TablesBox = memo(() => {
                 const comment = allComments.find((comment) => comment.id === Number(commentId));
                 if (comment) {
                     dispatch(
-                        setTeamLocal({
+                        teamActions.setTeamLocal({
                             userId,
                             comment: comment.description,
                             updatedAt,
@@ -76,7 +83,12 @@ export const TablesBox = memo(() => {
                         }),
                     );
                 } else if (commentId === null) {
-                    dispatch(setTeamLocal({ userId, comment: null, updatedAt, isWorkingRemotely }));
+                    dispatch(teamActions.setTeamLocal({
+                        userId,
+                        comment: null,
+                        updatedAt,
+                        isWorkingRemotely,
+                    }));
                 } else {
                     dispatch(fetchTeamList());
                 }
@@ -89,34 +101,15 @@ export const TablesBox = memo(() => {
         const dataFromSocket: WsTasksData = JSON.parse(event.data);
 
         if (dataFromSocket.type === WsTypes.MANGO) {
-            const key = Object.keys(dataFromSocket.data)[0];
-            setMango((prev) => ({ ...prev, [key]: dataFromSocket.data[key] }));
-        }
-        if (dataFromSocket.type === WsTypes.TASKS) {
-            setTasks(dataFromSocket.data);
+            dispatch(teamActions.changeOneMangoState(dataFromSocket.data));
         }
         if (dataFromSocket.type === WsTypes.TICKETS) {
-            setTickets(dataFromSocket.data);
+            dispatch(teamActions.setTickets(dataFromSocket.data));
         }
-    }, []);
-
-    useEffect(() => {
-        fetch(import.meta.env.VITE_MANGO_REDIS_URL, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(async (res) => {
-                return await res.json();
-            })
-            .then((data) => {
-                setMango(data);
-            })
-            .catch((error) => {
-                console.error('Error fetching data:', error);
-            });
-    }, []);
+        if (dataFromSocket.type === WsTypes.TASKS) {
+            dispatch(teamActions.setTasks(dataFromSocket.data));
+        }
+    }, [dispatch]);
 
     useEffect(() => {
         socket?.addEventListener('message', handleStatusChange);
@@ -136,6 +129,7 @@ export const TablesBox = memo(() => {
     useEffect(() => {
         dispatch(fetchTeamList());
         dispatch(fetchAllComments());
+        dispatch(fetchMangoStates());
     }, [dispatch]);
 
     return (

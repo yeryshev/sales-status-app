@@ -13,13 +13,13 @@ import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlin
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import { Tooltip } from '@mui/material';
-import { MangoRedisData, UsersTasks, UsersTickets } from '../../model/types/tasksWebsocket';
+import { UsersMango, UsersTasks, UsersTickets } from '../../model/types/tasksWebsocket';
 import { Teammate } from '../../model/types/teammate';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 
 interface TeamTableProps {
   teamList: Teammate[];
-  mango: MangoRedisData;
+  mango: UsersMango;
   tasks: UsersTasks;
   tickets: UsersTickets;
   teamIsLoading: boolean;

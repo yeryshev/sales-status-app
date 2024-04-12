@@ -73,7 +73,7 @@ const ProfilePage = () => {
     }, [dispatch]);
 
     return (
-        <DynamicModuleLoader reducers={reducers} removeAfterUnmount={true}>
+        <DynamicModuleLoader reducers={reducers}>
             <Layout>
                 <PageWrapper>
                     <Container maxWidth="lg" className="container">

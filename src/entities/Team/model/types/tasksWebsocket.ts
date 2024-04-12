@@ -1,6 +1,5 @@
 import { Teammate } from '@/entities/Team';
 
-export type MangoRedisData = Record<string, boolean>
 
 export interface UserTasks {
   conversations: number;
@@ -11,6 +10,7 @@ export interface UserTasks {
 
 export type UserTickets = string | number
 
+export type UsersMango = Record<string, boolean>
 export type UsersTasks = Record<Teammate['insideId'], UserTasks>
 export type UsersTickets = Record<Teammate['insideId'], UserTickets>
 
@@ -22,7 +22,7 @@ export enum WsTypes {
 
 export interface MangoWs {
   type: WsTypes.MANGO;
-  data: Record<string, boolean>;
+  data: UsersMango;
 }
 
 export interface TasksWs {
