@@ -6,40 +6,37 @@ import { StateSchema, ThunkExtraArg } from './StateSchema';
 import { createReducerManager } from './reducerManager';
 import { $api } from '@/shared/api/api';
 
-export function createReduxStore(
-    initialState?: StateSchema,
-    asyncReducers?: ReducersMapObject<StateSchema>,
-) {
-    const rootReducers: ReducersMapObject<StateSchema> = {
-        ...asyncReducers,
-        user: userReducer,
-        status: statusReducer,
-        comments: commentReducer,
-    };
+export function createReduxStore(initialState?: StateSchema, asyncReducers?: ReducersMapObject<StateSchema>) {
+  const rootReducers: ReducersMapObject<StateSchema> = {
+    ...asyncReducers,
+    user: userReducer,
+    status: statusReducer,
+    comments: commentReducer,
+  };
 
-    const reducerManager = createReducerManager(rootReducers);
+  const reducerManager = createReducerManager(rootReducers);
 
-    const extraArg: ThunkExtraArg = {
-        api: $api,
-    };
+  const extraArg: ThunkExtraArg = {
+    api: $api,
+  };
 
-    const store = configureStore({
-        reducer: reducerManager.reduce as Reducer<CombinedState<StateSchema>>,
-        devTools: import.meta.env.DEV,
-        preloadedState: initialState,
-        middleware: (getDefaultMiddleware) => {
-            return getDefaultMiddleware({
-                thunk: {
-                    extraArgument: extraArg,
-                },
-            });
+  const store = configureStore({
+    reducer: reducerManager.reduce as Reducer<CombinedState<StateSchema>>,
+    devTools: import.meta.env.DEV,
+    preloadedState: initialState,
+    middleware: (getDefaultMiddleware) => {
+      return getDefaultMiddleware({
+        thunk: {
+          extraArgument: extraArg,
         },
-    });
+      });
+    },
+  });
 
-    // @ts-expect-error временно
-    store.reducerManager = reducerManager;
+  // @ts-expect-error временно
+  store.reducerManager = reducerManager;
 
-    return store;
+  return store;
 }
 
 export type AppDispatch = ReturnType<typeof createReduxStore>['dispatch'];

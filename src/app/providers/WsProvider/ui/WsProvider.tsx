@@ -4,20 +4,16 @@ import { type ReactNode } from 'react';
 const url = `${import.meta.env.VITE_SOCKET_URL}`;
 
 interface WsProviderProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 const SocketCtxProvider = (props: WsProviderProps) => {
-    const { children } = props;
-    const socket = new WebSocket(url);
+  const { children } = props;
+  const socket = new WebSocket(url);
 
-    const websockets: SocketCtxState = [socket];
+  const websockets: SocketCtxState = [socket];
 
-    return (
-        <SocketCtx.Provider value={websockets}>
-            {children}
-        </SocketCtx.Provider>
-    );
+  return <SocketCtx.Provider value={websockets}>{children}</SocketCtx.Provider>;
 };
 
 export default SocketCtxProvider;

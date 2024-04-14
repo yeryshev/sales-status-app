@@ -25,48 +25,58 @@ interface UserTableProps {
 }
 
 export const UserTable = memo((props: UserTableProps) => {
-    const { teammate, mango, tasks, tickets, teamIsLoading } = props;
+  const { teammate, mango, tasks, tickets, teamIsLoading } = props;
 
-    return (
-        <TableContainer style={{ overflowX: 'auto' }}>
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell></TableCell>
-                        <TableCell align="left"></TableCell>
-                        <TableCell align="left"></TableCell>
-                        <TableCell align="left"></TableCell>
-                        <Tooltip title={'Первичные обращения'}>
-                            <TableCell align="center"><RequestQuoteOutlinedIcon fontSize={'small'} /></TableCell>
-                        </Tooltip>
-                        <Tooltip title={'Просроченные задачи'}>
-                            <TableCell align="center"><HourglassBottomOutlinedIcon fontSize={'small'} /></TableCell>
-                        </Tooltip>
-                        <Tooltip title={'Количество открытых чатов'}>
-                            <TableCell align="center"><QuestionAnswerOutlinedIcon fontSize={'small'}/></TableCell>
-                        </Tooltip>
-                        <Tooltip title={'Назначенные тикеты'}>
-                            <TableCell align="center"><FeedbackOutlinedIcon fontSize={'small'}/></TableCell>
-                        </Tooltip>
-                        <Tooltip title={'Работаю из дома'}>
-                            <TableCell align="center"><HomeOutlinedIcon fontSize={'small'} /></TableCell>
-                        </Tooltip>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {teammate
-                        ? <UserRow
-                            key={teammate.id}
-                            teammate={teammate}
-                            mango={mango[teammate.extNumber]}
-                            tasks={tasks[teammate.insideId]}
-                            tickets={tickets[teammate.insideId]}
-                            teamIsLoading={teamIsLoading}
-                        />
-                        : null}
-                    {teamIsLoading && <RowSkeleton />}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
+  return (
+    <TableContainer style={{ overflowX: 'auto' }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell></TableCell>
+            <TableCell align="left"></TableCell>
+            <TableCell align="left"></TableCell>
+            <TableCell align="left"></TableCell>
+            <Tooltip title={'Первичные обращения'}>
+              <TableCell align="center">
+                <RequestQuoteOutlinedIcon fontSize={'small'} />
+              </TableCell>
+            </Tooltip>
+            <Tooltip title={'Просроченные задачи'}>
+              <TableCell align="center">
+                <HourglassBottomOutlinedIcon fontSize={'small'} />
+              </TableCell>
+            </Tooltip>
+            <Tooltip title={'Количество открытых чатов'}>
+              <TableCell align="center">
+                <QuestionAnswerOutlinedIcon fontSize={'small'} />
+              </TableCell>
+            </Tooltip>
+            <Tooltip title={'Назначенные тикеты'}>
+              <TableCell align="center">
+                <FeedbackOutlinedIcon fontSize={'small'} />
+              </TableCell>
+            </Tooltip>
+            <Tooltip title={'Работаю из дома'}>
+              <TableCell align="center">
+                <HomeOutlinedIcon fontSize={'small'} />
+              </TableCell>
+            </Tooltip>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {teammate ? (
+            <UserRow
+              key={teammate.id}
+              teammate={teammate}
+              mango={mango[teammate.extNumber]}
+              tasks={tasks[teammate.insideId]}
+              tickets={tickets[teammate.insideId]}
+              teamIsLoading={teamIsLoading}
+            />
+          ) : null}
+          {teamIsLoading && <RowSkeleton />}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 });

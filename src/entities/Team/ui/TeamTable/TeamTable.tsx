@@ -25,62 +25,64 @@ interface TeamTableProps {
   teamIsLoading: boolean;
 }
 
-const getSkeletons = () => new Array(10)
-    .fill(0)
-    .map((_, index) => (
-        <RowSkeleton key={index} />
-    ));
+const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
 
 export const TeamTable = memo((props: TeamTableProps) => {
-    const { mango, tasks, tickets, teamIsLoading, teamList } = props;
-    const userId = useSelector((state: StateSchema) => state.user.user?.id);
+  const { mango, tasks, tickets, teamIsLoading, teamList } = props;
+  const userId = useSelector((state: StateSchema) => state.user.user?.id);
 
-    const filterTeamList = ((teammate: Teammate) => {
-        return teammate.secondName && teammate.firstName && teammate.id !== userId;
-    });
+  const filterTeamList = (teammate: Teammate) => {
+    return teammate.secondName && teammate.firstName && teammate.id !== userId;
+  };
 
-    const renderTeamList = (teammate: Teammate) => (
-        <TeamRow
-            key={teammate.id}
-            teammate={teammate}
-            mango={mango[teammate.extNumber]}
-            tasks={tasks[teammate.insideId]}
-            tickets={tickets[teammate.insideId]}
-            teamIsLoading={teamIsLoading}
-        />
-    );
+  const renderTeamList = (teammate: Teammate) => (
+    <TeamRow
+      key={teammate.id}
+      teammate={teammate}
+      mango={mango[teammate.extNumber]}
+      tasks={tasks[teammate.insideId]}
+      tickets={tickets[teammate.insideId]}
+      teamIsLoading={teamIsLoading}
+    />
+  );
 
-    return (
-        <TableContainer style={{ overflowX: 'auto' }}>
-            <Table size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell></TableCell>
-                        <TableCell align="left"></TableCell>
-                        <TableCell align="left"></TableCell>
-                        <TableCell align="left"></TableCell>
-                        <Tooltip title={'Первичные обращения'}>
-                            <TableCell align="center"><RequestQuoteOutlinedIcon fontSize={'small'} /></TableCell>
-                        </Tooltip>
-                        <Tooltip title={'Просроченные задачи'}>
-                            <TableCell align="center"><HourglassBottomOutlinedIcon fontSize={'small'} /></TableCell>
-                        </Tooltip>
-                        <Tooltip title={'Количество открытых чатов'}>
-                            <TableCell align="center"><QuestionAnswerOutlinedIcon fontSize={'small'}/></TableCell>
-                        </Tooltip>
-                        <Tooltip title={'Назначенные тикеты'}>
-                            <TableCell align="center"><FeedbackOutlinedIcon fontSize={'small'}/></TableCell>
-                        </Tooltip>
-                        <TableCell align="center"></TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {teamList.length > 0
-                        ? teamList.filter(filterTeamList).map(renderTeamList)
-                        : null}
-                    {teamIsLoading && getSkeletons()}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
+  return (
+    <TableContainer style={{ overflowX: 'auto' }}>
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell></TableCell>
+            <TableCell align="left"></TableCell>
+            <TableCell align="left"></TableCell>
+            <TableCell align="left"></TableCell>
+            <Tooltip title={'Первичные обращения'}>
+              <TableCell align="center">
+                <RequestQuoteOutlinedIcon fontSize={'small'} />
+              </TableCell>
+            </Tooltip>
+            <Tooltip title={'Просроченные задачи'}>
+              <TableCell align="center">
+                <HourglassBottomOutlinedIcon fontSize={'small'} />
+              </TableCell>
+            </Tooltip>
+            <Tooltip title={'Количество открытых чатов'}>
+              <TableCell align="center">
+                <QuestionAnswerOutlinedIcon fontSize={'small'} />
+              </TableCell>
+            </Tooltip>
+            <Tooltip title={'Назначенные тикеты'}>
+              <TableCell align="center">
+                <FeedbackOutlinedIcon fontSize={'small'} />
+              </TableCell>
+            </Tooltip>
+            <TableCell align="center"></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {teamList.length > 0 ? teamList.filter(filterTeamList).map(renderTeamList) : null}
+          {teamIsLoading && getSkeletons()}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 });

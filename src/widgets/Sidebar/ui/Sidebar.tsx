@@ -10,41 +10,41 @@ import { SidebarItemsList } from '@/widgets/Sidebar/model/items';
 import { SidebarItem } from '@/widgets/Sidebar/ui/SidebarItem/SidebarItem';
 
 interface SidebarProps {
-  sideBarOpen: boolean
-  toggleSideBar: () => () => void
+  sideBarOpen: boolean;
+  toggleSideBar: () => () => void;
 }
 
 export const Sidebar = memo((props: SidebarProps) => {
-    const { sideBarOpen, toggleSideBar } = props;
-  
-    return (
-        <Drawer open={sideBarOpen} onClose={toggleSideBar()}>
-            <Box
-                component="nav"
-                sx={{ width: 250 }}
-                role="presentation"
-                onClick={toggleSideBar()}
-                onKeyDown={toggleSideBar()}
-            >
-                <Toolbar
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end',
-                        px: [1],
-                    }}
-                >
-                    <IconButton onClick={toggleSideBar}>
-                        <ChevronLeftIcon />
-                    </IconButton>
-                </Toolbar>
-                <Divider />
-                <List component="nav">
-                    {SidebarItemsList.map((item) => (
-                        <SidebarItem key={item.path} item={item} />
-                    ))}
-                </List>
-            </Box>
-        </Drawer>
-    );
+  const { sideBarOpen, toggleSideBar } = props;
+
+  return (
+    <Drawer open={sideBarOpen} onClose={toggleSideBar()}>
+      <Box
+        component="nav"
+        sx={{ width: 250 }}
+        role="presentation"
+        onClick={toggleSideBar()}
+        onKeyDown={toggleSideBar()}
+      >
+        <Toolbar
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            px: [1],
+          }}
+        >
+          <IconButton onClick={toggleSideBar}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </Toolbar>
+        <Divider />
+        <List component="nav">
+          {SidebarItemsList.map((item) => (
+            <SidebarItem key={item.path} item={item} />
+          ))}
+        </List>
+      </Box>
+    </Drawer>
+  );
 });

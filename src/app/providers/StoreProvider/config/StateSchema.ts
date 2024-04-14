@@ -11,37 +11,37 @@ import { AddCommentFormSchema } from '@/features/AddCommentForm/model/types/addC
 import { SelectCommentFromSchema } from '@/features/SelectCommentForm/model/types/selectCommentForm';
 
 export interface StateSchema {
-    user: UserSchema;
-    comments: CommentsSchema;
-    status: StatusSchema;
+  user: UserSchema;
+  comments: CommentsSchema;
+  status: StatusSchema;
 
-    // Асинхронные редюсеры
-    loginForm?: LoginSchema;
-    profile?: ProfileSchema;
-    addCommentForm?: AddCommentFormSchema;
-    selectComment?: SelectCommentFromSchema;
-    teamTable?: TeamTableSchema;
+  // Асинхронные редюсеры
+  loginForm?: LoginSchema;
+  profile?: ProfileSchema;
+  addCommentForm?: AddCommentFormSchema;
+  selectComment?: SelectCommentFromSchema;
+  teamTable?: TeamTableSchema;
 }
 
 export type StateSchemaKey = keyof StateSchema;
 
 export interface ReducerManager {
-    getReducerMap: () => ReducersMapObject<StateSchema>
-    reduce: (state: StateSchema, action: AnyAction) => CombinedState<StateSchema>
-    add: (key: StateSchemaKey, reducer: Reducer) => void
-    remove: (key: StateSchemaKey) => void
+  getReducerMap: () => ReducersMapObject<StateSchema>;
+  reduce: (state: StateSchema, action: AnyAction) => CombinedState<StateSchema>;
+  add: (key: StateSchemaKey, reducer: Reducer) => void;
+  remove: (key: StateSchemaKey) => void;
 }
 
 export interface ReduxStoreWithManager extends EnhancedStore<StateSchema> {
-    reducerManager: ReducerManager;
+  reducerManager: ReducerManager;
 }
 
 export interface ThunkExtraArg {
-    api: AxiosInstance
+  api: AxiosInstance;
 }
 
 export interface ThunkConfig<T> {
-    rejectValue: T,
-    extra: ThunkExtraArg
-    state: StateSchema
+  rejectValue: T;
+  extra: ThunkExtraArg;
+  state: StateSchema;
 }

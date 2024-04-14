@@ -1,6 +1,5 @@
 import { Teammate } from '@/entities/Team';
 
-
 export interface UserTasks {
   conversations: number;
   leads: number;
@@ -8,11 +7,11 @@ export interface UserTasks {
   tasks: number;
 }
 
-export type UserTickets = string | number
+export type UserTickets = string | number;
 
-export type UsersMango = Record<string, boolean>
-export type UsersTasks = Record<Teammate['insideId'], UserTasks>
-export type UsersTickets = Record<Teammate['insideId'], UserTickets>
+export type UsersMango = Record<string, boolean>;
+export type UsersTasks = Record<Teammate['insideId'], UserTasks>;
+export type UsersTickets = Record<Teammate['insideId'], UserTickets>;
 
 export enum WsTypes {
   MANGO = 'mango',
@@ -35,4 +34,4 @@ export interface TicketsWs {
   data: UsersTickets;
 }
 
-export type WsTasksData = MangoWs | TasksWs | TicketsWs
+export type WsTasksData = MangoWs | TasksWs | TicketsWs;

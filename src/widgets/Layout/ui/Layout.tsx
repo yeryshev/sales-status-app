@@ -9,27 +9,27 @@ interface LayoutProps {
 }
 
 export const Layout = ({ children }: LayoutProps) => {
-    const [sideBarOpen, setSideBarOpen] = useState(false);
+  const [sideBarOpen, setSideBarOpen] = useState(false);
 
-    const toggleSideBar = useCallback(
-        () => (event?: KeyboardEvent | MouseEvent) => {
-            if (
-                event?.type === 'keydown' &&
-                ((event as KeyboardEvent).key === 'Tab' || (event as KeyboardEvent).key === 'Shift')
-            ) {
-                return;
-            }
-            setSideBarOpen(!sideBarOpen);
-        },
-        [setSideBarOpen, sideBarOpen],
-    );
+  const toggleSideBar = useCallback(
+    () => (event?: KeyboardEvent | MouseEvent) => {
+      if (
+        event?.type === 'keydown' &&
+        ((event as KeyboardEvent).key === 'Tab' || (event as KeyboardEvent).key === 'Shift')
+      ) {
+        return;
+      }
+      setSideBarOpen(!sideBarOpen);
+    },
+    [setSideBarOpen, sideBarOpen],
+  );
 
-    return (
-        <Box sx={{ display: 'flex' }}>
-            <CssBaseline />
-            <Navbar toggleSideBar={toggleSideBar} />
-            <Sidebar sideBarOpen={sideBarOpen} toggleSideBar={toggleSideBar} />
-            {children}
-        </Box>
-    );
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <Navbar toggleSideBar={toggleSideBar} />
+      <Sidebar sideBarOpen={sideBarOpen} toggleSideBar={toggleSideBar} />
+      {children}
+    </Box>
+  );
 };
