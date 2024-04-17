@@ -4,7 +4,7 @@ import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import { Teammate } from '@/entities/Team';
+import { Teammate } from '../../model/types/teammate';
 import { memo } from 'react';
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
@@ -13,8 +13,8 @@ import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { Tooltip } from '@mui/material';
 import { UsersMango, UsersTasks, UsersTickets } from '../../model/types/tasksWebsocket';
-import { UserRow } from '@/entities/Team/ui/UserRow/UserRow';
-import { RowSkeleton } from '@/entities/Team/ui/RowSkeleton/RowSkeleton';
+import { UserRow } from '../UserRow/UserRow';
+import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 
 interface UserTableProps {
   teammate?: Teammate;

@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from '@/app/providers/StoreProvider';
-import { Teammate } from '@/entities/Team';
+import { Teammate } from '../../types/teammate';
 
 export const fetchTeamList = createAsyncThunk<Teammate[], void, ThunkConfig<string>>(
   'team/fetchTeamList',

@@ -3,7 +3,7 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import { useSelector } from 'react-redux';
 import { type StateSchema } from '@/app/providers/StoreProvider';
-import { TeamRow } from '@/entities/Team/ui/TeamRow/TeamRow';
+import { TeamRow } from '../TeamRow/TeamRow';
 import { memo } from 'react';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -13,7 +13,7 @@ import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlin
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import { Tooltip } from '@mui/material';
-import { UsersMango, UsersTasks, UsersTickets } from '../../model/types/tasksWebsocket';
+import { UsersMango, UsersTasks, UsersTickets, UsersVacation } from '../../model/types/tasksWebsocket';
 import { Teammate } from '../../model/types/teammate';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 
@@ -22,13 +22,14 @@ interface TeamTableProps {
   mango: UsersMango;
   tasks: UsersTasks;
   tickets: UsersTickets;
+  vacationStates: UsersVacation;
   teamIsLoading: boolean;
 }
 
 const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
 
 export const TeamTable = memo((props: TeamTableProps) => {
-  const { mango, tasks, tickets, teamIsLoading, teamList } = props;
+  const { mango, tasks, tickets, teamIsLoading, teamList, vacationStates } = props;
   const userId = useSelector((state: StateSchema) => state.user.user?.id);
 
   const filterTeamList = (teammate: Teammate) => {
@@ -42,6 +43,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
       mango={mango[teammate.extNumber]}
       tasks={tasks[teammate.insideId]}
       tickets={tickets[teammate.insideId]}
+      vacationState={vacationStates[teammate.insideId]}
       teamIsLoading={teamIsLoading}
     />
   );

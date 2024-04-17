@@ -1,7 +1,7 @@
 import { StateSchema } from '@/app/providers/StoreProvider';
 import { getProfileValidateErrors } from './getProfileValidateErrors';
 import { describe, expect, test } from 'vitest';
-import { ValidateProfileError } from '@/pages/ProfilePage/model/types/profile';
+import { ValidateProfileError } from '../../types/profile';
 
 describe('getProfileValidateErrors', () => {
   test('should return profile validate errors', () => {

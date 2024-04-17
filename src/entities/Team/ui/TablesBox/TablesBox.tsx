@@ -18,6 +18,7 @@ import {
   getTeamList,
   getTeammate,
   getTicketsStates,
+  getVacationStates,
 } from '../../model/selectors/teamSelectors';
 import { fetchTeamList } from '../../model/services/fetchTeamList/fetchTeamList';
 import Box from '@mui/system/Box';
@@ -44,6 +45,7 @@ export const TablesBox = memo(() => {
   const mango = useSelector(getMangoStates);
   const tickets = useSelector(getTicketsStates);
   const tasks = useSelector(getTasksStates);
+  const vacationStates = useSelector(getVacationStates);
   const dispatch = useAppDispatch();
   const [socket] = useSocketCtx();
 
@@ -112,6 +114,9 @@ export const TablesBox = memo(() => {
       if (dataFromSocket.type === WsTypes.TASKS) {
         dispatch(teamActions.setTasks(dataFromSocket.data));
       }
+      if (dataFromSocket.type === WsTypes.VACATION) {
+        dispatch(teamActions.setVacation(dataFromSocket.data));
+      }
     },
     [dispatch],
   );
@@ -158,7 +163,14 @@ export const TablesBox = memo(() => {
       )}
       <Grid item xs={12}>
         <Paper sx={{ p: 2 }}>
-          <TeamTable teamList={teamList} mango={mango} tasks={tasks} tickets={tickets} teamIsLoading={teamIsLoading} />
+          <TeamTable
+            teamList={teamList}
+            mango={mango}
+            tasks={tasks}
+            tickets={tickets}
+            teamIsLoading={teamIsLoading}
+            vacationStates={vacationStates}
+          />
         </Paper>
       </Grid>
     </DynamicModuleLoader>

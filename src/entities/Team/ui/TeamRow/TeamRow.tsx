@@ -11,12 +11,12 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { Avatar, Chip, Link, Skeleton, Tooltip } from '@mui/material';
-import { Teammate } from '@/entities/Team';
+import { Teammate } from '../../model/types/teammate';
 import { OverridableStringUnion } from '@mui/types';
 import { ChipPropsColorOverrides } from '@mui/material/Chip';
 import PhoneIcon from '@mui/icons-material/Phone';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import { UserTasks, UserTickets } from '../../model/types/tasksWebsocket';
+import { UserTasks, UserTickets, UserVacation } from '../../model/types/tasksWebsocket';
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
   online: 'онлайн',
@@ -41,11 +41,19 @@ interface TeamRowProps {
   mango: boolean;
   tasks: UserTasks;
   tickets: UserTickets;
+  vacationState: UserVacation | undefined;
   teamIsLoading: boolean;
 }
 
+const renderVactionDay = (dateString: string) => {
+  const date = new Date(dateString);
+  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
+  const formatter = new Intl.DateTimeFormat('ru', options);
+  return formatter.format(date);
+};
+
 export const TeamRow = memo((props: TeamRowProps) => {
-  const { teammate, mango, tasks, tickets, teamIsLoading } = props;
+  const { teammate, mango, tasks, tickets, teamIsLoading, vacationState } = props;
   const [expandRow, setExpandRow] = useState(false);
   const updateTimeMsk = moment.utc(teammate.updatedAt).utcOffset('+0300').format('HH:mm');
 
@@ -94,6 +102,8 @@ export const TeamRow = memo((props: TeamRowProps) => {
                     >
                       <PhoneIcon fontSize={'small'} /> на звонке
                     </div>
+                  ) : vacationState?.onVacation ? (
+                    '🌴 в отпуске'
                   ) : (
                     statuses[teammate.status]
                   )
@@ -104,7 +114,15 @@ export const TeamRow = memo((props: TeamRowProps) => {
             </Tooltip>
           )}
         </TableCell>
-        <TableCell align="left">{teamIsLoading ? <Skeleton variant="text" /> : teammate.comment}</TableCell>
+        <TableCell align="left">
+          {vacationState?.endDate ? (
+            <span>до {renderVactionDay(vacationState.endDate)}</span>
+          ) : teamIsLoading ? (
+            <Skeleton variant="text" />
+          ) : (
+            teammate.comment
+          )}
+        </TableCell>
         <TableCell align="center" sx={{ width: '60px' }}>
           {!teamIsLoading && tasks && Boolean(tasks.leads) && (
             <Tooltip title={'Первичные обращения'}>
@@ -112,7 +130,15 @@ export const TeamRow = memo((props: TeamRowProps) => {
                 label={tasks.leads}
                 variant={'outlined'}
                 size={'small'}
-                color={tasks.leads >= 5 ? 'error' : tasks.leads === 0 ? 'success' : 'primary'}
+                color={
+                  vacationState?.onVacation
+                    ? 'default'
+                    : tasks.leads >= 5
+                      ? 'error'
+                      : tasks.leads === 0
+                        ? 'success'
+                        : 'primary'
+                }
               ></Chip>
             </Tooltip>
           )}
@@ -124,7 +150,15 @@ export const TeamRow = memo((props: TeamRowProps) => {
                 label={tasks.tasks}
                 variant={'outlined'}
                 size={'small'}
-                color={tasks.tasks >= 5 ? 'error' : tasks.tasks === 0 ? 'success' : 'primary'}
+                color={
+                  vacationState?.onVacation
+                    ? 'default'
+                    : tasks.tasks >= 5
+                      ? 'error'
+                      : tasks.tasks === 0
+                        ? 'success'
+                        : 'primary'
+                }
               ></Chip>
             </Tooltip>
           )}
@@ -136,7 +170,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
                 label={tasks.conversations}
                 variant={'outlined'}
                 size={'small'}
-                color={tasks.conversations === 0 ? 'success' : 'primary'}
+                color={vacationState?.onVacation ? 'default' : tasks.conversations === 0 ? 'success' : 'primary'}
               ></Chip>
             </Tooltip>
           )}
@@ -148,7 +182,15 @@ export const TeamRow = memo((props: TeamRowProps) => {
                 label={tickets}
                 variant={'outlined'}
                 size={'small'}
-                color={Number(tickets) >= 3 ? 'error' : Number(tickets) === 0 ? 'success' : 'primary'}
+                color={
+                  vacationState?.onVacation
+                    ? 'default'
+                    : Number(tickets) >= 3
+                      ? 'error'
+                      : Number(tickets) === 0
+                        ? 'success'
+                        : 'primary'
+                }
               ></Chip>
             </Tooltip>
           )}

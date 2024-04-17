@@ -2,13 +2,14 @@ import { type TeamTableSchema } from '../types/teamTableSchema';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchTeamList } from '../services/fetchTeamList/fetchTeamList';
 import { fetchMangoStates } from '../services/fetchMangoStates/fetchMangoStates';
-import { UsersMango, UsersTasks, UsersTickets } from '../types/tasksWebsocket';
+import { UsersMango, UsersTasks, UsersTickets, UsersVacation } from '../types/tasksWebsocket';
 
 const initialState: TeamTableSchema = {
   list: [],
   mangoStates: {},
   ticketsStates: {},
   tasksStates: {},
+  vacationStates: {},
   loading: false,
   error: null,
 };
@@ -55,6 +56,9 @@ export const teamSlice = createSlice({
     },
     setTasks: (state, action: PayloadAction<UsersTasks>) => {
       state.tasksStates = action.payload;
+    },
+    setVacation: (state, action: PayloadAction<UsersVacation>) => {
+      state.vacationStates = action.payload;
     },
   },
   extraReducers: (builder) => {

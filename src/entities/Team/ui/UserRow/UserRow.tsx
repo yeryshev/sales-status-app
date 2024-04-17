@@ -5,7 +5,7 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { Avatar, Chip, Skeleton, Switch, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { Teammate } from '@/entities/Team';
+import { Teammate } from '../../model/types/teammate';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';

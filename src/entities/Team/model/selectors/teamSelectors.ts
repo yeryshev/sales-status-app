@@ -26,3 +26,8 @@ export const getTasksStates = createSelector(
   (state: StateSchema) => state.teamTable?.tasksStates || {},
   (tasksStates) => tasksStates,
 );
+
+export const getVacationStates = createSelector(
+  (state: StateSchema) => state.teamTable?.vacationStates || {},
+  (vacationStates) => vacationStates,
+);

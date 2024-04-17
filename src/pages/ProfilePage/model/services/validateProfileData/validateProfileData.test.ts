@@ -1,6 +1,6 @@
 import { describe } from 'vitest';
 import { validateProfileData } from './validateProfileData';
-import { ValidateProfileError } from '@/pages/ProfilePage/model/types/profile';
+import { ValidateProfileError } from '../../types/profile';
 
 const data = {
   firstName: 'firstName',
