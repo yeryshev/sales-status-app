@@ -84,7 +84,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
           />
         </TableCell>
         <TableCell align="left" sx={{ width: '180px' }}>
-          <Box display={'flex'} alignItems={'center'} gap={0.5}>
+          <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={0.5}>
             {vacationState?.onVacation ? (
               <Typography
                 variant={'body2'}
