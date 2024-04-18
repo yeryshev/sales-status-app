@@ -5,20 +5,20 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
 
 export type SidebarItemType = {
-  path: string
-  text: string
-  Icon:  OverridableComponent<SvgIconTypeMap>
-}
+  path: string;
+  text: string;
+  Icon: OverridableComponent<SvgIconTypeMap>;
+};
 
 export const SidebarItemsList: Array<SidebarItemType> = [
-    {
-        path: RoutePath.main,
-        text: 'Дашборд',
-        Icon: DashboardIcon,
-    },
-    {
-        path: RoutePath.profile,
-        text: 'Профиль',
-        Icon: AccountBoxIcon,
-    },
+  {
+    path: RoutePath.main,
+    text: 'Дашборд',
+    Icon: DashboardIcon,
+  },
+  {
+    path: RoutePath.profile,
+    text: 'Профиль',
+    Icon: AccountBoxIcon,
+  },
 ];

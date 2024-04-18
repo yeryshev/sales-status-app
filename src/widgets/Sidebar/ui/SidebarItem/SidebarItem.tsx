@@ -6,18 +6,17 @@ import { SidebarItemType } from '../../model/items';
 import { memo } from 'react';
 
 interface SidebarItemProps {
-  item: SidebarItemType
+  item: SidebarItemType;
 }
 
-
 export const SidebarItem = memo((props: SidebarItemProps) => {
-    const { item } = props;
-    return (
-        <ListItemButton component={Link} to={item.path}>
-            <ListItemIcon>
-                <item.Icon></item.Icon>
-            </ListItemIcon>
-            <ListItemText primary={item.text} />
-        </ListItemButton>
-    );
+  const { item } = props;
+  return (
+    <ListItemButton component={Link} to={item.path}>
+      <ListItemIcon>
+        <item.Icon></item.Icon>
+      </ListItemIcon>
+      <ListItemText primary={item.text} />
+    </ListItemButton>
+  );
 });

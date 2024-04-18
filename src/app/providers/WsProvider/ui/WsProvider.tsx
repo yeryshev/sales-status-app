@@ -2,21 +2,18 @@ import { SocketCtx, SocketCtxState } from '@/app/providers/WsProvider/lib/WsCont
 import { type ReactNode } from 'react';
 
 const url = `${import.meta.env.VITE_SOCKET_URL}`;
-const mangoUrl = `${import.meta.env.VITE_MANGO_SOCKET_URL}`;
-const tasksUrl = `${import.meta.env.VITE_TASKS_SOCKET_URL}`;
 
-const SocketCtxProvider = (props: { children?: ReactNode }) => {
-    const socket = new WebSocket(url);
-    const mangoSocket = new WebSocket(mangoUrl);
-    const tasksSocket = new WebSocket(tasksUrl);
+interface WsProviderProps {
+  children: ReactNode;
+}
 
-    const websockets: SocketCtxState = [socket, mangoSocket, tasksSocket];
+const SocketCtxProvider = (props: WsProviderProps) => {
+  const { children } = props;
+  const socket = new WebSocket(url);
 
-    return (
-        <SocketCtx.Provider value={websockets}>
-            {props.children}
-        </SocketCtx.Provider>
-    );
+  const websockets: SocketCtxState = [socket];
+
+  return <SocketCtx.Provider value={websockets}>{children}</SocketCtx.Provider>;
 };
 
 export default SocketCtxProvider;

@@ -7,15 +7,15 @@ import { ColorModeCtxProvider } from './app/providers/ThemeProvider';
 import { SocketCtxProvider } from './app/providers/WsProvider';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <BrowserRouter>
-        <StoreProvider>
-            <ErrorBoundary>
-                <ColorModeCtxProvider>
-                    <SocketCtxProvider>
-                        <App />
-                    </SocketCtxProvider>
-                </ColorModeCtxProvider>
-            </ErrorBoundary>
-        </StoreProvider>
-    </BrowserRouter>,
+  <BrowserRouter>
+    <StoreProvider>
+      <ErrorBoundary>
+        <ColorModeCtxProvider>
+          <SocketCtxProvider>
+            <App />
+          </SocketCtxProvider>
+        </ColorModeCtxProvider>
+      </ErrorBoundary>
+    </StoreProvider>
+  </BrowserRouter>,
 );

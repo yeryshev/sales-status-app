@@ -1,5 +1,10 @@
-import { commentsReducer } from './model/slice/commentsSlice';
-import { CommentsSchema } from './model/types/CommentsSchema';
-import { Comment } from './model/types/Comment';
-
-export { commentsReducer, type CommentsSchema, type Comment };
+export { type Comment } from './model/types/Comment';
+export { type CommentsSchema } from './model/types/CommentsSchema';
+export { getAllComments } from './model/selectors/commentSelectors';
+export { getUserComments } from './model/selectors/commentSelectors';
+export { fetchAllComments } from './model/services/fetchAllComments/fetchAllComments';
+export { fetchCommentsByUserId } from './model/services/fetchCommentsByUserId/fetchCommentsByUserId';
+export { addComment } from './model/services/addComment/addComment';
+export { deleteComment } from './model/services/deleteComment/deleteComment';
+export { commentActions } from './model/slice/commentSlice';
+export { commentReducer } from './model/slice/commentSlice';
