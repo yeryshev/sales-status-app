@@ -9,7 +9,7 @@ module.exports = {
   ],
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
-  plugins: ["react-refresh"],
+  plugins: ["react-refresh", "@eryshev/fsd"],
   rules: {
     "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     "no-restricted-imports": [
@@ -18,5 +18,6 @@ module.exports = {
         patterns: ["@mui/*/*/*"]
       }
     ],
+    "@eryshev/fsd/path-checker": ["error", { "alias": "@" }],
   }
 };
