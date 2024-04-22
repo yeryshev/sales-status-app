@@ -6,18 +6,14 @@ import { useSelector } from 'react-redux';
 import { getUserMounted } from '@/entities/User';
 
 const App = () => {
-    const dispatch = useAppDispatch();
-    const userMounted = useSelector(getUserMounted);
+  const dispatch = useAppDispatch();
+  const userMounted = useSelector(getUserMounted);
 
-    useEffect(() => {
-        dispatch(checkUser());
-    }, [dispatch]);
+  useEffect(() => {
+    dispatch(checkUser());
+  }, [dispatch]);
 
-    return (
-        userMounted && (
-            <AppRouter />
-        )
-    );
+  return userMounted && <AppRouter />;
 };
 
 export default App;
