@@ -47,3 +47,10 @@ export interface VacationWs {
 }
 
 export type WsTasksData = MangoWs | TasksWs | TicketsWs | VacationWs;
+
+export type TasksData = {
+  [WsTypes.MANGO]: UsersMango;
+  [WsTypes.TASKS]: UsersTasks;
+  [WsTypes.TICKETS]: UsersTickets;
+  [WsTypes.VACATION]: UsersVacation;
+};

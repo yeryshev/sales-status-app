@@ -1,32 +1,22 @@
 import { Grid, Link as MuiLink, Paper } from '@mui/material';
 import { TeamTable } from '../TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
-import { memo, useCallback, useEffect, useMemo } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { UserTable } from '../UserTable/UserTable';
-import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
 import { checkUser, getUserData } from '@/entities/User';
 import { teamActions, teamReducer } from '../../model/slice/teamSlice';
 import { statusActions } from '@/entities/Status';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { fetchAllComments, getAllComments } from '@/entities/Comment';
-import { WsTasksData, WsTypes } from '../../model/types/tasksWebsocket';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
-import {
-  getMangoStates,
-  getTasksStates,
-  getTeamIsLoading,
-  getTeamList,
-  getTeammate,
-  getTicketsStates,
-  getVacationStates,
-} from '../../model/selectors/teamSelectors';
+import { getTeamIsLoading, getTeamList, getTeammate } from '../../model/selectors/teamSelectors';
 import { fetchTeamList } from '../../model/services/fetchTeamList/fetchTeamList';
 import Box from '@mui/system/Box';
 import { Link as RouterLink } from 'react-router-dom';
 import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
-import { fetchMangoStates } from '../../model/services/fetchMangoStates/fetchMangoStates';
+import { useGetAdditionalTeamData } from '../../api/teamTasksApi';
 
-const Statuses: Record<number, string> = {
+const statusesMapping: Record<number, string> = {
   1: 'online',
   2: 'busy',
   3: 'offline',
@@ -36,21 +26,36 @@ const reducers: ReducersList = {
   teamTable: teamReducer,
 };
 
+const statusCommentsSocket = new WebSocket(import.meta.env.VITE_SOCKET_URL);
+
+const handleVisibilityChange = (socket: WebSocket) => {
+  if (!document.hidden) {
+    if (socket.readyState !== WebSocket.OPEN) {
+      window.location.reload();
+    }
+  }
+};
+
 export const TablesBox = memo(() => {
   const user = useSelector(getUserData);
   const teamList = useSelector(getTeamList);
   const teammate = useSelector(getTeammate);
   const teamIsLoading = useSelector(getTeamIsLoading);
   const allComments = useSelector(getAllComments);
-  const mango = useSelector(getMangoStates);
-  const tickets = useSelector(getTicketsStates);
-  const tasks = useSelector(getTasksStates);
-  const vacationStates = useSelector(getVacationStates);
+  const { data: additionalTeamData } = useGetAdditionalTeamData();
   const dispatch = useAppDispatch();
-  const [socket] = useSocketCtx();
+  const { tasks = {}, tickets = {}, mango = {}, vacation = {} } = additionalTeamData || {};
 
-  const tasksSocket = useMemo(() => {
-    return new WebSocket(`${import.meta.env.VITE_TASKS_SOCKET_URL}`);
+  useEffect(() => {
+    document.addEventListener('visibilitychange', () => {
+      handleVisibilityChange(statusCommentsSocket);
+    });
+
+    return () => {
+      document.removeEventListener('visibilitychange', () => {
+        handleVisibilityChange(statusCommentsSocket);
+      });
+    };
   }, []);
 
   const handleStatusChange = useCallback(
@@ -64,7 +69,7 @@ export const TablesBox = memo(() => {
         dispatch(
           teamActions.setTeamLocal({
             userId,
-            status: Statuses[statusId],
+            status: statusesMapping[statusId],
             updatedAt,
             isWorkingRemotely,
           }),
@@ -101,40 +106,17 @@ export const TablesBox = memo(() => {
     [dispatch, user, allComments],
   );
 
-  const handleTasksChange = useCallback(
-    (event: MessageEvent) => {
-      const dataFromSocket: WsTasksData = JSON.parse(event.data);
-
-      if (dataFromSocket.type === WsTypes.MANGO) {
-        dispatch(teamActions.changeOneMangoState(dataFromSocket.data));
-      }
-      if (dataFromSocket.type === WsTypes.TICKETS) {
-        dispatch(teamActions.setTickets(dataFromSocket.data));
-      }
-      if (dataFromSocket.type === WsTypes.TASKS) {
-        dispatch(teamActions.setTasks(dataFromSocket.data));
-      }
-      if (dataFromSocket.type === WsTypes.VACATION) {
-        dispatch(teamActions.setVacation(dataFromSocket.data));
-      }
-    },
-    [dispatch],
-  );
-
   useEffect(() => {
-    socket?.addEventListener('message', handleStatusChange);
-    tasksSocket?.addEventListener('message', handleTasksChange);
+    statusCommentsSocket.addEventListener('message', handleStatusChange);
 
     return () => {
-      socket?.removeEventListener('message', handleStatusChange);
-      tasksSocket?.removeEventListener('message', handleTasksChange);
+      statusCommentsSocket.removeEventListener('message', handleStatusChange);
     };
-  }, [socket, tasksSocket, handleStatusChange, handleTasksChange]);
+  }, [handleStatusChange]);
 
   useEffect(() => {
     dispatch(fetchTeamList());
     dispatch(fetchAllComments());
-    dispatch(fetchMangoStates());
   }, [dispatch]);
 
   return (
@@ -165,11 +147,11 @@ export const TablesBox = memo(() => {
         <Paper sx={{ p: 2 }}>
           <TeamTable
             teamList={teamList}
+            teamIsLoading={teamIsLoading}
             mango={mango}
             tasks={tasks}
             tickets={tickets}
-            teamIsLoading={teamIsLoading}
-            vacationStates={vacationStates}
+            vacationStates={vacation}
           />
         </Paper>
       </Grid>

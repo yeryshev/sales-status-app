@@ -3,42 +3,15 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import { StatusBox } from '@/entities/Status';
 import { Layout } from '@/widgets/Layout';
-import { memo, useEffect } from 'react';
+import { memo } from 'react';
 import { useSelector } from 'react-redux';
 import { CommentBox } from '@/widgets/CommentBox';
 import { TablesBox } from '@/entities/Team';
-import { useSocketCtx } from '@/app/providers/WsProvider';
-import { SocketCtxState } from '@/app/providers/WsProvider/lib/WsContext';
 import { PageWrapper } from '@/shared/ui/PageWrapper/PageWrapper';
 import { getUserData } from '@/entities/User';
 
-const handleVisibilityChange = (websockets: SocketCtxState) => {
-  if (!document.hidden) {
-    const isOpen = WebSocket.OPEN;
-
-    for (const socket of websockets) {
-      if (socket?.readyState !== isOpen) {
-        window.location.reload();
-      }
-    }
-  }
-};
-
 const MainPage = memo(() => {
-  const websockets = useSocketCtx();
   const user = useSelector(getUserData);
-
-  useEffect(() => {
-    document.addEventListener('visibilitychange', () => {
-      handleVisibilityChange(websockets);
-    });
-
-    return () => {
-      document.removeEventListener('visibilitychange', () => {
-        handleVisibilityChange(websockets);
-      });
-    };
-  }, [websockets]);
 
   return (
     <Layout>

@@ -1,15 +1,9 @@
 import { type TeamTableSchema } from '../types/teamTableSchema';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { fetchTeamList } from '../services/fetchTeamList/fetchTeamList';
-import { fetchMangoStates } from '../services/fetchMangoStates/fetchMangoStates';
-import { UsersMango, UsersTasks, UsersTickets, UsersVacation } from '../types/tasksWebsocket';
 
 const initialState: TeamTableSchema = {
   list: [],
-  mangoStates: {},
-  ticketsStates: {},
-  tasksStates: {},
-  vacationStates: {},
   loading: false,
   error: null,
 };
@@ -47,19 +41,6 @@ export const teamSlice = createSlice({
           }
         });
     },
-    changeOneMangoState: (state, action: PayloadAction<UsersMango>) => {
-      const key = Object.keys(action.payload)[0];
-      state.mangoStates[key] = action.payload[key];
-    },
-    setTickets: (state, action: PayloadAction<UsersTickets>) => {
-      state.ticketsStates = action.payload;
-    },
-    setTasks: (state, action: PayloadAction<UsersTasks>) => {
-      state.tasksStates = action.payload;
-    },
-    setVacation: (state, action: PayloadAction<UsersVacation>) => {
-      state.vacationStates = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder
@@ -74,9 +55,6 @@ export const teamSlice = createSlice({
       .addCase(fetchTeamList.rejected, (state, action) => {
         state.error = action.error.message || 'Error';
         state.loading = false;
-      })
-      .addCase(fetchMangoStates.fulfilled, (state, action: PayloadAction<UsersMango>) => {
-        state.mangoStates = action.payload;
       });
   },
 });

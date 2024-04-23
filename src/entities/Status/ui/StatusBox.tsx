@@ -1,4 +1,3 @@
-import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
 import { useSelector } from 'react-redux';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import Radio from '@mui/material/Radio';
@@ -15,14 +14,11 @@ import { StateSchema } from '@/app/providers/StoreProvider';
 export const StatusBox = () => {
   const user = useSelector((state: StateSchema) => state.user.user);
   const dispatch = useAppDispatch();
-  const [socket] = useSocketCtx();
   const status = useSelector(getStatusValue);
 
   useEffect(() => {
-    if (user?.id) {
-      dispatch(statusActions.changeStatus(user.statusId));
-    }
-  }, [dispatch, user?.id, user?.statusId, socket]);
+    user && dispatch(statusActions.changeStatus(user.statusId));
+  }, [dispatch, user]);
 
   const handleChangeMainStatus = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
