@@ -25,4 +25,5 @@ def set_offline_users():
         users_to_update = session.query(User).filter(User.status_id != 3).all()
         for user in users_to_update:
             user.status_id = 3
+            user.comment_id = None
         session.commit()
