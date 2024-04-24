@@ -4,7 +4,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
-import { Grid } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import { type ChangeEvent, useEffect } from 'react';
 import { statusActions } from '../model/slice/statusSlice';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
@@ -41,13 +41,13 @@ export const StatusBox = () => {
           data-testid="status-radio-group"
         >
           <Grid container direction="row" spacing={1}>
-            <Grid item xs={12} sm={12}>
+            <Grid xs={12} sm={12}>
               <FormControlLabel value={1} control={<Radio />} label="Онлайн" />
             </Grid>
-            <Grid item xs={12} sm={12}>
+            <Grid xs={12} sm={12}>
               <FormControlLabel value={2} control={<Radio />} label="Занят" />
             </Grid>
-            <Grid item xs={12} sm={12}>
+            <Grid xs={12} sm={12}>
               <FormControlLabel value={3} control={<Radio />} label="Оффлайн" />
             </Grid>
           </Grid>

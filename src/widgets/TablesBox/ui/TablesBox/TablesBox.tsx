@@ -1,20 +1,21 @@
-import { Grid, Link as MuiLink, Paper } from '@mui/material';
+import { Link as MuiLink, Paper } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import { TeamTable } from '../TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { memo, useCallback, useEffect } from 'react';
 import { UserTable } from '../UserTable/UserTable';
 import { checkUser, getUserData } from '@/entities/User';
-import { teamActions, teamReducer } from '../../model/slice/teamSlice';
+import { teamActions, teamReducer } from '@/entities/Team/model/slice/teamSlice';
 import { statusActions } from '@/entities/Status';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { fetchAllComments, getAllComments } from '@/entities/Comment';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
-import { getTeamIsLoading, getTeamList, getTeammate } from '../../model/selectors/teamSelectors';
-import { fetchTeamList } from '../../model/services/fetchTeamList/fetchTeamList';
+import { getTeamIsLoading, getTeamList, getTeammate } from '@/entities/Team/model/selectors/teamSelectors';
+import { fetchTeamList } from '@/entities/Team/model/services/fetchTeamList/fetchTeamList';
 import Box from '@mui/system/Box';
 import { Link as RouterLink } from 'react-router-dom';
 import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
-import { useGetAdditionalTeamData } from '../../api/teamTasksApi';
+import { useGetAdditionalTeamData } from '@/entities/Team/api/teamTasksApi';
 
 const statusesMapping: Record<number, string> = {
   1: 'online',
@@ -122,7 +123,7 @@ export const TablesBox = memo(() => {
   return (
     <DynamicModuleLoader reducers={reducers}>
       {!teamIsLoading && (
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <Paper sx={{ p: 2 }}>
             {teammate ? (
               <UserTable
@@ -143,7 +144,7 @@ export const TablesBox = memo(() => {
           </Paper>
         </Grid>
       )}
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Paper sx={{ p: 2 }}>
           <TeamTable
             teamList={teamList}

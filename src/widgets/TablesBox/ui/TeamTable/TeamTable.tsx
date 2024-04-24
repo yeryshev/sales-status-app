@@ -13,8 +13,13 @@ import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlin
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import { Tooltip } from '@mui/material';
-import { UsersMango, UsersTasks, UsersTickets, UsersVacation } from '../../model/types/tasksWebsocket';
-import { Teammate } from '../../model/types/teammate';
+import {
+  UsersMango,
+  UsersTasks,
+  UsersTickets,
+  UsersVacation,
+} from '../../../../entities/Team/model/types/tasksWebsocket';
+import { Teammate } from '../../../../entities/Team/model/types/teammate';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 
 interface TeamTableProps {

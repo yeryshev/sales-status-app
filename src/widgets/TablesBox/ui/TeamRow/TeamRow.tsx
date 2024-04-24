@@ -11,12 +11,12 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { Avatar, Chip, Link, Tooltip } from '@mui/material';
-import { Teammate } from '../../model/types/teammate';
+import { Teammate } from '../../../../entities/Team/model/types/teammate';
 import { OverridableStringUnion } from '@mui/types';
 import { ChipPropsColorOverrides } from '@mui/material/Chip';
 import PhoneIcon from '@mui/icons-material/Phone';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import { UserTasks, UserTickets, UserVacation } from '../../model/types/tasksWebsocket';
+import { UserTasks, UserTickets, UserVacation } from '../../../../entities/Team/model/types/tasksWebsocket';
 import Typography from '@mui/material/Typography';
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
