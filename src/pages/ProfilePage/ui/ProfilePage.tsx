@@ -112,7 +112,7 @@ const ProfilePage = () => {
             />
             {validateErrors?.length &&
               validateErrors.map((error) => (
-                <Alert key={error} severity="error" sx={{ my: 2 }}>
+                <Alert key={error} severity="error" sx={{ my: 2 }} data-testid="ProfilePage.Error">
                   {validateErrorTranslates[error]}
                 </Alert>
               ))}

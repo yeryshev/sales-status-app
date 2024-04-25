@@ -1,6 +1,5 @@
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Profile } from '@/pages/ProfilePage/model/types/profile';
 import Paper from '@mui/material/Paper';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -8,6 +7,7 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import { useCallback } from 'react';
+import { Profile } from '../../model/types/profile';
 
 interface ProfileCardProps {
   profileData?: Profile;
@@ -125,6 +125,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                   shrink: true,
                   style: { zIndex: 1 },
                 }}
+                data-testid="ProfileCard.FirstName"
               />
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
@@ -138,6 +139,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                   shrink: true,
                   style: { zIndex: 1 },
                 }}
+                data-testid="ProfileCard.SecondName"
               />
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
@@ -151,6 +153,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                   shrink: true,
                   style: { zIndex: 1 },
                 }}
+                data-testid="ProfileCard.InsideId"
               />
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
@@ -165,6 +168,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                   shrink: true,
                   style: { zIndex: 1 },
                 }}
+                data-testid="ProfileCard.Email"
               />
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
@@ -179,6 +183,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                   shrink: true,
                   style: { zIndex: 1 },
                 }}
+                data-testid="ProfileCard.ExtNumber"
               />
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
@@ -192,6 +197,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                   shrink: true,
                   style: { zIndex: 1 },
                 }}
+                data-testid="ProfileCard.Telegram"
               />
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
@@ -205,6 +211,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                   shrink: true,
                   style: { zIndex: 1 },
                 }}
+                data-testid="ProfileCard.PhotoUrl"
               />
             </Grid>
           </Grid>
@@ -225,6 +232,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
           variant="contained"
           color="primary"
           onClick={onSave}
+          data-testid="ProfileCard.SaveButton"
         >
           Сохранить
         </Button>
@@ -235,6 +243,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
           variant="outlined"
           color="primary"
           onClick={onCancelEdit}
+          data-testid="ProfileCard.CancelButton"
         >
           Отмена
         </Button>
