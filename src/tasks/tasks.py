@@ -22,7 +22,7 @@ def setup_periodic_tasks(sender, **kwargs):
 @celery.task(name='set_offline_users')
 def set_offline_users():
     with sync_session_factory() as session:
-        users_to_update = session.query(User).filter(User.status_id != 3).all()
+        users_to_update = session.query(User).filter(User.status_id != 3 or User.comment_id).all()
         for user in users_to_update:
             user.status_id = 3
             user.comment_id = None
