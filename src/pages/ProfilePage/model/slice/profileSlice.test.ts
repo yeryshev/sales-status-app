@@ -1,6 +1,7 @@
-import { ProfileSchema, ValidateProfileError } from '../types/profile';
+import { ProfileSchema } from '../types/profile';
 import { profileActions, profileReducer } from './profileSlice';
 import { updateProfileData } from '../services/updateProfileData/updateProfileData';
+import { ValidateProfileError } from '../consts/consts';
 
 const data = {
   firstName: 'firstName',
