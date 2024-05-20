@@ -2,7 +2,7 @@ import { Link as MuiLink, Paper } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { TeamTable } from '../TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
-import { memo, useCallback, useEffect } from 'react';
+import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { UserTable } from '../UserTable/UserTable';
 import { checkUser, getUserData } from '@/entities/User';
 import { teamActions, teamReducer } from '@/entities/Team/model/slice/teamSlice';
@@ -16,6 +16,40 @@ import Box from '@mui/system/Box';
 import { Link as RouterLink } from 'react-router-dom';
 import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
 import { useGetAdditionalTeamData } from '@/entities/Team/api/teamTasksApi';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import { LastWeekTable } from '../TeamResults/LastWeekResults/LastWeekTable';
+import Divider from '@mui/material/Divider';
+import { CurrentWeekResultTable } from '../TeamResults/CurrentWeekResult/CurrentWeekResultTable';
+
+interface TabPanelProps {
+  children?: ReactNode;
+  index: number;
+  value: number;
+}
+
+function CustomTabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
 
 const statusesMapping: Record<number, string> = {
   1: 'online',
@@ -45,7 +79,18 @@ export const TablesBox = memo(() => {
   const allComments = useSelector(getAllComments);
   const { data: additionalTeamData } = useGetAdditionalTeamData();
   const dispatch = useAppDispatch();
-  const { tasks = {}, tickets = {}, mango = {}, vacation = {} } = additionalTeamData || {};
+  const {
+    tasks = {},
+    tickets = {},
+    mango = {},
+    vacation = {},
+    last_week_stat: lastWeekStats = {},
+  } = additionalTeamData || {};
+
+  const [tabNumber, setTabNumber] = useState(0);
+  const handleChangeTab = (_: SyntheticEvent, newTab: number) => {
+    setTabNumber(newTab);
+  };
 
   useEffect(() => {
     document.addEventListener('visibilitychange', () => {
@@ -145,15 +190,37 @@ export const TablesBox = memo(() => {
         </Grid>
       )}
       <Grid xs={12}>
-        <Paper sx={{ p: 2 }}>
-          <TeamTable
-            teamList={teamList}
-            teamIsLoading={teamIsLoading}
-            mango={mango}
-            tasks={tasks}
-            tickets={tickets}
-            vacationStates={vacation}
-          />
+        <Paper>
+          <Box sx={{ width: '100%' }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs value={tabNumber} onChange={handleChangeTab} aria-label="basic tabs">
+                <Tab label="Команда" {...a11yProps(0)} />
+                <Tab label="Успехи" {...a11yProps(1)} />
+              </Tabs>
+            </Box>
+            <CustomTabPanel value={tabNumber} index={0}>
+              <TeamTable
+                teamList={teamList}
+                teamIsLoading={teamIsLoading}
+                mango={mango}
+                tasks={tasks}
+                tickets={tickets}
+                vacationStates={vacation}
+              />
+            </CustomTabPanel>
+            <CustomTabPanel value={tabNumber} index={1}>
+              <Box display={'flex'} gap={2}>
+                <CurrentWeekResultTable teamList={teamList} teamIsLoading={teamIsLoading} tasks={tasks} />
+                <Divider orientation="vertical" variant="middle" flexItem />
+                <LastWeekTable
+                  teamList={teamList}
+                  teamIsLoading={teamIsLoading}
+                  tasks={tasks}
+                  lastWeekStats={lastWeekStats}
+                />
+              </Box>
+            </CustomTabPanel>
+          </Box>
         </Paper>
       </Grid>
     </DynamicModuleLoader>

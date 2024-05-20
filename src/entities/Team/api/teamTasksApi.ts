@@ -1,17 +1,11 @@
 import { rtkApi } from '@/shared/api/rtkApi';
-import { TasksData, UsersMango, WsTasksData, WsTypes } from '../model/types/tasksWebsocket';
+import { TasksData, WsTasksData, WsTypes } from '../model/types/tasksWebsocket';
 
 const tasksApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
     getAdditionalTeamData: build.query<TasksData, void>({
       query: () => ({
-        url: import.meta.env.VITE_MANGO_REDIS_URL,
-      }),
-      transformResponse: (response: UsersMango) => ({
-        [WsTypes.MANGO]: response,
-        [WsTypes.TICKETS]: {},
-        [WsTypes.TASKS]: {},
-        [WsTypes.VACATION]: {},
+        url: import.meta.env.VITE_TASKS_REDIS_URL,
       }),
       async onCacheEntryAdded(_, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
         let ws: WebSocket | null = null;
