@@ -15,6 +15,7 @@ import { Tooltip } from '@mui/material';
 import { UsersMango, UsersTasks, UsersTickets } from '../../../../entities/Team/model/types/tasksWebsocket';
 import { UserRow } from '../UserRow/UserRow';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
+import Paper from '@mui/material/Paper';
 
 interface UserTableProps {
   teammate?: Teammate;
@@ -28,7 +29,7 @@ export const UserTable = memo((props: UserTableProps) => {
   const { teammate, mango, tasks, tickets, teamIsLoading } = props;
 
   return (
-    <TableContainer style={{ overflowX: 'auto' }}>
+    <TableContainer style={{ overflowX: 'auto' }} component={Paper}>
       <Table size="small">
         <TableHead>
           <TableRow>

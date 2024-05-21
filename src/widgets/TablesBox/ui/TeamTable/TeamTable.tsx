@@ -21,6 +21,7 @@ import {
 } from '../../../../entities/Team/model/types/tasksWebsocket';
 import { Teammate } from '../../../../entities/Team/model/types/teammate';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
+import Paper from '@mui/material/Paper';
 
 interface TeamTableProps {
   teamList: Teammate[];
@@ -54,7 +55,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
   );
 
   return (
-    <TableContainer style={{ overflowX: 'auto' }}>
+    <TableContainer style={{ overflowX: 'auto' }} component={Paper}>
       <Table size="small">
         <TableHead>
           <TableRow>

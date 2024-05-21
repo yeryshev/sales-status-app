@@ -1,4 +1,4 @@
-import { Link as MuiLink, Paper } from '@mui/material';
+import { Link as MuiLink, Tooltip } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { TeamTable } from '../TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
@@ -19,8 +19,8 @@ import { useGetAdditionalTeamData } from '@/entities/Team/api/teamTasksApi';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { LastWeekTable } from '../TeamResults/LastWeekResults/LastWeekTable';
-import Divider from '@mui/material/Divider';
 import { CurrentWeekResultTable } from '../TeamResults/CurrentWeekResult/CurrentWeekResultTable';
+import Typography from '@mui/material/Typography';
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -39,7 +39,7 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box>{children}</Box>}
     </div>
   );
 }
@@ -79,13 +79,7 @@ export const TablesBox = memo(() => {
   const allComments = useSelector(getAllComments);
   const { data: additionalTeamData } = useGetAdditionalTeamData();
   const dispatch = useAppDispatch();
-  const {
-    tasks = {},
-    tickets = {},
-    mango = {},
-    vacation = {},
-    last_week_stat: lastWeekStats = {},
-  } = additionalTeamData || {};
+  const { tasks = {}, tickets = {}, mango = {}, vacation = {}, lastWeekStat = {} } = additionalTeamData || {};
 
   const [tabNumber, setTabNumber] = useState(0);
   const handleChangeTab = (_: SyntheticEvent, newTab: number) => {
@@ -169,59 +163,64 @@ export const TablesBox = memo(() => {
     <DynamicModuleLoader reducers={reducers}>
       {!teamIsLoading && (
         <Grid xs={12}>
-          <Paper sx={{ p: 2 }}>
-            {teammate ? (
-              <UserTable
-                teammate={teammate}
-                mango={mango}
-                tasks={tasks}
-                tickets={tickets}
-                teamIsLoading={teamIsLoading}
-              />
-            ) : (
-              <Box>
-                Чтобы принять участие, необходимо указать имя и фамилию в{' '}
-                <MuiLink component={RouterLink} to={RoutePath.profile}>
-                  {'профиле'}
-                </MuiLink>
-              </Box>
-            )}
-          </Paper>
+          {teammate ? (
+            <UserTable
+              teammate={teammate}
+              mango={mango}
+              tasks={tasks}
+              tickets={tickets}
+              teamIsLoading={teamIsLoading}
+            />
+          ) : (
+            <Box>
+              Чтобы принять участие, необходимо указать имя и фамилию в{' '}
+              <MuiLink component={RouterLink} to={RoutePath.profile}>
+                {'профиле'}
+              </MuiLink>
+            </Box>
+          )}
         </Grid>
       )}
       <Grid xs={12}>
-        <Paper>
-          <Box sx={{ width: '100%' }}>
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value={tabNumber} onChange={handleChangeTab} aria-label="basic tabs">
-                <Tab label="Команда" {...a11yProps(0)} />
+        <Box sx={{ width: '100%' }}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs value={tabNumber} onChange={handleChangeTab} aria-label="basic tabs">
+              <Tab label="Команда" {...a11yProps(0)} />
+              <Tooltip
+                title={
+                  <Typography variant={'body2'}>
+                    Рейтинг менеджеров по новым клиентам
+                    <br />
+                    ТОП 3 получают бейджи каждую неделю
+                  </Typography>
+                }
+              >
                 <Tab label="Успехи" {...a11yProps(1)} />
-              </Tabs>
-            </Box>
-            <CustomTabPanel value={tabNumber} index={0}>
-              <TeamTable
+              </Tooltip>
+            </Tabs>
+          </Box>
+          <CustomTabPanel value={tabNumber} index={0}>
+            <TeamTable
+              teamList={teamList}
+              teamIsLoading={teamIsLoading}
+              mango={mango}
+              tasks={tasks}
+              tickets={tickets}
+              vacationStates={vacation}
+            />
+          </CustomTabPanel>
+          <CustomTabPanel value={tabNumber} index={1}>
+            <Box display={'flex'} gap={2}>
+              <CurrentWeekResultTable teamList={teamList} teamIsLoading={teamIsLoading} tasks={tasks} />
+              <LastWeekTable
                 teamList={teamList}
                 teamIsLoading={teamIsLoading}
-                mango={mango}
                 tasks={tasks}
-                tickets={tickets}
-                vacationStates={vacation}
+                lastWeekStats={lastWeekStat}
               />
-            </CustomTabPanel>
-            <CustomTabPanel value={tabNumber} index={1}>
-              <Box display={'flex'} gap={2}>
-                <CurrentWeekResultTable teamList={teamList} teamIsLoading={teamIsLoading} tasks={tasks} />
-                <Divider orientation="vertical" variant="middle" flexItem />
-                <LastWeekTable
-                  teamList={teamList}
-                  teamIsLoading={teamIsLoading}
-                  tasks={tasks}
-                  lastWeekStats={lastWeekStats}
-                />
-              </Box>
-            </CustomTabPanel>
-          </Box>
-        </Paper>
+            </Box>
+          </CustomTabPanel>
+        </Box>
       </Grid>
     </DynamicModuleLoader>
   );

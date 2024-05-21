@@ -16,18 +16,23 @@ export type UserVacation = {
   endDate: string | null;
 };
 
+export type UserLastWeekStats = {
+  deals: number;
+  budget: number;
+};
+
 export type UsersMango = Record<Teammate['extNumber'], boolean>;
 export type UsersTasks = Record<Teammate['insideId'], UserTasks>;
 export type UsersTickets = Record<Teammate['insideId'], UserTickets>;
 export type UsersVacation = Record<Teammate['insideId'], UserVacation>;
-export type UsersLastWeekStats = Record<Teammate['insideId'], number>;
+export type UsersLastWeekStats = Record<Teammate['insideId'], UserLastWeekStats>;
 
 export enum WsTypes {
   MANGO = 'mango',
   TASKS = 'tasks',
   TICKETS = 'tickets',
   VACATION = 'vacation',
-  LAST_WEEK_STATS = 'last_week_stat',
+  LAST_WEEK_STATS = 'lastWeekStat',
 }
 
 export interface MangoWs {
