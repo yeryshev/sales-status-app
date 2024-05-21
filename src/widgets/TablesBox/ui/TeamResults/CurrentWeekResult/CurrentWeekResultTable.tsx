@@ -39,6 +39,12 @@ export const CurrentWeekResultTable = memo((props: TeamTableProps) => {
     const getScoreA = tasks[a.insideId]?.deals || 0;
     const getScoreB = tasks[b.insideId]?.deals || 0;
 
+    if (getScoreA === getScoreB) {
+      const budgetA = tasks[a.insideId]?.budget || 0;
+      const budgetB = tasks[b.insideId]?.budget || 0;
+      return Number(budgetB) - Number(budgetA);
+    }
+
     return Number(getScoreB) - Number(getScoreA);
   };
 
