@@ -76,13 +76,6 @@ const ProfilePage = () => {
     [dispatch],
   );
 
-  const onChangePhotoUrl = useCallback(
-    (value?: string) => {
-      dispatch(profileActions.updateProfile({ photoUrl: value }));
-    },
-    [dispatch],
-  );
-
   const onCancelEdit = useCallback(() => {
     dispatch(profileActions.cancelEdit());
   }, [dispatch]);
@@ -106,7 +99,6 @@ const ProfilePage = () => {
               onChangeEmail={onChangeEmail}
               onChangeExtNumber={onChangeExtNumber}
               onChangeTelegram={onChangeTelegram}
-              onChangePhotoUrl={onChangePhotoUrl}
               onCancelEdit={onCancelEdit}
               onSave={onSave}
             />

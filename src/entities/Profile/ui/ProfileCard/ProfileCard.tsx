@@ -1,7 +1,6 @@
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Unstable_Grid2';
 import Paper from '@mui/material/Paper';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -19,7 +18,6 @@ interface ProfileCardProps {
   onChangeEmail?: (value?: string) => void;
   onChangeExtNumber?: (value?: string) => void;
   onChangeTelegram?: (value?: string) => void;
-  onChangePhotoUrl?: (value?: string) => void;
   onCancelEdit?: () => void;
   onSave?: () => void;
 }
@@ -35,7 +33,6 @@ export const ProfileCard = (props: ProfileCardProps) => {
     onChangeEmail,
     onChangeExtNumber,
     onChangeTelegram,
-    onChangePhotoUrl,
     onCancelEdit,
     onSave,
   } = props;
@@ -79,32 +76,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
 
   return (
     <Grid container spacing={3} mt={4}>
-      <Grid xs={12} sm={4} lg={3} className="avatar-column">
-        <Paper
-          sx={{
-            p: 2,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 2,
-            justifyContent: 'center',
-          }}
-        >
-          <Box>
-            <Avatar
-              src={formData?.photoUrl}
-              sx={{
-                aspectRatio: '1/1',
-                width: '100%',
-                height: '100%',
-              }}
-              alt={formData?.firstName}
-              className="avatar-container"
-            />
-          </Box>
-        </Paper>
-      </Grid>
-      <Grid xs={12} sm={8} lg={9} className="form-column">
+      <Grid xs={12} sm={12} lg={12} className="form-column">
         <Paper
           sx={{
             p: 2,
@@ -198,20 +170,6 @@ export const ProfileCard = (props: ProfileCardProps) => {
                   style: { zIndex: 1 },
                 }}
                 data-testid="ProfileCard.Telegram"
-              />
-            </Grid>
-            <Grid xs={12} sm={12} md={6} lg={6}>
-              <TextField
-                value={formData?.photoUrl ?? ''}
-                onChange={(e) => onChangePhotoUrl?.(e.target.value)}
-                name={formData?.photoUrl}
-                label={'Ссылка на фото'}
-                fullWidth
-                InputLabelProps={{
-                  shrink: true,
-                  style: { zIndex: 1 },
-                }}
-                data-testid="ProfileCard.PhotoUrl"
               />
             </Grid>
           </Grid>
