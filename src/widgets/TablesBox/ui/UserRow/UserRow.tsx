@@ -5,7 +5,7 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { Avatar, Chip, Skeleton, Switch, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { Teammate } from '../../model/types/teammate';
+import { Teammate } from '../../../../entities/Team/model/types/teammate';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
@@ -13,7 +13,7 @@ import { OverridableStringUnion } from '@mui/types';
 import { ChipPropsColorOverrides } from '@mui/material/Chip';
 import PhoneIcon from '@mui/icons-material/Phone';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import { UserTasks, UserTickets } from '../../model/types/tasksWebsocket';
+import { UserTasks, UserTickets } from '../../../../entities/Team/model/types/tasksWebsocket';
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
   online: 'онлайн',

@@ -5,6 +5,7 @@ import { CombinedState, configureStore, Reducer, ReducersMapObject } from '@redu
 import { StateSchema, ThunkExtraArg } from './StateSchema';
 import { createReducerManager } from './reducerManager';
 import { $api } from '@/shared/api/api';
+import { rtkApi } from '@/shared/api/rtkApi';
 
 export function createReduxStore(initialState?: StateSchema, asyncReducers?: ReducersMapObject<StateSchema>) {
   const rootReducers: ReducersMapObject<StateSchema> = {
@@ -12,6 +13,7 @@ export function createReduxStore(initialState?: StateSchema, asyncReducers?: Red
     user: userReducer,
     status: statusReducer,
     comments: commentReducer,
+    [rtkApi.reducerPath]: rtkApi.reducer,
   };
 
   const reducerManager = createReducerManager(rootReducers);
@@ -29,7 +31,7 @@ export function createReduxStore(initialState?: StateSchema, asyncReducers?: Red
         thunk: {
           extraArgument: extraArg,
         },
-      });
+      }).concat(rtkApi.middleware);
     },
   });
 

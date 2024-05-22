@@ -1,20 +1,5 @@
-export enum ValidateProfileError {
-  INCORRECT_TELEGRAM = 'INCORRECT_TELEGRAM',
-  INCORRECT_EXT_NUMBER = 'INCORRECT_EXT_NUMBER',
-  NO_DATA = 'NO_DATA',
-  SERVER_ERROR = 'SERVER_ERROR',
-}
-
-export interface Profile {
-  firstName?: string;
-  secondName?: string;
-  email?: string;
-  photoUrl?: string;
-  extNumber?: string;
-  insideId?: number | null;
-  telegram?: string;
-  isWorkingRemotely?: boolean;
-}
+import { Profile } from '@/entities/Profile';
+import { ValidateProfileError } from '../consts/consts';
 
 export interface ProfileSchema {
   data?: Profile;

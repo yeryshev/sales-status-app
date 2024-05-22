@@ -9,11 +9,13 @@ import { ProfileSchema } from '@/pages/ProfilePage';
 import { AxiosInstance } from 'axios';
 import { AddCommentFormSchema } from '@/features/AddCommentForm/model/types/addCommentForm';
 import { SelectCommentFromSchema } from '@/features/SelectCommentForm/model/types/selectCommentForm';
+import { rtkApi } from '@/shared/api/rtkApi';
 
 export interface StateSchema {
   user: UserSchema;
   comments: CommentsSchema;
   status: StatusSchema;
+  [rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>;
 
   // Асинхронные редюсеры
   loginForm?: LoginSchema;

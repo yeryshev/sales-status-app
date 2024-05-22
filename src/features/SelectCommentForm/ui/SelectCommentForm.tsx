@@ -3,7 +3,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Unstable_Grid2';
 import Button from '@mui/material/Button';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { fetchCommentsByUserId, getUserComments } from '@/entities/Comment';
@@ -73,17 +73,17 @@ export const SelectCommentForm = memo(() => {
         </Select>
       </FormControl>
       <Grid container justifyContent={'center'}>
-        <Grid item>
+        <Grid>
           <Button type="button" onClick={handlePickComment} disabled={!comment} color="success" size={'small'}>
             Установить
           </Button>
         </Grid>
-        <Grid item>
+        <Grid>
           <Button onClick={handleDeleteComment} disabled={!comment} color="error" size={'small'}>
             Удалить
           </Button>
         </Grid>
-        <Grid item>
+        <Grid>
           <Button disabled={user?.commentId === null} size={'small'} onClick={handleClearComment}>
             Очистить
           </Button>
