@@ -14,12 +14,13 @@ import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import { Tooltip } from '@mui/material';
 import {
+  UsersAvatarsAndBirthday,
   UsersMango,
   UsersTasks,
   UsersTickets,
   UsersVacation,
-} from '../../../../entities/Team/model/types/tasksWebsocket';
-import { Teammate } from '../../../../entities/Team/model/types/teammate';
+} from '@/entities/Team/model/types/tasksWebsocket';
+import { Teammate } from '@/entities/Team/model/types/teammate';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import Paper from '@mui/material/Paper';
 
@@ -29,13 +30,14 @@ interface TeamTableProps {
   tasks: UsersTasks;
   tickets: UsersTickets;
   vacationStates: UsersVacation;
+  avatarsAndBirthday: UsersAvatarsAndBirthday;
   teamIsLoading: boolean;
 }
 
 const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
 
 export const TeamTable = memo((props: TeamTableProps) => {
-  const { mango, tasks, tickets, teamIsLoading, teamList, vacationStates } = props;
+  const { mango, tasks, tickets, teamIsLoading, teamList, vacationStates, avatarsAndBirthday } = props;
   const userId = useSelector((state: StateSchema) => state.user.user?.id);
 
   const filterTeamList = (teammate: Teammate) => {
@@ -50,6 +52,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
       tasks={tasks[teammate.insideId]}
       tickets={tickets[teammate.insideId]}
       vacationState={vacationStates[teammate.insideId]}
+      avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}
       teamIsLoading={teamIsLoading}
     />
   );

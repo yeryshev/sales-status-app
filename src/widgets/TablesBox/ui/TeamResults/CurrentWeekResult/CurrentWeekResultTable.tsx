@@ -5,7 +5,7 @@ import { memo } from 'react';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import { UsersTasks } from '@/entities/Team/model/types/tasksWebsocket';
+import { UsersAvatarsAndBirthday, UsersTasks } from '@/entities/Team/model/types/tasksWebsocket';
 import { Teammate } from '@/entities/Team/model/types/teammate';
 import { RowSkeleton } from '../../RowSkeleton/RowSkeleton';
 import { CurrentWeekResultRow } from './CurrentWeekResultRow';
@@ -14,6 +14,7 @@ import Paper from '@mui/material/Paper';
 interface TeamTableProps {
   teamList: Teammate[];
   tasks: UsersTasks;
+  avatarsAndBirthday: UsersAvatarsAndBirthday;
   teamIsLoading: boolean;
 }
 
@@ -23,7 +24,7 @@ const coordinatorsString = import.meta.env.VITE_COORDINATORS;
 const coordinatorsArray = coordinatorsString ? coordinatorsString.split(',') : [];
 
 export const CurrentWeekResultTable = memo((props: TeamTableProps) => {
-  const { tasks, teamIsLoading, teamList } = props;
+  const { tasks, teamIsLoading, teamList, avatarsAndBirthday } = props;
 
   const filterTeamList = (teammate: Teammate) => {
     const getDeals = tasks[teammate.insideId]?.deals || 0;
@@ -54,6 +55,7 @@ export const CurrentWeekResultTable = memo((props: TeamTableProps) => {
       teammate={teammate}
       tasks={tasks[teammate.insideId]}
       teamIsLoading={teamIsLoading}
+      avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}
       index={index}
     />
   );

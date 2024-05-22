@@ -11,12 +11,17 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { Avatar, Chip, Link, Tooltip } from '@mui/material';
-import { Teammate } from '../../../../entities/Team/model/types/teammate';
+import { Teammate } from '@/entities/Team/model/types/teammate';
 import { OverridableStringUnion } from '@mui/types';
 import { ChipPropsColorOverrides } from '@mui/material/Chip';
 import PhoneIcon from '@mui/icons-material/Phone';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import { UserTasks, UserTickets, UserVacation } from '../../../../entities/Team/model/types/tasksWebsocket';
+import {
+  UserAvatarsAndBirthday,
+  UserTasks,
+  UserTickets,
+  UserVacation,
+} from '@/entities/Team/model/types/tasksWebsocket';
 import Typography from '@mui/material/Typography';
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
@@ -43,6 +48,7 @@ interface TeamRowProps {
   tasks: UserTasks;
   tickets: UserTickets;
   vacationState: UserVacation | undefined;
+  avatarsAndBirthday: UserAvatarsAndBirthday;
   teamIsLoading: boolean;
 }
 
@@ -69,7 +75,7 @@ const renderStateLabel = (label: string | number, onVacation: boolean = false) =
 };
 
 export const TeamRow = memo((props: TeamRowProps) => {
-  const { teammate, mango, tasks, tickets, vacationState, teamIsLoading } = props;
+  const { teammate, mango, tasks, tickets, vacationState, teamIsLoading, avatarsAndBirthday } = props;
   const [expandRow, setExpandRow] = useState(false);
   const updateTimeMsk = moment.utc(teammate.updatedAt).utcOffset('+0300').format('HH:mm');
 
@@ -79,7 +85,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
         <TableCell align="left" sx={{ width: '50px' }}>
           <Avatar
             alt={`${teammate.firstName} ${teammate.secondName}`}
-            src={teammate.photoUrl}
+            src={avatarsAndBirthday?.avatar}
             sx={{ width: 50, height: 50, filter: vacationState?.onVacation ? 'grayscale(100%)' : 'none' }}
           />
         </TableCell>

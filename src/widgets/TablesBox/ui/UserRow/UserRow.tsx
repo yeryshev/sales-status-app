@@ -5,7 +5,7 @@ import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { Avatar, Chip, Skeleton, Switch, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { Teammate } from '../../../../entities/Team/model/types/teammate';
+import { Teammate } from '@/entities/Team/model/types/teammate';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
@@ -13,7 +13,7 @@ import { OverridableStringUnion } from '@mui/types';
 import { ChipPropsColorOverrides } from '@mui/material/Chip';
 import PhoneIcon from '@mui/icons-material/Phone';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import { UserTasks, UserTickets } from '../../../../entities/Team/model/types/tasksWebsocket';
+import { UserAvatarsAndBirthday, UserTasks, UserTickets } from '@/entities/Team/model/types/tasksWebsocket';
 
 const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
   online: 'онлайн',
@@ -38,11 +38,12 @@ interface UserRowProps {
   mango: boolean;
   tasks: UserTasks;
   tickets: UserTickets;
+  avatarsAndBirthday: UserAvatarsAndBirthday;
   teamIsLoading: boolean;
 }
 
 export const UserRow = memo((props: UserRowProps) => {
-  const { teammate, mango, tasks, tickets, teamIsLoading } = props;
+  const { teammate, mango, tasks, tickets, teamIsLoading, avatarsAndBirthday } = props;
   const user = useSelector((state: StateSchema) => state.user.user);
   const dispatch = useAppDispatch();
   const updateTimeMsk = moment.utc(teammate.updatedAt).utcOffset('+0300').format('HH:mm');
@@ -59,7 +60,7 @@ export const UserRow = memo((props: UserRowProps) => {
         ) : (
           <Avatar
             alt={`${teammate.firstName} ${teammate.secondName}`}
-            src={teammate.photoUrl}
+            src={avatarsAndBirthday?.avatar}
             sx={{ width: 50, height: 50 }}
           />
         )}
