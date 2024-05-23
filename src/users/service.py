@@ -2,7 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.models import User
-from src.models import Status
+from src.statuses.models import Status
 from src.users.schemas import UserUpdate, Teammate
 from src.users.utils import create_teammates
 from src.comments.models import Comment

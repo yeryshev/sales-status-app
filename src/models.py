@@ -1,8 +1,8 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Annotated
+
 from sqlalchemy import text
-from sqlalchemy.orm import Mapped, mapped_column
-from src.database import Base
+from sqlalchemy.orm import mapped_column
 
 intpk = Annotated[int, mapped_column(primary_key=True)]
 
@@ -18,12 +18,3 @@ updated_at = Annotated[
         server_default=text("TIMEZONE('utc', now())"),
         onupdate=text("TIMEZONE('utc', now())")
     )]
-
-
-class Status(Base):
-    __tablename__ = "status"
-
-    id: Mapped[intpk]
-    title: Mapped[str]
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at]
