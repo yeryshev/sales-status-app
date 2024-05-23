@@ -1,3 +1,5 @@
+from typing import Type
+
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -26,7 +28,7 @@ async def get_team(session: AsyncSession) -> list[Teammate]:
         return []
 
 
-async def update_user(user_update: UserUpdate, session: AsyncSession, user: User) -> User:
+async def update_user(user_update: UserUpdate, session: AsyncSession, user: Type[User]) -> Type[User]:
     update_data = user_update.model_dump(exclude_unset=True)
 
     for key, value in update_data.items():

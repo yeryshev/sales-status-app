@@ -42,6 +42,7 @@ async def update_status(
 
         db_status.title = new_status.title
         await session.commit()
+        await session.refresh(db_status)
         return db_status
     except Exception:
         raise HTTPException(status_code=500, detail="Could not update status")

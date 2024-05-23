@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     DB_NAME: str
     AUTH_SECRET: str
-    FRONTEND_ORIGIN: str
+    FRONTEND_ORIGINS: str
     TELEGRAM_BOT_SECRET: str
 
     @property

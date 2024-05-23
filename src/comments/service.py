@@ -1,3 +1,5 @@
+from typing import Type
+
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,7 +32,7 @@ async def add_comment_to_db(
 
 
 async def delete_comment_from_db(
-        comment: Comment,
+        comment: Type[Comment],
         session: AsyncSession
 ):
     try:

@@ -1,17 +1,17 @@
 from fastapi import FastAPI
-from config import FRONTEND_ORIGIN
-from src.users.router import router as users_router
-from src.auth.router import router as auth_router
-from src.comments.router import router as comments_router
-from src.websockets.router import router as websocket_router
-from src.telegram.router import router as telegram_router
-from src.statuses.router import router as statuses_router
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.auth.router import router as auth_router
+from src.comments.router import router as comments_router
+from src.config import settings
+from src.statuses.router import router as statuses_router
+from src.telegram.router import router as telegram_router
+from src.users.router import router as users_router
+from src.websockets.router import router as websocket_router
 
 app = FastAPI(title='Team Status API')
 
-origins = [FRONTEND_ORIGIN]
+origins = settings.FRONTEND_ORIGINS.split(',')
 
 app.add_middleware(
     CORSMiddleware,
