@@ -24,7 +24,7 @@ async def create_status(
         session: AsyncSession = Depends(get_async_session),
 ):
     try:
-        new_status = Status(description=status.title)
+        new_status = Status(title=status.title)
         return await add_status_to_db(status=new_status, session=session)
     except Exception as e:
         print(str(e))
