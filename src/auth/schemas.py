@@ -14,6 +14,7 @@ class UserRead(schemas.BaseUser[int]):
     is_working_remotely: bool = Field(None, serialization_alias="isWorkingRemotely")
     is_coordinator: bool = Field(None, serialization_alias="isCoordinator")
     is_female: bool = Field(None, serialization_alias="isFemale")
+    is_manager: bool = Field(None, serialization_alias="isManager")
     status_id: int = Field(None, serialization_alias="statusId")
     comment_id: Optional[int] = Field(None, serialization_alias="commentId")
     is_active: bool = Field(None, serialization_alias="isActive")

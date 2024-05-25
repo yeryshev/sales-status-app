@@ -28,6 +28,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_working_remotely: Mapped[bool] = mapped_column(default=False)
     is_coordinator: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
     is_female: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
+    is_manager: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default='true')
     status_id: Mapped[int] = mapped_column(default=3)
     comment_id: Mapped[Optional[int]] = mapped_column(ForeignKey(
         Comment.id,
