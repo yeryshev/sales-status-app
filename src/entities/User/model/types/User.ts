@@ -4,7 +4,6 @@ export interface User {
   email: string;
   firstName: string;
   secondName: string;
-  photoUrl: string;
   extNumber: string;
   insideId: number;
   telegram: string;

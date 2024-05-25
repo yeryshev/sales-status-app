@@ -79,7 +79,14 @@ export const TablesBox = memo(() => {
   const allComments = useSelector(getAllComments);
   const { data: additionalTeamData } = useGetAdditionalTeamData();
   const dispatch = useAppDispatch();
-  const { tasks = {}, tickets = {}, mango = {}, vacation = {}, lastWeekStat = {} } = additionalTeamData || {};
+  const {
+    tasks = {},
+    tickets = {},
+    mango = {},
+    vacation = {},
+    lastWeekStat = {},
+    avatarsAndBirthday = {},
+  } = additionalTeamData || {};
 
   const [tabNumber, setTabNumber] = useState(0);
   const handleChangeTab = (_: SyntheticEvent, newTab: number) => {
@@ -170,6 +177,7 @@ export const TablesBox = memo(() => {
               tasks={tasks}
               tickets={tickets}
               teamIsLoading={teamIsLoading}
+              avatarsAndBirthday={avatarsAndBirthday}
             />
           ) : (
             <Box>
@@ -207,11 +215,17 @@ export const TablesBox = memo(() => {
               tasks={tasks}
               tickets={tickets}
               vacationStates={vacation}
+              avatarsAndBirthday={avatarsAndBirthday}
             />
           </CustomTabPanel>
           <CustomTabPanel value={tabNumber} index={1}>
             <Box display={'flex'} gap={2}>
-              <CurrentWeekResultTable teamList={teamList} teamIsLoading={teamIsLoading} tasks={tasks} />
+              <CurrentWeekResultTable
+                teamList={teamList}
+                teamIsLoading={teamIsLoading}
+                tasks={tasks}
+                avatarsAndBirthday={avatarsAndBirthday}
+              />
               <LastWeekTable
                 teamList={teamList}
                 teamIsLoading={teamIsLoading}

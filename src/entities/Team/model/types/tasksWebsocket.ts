@@ -21,11 +21,17 @@ export type UserLastWeekStats = {
   budget: number;
 };
 
+export type UserAvatarsAndBirthday = {
+  avatar: string;
+  isBirthday: boolean;
+};
+
 export type UsersMango = Record<Teammate['extNumber'], boolean>;
 export type UsersTasks = Record<Teammate['insideId'], UserTasks>;
 export type UsersTickets = Record<Teammate['insideId'], UserTickets>;
 export type UsersVacation = Record<Teammate['insideId'], UserVacation>;
 export type UsersLastWeekStats = Record<Teammate['insideId'], UserLastWeekStats>;
+export type UsersAvatarsAndBirthday = Record<Teammate['insideId'], UserAvatarsAndBirthday>;
 
 export enum WsTypes {
   MANGO = 'mango',
@@ -33,6 +39,7 @@ export enum WsTypes {
   TICKETS = 'tickets',
   VACATION = 'vacation',
   LAST_WEEK_STATS = 'lastWeekStat',
+  AVATARS_AND_BIRTHDAY = 'avatarsAndBirthday',
 }
 
 export interface MangoWs {
@@ -63,4 +70,5 @@ export type TasksData = {
   [WsTypes.TICKETS]: UsersTickets;
   [WsTypes.VACATION]: UsersVacation;
   [WsTypes.LAST_WEEK_STATS]: UsersLastWeekStats;
+  [WsTypes.AVATARS_AND_BIRTHDAY]: UsersAvatarsAndBirthday;
 };

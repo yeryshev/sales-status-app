@@ -12,7 +12,12 @@ import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlin
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { Tooltip } from '@mui/material';
-import { UsersMango, UsersTasks, UsersTickets } from '../../../../entities/Team/model/types/tasksWebsocket';
+import {
+  UsersAvatarsAndBirthday,
+  UsersMango,
+  UsersTasks,
+  UsersTickets,
+} from '@/entities/Team/model/types/tasksWebsocket';
 import { UserRow } from '../UserRow/UserRow';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import Paper from '@mui/material/Paper';
@@ -22,11 +27,12 @@ interface UserTableProps {
   mango: UsersMango;
   tasks: UsersTasks;
   tickets: UsersTickets;
+  avatarsAndBirthday: UsersAvatarsAndBirthday;
   teamIsLoading: boolean;
 }
 
 export const UserTable = memo((props: UserTableProps) => {
-  const { teammate, mango, tasks, tickets, teamIsLoading } = props;
+  const { teammate, mango, tasks, tickets, teamIsLoading, avatarsAndBirthday } = props;
 
   return (
     <TableContainer style={{ overflowX: 'auto' }} component={Paper}>
@@ -72,6 +78,7 @@ export const UserTable = memo((props: UserTableProps) => {
               mango={mango[teammate.extNumber]}
               tasks={tasks[teammate.insideId]}
               tickets={tickets[teammate.insideId]}
+              avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}
               teamIsLoading={teamIsLoading}
             />
           ) : null}

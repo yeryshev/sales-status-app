@@ -8,7 +8,6 @@ describe('getProfileForm', () => {
       firstName: 'firstName',
       secondName: 'secondName',
       email: 'example@example.com',
-      photoUrl: 'photoUrl',
       extNumber: 'extNumber',
       insideId: 1,
       telegram: 'telegram',
