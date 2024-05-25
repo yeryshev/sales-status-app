@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped
 
-from src.database import Base
+from src.comments.models import Base
 from src.models import intpk, created_at, updated_at
 
 

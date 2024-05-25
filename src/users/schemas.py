@@ -1,16 +1,18 @@
 from datetime import datetime
 from typing import Optional
+
 from pydantic import Field, BaseModel
 
 
 class UserUpdate(BaseModel):
     first_name: Optional[str] = Field(None, alias="firstName")
     second_name: Optional[str] = Field(None, alias="secondName")
-    photo_url: Optional[str] = Field(None, alias="photoUrl")
     ext_number: Optional[str] = Field(None, alias="extNumber")
     telegram: Optional[str] = Field(None, alias="telegram")
     inside_id: Optional[int] = Field(None, alias="insideId")
     is_working_remotely: Optional[bool] = Field(None, alias="isWorkingRemotely")
+    is_coordinator: Optional[bool] = Field(None, alias="isCoordinator")
+    is_female: Optional[bool] = Field(None, alias="isFemale")
     status_id: Optional[int] = Field(None, alias="statusId")
     comment_id: Optional[int] = Field(None, alias="commentId")
     is_active: Optional[bool] = Field(None, alias="isActive")
@@ -23,11 +25,12 @@ class UserRead(BaseModel):
     email: str
     first_name: Optional[str] = Field(None, serialization_alias="firstName")
     second_name: Optional[str] = Field(None, serialization_alias="secondName")
-    photo_url: Optional[str] = Field(None, serialization_alias="photoUrl")
     ext_number: Optional[str] = Field(None, serialization_alias="extNumber")
     telegram: Optional[str] = Field(None, serialization_alias="telegram")
     inside_id: Optional[int] = Field(None, serialization_alias="insideId")
     is_working_remotely: Optional[bool] = Field(None, serialization_alias="isWorkingRemotely")
+    is_coordinator: bool = Field(None, serialization_alias="isCoordinator")
+    is_female: bool = Field(None, serialization_alias="isFemale")
     status_id: int = Field(None, serialization_alias="statusId")
     comment_id: Optional[int] = Field(None, serialization_alias="commentId")
     is_active: bool = Field(None, serialization_alias="isActive")
@@ -40,11 +43,12 @@ class Teammate(BaseModel):
     email: str
     first_name: Optional[str] = Field(None, serialization_alias="firstName")
     second_name: Optional[str] = Field(None, serialization_alias="secondName")
-    photo_url: Optional[str] = Field(None, serialization_alias="photoUrl")
     ext_number: Optional[str] = Field(None, serialization_alias="extNumber")
     telegram: Optional[str] = Field(None, serialization_alias="telegram")
     inside_id: Optional[int] = Field(None, serialization_alias="insideId")
     is_working_remotely: Optional[bool] = Field(None, serialization_alias="isWorkingRemotely")
+    is_coordinator: bool = Field(None, serialization_alias="isCoordinator")
+    is_female: bool = Field(None, serialization_alias="isFemale")
     status: Optional[str]
     comment: Optional[str]
     updated_at: datetime = Field(None, serialization_alias="updatedAt")

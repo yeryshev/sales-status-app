@@ -12,3 +12,6 @@ class Comment(Base):
     owner_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
+
+    def __repr__(self):
+        return f"id: {self.id}, description: {self.description}"

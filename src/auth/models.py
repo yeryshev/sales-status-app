@@ -5,9 +5,11 @@ from fastapi_users.db import SQLAlchemyBaseUserTable, SQLAlchemyUserDatabase
 from sqlalchemy import String, ForeignKey, Boolean
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column
-from src.database import Base, get_async_session
-from src.models import intpk, created_at, updated_at
+
 from src.comments.models import Comment
+from src.database import get_async_session
+from src.models import intpk, created_at, updated_at
+from src.statuses.models import Base
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
@@ -20,11 +22,12 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     )
     first_name: Mapped[Optional[str]]
     second_name: Mapped[Optional[str]]
-    photo_url: Mapped[Optional[str]]
     ext_number: Mapped[Optional[str]]
-    inside_id: Mapped[Optional[int]] = mapped_column(unique=True, nullable=True)
     telegram: Mapped[Optional[str]]
+    inside_id: Mapped[Optional[int]] = mapped_column(unique=True, nullable=True)
     is_working_remotely: Mapped[bool] = mapped_column(default=False)
+    is_coordinator: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
+    is_female: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
     status_id: Mapped[int] = mapped_column(default=3)
     comment_id: Mapped[Optional[int]] = mapped_column(ForeignKey(
         Comment.id,
