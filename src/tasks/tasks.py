@@ -2,7 +2,6 @@ import os
 
 from celery import Celery
 from celery.schedules import crontab
-from sqlalchemy import or_
 
 from src.auth.models import User
 from src.database import sync_session_factory
@@ -24,8 +23,7 @@ def setup_periodic_tasks(sender, **kwargs):
 @celery.task(name='set_offline_users')
 def set_offline_users():
     with sync_session_factory() as session:
-        users_to_update = session.query(User).filter(or_(User.status_id != 3, User.comment_id != None)).all()
+        users_to_update = session.query(User).filter(User.status_id != 3).all()
         for user in users_to_update:
             user.status_id = 3
-            user.comment_id = None
         session.commit()
