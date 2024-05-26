@@ -21,7 +21,7 @@ class UserUpdate(BaseModel):
     is_verified: Optional[bool] = Field(None, alias="isVerified")
 
 
-class UserRead(BaseModel):
+class UserOut(BaseModel):
     id: int
     email: str
     first_name: Optional[str] = Field(None, serialization_alias="firstName")

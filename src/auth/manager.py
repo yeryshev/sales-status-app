@@ -25,6 +25,12 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     async def on_after_reset_password(self, user: User, request: Optional[Request] = None):
         print(f"User {user.id} has reset their password.")
 
+    async def on_before_delete(self, user: User, request: Optional[Request] = None):
+        print(f"User {user.id} is going to be deleted")
+
+    async def on_after_delete(self, user: User, request: Optional[Request] = None):
+        print(f"User {user.id} is successfully deleted")
+
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, User)
