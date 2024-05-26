@@ -3,6 +3,7 @@ from typing import Type
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.models import User, Status, Comment
 from src.users.schemas import UserUpdate, Teammate
 from src.users.utils import create_teammates

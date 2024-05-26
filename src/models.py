@@ -32,6 +32,8 @@ class Comment(Base):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
+    owner: Mapped["User"] = relationship("User", back_populates="comment")
+
     def __repr__(self):
         return f"id: {self.id}, description: {self.description}"
 
@@ -49,7 +51,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_coordinator: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
     is_female: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
     is_manager: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default='true')
-    status_id: Mapped[int] = mapped_column(default=3)
+    status_id: Mapped[Optional[int]] = mapped_column(ForeignKey("status.id", ondelete="SET NULL"), index=True)
     comment_id: Mapped[Optional[int]] = mapped_column(ForeignKey(
         Comment.id,
         name="users_comment_id_fkey",
@@ -62,6 +64,8 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     updated_at: Mapped[updated_at]
 
     busy_time: Mapped[Optional["BusyTime"]] = relationship("BusyTime", back_populates="user", uselist=False)
+    status: Mapped[Optional["Status"]] = relationship("Status", back_populates="users")
+    comment: Mapped[Optional["Comment"]] = relationship("Comment", back_populates="owner")
 
     def __repr__(self):
         return f"id: {self.id}, email: {self.email} first_name: {self.first_name} second_name: {self.second_name} "
@@ -76,6 +80,7 @@ class Status(Base):
     updated_at: Mapped[updated_at]
 
     busy_times: Mapped[list["BusyTime"]] = relationship("BusyTime", back_populates="status")
+    users: Mapped[list["User"]] = relationship("User", back_populates="status")
 
     def __repr__(self):
         return f"id: {self.id}, title: {self.title}"
