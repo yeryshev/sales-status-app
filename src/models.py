@@ -3,7 +3,7 @@ from typing import Annotated, Optional
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import text, String, Boolean, ForeignKey
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 from src.database import Base
 
@@ -28,7 +28,7 @@ class Comment(Base):
 
     id: Mapped[int_primary_key]
     description: Mapped[str]
-    owner_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"))
+    owner_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), index=True)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
@@ -61,6 +61,8 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
+    busy_time: Mapped[Optional["BusyTime"]] = relationship("BusyTime", back_populates="user", uselist=False)
+
     def __repr__(self):
         return f"id: {self.id}, email: {self.email} first_name: {self.first_name} second_name: {self.second_name} "
 
@@ -73,5 +75,24 @@ class Status(Base):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
+    busy_times: Mapped[list["BusyTime"]] = relationship("BusyTime", back_populates="status")
+
     def __repr__(self):
         return f"id: {self.id}, title: {self.title}"
+
+
+class BusyTime(Base):
+    __tablename__ = "busy_time"
+
+    id: Mapped[int_primary_key]
+    status_id: Mapped[int] = mapped_column(ForeignKey("status.id", ondelete="CASCADE"), index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), unique=True, index=True)
+    end_time: Mapped[datetime]
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+    user: Mapped["User"] = relationship("User", back_populates="busy_time")
+    status: Mapped["Status"] = relationship("Status", back_populates="busy_times")
+
+    def __repr__(self):
+        return f"id: {self.id}, status_id: {self.status_id}, user_id: {self.user_id}, end_time: {self.end_time}"
