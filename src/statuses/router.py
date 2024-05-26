@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.base_config import current_user, current_superuser
 from src.database import get_async_session
-from .models import Status
+from ..models import Status
 from .schemas import StatusOut, StatusIn, StatusUpdate
 from .service import add_status_to_db, delete_status_from_db, get_statuses
 

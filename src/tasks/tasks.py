@@ -3,7 +3,7 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 
-from src.auth.models import User
+from src.models import User
 from src.database import sync_session_factory
 
 celery = Celery('tasks')

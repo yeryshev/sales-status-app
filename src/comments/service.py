@@ -3,7 +3,7 @@ from typing import Type
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.comments.models import Comment
+from src.models import Comment
 
 
 async def get_comments(session: AsyncSession, user: int) -> list[Comment]:

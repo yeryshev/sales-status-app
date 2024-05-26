@@ -2,11 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.base_config import current_user
-from src.auth.models import User
+from src.models import User, Comment
 from src.comments.schemas import CommentOut, CommentIn
 from src.comments.service import add_comment_to_db, delete_comment_from_db, get_comments
 from src.database import get_async_session
-from src.comments.models import Comment
 
 router = APIRouter(prefix="/comments", tags=["Comments"])
 
