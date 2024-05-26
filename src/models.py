@@ -32,7 +32,7 @@ class Comment(Base):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-    owner: Mapped["User"] = relationship("User", back_populates="comment")
+    owner: Mapped["User"] = relationship("User", back_populates="comments", foreign_keys=[owner_id])
 
     def __repr__(self):
         return f"id: {self.id}, description: {self.description}"
@@ -52,11 +52,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_female: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
     is_manager: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default='true')
     status_id: Mapped[Optional[int]] = mapped_column(ForeignKey("status.id", ondelete="SET NULL"), index=True)
-    comment_id: Mapped[Optional[int]] = mapped_column(ForeignKey(
-        Comment.id,
-        name="users_comment_id_fkey",
-        ondelete="SET NULL",
-    ))
+    comment_id: Mapped[Optional[int]] = mapped_column(ForeignKey("comment.id", ondelete="SET NULL"))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
@@ -65,7 +61,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
 
     busy_time: Mapped[Optional["BusyTime"]] = relationship("BusyTime", back_populates="user", uselist=False)
     status: Mapped[Optional["Status"]] = relationship("Status", back_populates="users")
-    comment: Mapped[Optional["Comment"]] = relationship("Comment", back_populates="owner")
+    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="owner", foreign_keys=[Comment.owner_id])
 
     def __repr__(self):
         return f"id: {self.id}, email: {self.email} first_name: {self.first_name} second_name: {self.second_name} "
