@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,6 +22,7 @@ def check_user(user: UserOut = Depends(current_user)):
 @router.patch("/me", response_model=UserOut, response_model_by_alias=True)
 async def update_user_router(
         user_update: UserIn,
+        deadline: datetime = datetime.utcnow(),
         session: AsyncSession = Depends(get_async_session),
         session_user: User = Depends(current_user)
 ):
@@ -31,7 +33,7 @@ async def update_user_router(
     if session_user.id != user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
 
-    updated_user = await update_user(user_update, session, user)
+    updated_user = await update_user(user_update, session, user, deadline)
     await manager.broadcast(json.dumps({
         "userId": updated_user.id,
         "statusId": updated_user.status_id,
