@@ -79,8 +79,7 @@ class Status(Base):
 
     busy_times: Mapped[list["BusyTime"]] = relationship("BusyTime", back_populates="status",
                                                         cascade='save-update, merge, delete', passive_deletes=True)
-    users: Mapped[list["User"]] = relationship("User", back_populates="status", cascade='save-update, merge, delete',
-                                               passive_deletes=True)
+    users: Mapped[list["User"]] = relationship("User", back_populates="status")
 
     def __repr__(self):
         return f"id: {self.id}, title: {self.title}"
