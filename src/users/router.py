@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.base_config import current_user, current_superuser
 from src.database import get_async_session
 from src.models import User
-from src.users.schemas import UserOut, UserUpdate, Teammate
+from src.users.schemas import UserOut, UserIn, TeammateOut
 from src.users.service import update_user, get_team
 from src.websockets.router import manager
 
@@ -20,7 +20,7 @@ def check_user(user: UserOut = Depends(current_user)):
 
 @router.patch("/me", response_model=UserOut, response_model_by_alias=True)
 async def update_user_router(
-        user_update: UserUpdate,
+        user_update: UserIn,
         session: AsyncSession = Depends(get_async_session),
         session_user: User = Depends(current_user)
 ):
@@ -58,7 +58,7 @@ async def delete_user_router(
 
 
 @router.get("/team",
-            response_model=list[Teammate],
+            response_model=list[TeammateOut],
             response_model_by_alias=True,
             dependencies=[Depends(current_user)])
 async def get_users_router(

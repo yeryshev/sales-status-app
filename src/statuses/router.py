@@ -4,13 +4,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.auth.base_config import current_user, current_superuser
 from src.database import get_async_session
 from ..models import Status
-from .schemas import StatusOut, StatusIn, StatusUpdate
+from .schemas import StatusGet, StatusCreate, StatusUpdate
 from .service import add_status_to_db, delete_status_from_db, get_statuses
 
 router = APIRouter(prefix="/status", tags=["Statuses"])
 
 
-@router.get("/", response_model=list[StatusOut], dependencies=[Depends(current_user)])
+@router.get("/", response_model=list[StatusGet], dependencies=[Depends(current_user)])
 async def get_all_statuses(session: AsyncSession = Depends(get_async_session)):
     try:
         return await get_statuses(session)
@@ -18,9 +18,9 @@ async def get_all_statuses(session: AsyncSession = Depends(get_async_session)):
         raise HTTPException(status_code=404, detail="Statuses not found")
 
 
-@router.post("/", response_model=StatusOut, dependencies=[Depends(current_superuser)])
+@router.post("/", response_model=StatusGet, dependencies=[Depends(current_superuser)])
 async def create_status(
-        status: StatusIn,
+        status: StatusCreate,
         session: AsyncSession = Depends(get_async_session),
 ):
     try:
@@ -31,7 +31,7 @@ async def create_status(
         raise HTTPException(status_code=500, detail="Could not create status")
 
 
-@router.put("/{status_id}", response_model=StatusOut, dependencies=[Depends(current_superuser)])
+@router.put("/{status_id}", response_model=StatusGet, dependencies=[Depends(current_superuser)])
 async def update_status(
         new_status: StatusUpdate,
         session: AsyncSession = Depends(get_async_session)):
@@ -48,7 +48,7 @@ async def update_status(
         raise HTTPException(status_code=500, detail="Could not update status")
 
 
-@router.delete("/{status_id}", response_model=StatusOut, dependencies=[Depends(current_superuser)])
+@router.delete("/{status_id}", response_model=StatusGet, dependencies=[Depends(current_superuser)])
 async def delete_comment(
         status_id: int,
         session: AsyncSession = Depends(get_async_session)):

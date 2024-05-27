@@ -5,11 +5,11 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.models import User, Status, Comment
-from src.users.schemas import UserUpdate, Teammate
+from src.users.schemas import UserIn, TeammateOut
 from src.users.utils import create_teammates
 
 
-async def get_team(session: AsyncSession) -> list[Teammate]:
+async def get_team(session: AsyncSession) -> list[TeammateOut]:
     try:
         query = (select(User, Status, Comment)
                  .select_from(User)
@@ -27,7 +27,7 @@ async def get_team(session: AsyncSession) -> list[Teammate]:
         return []
 
 
-async def update_user(user_update: UserUpdate, session: AsyncSession, user: Type[User]) -> Type[User]:
+async def update_user(user_update: UserIn, session: AsyncSession, user: Type[User]) -> Type[User]:
     update_data = user_update.model_dump(exclude_unset=True)
 
     for key, value in update_data.items():

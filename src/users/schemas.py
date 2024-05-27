@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import Field, BaseModel
 
 
-class UserUpdate(BaseModel):
+class UserIn(BaseModel):
     first_name: Optional[str] = Field(None, alias="firstName")
     second_name: Optional[str] = Field(None, alias="secondName")
     ext_number: Optional[str] = Field(None, alias="extNumber")
@@ -40,7 +40,7 @@ class UserOut(BaseModel):
     is_verified: bool = Field(None, serialization_alias="isVerified")
 
 
-class Teammate(BaseModel):
+class TeammateOut(BaseModel):
     id: int
     email: str
     first_name: Optional[str] = Field(None, serialization_alias="firstName")
