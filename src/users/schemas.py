@@ -3,6 +3,9 @@ from typing import Optional
 
 from pydantic import Field, BaseModel
 
+from src.comments.schemas import CommentGet
+from src.statuses.schemas import StatusGet
+
 
 class UserIn(BaseModel):
     first_name: Optional[str] = Field(None, alias="firstName")
@@ -40,6 +43,13 @@ class UserOut(BaseModel):
     is_verified: bool = Field(None, serialization_alias="isVerified")
 
 
+class BusyTime(BaseModel):
+    id: int
+    status_id: int
+    user_id: int
+    end_time: datetime
+
+
 class TeammateOut(BaseModel):
     id: int
     email: str
@@ -52,6 +62,7 @@ class TeammateOut(BaseModel):
     is_coordinator: bool = Field(None, serialization_alias="isCoordinator")
     is_female: bool = Field(None, serialization_alias="isFemale")
     is_manager: bool = Field(None, serialization_alias="isManager")
-    status: Optional[str]
-    comment: Optional[str]
+    status: Optional[StatusGet] = None
+    comment: Optional[CommentGet] = None
+    busy_time: Optional[BusyTime] = None
     updated_at: datetime = Field(None, serialization_alias="updatedAt")

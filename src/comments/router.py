@@ -3,14 +3,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.auth.base_config import current_user
 from src.models import User, Comment
-from src.comments.schemas import CommentOut, CommentIn
+from src.comments.schemas import CommentGet, CommentCreate
 from src.comments.service import add_comment_to_db, delete_comment_from_db, get_comments
 from src.database import get_async_session
 
 router = APIRouter(prefix="/comments", tags=["Comments"])
 
 
-@router.get("/", response_model=list[CommentOut], dependencies=[Depends(current_user)])
+@router.get("/", response_model=list[CommentGet], dependencies=[Depends(current_user)])
 async def get_my_comments(
         session: AsyncSession = Depends(get_async_session),
         user: int = None):
@@ -20,9 +20,9 @@ async def get_my_comments(
         raise HTTPException(status_code=404, detail="Comments not found")
 
 
-@router.post("/", response_model=CommentOut)
+@router.post("/", response_model=CommentGet)
 async def create_comment(
-        comment: CommentIn,
+        comment: CommentCreate,
         session: AsyncSession = Depends(get_async_session),
         session_user: User = Depends(current_user)
 ):
@@ -34,7 +34,7 @@ async def create_comment(
         raise HTTPException(status_code=500, detail="Could not create comment")
 
 
-@router.delete("/{comment_id}", response_model=CommentOut)
+@router.delete("/{comment_id}", response_model=CommentGet)
 async def delete_comment(
         comment_id: int,
         session: AsyncSession = Depends(get_async_session),

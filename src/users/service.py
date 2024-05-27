@@ -1,28 +1,25 @@
 from datetime import datetime
-from typing import Type
+from typing import Type, Sequence
 
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
-from src.models import User, Status, Comment, BusyTime
-from src.users.schemas import UserIn, TeammateOut
-from src.users.utils import create_teammates
+from src.models import User, Status, BusyTime
+from src.users.schemas import UserIn
 
 
-async def get_team(session: AsyncSession) -> list[TeammateOut]:
+async def get_team(session: AsyncSession) -> Sequence[User] | list[User]:
     try:
-        query = (select(User, Status, Comment)
-                 .select_from(User)
-                 .outerjoin(Status, Status.id == User.status_id)
-                 .outerjoin(Comment, Comment.id == User.comment_id)
-                 .order_by(User.status_id.asc(), User.updated_at.desc()))
+        query = (select(User)
+                 .options(selectinload(User.status), selectinload(User.comment), selectinload(User.busy_time))
+                 .order_by(User.status_id.asc(), User.updated_at.desc())
+                 )
 
         result = await session.execute(query)
-        rows = result.fetchall()
+        return result.scalars().all()
 
-        users = create_teammates(rows)
-        return users
     except SQLAlchemyError as e:
         print(str(e))
         return []

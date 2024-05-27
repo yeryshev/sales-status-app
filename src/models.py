@@ -59,14 +59,19 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
-    busy_time: Mapped[Optional["BusyTime"]] = relationship("BusyTime", back_populates="user", uselist=False)
     status: Mapped[Optional["Status"]] = relationship("Status", back_populates="users")
-    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="owner", foreign_keys=[Comment.owner_id],
-                                                     cascade='save-update, merge, delete', passive_deletes=True,
+    busy_time: Mapped[Optional["BusyTime"]] = relationship("BusyTime", back_populates="user", uselist=False)
+    comment: Mapped[Optional["Comment"]] = relationship("Comment", foreign_keys=[comment_id])
+    comments: Mapped[list["Comment"]] = relationship("Comment",
+                                                     back_populates="owner",
+                                                     foreign_keys=[Comment.owner_id],
+                                                     cascade='save-update, merge, delete',
+                                                     passive_deletes=True,
                                                      )
 
     def __repr__(self):
-        return f"id: {self.id}, email: {self.email} first_name: {self.first_name} second_name: {self.second_name}"
+        return (f"id: {self.id}, email: {self.email} first_name: {self.first_name} second_name: {self.second_name},"
+                f"comments: {self.comments}")
 
 
 class Status(Base):
