@@ -4,12 +4,12 @@ from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import Status
+from src.models import Status
 
 
 async def get_statuses(session: AsyncSession) -> list[Status]:
     try:
-        query = select(Status)
+        query = select(Status).order_by(Status.priority.desc())
         result = await session.execute(query)
         statuses = result.scalars().all()
         return list(statuses)
