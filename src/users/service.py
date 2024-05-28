@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.models import User, Status, BusyTime
-from src.users.schemas import UserIn
+from src.users.schemas import UserUpdate
 
 
-async def get_team(session: AsyncSession) -> Sequence[User] | list[User]:
+async def get_all_users(session: AsyncSession) -> Sequence[User]:
     try:
         query = (select(User)
                  .options(selectinload(User.status), selectinload(User.comment), selectinload(User.busy_time))
@@ -26,7 +26,7 @@ async def get_team(session: AsyncSession) -> Sequence[User] | list[User]:
 
 
 async def update_user(
-        user_update: UserIn,
+        user_update: UserUpdate,
         session: AsyncSession,
         user: Type[User],
         deadline: datetime

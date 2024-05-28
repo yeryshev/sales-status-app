@@ -101,7 +101,8 @@ class Status(Base):
         return {
             "id": self.id,
             "title": self.title,
-            "is_deadline_required": self.is_deadline_required
+            "is_deadline_required": self.is_deadline_required,
+            "priority": self.priority
         }
 
 

@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timezone
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
@@ -8,17 +8,17 @@ from sqlalchemy.orm import selectinload
 
 from src.auth.base_config import current_user, current_superuser
 from src.database import get_async_session
-from src.models import User, Status, BusyTime
-from src.users.schemas import UserOut, UserIn, TeammateOut
-from src.users.service import update_user, get_team
+from src.models import User
+from src.users.schemas import UserGet, UserUpdate
+from src.users.service import update_user, get_all_users
 from src.websockets.router import manager
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.get("/me", response_model=UserOut)
+@router.get("/me", response_model=UserGet)
 async def check_user(
-        user: UserOut = Depends(current_user),
+        user: UserGet = Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
     query = (select(User)
@@ -34,9 +34,9 @@ async def check_user(
     return user_data
 
 
-@router.patch("/me", response_model=UserOut, response_model_by_alias=True)
+@router.patch("/me", response_model=UserGet, response_model_by_alias=True)
 async def update_user_router(
-        user_update: UserIn,
+        user_update: UserUpdate,
         deadline: datetime = datetime.utcnow(),
         session: AsyncSession = Depends(get_async_session),
         session_user: User = Depends(current_user)
@@ -95,13 +95,13 @@ async def delete_user_router(
 
 
 @router.get("/team",
-            response_model=list[TeammateOut],
+            response_model=list[UserGet],
             response_model_by_alias=True,
             dependencies=[Depends(current_user)])
 async def get_users_router(
         session: AsyncSession = Depends(get_async_session)):
     try:
-        team = await get_team(session)
-        return team
+        all_users = await get_all_users(session)
+        return all_users
     except Exception:
         raise HTTPException(status_code=404, detail="Users not found")
