@@ -24,6 +24,13 @@ class UserIn(BaseModel):
     is_verified: Optional[bool] = Field(None, alias="isVerified")
 
 
+class BusyTime(BaseModel):
+    id: int
+    status_id: int
+    user_id: int
+    end_time: datetime
+
+
 class UserOut(BaseModel):
     id: int
     email: str
@@ -41,13 +48,10 @@ class UserOut(BaseModel):
     is_active: bool = Field(None, serialization_alias="isActive")
     is_superuser: bool = Field(None, serialization_alias="isSuperuser")
     is_verified: bool = Field(None, serialization_alias="isVerified")
-
-
-class BusyTime(BaseModel):
-    id: int
-    status_id: int
-    user_id: int
-    end_time: datetime
+    status: Optional[StatusGet] = None
+    comment: Optional[CommentGet] = None
+    busy_time: Optional[BusyTime] = None
+    updated_at: datetime = Field(None, serialization_alias="updatedAt")
 
 
 class TeammateOut(BaseModel):

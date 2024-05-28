@@ -25,7 +25,12 @@ async def get_team(session: AsyncSession) -> Sequence[User] | list[User]:
         return []
 
 
-async def update_user(user_update: UserIn, session: AsyncSession, user: Type[User], deadline: datetime) -> Type[User]:
+async def update_user(
+        user_update: UserIn,
+        session: AsyncSession,
+        user: Type[User],
+        deadline: datetime
+) -> Type[User]:
     update_data = user_update.model_dump(exclude_unset=True)
 
     for key, value in update_data.items():
@@ -47,9 +52,7 @@ async def update_user(user_update: UserIn, session: AsyncSession, user: Type[Use
                     )
                     session.add(new_busy_time)
 
-                user.status_id = value
-            else:
-                user.status_id = value
+            user.status_id = value
         else:
             setattr(user, key, value)
 

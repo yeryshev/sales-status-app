@@ -37,6 +37,12 @@ class Comment(Base):
     def __repr__(self):
         return f"id: {self.id}, description: {self.description}"
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "description": self.description
+        }
+
 
 class User(SQLAlchemyBaseUserTable[int], Base):
     id: Mapped[int_primary_key]
@@ -88,7 +94,14 @@ class Status(Base):
     users: Mapped[list["User"]] = relationship("User", back_populates="status")
 
     def __repr__(self):
-        return f"id: {self.id}, title: {self.title}"
+        return f"id: {self.id}, title: {self.title}, is_deadline_required: {self.is_deadline_required}"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "is_deadline_required": self.is_deadline_required
+        }
 
 
 class BusyTime(Base):

@@ -35,4 +35,3 @@ async def websocket_endpoint(websocket: WebSocket):
             await manager.broadcast(data)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-

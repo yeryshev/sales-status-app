@@ -2,11 +2,13 @@ import json
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from src.auth.base_config import current_user, current_superuser
 from src.database import get_async_session
-from src.models import User
+from src.models import User, Status, BusyTime
 from src.users.schemas import UserOut, UserIn, TeammateOut
 from src.users.service import update_user, get_team
 from src.websockets.router import manager
@@ -15,8 +17,21 @@ router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.get("/me", response_model=UserOut)
-def check_user(user: UserOut = Depends(current_user)):
-    return user
+async def check_user(
+        user: UserOut = Depends(current_user),
+        session: AsyncSession = Depends(get_async_session)
+):
+    query = (select(User)
+             .where(User.id == user.id)
+             .options(selectinload(User.status), selectinload(User.comment), selectinload(User.busy_time))
+             )
+    result = await session.execute(query)
+    user_data = result.scalars().first()
+
+    if not user_data:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user_data
 
 
 @router.patch("/me", response_model=UserOut, response_model_by_alias=True)
@@ -26,20 +41,40 @@ async def update_user_router(
         session: AsyncSession = Depends(get_async_session),
         session_user: User = Depends(current_user)
 ):
-    user = await session.get(User, session_user.id)
+    user = await session.get(
+        User,
+        session_user.id,
+    )
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     if session_user.id != user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
 
-    updated_user = await update_user(user_update, session, user, deadline)
+    updated_user = await update_user(
+        user_update,
+        session,
+        user,
+        deadline
+    )
+
+    query = (select(User)
+             .where(User.id == updated_user.id)
+             .options(selectinload(User.status), selectinload(User.comment), selectinload(User.busy_time))
+             )
+    result = await session.execute(query)
+    updated_user = result.scalars().first()
+
     await manager.broadcast(json.dumps({
         "userId": updated_user.id,
         "statusId": updated_user.status_id,
-        "commentId": updated_user.comment_id,
-        "isWorkingRemotely": updated_user.is_working_remotely
+        "status": updated_user.status.to_dict(),
+        "comment": updated_user.comment.to_dict() if updated_user.comment else None,
+        "commentId": updated_user.comment_id if updated_user.comment else None,
+        "isWorkingRemotely": updated_user.is_working_remotely,
+        "updatedAt": updated_user.updated_at.isoformat(),
     }))
+
     return updated_user
 
 
