@@ -12,8 +12,6 @@ import TableBody from '@mui/material/TableBody';
 import TableHead from '@mui/material/TableHead';
 import { Avatar, Chip, Link, Tooltip } from '@mui/material';
 import { Teammate } from '@/entities/Team/model/types/teammate';
-import { OverridableStringUnion } from '@mui/types';
-import { ChipPropsColorOverrides } from '@mui/material/Chip';
 import PhoneIcon from '@mui/icons-material/Phone';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import {
@@ -23,23 +21,16 @@ import {
   UserVacation,
 } from '@/entities/Team/model/types/tasksWebsocket';
 import Typography from '@mui/material/Typography';
+import { Status } from '@/entities/Status';
 
-const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
-  online: 'онлайн',
-  busy: 'занят',
-  offline: 'оффлайн',
-};
-
-const StatusColors: Record<
-  'online' | 'busy' | 'offline',
-  OverridableStringUnion<
-    'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning',
-    ChipPropsColorOverrides
-  >
-> = {
-  online: 'success',
-  busy: 'primary',
-  offline: 'default',
+const mapStatusColors = (status_priority: Status['priority']) => {
+  if (status_priority === 0) {
+    return 'default';
+  }
+  if (status_priority === 2) {
+    return 'success';
+  }
+  return 'primary';
 };
 
 interface TeamRowProps {
@@ -82,7 +73,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
   return (
     <>
       <TableRow key={teammate.id} hover={true}>
-        <TableCell align="left" sx={{ width: '50px' }}>
+        <TableCell align="left" width={50}>
           <Avatar
             alt={`${teammate.firstName} ${teammate.secondName}`}
             src={avatarsAndBirthday?.avatar}
@@ -129,10 +120,10 @@ export const TeamRow = memo((props: TeamRowProps) => {
                     <Typography variant={'body2'}>в отпуске</Typography>
                   </Box>
                 ) : (
-                  <Typography variant={'body2'}>{statuses[teammate.status]}</Typography>
+                  <Typography variant={'body2'}>{teammate.status?.title}</Typography>
                 )
               }
-              color={StatusColors[teammate.status]}
+              color={mapStatusColors(teammate.status.priority)}
               size={'small'}
             />
           </Tooltip>
@@ -143,7 +134,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
               до {renderVacationDay(vacationState?.endDate)}
             </Typography>
           ) : (
-            teammate.comment
+            teammate.comment?.description
           )}
         </TableCell>
         <TableCell align="center" sx={{ width: '60px' }}>

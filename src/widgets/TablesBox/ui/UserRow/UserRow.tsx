@@ -9,28 +9,19 @@ import { Teammate } from '@/entities/Team/model/types/teammate';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
-import { OverridableStringUnion } from '@mui/types';
-import { ChipPropsColorOverrides } from '@mui/material/Chip';
 import PhoneIcon from '@mui/icons-material/Phone';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { UserAvatarsAndBirthday, UserTasks, UserTickets } from '@/entities/Team/model/types/tasksWebsocket';
+import { Status } from '@/entities/Status';
 
-const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
-  online: 'онлайн',
-  busy: 'занят',
-  offline: 'оффлайн',
-};
-
-const StatusColors: Record<
-  'online' | 'busy' | 'offline',
-  OverridableStringUnion<
-    'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning',
-    ChipPropsColorOverrides
-  >
-> = {
-  online: 'success',
-  busy: 'primary',
-  offline: 'default',
+const mapStatusColors = (status_priority: Status['priority']) => {
+  if (status_priority === 0) {
+    return 'default';
+  }
+  if (status_priority === 2) {
+    return 'success';
+  }
+  return 'primary';
 };
 
 interface UserRowProps {
@@ -97,16 +88,16 @@ export const UserRow = memo((props: UserRowProps) => {
                     <PhoneIcon fontSize={'small'} /> на звонке
                   </div>
                 ) : (
-                  statuses[teammate.status]
+                  teammate.status.title
                 )
               }
-              color={StatusColors[teammate.status]}
+              color={mapStatusColors(teammate.status?.priority)}
               size={'small'}
             />
           </Tooltip>
         )}
       </TableCell>
-      <TableCell align="left">{teamIsLoading ? <Skeleton variant="text" /> : teammate.comment}</TableCell>
+      <TableCell align="left">{teamIsLoading ? <Skeleton variant="text" /> : teammate.comment?.description}</TableCell>
       <TableCell align="center" sx={{ width: '60px' }}>
         {!teamIsLoading && tasks && Boolean(tasks.leads) && (
           <Tooltip title={'Первичные обращения'}>

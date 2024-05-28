@@ -12,8 +12,7 @@ export const statusSlice = createSlice({
   initialState,
   reducers: {
     changeStatus: (state, action) => {
-      if (state.value === action.payload) return;
-      if (action.payload < 1 || action.payload > 3) return;
+      if (state.value?.id === action.payload) return;
       state.value = action.payload;
     },
   },
