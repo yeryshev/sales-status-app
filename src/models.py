@@ -86,6 +86,7 @@ class Status(Base):
     id: Mapped[int_primary_key]
     title: Mapped[str]
     is_deadline_required: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default='true')
+    priority: Mapped[int] = mapped_column(default=0, nullable=False, server_default='0')
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
