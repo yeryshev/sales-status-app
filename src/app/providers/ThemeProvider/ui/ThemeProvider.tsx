@@ -16,7 +16,32 @@ const ToggleColorMode = ({ children }: { children: ReactNode }) => {
     [],
   );
 
-  const theme = useMemo(() => createTheme({ palette: { mode } }), [mode]);
+  const theme = useMemo(
+    () =>
+      createTheme({
+        typography: {
+          fontFamily: [
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            'Roboto',
+            '"Helvetica Neue"',
+            'Arial',
+            'sans-serif',
+            '"Apple Color Emoji"',
+            '"Segoe UI Emoji"',
+            '"Segoe UI Symbol"',
+          ].join(','),
+        },
+        palette: {
+          mode,
+          ...(mode === Theme.DARK && {
+            background: { paper: 'palette.action.disabledBackground' },
+          }),
+        },
+      }),
+    [mode],
+  );
 
   return (
     <ThemeContext.Provider value={colorMode}>
