@@ -98,7 +98,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
             )}
           </Box>
         </TableCell>
-        <TableCell align="left" sx={{ width: '140px' }}>
+        <TableCell align="left" sx={{ width: '160px' }}>
           <Tooltip disableFocusListener title={`Последнее обновление в ${updateTimeMsk}`}>
             <Chip
               label={

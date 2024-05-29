@@ -56,10 +56,7 @@ export const UserRow = memo((props: UserRowProps) => {
           </Box>
         )}
       </TableCell>
-      <TableCell
-        align="left"
-        // sx={{ width: '110px' }}
-      >
+      <TableCell align="left" sx={{ width: '160px' }}>
         {teamIsLoading ? <Skeleton variant="text" /> : <StatusSelector />}
       </TableCell>
       <TableCell align="left">{teamIsLoading ? <Skeleton variant="text" /> : teammate.comment?.description}</TableCell>
