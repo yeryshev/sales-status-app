@@ -28,11 +28,10 @@ export const teamSlice = createSlice({
           return teammate;
         })
         .sort((a, b) => {
-          if (a.status.priority !== b.status.priority) {
-            return a.status.priority - a.status.priority;
-          } else {
+          if (a.status.priority === b.status.priority) {
             return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
           }
+          return b.status.priority - a.status.priority;
         });
     },
   },

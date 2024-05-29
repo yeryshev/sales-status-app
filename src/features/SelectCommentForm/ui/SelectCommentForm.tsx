@@ -54,12 +54,12 @@ export const SelectCommentForm = memo(() => {
   return (
     <DynamicModuleLoader reducers={reducers}>
       <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel id="demo-simple-select-label" size={'small'}>
+        <InputLabel id="select-comment-form-label" size={'small'}>
           Выбрать
         </InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select-vadim"
+          labelId="select-comment-form-labell"
+          id="select-comment-form"
           value={comment ? String(comment.id) : ''}
           onChange={handleChange}
           label="Выбрать комментарий"
