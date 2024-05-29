@@ -22,6 +22,7 @@ import {
 } from '@/entities/Team/model/types/tasksWebsocket';
 import Typography from '@mui/material/Typography';
 import { Status } from '@/entities/Status';
+import { feminizeWord } from '@/shared/lib/feminizeWords/feminizeWords';
 
 const mapStatusColors = (status_priority: Status['priority']) => {
   if (status_priority === 0) {
@@ -120,7 +121,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
                     <Typography variant={'body2'}>в отпуске</Typography>
                   </Box>
                 ) : (
-                  <Typography variant={'body2'}>{teammate.status?.title}</Typography>
+                  <Typography variant={'body2'}>{feminizeWord(teammate.status.title, teammate.isFemale)}</Typography>
                 )
               }
               color={mapStatusColors(teammate.status.priority)}

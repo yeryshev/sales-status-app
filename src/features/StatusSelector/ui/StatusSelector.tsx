@@ -10,6 +10,7 @@ import { statusActions } from '@/entities/Status';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import { statusSelectorReducer } from '../model/slices/statusSelectorSlice';
 import { updateUser } from '@/entities/User/model/actions/userActions';
+import { feminizeWord } from '@/shared/lib/feminizeWords/feminizeWords';
 
 const reducers: ReducersList = {
   selectStatus: statusSelectorReducer,
@@ -45,7 +46,7 @@ export const StatusSelector = memo(() => {
         <Select value={userStatus?.title || ''} onChange={handleChangeMainStatus} size={'small'} fullWidth>
           {cachedStatuses?.map((status) => (
             <MenuItem key={status.id} value={status.title} disabled={user?.statusId === status.id}>
-              {status.title}
+              {feminizeWord(status.title, user?.isFemale)}
             </MenuItem>
           ))}
         </Select>
