@@ -1,3 +1,6 @@
+import { Status } from '@/entities/Status';
+import { TeammateComment } from '@/entities/Team/model/types/teammate';
+
 export interface User {
   id: number;
   username: string;
@@ -8,8 +11,14 @@ export interface User {
   insideId: number;
   telegram: string;
   isWorkingRemotely: boolean;
+  isCoordinator: boolean;
+  isFemale: boolean;
+  isManager: boolean;
   statusId: number;
   commentId: number | null;
+  status: Status;
+  comment: TeammateComment;
+  updatedAt: string;
 }
 
 export interface UserSchema {

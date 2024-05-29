@@ -1,4 +1,4 @@
-import { Link as MuiLink, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { TeamTable } from '../TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
@@ -13,8 +13,6 @@ import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/Dynam
 import { getTeamIsLoading, getTeamList, getTeammate } from '@/entities/Team/model/selectors/teamSelectors';
 import { fetchTeamList } from '@/entities/Team/model/services/fetchTeamList/fetchTeamList';
 import Box from '@mui/system/Box';
-import { Link as RouterLink } from 'react-router-dom';
-import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
 import { useGetAdditionalTeamData } from '@/entities/Team/api/teamTasksApi';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -162,25 +160,16 @@ export const TablesBox = memo(() => {
 
   return (
     <DynamicModuleLoader reducers={reducers}>
-      {!teamIsLoading && (
+      {!teamIsLoading && teammate && (
         <Grid xs={12}>
-          {teammate ? (
-            <UserTable
-              teammate={teammate}
-              mango={mango}
-              tasks={tasks}
-              tickets={tickets}
-              teamIsLoading={teamIsLoading}
-              avatarsAndBirthday={avatarsAndBirthday}
-            />
-          ) : (
-            <Box>
-              Чтобы принять участие, необходимо указать имя и фамилию в{' '}
-              <MuiLink component={RouterLink} to={RoutePath.profile}>
-                {'профиле'}
-              </MuiLink>
-            </Box>
-          )}
+          <UserTable
+            teammate={teammate}
+            mango={mango}
+            tasks={tasks}
+            tickets={tickets}
+            teamIsLoading={teamIsLoading}
+            avatarsAndBirthday={avatarsAndBirthday}
+          />
         </Grid>
       )}
       <Grid xs={12}>

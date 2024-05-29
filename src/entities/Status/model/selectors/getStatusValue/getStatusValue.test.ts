@@ -1,11 +1,11 @@
 import { StateSchema } from '@/app/providers/StoreProvider';
-import { getStatusValue } from './getStatusValue';
+import { getStatusData } from './getStatusData';
 
 describe('getStatusValue', () => {
   test('должно вернуть значение статуса', () => {
     const state: DeepPartial<StateSchema> = {
       status: {
-        value: {
+        data: {
           id: 1,
           title: 'занят',
           priority: 2,
@@ -13,7 +13,7 @@ describe('getStatusValue', () => {
         },
       },
     };
-    expect(getStatusValue(state as StateSchema)).toEqual({
+    expect(getStatusData(state as StateSchema)).toEqual({
       id: 1,
       title: 'занят',
       priority: 2,

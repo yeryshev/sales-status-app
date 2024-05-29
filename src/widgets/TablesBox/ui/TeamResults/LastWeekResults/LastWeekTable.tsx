@@ -20,20 +20,12 @@ interface TeamTableProps {
 
 const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
 
-const coordinatorsString = import.meta.env.VITE_COORDINATORS;
-const coordinatorsArray = coordinatorsString ? coordinatorsString.split(',') : [];
-
 export const LastWeekTable = memo((props: TeamTableProps) => {
   const { tasks, teamIsLoading, teamList, lastWeekStats } = props;
 
   const filterTeamList = (teammate: Teammate) => {
     const getDeals = lastWeekStats[teammate.insideId]?.deals || 0;
-    return (
-      teammate.secondName &&
-      teammate.firstName &&
-      Number(getDeals) >= 0 &&
-      !coordinatorsArray.includes(String(teammate.id))
-    );
+    return teammate.isManager && Number(getDeals) >= 0 && !teammate.isCoordinator;
   };
 
   const sortTeamList = (a: Teammate, b: Teammate) => {

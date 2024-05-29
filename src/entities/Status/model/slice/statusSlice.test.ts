@@ -4,7 +4,7 @@ import { statusActions } from './statusSlice';
 describe('statusSlice', () => {
   test('доолжно менять статус', () => {
     const state: StatusSchema = {
-      value: {
+      data: {
         id: 1,
         title: 'занят',
         priority: 2,
@@ -15,7 +15,7 @@ describe('statusSlice', () => {
     };
 
     expect(statusReducer(state, statusActions.changeStatus(3))).toEqual({
-      value: 3,
+      data: 3,
       loading: false,
       error: null,
     });
@@ -23,7 +23,7 @@ describe('statusSlice', () => {
 
   test('должно работать с пустым стейтом', () => {
     expect(statusReducer(undefined, statusActions.changeStatus(3))).toEqual({
-      value: 3,
+      data: 3,
       loading: false,
       error: null,
     });

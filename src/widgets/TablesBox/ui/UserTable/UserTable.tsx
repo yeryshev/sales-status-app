@@ -32,7 +32,7 @@ interface UserTableProps {
 }
 
 export const UserTable = memo((props: UserTableProps) => {
-  const { teammate, mango, tasks, tickets, teamIsLoading, avatarsAndBirthday } = props;
+  const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday } = props;
 
   return (
     <TableContainer style={{ overflowX: 'auto' }} component={Paper}>
@@ -75,7 +75,6 @@ export const UserTable = memo((props: UserTableProps) => {
             <UserRow
               key={teammate.id}
               teammate={teammate}
-              mango={mango[teammate.extNumber]}
               tasks={tasks[teammate.insideId]}
               tickets={tickets[teammate.insideId]}
               avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}

@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { StatusSchema } from '../types/StatusSchema';
 
 const initialState: StatusSchema = {
-  value: null,
+  data: null,
   loading: false,
   error: null,
 };
@@ -12,8 +12,8 @@ export const statusSlice = createSlice({
   initialState,
   reducers: {
     changeStatus: (state, action) => {
-      if (state.value?.id === action.payload) return;
-      state.value = action.payload;
+      if (state.data?.id === action.payload) return;
+      state.data = action.payload;
     },
   },
 });

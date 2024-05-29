@@ -9,5 +9,5 @@ export const getTeamList = createSelector(
 export const getTeamIsLoading = (state: StateSchema) => state.teamTable?.loading || false;
 
 export const getTeammate = createSelector(getTeamList, getUserData, (teamList, userData) => {
-  return teamList.find((t) => t.id === userData?.id && t.secondName && t.firstName);
+  return teamList.find((t) => t.id === userData?.id && t.isManager);
 });

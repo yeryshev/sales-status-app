@@ -8,19 +8,19 @@ import Button from '@mui/material/Button';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { fetchCommentsByUserId, getUserComments } from '@/entities/Comment';
 import { useSelector } from 'react-redux';
-import { StateSchema } from '@/app/providers/StoreProvider';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { deleteComment } from '@/entities/Comment/model/services/deleteComment/deleteComment';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import { selectCommentFormActions, selectCommentFormReducer } from '../model/slices/selectCommentFormSlice';
 import { getCommentSelectItem } from '../model/selectors/selectCommentFormSelectors';
+import { getUserData } from '@/entities/User';
 
 const reducers: ReducersList = {
   selectComment: selectCommentFormReducer,
 };
 
 export const SelectCommentForm = memo(() => {
-  const user = useSelector((state: StateSchema) => state.user.user);
+  const user = useSelector(getUserData);
   const dispatch = useAppDispatch();
   const userComments = useSelector(getUserComments);
   const comment = useSelector(getCommentSelectItem);

@@ -1,4 +1,3 @@
-import moment from 'moment';
 import { type ChangeEvent, memo } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
@@ -9,24 +8,12 @@ import { Teammate } from '@/entities/Team/model/types/teammate';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
-import PhoneIcon from '@mui/icons-material/Phone';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { UserAvatarsAndBirthday, UserTasks, UserTickets } from '@/entities/Team/model/types/tasksWebsocket';
-import { Status } from '@/entities/Status';
-
-const mapStatusColors = (status_priority: Status['priority']) => {
-  if (status_priority === 0) {
-    return 'default';
-  }
-  if (status_priority === 2) {
-    return 'success';
-  }
-  return 'primary';
-};
+import { StatusSelector } from '@/features/StatusSelector/ui/StatusSelector';
 
 interface UserRowProps {
   teammate: Teammate;
-  mango: boolean;
   tasks: UserTasks;
   tickets: UserTickets;
   avatarsAndBirthday: UserAvatarsAndBirthday;
@@ -34,10 +21,9 @@ interface UserRowProps {
 }
 
 export const UserRow = memo((props: UserRowProps) => {
-  const { teammate, mango, tasks, tickets, teamIsLoading, avatarsAndBirthday } = props;
+  const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday } = props;
   const user = useSelector((state: StateSchema) => state.user.user);
   const dispatch = useAppDispatch();
-  const updateTimeMsk = moment.utc(teammate.updatedAt).utcOffset('+0300').format('HH:mm');
 
   const handleSwitch = (e: ChangeEvent<HTMLInputElement>) => {
     user && dispatch(updateUser({ ...user, isWorkingRemotely: e.target.checked }));
@@ -70,32 +56,11 @@ export const UserRow = memo((props: UserRowProps) => {
           </Box>
         )}
       </TableCell>
-      <TableCell align="left" sx={{ width: '110px' }}>
-        {teamIsLoading ? (
-          <Skeleton variant="text" />
-        ) : (
-          <Tooltip disableFocusListener title={`Последнее обновление в ${updateTimeMsk}`}>
-            <Chip
-              label={
-                mango ? (
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4,
-                    }}
-                  >
-                    <PhoneIcon fontSize={'small'} /> на звонке
-                  </div>
-                ) : (
-                  teammate.status.title
-                )
-              }
-              color={mapStatusColors(teammate.status?.priority)}
-              size={'small'}
-            />
-          </Tooltip>
-        )}
+      <TableCell
+        align="left"
+        // sx={{ width: '110px' }}
+      >
+        {teamIsLoading ? <Skeleton variant="text" /> : <StatusSelector />}
       </TableCell>
       <TableCell align="left">{teamIsLoading ? <Skeleton variant="text" /> : teammate.comment?.description}</TableCell>
       <TableCell align="center" sx={{ width: '60px' }}>

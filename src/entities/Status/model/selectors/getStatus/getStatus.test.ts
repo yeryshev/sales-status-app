@@ -5,7 +5,7 @@ describe('getStatus', () => {
   test('должно вернуть весь стейт статуса', () => {
     const state: DeepPartial<StateSchema> = {
       status: {
-        value: {
+        data: {
           id: 1,
           title: 'занят',
           priority: 2,
@@ -14,7 +14,7 @@ describe('getStatus', () => {
       },
     };
     expect(getStatus(state as StateSchema)).toEqual({
-      value: {
+      data: {
         id: 1,
         title: 'занят',
         priority: 2,
