@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Type, Sequence
 
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -13,8 +13,9 @@ from src.users.schemas import UserUpdate
 async def get_all_users(session: AsyncSession) -> Sequence[User]:
     try:
         query = (select(User)
+                 .join(User.status)
                  .options(selectinload(User.status), selectinload(User.comment), selectinload(User.busy_time))
-                 .order_by(User.status_id.asc(), User.updated_at.desc())
+                 .order_by(desc(Status.priority), desc(User.updated_at))
                  )
 
         result = await session.execute(query)
