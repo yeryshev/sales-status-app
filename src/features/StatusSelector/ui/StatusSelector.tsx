@@ -20,6 +20,7 @@ export const StatusSelector = memo(() => {
   const user = useSelector(getUserData);
   const dispatch = useAppDispatch();
   const { data: statuses } = useGetStatuses();
+  // const [modalOpen, setModalOpen] = useState(false);
   // const status = useSelector(getStatusSelectItem);
 
   const cachedStatuses = useMemo(() => statuses, [statuses]);
@@ -37,6 +38,10 @@ export const StatusSelector = memo(() => {
   const handleChangeMainStatus = (_: SelectChangeEvent, child: unknown) => {
     // @ts-expect-error ts(2339)
     const statusId = Number(child.key.slice(-1) || cachedUserStatus);
+    // const newStatus = cachedStatuses?.find((status) => status.id === statusId);
+    // if (newStatus?.isDeadlineRequired) {
+    //   setModalOpen(true);
+    // }
     user && dispatch(updateUser({ ...user, statusId }));
   };
 
@@ -51,6 +56,13 @@ export const StatusSelector = memo(() => {
           ))}
         </Select>
       </FormControl>
+      {/*<AwayConfirmationModal*/}
+      {/*  open={modalOpen}*/}
+      {/*  value={'Dione'}*/}
+      {/*  onClose={() => setModalOpen(false)}*/}
+      {/*  id={'ringtone-menu'}*/}
+      {/*  keepMounted={false}*/}
+      {/*/>*/}
     </DynamicModuleLoader>
   );
 });
