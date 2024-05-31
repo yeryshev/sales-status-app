@@ -83,6 +83,9 @@ export const TablesBox = memo(() => {
     teamList = teamList.filter((user) => !user.isAccountManager);
   }
 
+  const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
+  const shouldSeeUserTable = !teamIsLoading && teammate && userOnRightPage;
+
   const {
     tasks = {},
     tickets = {},
@@ -172,7 +175,7 @@ export const TablesBox = memo(() => {
 
   return (
     <DynamicModuleLoader reducers={reducers}>
-      {!teamIsLoading && teammate && (
+      {shouldSeeUserTable && (
         <Grid xs={12}>
           <UserTable
             teammate={teammate}

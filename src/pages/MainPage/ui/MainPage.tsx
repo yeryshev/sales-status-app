@@ -8,16 +8,22 @@ import { CommentBox } from '@/widgets/CommentBox';
 import { TablesBox } from '@/widgets/TablesBox';
 import { PageWrapper } from '@/shared/ui/PageWrapper/PageWrapper';
 import { getUserData } from '@/entities/User';
+import { useLocation } from 'react-router-dom';
+import { AppRoutes, RoutePath } from '@/shared/config/routeConfig/routeConfig';
 
 const MainPage = memo(() => {
   const user = useSelector(getUserData);
+  const location = useLocation();
+  const isAccountManagersRoute = location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS];
+  const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
+  const shouldSeeCommentBox = user?.isManager && userOnRightPage;
 
   return (
     <Layout>
       <PageWrapper>
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
           <Grid container spacing={2}>
-            {user?.isManager && (
+            {shouldSeeCommentBox && (
               <Grid xs={12} sm={12} lg={2} alignSelf={'flex-start'}>
                 <Paper
                   sx={{
@@ -31,7 +37,7 @@ const MainPage = memo(() => {
                 </Paper>
               </Grid>
             )}
-            <Grid container xs={12} lg={user?.isManager ? 10 : 12} spacing={2} alignSelf={'flex-start'}>
+            <Grid container xs={12} lg={shouldSeeCommentBox ? 10 : 12} spacing={2} alignSelf={'flex-start'}>
               <TablesBox />
             </Grid>
           </Grid>
