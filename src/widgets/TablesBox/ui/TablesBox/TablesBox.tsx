@@ -13,12 +13,14 @@ import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/Dynam
 import { getTeamIsLoading, getTeamList, getTeammate } from '@/entities/Team/model/selectors/teamSelectors';
 import { fetchTeamList } from '@/entities/Team/model/services/fetchTeamList/fetchTeamList';
 import Box from '@mui/system/Box';
-import { useGetAdditionalTeamData } from '@/entities/Team/api/teamTasksApi';
+import { useGetAdditionalAccountManagersTeamData, useGetAdditionalTeamData } from '@/entities/Team/api/teamTasksApi';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { LastWeekTable } from '../TeamResults/LastWeekResults/LastWeekTable';
 import { CurrentWeekResultTable } from '../TeamResults/CurrentWeekResult/CurrentWeekResultTable';
 import Typography from '@mui/material/Typography';
+import { useLocation } from 'react-router-dom';
+import { AppRoutes, RoutePath } from '@/shared/config/routeConfig/routeConfig';
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -65,11 +67,23 @@ const handleVisibilityChange = (socket: WebSocket) => {
 
 export const TablesBox = memo(() => {
   const user = useSelector(getUserData);
-  const teamList = useSelector(getTeamList);
+  let teamList = useSelector(getTeamList);
   const teammate = useSelector(getTeammate);
   const teamIsLoading = useSelector(getTeamIsLoading);
-  const { data: additionalTeamData } = useGetAdditionalTeamData();
+  const [tabNumber, setTabNumber] = useState(0);
+  const location = useLocation();
+
+  let { data: additionalTeamData } = useGetAdditionalTeamData();
+  const { data: additionalAccountManagersData } = useGetAdditionalAccountManagersTeamData();
   const dispatch = useAppDispatch();
+
+  if (location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS]) {
+    teamList = teamList.filter((user) => user.isAccountManager);
+    additionalTeamData = additionalAccountManagersData;
+  } else {
+    teamList = teamList.filter((user) => !user.isAccountManager);
+  }
+
   const {
     tasks = {},
     tickets = {},
@@ -79,7 +93,6 @@ export const TablesBox = memo(() => {
     avatarsAndBirthday = {},
   } = additionalTeamData || {};
 
-  const [tabNumber, setTabNumber] = useState(0);
   const handleChangeTab = (_: SyntheticEvent, newTab: number) => {
     setTabNumber(newTab);
   };
