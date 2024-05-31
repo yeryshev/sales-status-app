@@ -13,7 +13,7 @@ import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/Dynam
 import { getTeamIsLoading, getTeamList, getTeammate } from '@/entities/Team/model/selectors/teamSelectors';
 import { fetchTeamList } from '@/entities/Team/model/services/fetchTeamList/fetchTeamList';
 import Box from '@mui/system/Box';
-import { useGetAdditionalAccountManagersTeamData, useGetAdditionalTeamData } from '@/entities/Team/api/teamTasksApi';
+import { useGetAdditionalTeamData } from '@/entities/Team/api/teamTasksApi';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { LastWeekTable } from '../TeamResults/LastWeekResults/LastWeekTable';
@@ -70,16 +70,15 @@ export const TablesBox = memo(() => {
   let teamList = useSelector(getTeamList);
   const teammate = useSelector(getTeammate);
   const teamIsLoading = useSelector(getTeamIsLoading);
+  const dispatch = useAppDispatch();
   const [tabNumber, setTabNumber] = useState(0);
   const location = useLocation();
 
-  let { data: additionalTeamData } = useGetAdditionalTeamData();
-  const { data: additionalAccountManagersData } = useGetAdditionalAccountManagersTeamData();
-  const dispatch = useAppDispatch();
+  const isAccountManagersRoute = location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS];
+  const { data: additionalTeamData } = useGetAdditionalTeamData(isAccountManagersRoute ? 'account' : 'inbound');
 
-  if (location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS]) {
+  if (isAccountManagersRoute) {
     teamList = teamList.filter((user) => user.isAccountManager);
-    additionalTeamData = additionalAccountManagersData;
   } else {
     teamList = teamList.filter((user) => !user.isAccountManager);
   }

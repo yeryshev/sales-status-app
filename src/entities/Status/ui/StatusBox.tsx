@@ -59,7 +59,7 @@ export const StatusBox = () => {
                 <Grid xs={12} sm={12} key={status.id}>
                   <FormControlLabel
                     value={status.id}
-                    control={<Radio color={mapStatusColors(status.priority)} />}
+                    control={<Radio color={mapStatusColors(status?.priority)} />}
                     label={status.title}
                   />
                 </Grid>
