@@ -57,6 +57,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_coordinator: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
     is_female: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
     is_manager: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default='true')
+    is_account_manager: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
     status_id: Mapped[Optional[int]] = mapped_column(ForeignKey("status.id", ondelete="SET NULL"), index=True)
     comment_id: Mapped[Optional[int]] = mapped_column(ForeignKey("comment.id", ondelete="SET NULL"))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
