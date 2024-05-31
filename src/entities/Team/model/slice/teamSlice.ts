@@ -28,17 +28,10 @@ export const teamSlice = createSlice({
           return teammate;
         })
         .sort((a, b) => {
-          const statusOrder = {
-            online: 1,
-            busy: 2,
-            offline: 3,
-          };
-
-          if (statusOrder[a.status] !== statusOrder[b.status]) {
-            return statusOrder[a.status] - statusOrder[b.status];
-          } else {
+          if (a.status.priority === b.status.priority) {
             return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
           }
+          return b.status.priority - a.status.priority;
         });
     },
   },

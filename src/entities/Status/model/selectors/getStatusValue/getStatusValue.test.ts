@@ -1,13 +1,23 @@
 import { StateSchema } from '@/app/providers/StoreProvider';
-import { getStatusValue } from './getStatusValue';
+import { getStatusData } from './getStatusData';
 
 describe('getStatusValue', () => {
   test('должно вернуть значение статуса', () => {
     const state: DeepPartial<StateSchema> = {
       status: {
-        value: 1,
+        data: {
+          id: 1,
+          title: 'занят',
+          priority: 2,
+          isDeadlineRequired: false,
+        },
       },
     };
-    expect(getStatusValue(state as StateSchema)).toBe(1);
+    expect(getStatusData(state as StateSchema)).toEqual({
+      id: 1,
+      title: 'занят',
+      priority: 2,
+      isDeadlineRequired: false,
+    });
   });
 });

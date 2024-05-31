@@ -1,3 +1,10 @@
+import { Status } from '@/entities/Status';
+
+export interface TeammateComment {
+  id: number;
+  description: string;
+}
+
 export interface Teammate {
   id: number;
   email: string;
@@ -7,7 +14,10 @@ export interface Teammate {
   insideId: number;
   telegram: string;
   isWorkingRemotely: boolean;
-  status: 'online' | 'busy' | 'offline';
-  comment: string;
+  isCoordinator: boolean;
+  isFemale: boolean;
+  isManager: boolean;
+  status: Status;
+  comment: TeammateComment;
   updatedAt: string;
 }

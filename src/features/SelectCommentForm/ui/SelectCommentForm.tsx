@@ -8,19 +8,19 @@ import Button from '@mui/material/Button';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { fetchCommentsByUserId, getUserComments } from '@/entities/Comment';
 import { useSelector } from 'react-redux';
-import { StateSchema } from '@/app/providers/StoreProvider';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { deleteComment } from '@/entities/Comment/model/services/deleteComment/deleteComment';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import { selectCommentFormActions, selectCommentFormReducer } from '../model/slices/selectCommentFormSlice';
 import { getCommentSelectItem } from '../model/selectors/selectCommentFormSelectors';
+import { getUserData } from '@/entities/User';
 
 const reducers: ReducersList = {
   selectComment: selectCommentFormReducer,
 };
 
 export const SelectCommentForm = memo(() => {
-  const user = useSelector((state: StateSchema) => state.user.user);
+  const user = useSelector(getUserData);
   const dispatch = useAppDispatch();
   const userComments = useSelector(getUserComments);
   const comment = useSelector(getCommentSelectItem);
@@ -54,12 +54,12 @@ export const SelectCommentForm = memo(() => {
   return (
     <DynamicModuleLoader reducers={reducers}>
       <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel id="demo-simple-select-label" size={'small'}>
+        <InputLabel id="select-comment-form-label" size={'small'}>
           Выбрать
         </InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select-vadim"
+          labelId="select-comment-form-labell"
+          id="select-comment-form"
           value={comment ? String(comment.id) : ''}
           onChange={handleChange}
           label="Выбрать комментарий"

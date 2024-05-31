@@ -1,1 +1,6 @@
-export type Status = 1 | 2 | 3;
+export type Status = {
+  id: number;
+  title: string;
+  isDeadlineRequired: boolean;
+  priority: number;
+};
