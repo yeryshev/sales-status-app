@@ -17,6 +17,7 @@ export interface Teammate {
   isCoordinator: boolean;
   isFemale: boolean;
   isManager: boolean;
+  isAccountManager: boolean;
   status: Status;
   comment: TeammateComment;
   updatedAt: string;

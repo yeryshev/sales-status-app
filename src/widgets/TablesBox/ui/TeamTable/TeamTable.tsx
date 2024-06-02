@@ -41,7 +41,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
   const userId = useSelector((state: StateSchema) => state.user.user?.id);
 
   const filterTeamList = (teammate: Teammate) => {
-    return teammate.secondName && teammate.firstName && teammate.id !== userId;
+    return teammate.isManager && teammate.id !== userId;
   };
 
   const renderTeamList = (teammate: Teammate) => (

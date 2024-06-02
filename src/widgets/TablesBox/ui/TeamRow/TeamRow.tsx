@@ -124,7 +124,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
                   <Typography variant={'body2'}>{feminizeWord(teammate.status.title, teammate.isFemale)}</Typography>
                 )
               }
-              color={mapStatusColors(teammate.status.priority)}
+              color={mapStatusColors(teammate.status?.priority)}
               size={'small'}
             />
           </Tooltip>

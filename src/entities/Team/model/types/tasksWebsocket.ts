@@ -35,6 +35,7 @@ export type UsersAvatarsAndBirthday = Record<Teammate['insideId'], UserAvatarsAn
 
 export enum WsTypes {
   MANGO = 'mango',
+  MANGO_STATE = 'mangoState',
   TASKS = 'tasks',
   TICKETS = 'tickets',
   VACATION = 'vacation',
@@ -44,6 +45,11 @@ export enum WsTypes {
 
 export interface MangoWs {
   type: WsTypes.MANGO;
+  data: UsersMango;
+}
+
+export interface MangoStateWs {
+  type: WsTypes.MANGO_STATE;
   data: UsersMango;
 }
 
@@ -62,7 +68,7 @@ export interface VacationWs {
   data: UsersVacation;
 }
 
-export type WsTasksData = MangoWs | TasksWs | TicketsWs | VacationWs;
+export type WsTasksData = MangoWs | MangoStateWs | TasksWs | TicketsWs | VacationWs;
 
 export type TasksData = {
   [WsTypes.MANGO]: UsersMango;

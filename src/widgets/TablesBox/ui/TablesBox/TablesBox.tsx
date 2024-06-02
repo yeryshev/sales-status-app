@@ -19,6 +19,8 @@ import Tab from '@mui/material/Tab';
 import { LastWeekTable } from '../TeamResults/LastWeekResults/LastWeekTable';
 import { CurrentWeekResultTable } from '../TeamResults/CurrentWeekResult/CurrentWeekResultTable';
 import Typography from '@mui/material/Typography';
+import { useLocation } from 'react-router-dom';
+import { AppRoutes, RoutePath } from '@/shared/config/routeConfig/routeConfig';
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -65,11 +67,25 @@ const handleVisibilityChange = (socket: WebSocket) => {
 
 export const TablesBox = memo(() => {
   const user = useSelector(getUserData);
-  const teamList = useSelector(getTeamList);
+  let teamList = useSelector(getTeamList);
   const teammate = useSelector(getTeammate);
   const teamIsLoading = useSelector(getTeamIsLoading);
-  const { data: additionalTeamData } = useGetAdditionalTeamData();
   const dispatch = useAppDispatch();
+  const [tabNumber, setTabNumber] = useState(0);
+  const location = useLocation();
+
+  const isAccountManagersRoute = location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS];
+  const { data: additionalTeamData } = useGetAdditionalTeamData(isAccountManagersRoute ? 'account' : 'inbound');
+
+  if (isAccountManagersRoute) {
+    teamList = teamList.filter((user) => user.isAccountManager);
+  } else {
+    teamList = teamList.filter((user) => !user.isAccountManager);
+  }
+
+  const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
+  const shouldSeeUserTable = !teamIsLoading && teammate && userOnRightPage;
+
   const {
     tasks = {},
     tickets = {},
@@ -79,7 +95,6 @@ export const TablesBox = memo(() => {
     avatarsAndBirthday = {},
   } = additionalTeamData || {};
 
-  const [tabNumber, setTabNumber] = useState(0);
   const handleChangeTab = (_: SyntheticEvent, newTab: number) => {
     setTabNumber(newTab);
   };
@@ -160,7 +175,7 @@ export const TablesBox = memo(() => {
 
   return (
     <DynamicModuleLoader reducers={reducers}>
-      {!teamIsLoading && teammate && (
+      {shouldSeeUserTable && (
         <Grid xs={12}>
           <UserTable
             teammate={teammate}

@@ -14,6 +14,7 @@ export interface User {
   isCoordinator: boolean;
   isFemale: boolean;
   isManager: boolean;
+  isAccountManager: boolean;
   statusId: number;
   commentId: number | null;
   status: Status;
