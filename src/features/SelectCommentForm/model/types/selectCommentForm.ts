@@ -1,6 +1,6 @@
 import { Comment } from '@/entities/Comment';
 
-export interface SelectCommentFromSchema {
+export interface SelectCommentFormSchema {
   commentSelectItem?: Comment;
   error?: string;
 }

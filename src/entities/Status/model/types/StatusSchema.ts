@@ -1,7 +1,7 @@
 import { type Status } from './Status';
 
 export interface StatusSchema {
-  value: Status | null;
+  data: Status | null;
   loading: boolean;
   error: null | string;
 }

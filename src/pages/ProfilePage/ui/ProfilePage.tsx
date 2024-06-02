@@ -13,9 +13,9 @@ import { getProfileForm } from '../model/selectors/getProfileForm/getProfileForm
 import { updateProfileData } from '../model/services/updateProfileData/updateProfileData';
 import { getProfileValidateErrors } from '../model/selectors/getProfileValidateError/getProfileValidateErrors';
 import Alert from '@mui/material/Alert';
-import { ValidateProfileError } from '../model/types/profile';
 import { getProfileData } from '../model/selectors/getProfileData/getProfileData';
 import { PageWrapper } from '@/shared/ui/PageWrapper/PageWrapper';
+import { ValidateProfileError } from '../model/consts/consts';
 
 const reducers: ReducersList = {
   profile: profileReducer,
@@ -76,13 +76,6 @@ const ProfilePage = () => {
     [dispatch],
   );
 
-  const onChangePhotoUrl = useCallback(
-    (value?: string) => {
-      dispatch(profileActions.updateProfile({ photoUrl: value }));
-    },
-    [dispatch],
-  );
-
   const onCancelEdit = useCallback(() => {
     dispatch(profileActions.cancelEdit());
   }, [dispatch]);
@@ -106,13 +99,12 @@ const ProfilePage = () => {
               onChangeEmail={onChangeEmail}
               onChangeExtNumber={onChangeExtNumber}
               onChangeTelegram={onChangeTelegram}
-              onChangePhotoUrl={onChangePhotoUrl}
               onCancelEdit={onCancelEdit}
               onSave={onSave}
             />
             {validateErrors?.length &&
               validateErrors.map((error) => (
-                <Alert key={error} severity="error" sx={{ my: 2 }}>
+                <Alert key={error} severity="error" sx={{ my: 2 }} data-testid="ProfilePage.Error">
                   {validateErrorTranslates[error]}
                 </Alert>
               ))}

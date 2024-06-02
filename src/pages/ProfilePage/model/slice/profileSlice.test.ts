@@ -1,12 +1,12 @@
-import { ProfileSchema, ValidateProfileError } from '../types/profile';
+import { ProfileSchema } from '../types/profile';
 import { profileActions, profileReducer } from './profileSlice';
 import { updateProfileData } from '../services/updateProfileData/updateProfileData';
+import { ValidateProfileError } from '../consts/consts';
 
 const data = {
   firstName: 'firstName',
   secondName: 'secondName',
   email: 'example@example.com',
-  photoUrl: 'photoUrl',
   extNumber: '2000',
   insideId: 1,
   telegram: 'telegram',

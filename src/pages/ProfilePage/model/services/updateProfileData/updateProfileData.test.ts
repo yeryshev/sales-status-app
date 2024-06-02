@@ -1,12 +1,12 @@
 import { updateProfileData } from './updateProfileData';
 import { TestAsyncThunk } from '@/shared/lib/tests/TestAsyncThunk/TestAsyncThunk';
-import { ValidateProfileError } from '../../types/profile';
+
+import { ValidateProfileError } from '../../consts/consts';
 
 const data = {
   firstName: 'firstName',
   secondName: 'secondName',
   email: 'example@example.com',
-  photoUrl: 'photoUrl',
   extNumber: '2000',
   insideId: 1,
   telegram: 'telegram',

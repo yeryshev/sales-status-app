@@ -1,34 +1,64 @@
 import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
-import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
+import { useSelector } from 'react-redux';
+import { type StateSchema } from '@/app/providers/StoreProvider';
+import { TeamRow } from '../TeamRow/TeamRow';
+import { memo } from 'react';
+import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import { Teammate } from '../../model/types/teammate';
-import { memo } from 'react';
+import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
+import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
-import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
-import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { Tooltip } from '@mui/material';
-import { UsersMango, UsersTasks, UsersTickets } from '../../model/types/tasksWebsocket';
-import { UserRow } from '../UserRow/UserRow';
+import {
+  UsersAvatarsAndBirthday,
+  UsersMango,
+  UsersTasks,
+  UsersTickets,
+  UsersVacation,
+} from '@/entities/Team/model/types/tasksWebsocket';
+import { Teammate } from '@/entities/Team/model/types/teammate';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
+import Paper from '@mui/material/Paper';
 
-interface UserTableProps {
-  teammate?: Teammate;
+interface TeamTableProps {
+  teamList: Teammate[];
   mango: UsersMango;
   tasks: UsersTasks;
   tickets: UsersTickets;
+  vacationStates: UsersVacation;
+  avatarsAndBirthday: UsersAvatarsAndBirthday;
   teamIsLoading: boolean;
 }
 
-export const UserTable = memo((props: UserTableProps) => {
-  const { teammate, mango, tasks, tickets, teamIsLoading } = props;
+const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
+
+export const TeamTable = memo((props: TeamTableProps) => {
+  const { mango, tasks, tickets, teamIsLoading, teamList, vacationStates, avatarsAndBirthday } = props;
+  const userId = useSelector((state: StateSchema) => state.user.user?.id);
+
+  const filterTeamList = (teammate: Teammate) => {
+    return teammate.isManager && teammate.id !== userId;
+  };
+
+  const renderTeamList = (teammate: Teammate) => (
+    <TeamRow
+      key={teammate.id}
+      teammate={teammate}
+      mango={mango[teammate.extNumber]}
+      tasks={tasks[teammate.insideId]}
+      tickets={tickets[teammate.insideId]}
+      vacationState={vacationStates[teammate.insideId]}
+      avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}
+      teamIsLoading={teamIsLoading}
+    />
+  );
 
   return (
-    <TableContainer style={{ overflowX: 'auto' }}>
+    <TableContainer style={{ overflowX: 'auto' }} component={Paper}>
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -56,25 +86,12 @@ export const UserTable = memo((props: UserTableProps) => {
                 <FeedbackOutlinedIcon fontSize={'small'} />
               </TableCell>
             </Tooltip>
-            <Tooltip title={'Работаю из дома'}>
-              <TableCell align="center">
-                <HomeOutlinedIcon fontSize={'small'} />
-              </TableCell>
-            </Tooltip>
+            <TableCell align="center"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {teammate ? (
-            <UserRow
-              key={teammate.id}
-              teammate={teammate}
-              mango={mango[teammate.extNumber]}
-              tasks={tasks[teammate.insideId]}
-              tickets={tickets[teammate.insideId]}
-              teamIsLoading={teamIsLoading}
-            />
-          ) : null}
-          {teamIsLoading && <RowSkeleton />}
+          {teamList.length > 0 ? teamList.filter(filterTeamList).map(renderTeamList) : null}
+          {teamIsLoading && getSkeletons()}
         </TableBody>
       </Table>
     </TableContainer>

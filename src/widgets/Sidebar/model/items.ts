@@ -1,7 +1,8 @@
 import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { SvgIconTypeMap } from '@mui/material';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import PaymentsIcon from '@mui/icons-material/Payments';
 import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
 
 export type SidebarItemType = {
@@ -13,8 +14,13 @@ export type SidebarItemType = {
 export const SidebarItemsList: Array<SidebarItemType> = [
   {
     path: RoutePath.main,
-    text: 'Дашборд',
-    Icon: DashboardIcon,
+    text: 'Входящие',
+    Icon: AttachMoneyIcon,
+  },
+  {
+    path: RoutePath.accountManagers,
+    text: 'Аккаунты',
+    Icon: PaymentsIcon,
   },
   {
     path: RoutePath.profile,

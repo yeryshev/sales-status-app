@@ -1,12 +1,12 @@
 import { describe } from 'vitest';
 import { validateProfileData } from './validateProfileData';
-import { ValidateProfileError } from '../../types/profile';
+
+import { ValidateProfileError } from '../../consts/consts';
 
 const data = {
   firstName: 'firstName',
   secondName: 'secondName',
   email: 'example@example.com',
-  photoUrl: 'photoUrl',
   extNumber: '2000',
   insideId: 1,
   telegram: 'telegram',

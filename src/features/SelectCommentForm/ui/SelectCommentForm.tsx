@@ -3,24 +3,24 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Unstable_Grid2';
 import Button from '@mui/material/Button';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { fetchCommentsByUserId, getUserComments } from '@/entities/Comment';
 import { useSelector } from 'react-redux';
-import { StateSchema } from '@/app/providers/StoreProvider';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { deleteComment } from '@/entities/Comment/model/services/deleteComment/deleteComment';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import { selectCommentFormActions, selectCommentFormReducer } from '../model/slices/selectCommentFormSlice';
 import { getCommentSelectItem } from '../model/selectors/selectCommentFormSelectors';
+import { getUserData } from '@/entities/User';
 
 const reducers: ReducersList = {
   selectComment: selectCommentFormReducer,
 };
 
 export const SelectCommentForm = memo(() => {
-  const user = useSelector((state: StateSchema) => state.user.user);
+  const user = useSelector(getUserData);
   const dispatch = useAppDispatch();
   const userComments = useSelector(getUserComments);
   const comment = useSelector(getCommentSelectItem);
@@ -54,12 +54,12 @@ export const SelectCommentForm = memo(() => {
   return (
     <DynamicModuleLoader reducers={reducers}>
       <FormControl fullWidth sx={{ mb: 2 }}>
-        <InputLabel id="demo-simple-select-label" size={'small'}>
+        <InputLabel id="select-comment-form-label" size={'small'}>
           Выбрать
         </InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select-vadim"
+          labelId="select-comment-form-labell"
+          id="select-comment-form"
           value={comment ? String(comment.id) : ''}
           onChange={handleChange}
           label="Выбрать комментарий"
@@ -73,17 +73,17 @@ export const SelectCommentForm = memo(() => {
         </Select>
       </FormControl>
       <Grid container justifyContent={'center'}>
-        <Grid item>
+        <Grid>
           <Button type="button" onClick={handlePickComment} disabled={!comment} color="success" size={'small'}>
             Установить
           </Button>
         </Grid>
-        <Grid item>
+        <Grid>
           <Button onClick={handleDeleteComment} disabled={!comment} color="error" size={'small'}>
             Удалить
           </Button>
         </Grid>
-        <Grid item>
+        <Grid>
           <Button disabled={user?.commentId === null} size={'small'} onClick={handleClearComment}>
             Очистить
           </Button>

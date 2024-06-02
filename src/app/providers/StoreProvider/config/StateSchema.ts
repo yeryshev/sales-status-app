@@ -8,18 +8,22 @@ import { AnyAction } from 'redux';
 import { ProfileSchema } from '@/pages/ProfilePage';
 import { AxiosInstance } from 'axios';
 import { AddCommentFormSchema } from '@/features/AddCommentForm/model/types/addCommentForm';
-import { SelectCommentFromSchema } from '@/features/SelectCommentForm/model/types/selectCommentForm';
+import { SelectCommentFormSchema } from '@/features/SelectCommentForm/model/types/selectCommentForm';
+import { rtkApi } from '@/shared/api/rtkApi';
+import { StatusSelectorSchema } from '@/features/StatusSelector/model/types/statusSelector';
 
 export interface StateSchema {
   user: UserSchema;
   comments: CommentsSchema;
   status: StatusSchema;
+  [rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>;
 
   // Асинхронные редюсеры
   loginForm?: LoginSchema;
   profile?: ProfileSchema;
   addCommentForm?: AddCommentFormSchema;
-  selectComment?: SelectCommentFromSchema;
+  selectComment?: SelectCommentFormSchema;
+  selectStatus?: StatusSelectorSchema;
   teamTable?: TeamTableSchema;
 }
 

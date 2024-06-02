@@ -10,6 +10,7 @@ export type AppRouteProps = RouteProps & {
 
 export enum AppRoutes {
   MAIN = 'main',
+  ACCOUNT_MANAGERS = 'accountManagers',
   PROFILE = 'profile',
   LOGIN = 'login',
   NOT_FOUND = 'error',
@@ -17,6 +18,7 @@ export enum AppRoutes {
 
 export const RoutePath: Record<AppRoutes, string> = {
   [AppRoutes.MAIN]: '/',
+  [AppRoutes.ACCOUNT_MANAGERS]: '/account-managers',
   [AppRoutes.PROFILE]: '/profile',
   [AppRoutes.LOGIN]: '/auth/login',
   [AppRoutes.NOT_FOUND]: '*',
@@ -25,6 +27,11 @@ export const RoutePath: Record<AppRoutes, string> = {
 export const routeConfig: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.MAIN]: {
     path: RoutePath.main,
+    element: <MainPage />,
+    authOnly: true,
+  },
+  [AppRoutes.ACCOUNT_MANAGERS]: {
+    path: RoutePath.accountManagers,
     element: <MainPage />,
     authOnly: true,
   },

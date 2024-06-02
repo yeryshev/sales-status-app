@@ -1,51 +1,29 @@
-import moment from 'moment';
 import { type ChangeEvent, memo } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Box from '@mui/material/Box';
 import { Avatar, Chip, Skeleton, Switch, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { Teammate } from '../../model/types/teammate';
+import { Teammate } from '@/entities/Team/model/types/teammate';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
-import { OverridableStringUnion } from '@mui/types';
-import { ChipPropsColorOverrides } from '@mui/material/Chip';
-import PhoneIcon from '@mui/icons-material/Phone';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import { UserTasks, UserTickets } from '../../model/types/tasksWebsocket';
-
-const statuses: Record<'online' | 'busy' | 'offline', 'онлайн' | 'занят' | 'оффлайн'> = {
-  online: 'онлайн',
-  busy: 'занят',
-  offline: 'оффлайн',
-};
-
-const StatusColors: Record<
-  'online' | 'busy' | 'offline',
-  OverridableStringUnion<
-    'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning',
-    ChipPropsColorOverrides
-  >
-> = {
-  online: 'success',
-  busy: 'primary',
-  offline: 'default',
-};
+import { UserAvatarsAndBirthday, UserTasks, UserTickets } from '@/entities/Team/model/types/tasksWebsocket';
+import { StatusSelector } from '@/features/StatusSelector/ui/StatusSelector';
 
 interface UserRowProps {
   teammate: Teammate;
-  mango: boolean;
   tasks: UserTasks;
   tickets: UserTickets;
+  avatarsAndBirthday: UserAvatarsAndBirthday;
   teamIsLoading: boolean;
 }
 
 export const UserRow = memo((props: UserRowProps) => {
-  const { teammate, mango, tasks, tickets, teamIsLoading } = props;
+  const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday } = props;
   const user = useSelector((state: StateSchema) => state.user.user);
   const dispatch = useAppDispatch();
-  const updateTimeMsk = moment.utc(teammate.updatedAt).utcOffset('+0300').format('HH:mm');
 
   const handleSwitch = (e: ChangeEvent<HTMLInputElement>) => {
     user && dispatch(updateUser({ ...user, isWorkingRemotely: e.target.checked }));
@@ -59,7 +37,7 @@ export const UserRow = memo((props: UserRowProps) => {
         ) : (
           <Avatar
             alt={`${teammate.firstName} ${teammate.secondName}`}
-            src={teammate.photoUrl}
+            src={avatarsAndBirthday?.avatar}
             sx={{ width: 50, height: 50 }}
           />
         )}
@@ -78,34 +56,10 @@ export const UserRow = memo((props: UserRowProps) => {
           </Box>
         )}
       </TableCell>
-      <TableCell align="left" sx={{ width: '110px' }}>
-        {teamIsLoading ? (
-          <Skeleton variant="text" />
-        ) : (
-          <Tooltip disableFocusListener title={`Последнее обновление в ${updateTimeMsk}`}>
-            <Chip
-              label={
-                mango ? (
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 4,
-                    }}
-                  >
-                    <PhoneIcon fontSize={'small'} /> на звонке
-                  </div>
-                ) : (
-                  statuses[teammate.status]
-                )
-              }
-              color={StatusColors[teammate.status]}
-              size={'small'}
-            />
-          </Tooltip>
-        )}
+      <TableCell align="left" sx={{ width: '160px' }}>
+        {teamIsLoading ? <Skeleton variant="text" /> : <StatusSelector />}
       </TableCell>
-      <TableCell align="left">{teamIsLoading ? <Skeleton variant="text" /> : teammate.comment}</TableCell>
+      <TableCell align="left">{teamIsLoading ? <Skeleton variant="text" /> : teammate.comment?.description}</TableCell>
       <TableCell align="center" sx={{ width: '60px' }}>
         {!teamIsLoading && tasks && Boolean(tasks.leads) && (
           <Tooltip title={'Первичные обращения'}>

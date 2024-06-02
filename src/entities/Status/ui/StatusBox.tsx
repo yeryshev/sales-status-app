@@ -1,28 +1,37 @@
-import { useSocketCtx } from '@/app/providers/WsProvider/lib/WsContext';
 import { useSelector } from 'react-redux';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
-import { Grid } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 import { type ChangeEvent, useEffect } from 'react';
 import { statusActions } from '../model/slice/statusSlice';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { getStatusValue } from '../model/selectors/getStatusValue/getStatusValue';
+import { getStatusData } from '../model/selectors/getStatusValue/getStatusData';
 import { StateSchema } from '@/app/providers/StoreProvider';
+import { useGetStatuses } from '../api/statusApi';
+import { Status } from '../model/types/Status';
+
+const mapStatusColors = (status_priority: Status['priority']) => {
+  if (status_priority === 0) {
+    return 'default';
+  }
+  if (status_priority === 2) {
+    return 'success';
+  }
+  return 'primary';
+};
 
 export const StatusBox = () => {
   const user = useSelector((state: StateSchema) => state.user.user);
   const dispatch = useAppDispatch();
-  const [socket] = useSocketCtx();
-  const status = useSelector(getStatusValue);
+  const status = useSelector(getStatusData);
+  const { data: statuses } = useGetStatuses();
 
   useEffect(() => {
-    if (user?.id) {
-      dispatch(statusActions.changeStatus(user.statusId));
-    }
-  }, [dispatch, user?.id, user?.statusId, socket]);
+    user && dispatch(statusActions.changeStatus(user.statusId));
+  }, [dispatch, user]);
 
   const handleChangeMainStatus = (event: ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
@@ -45,15 +54,16 @@ export const StatusBox = () => {
           data-testid="status-radio-group"
         >
           <Grid container direction="row" spacing={1}>
-            <Grid item xs={12} sm={12}>
-              <FormControlLabel value={1} control={<Radio />} label="Онлайн" />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <FormControlLabel value={2} control={<Radio />} label="Занят" />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <FormControlLabel value={3} control={<Radio />} label="Оффлайн" />
-            </Grid>
+            {statuses &&
+              statuses.map((status) => (
+                <Grid xs={12} sm={12} key={status.id}>
+                  <FormControlLabel
+                    value={status.id}
+                    control={<Radio color={mapStatusColors(status?.priority)} />}
+                    label={status.title}
+                  />
+                </Grid>
+              ))}
           </Grid>
         </RadioGroup>
       </FormLabel>
