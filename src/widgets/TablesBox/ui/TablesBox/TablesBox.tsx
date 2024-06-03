@@ -223,12 +223,14 @@ export const TablesBox = memo(() => {
                 teamIsLoading={teamIsLoading}
                 tasks={tasks}
                 avatarsAndBirthday={avatarsAndBirthday}
+                isAccountManagersRoute={isAccountManagersRoute}
               />
               <LastWeekTable
                 teamList={teamList}
                 teamIsLoading={teamIsLoading}
                 tasks={tasks}
                 lastWeekStats={lastWeekStat}
+                isAccountManagersRoute={isAccountManagersRoute}
               />
             </Box>
           </CustomTabPanel>
