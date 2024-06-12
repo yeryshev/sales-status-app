@@ -1,4 +1,4 @@
-import { type Teammate } from './teammate';
+import { Teammate } from './teammate';
 
 export interface TeamTableSchema {
   list: Teammate[];

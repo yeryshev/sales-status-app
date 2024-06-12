@@ -7,10 +7,10 @@ import { useSelector } from 'react-redux';
 import { Teammate } from '@/entities/Team/model/types/teammate';
 import { updateUser } from '@/entities/User/model/actions/userActions';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { StateSchema } from '@/app/providers/StoreProvider';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { UserAvatarsAndBirthday, UserTasks, UserTickets } from '@/entities/Team/model/types/tasksWebsocket';
 import { StatusSelector } from '@/features/Status/StatusSelector/ui/StatusSelector';
+import { getUserData } from '@/entities/User';
 
 interface UserRowProps {
   teammate: Teammate;
@@ -22,7 +22,7 @@ interface UserRowProps {
 
 export const UserRow = memo((props: UserRowProps) => {
   const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday } = props;
-  const user = useSelector((state: StateSchema) => state.user.user);
+  const user = useSelector(getUserData);
   const dispatch = useAppDispatch();
 
   const handleSwitch = (e: ChangeEvent<HTMLInputElement>) => {

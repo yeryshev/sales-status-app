@@ -20,7 +20,6 @@ export const StatusSelector = memo(() => {
   const user = useSelector(getUserData);
   const dispatch = useAppDispatch();
   const { data: statuses } = useGetStatuses();
-  // const status = useSelector(getStatusSelectItem);
 
   const cachedStatuses = useMemo(() => statuses, [statuses]);
   const cachedUserStatus = useMemo(() => user?.statusId, [user?.statusId]);

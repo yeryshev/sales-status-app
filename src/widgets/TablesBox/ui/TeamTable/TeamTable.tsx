@@ -2,7 +2,6 @@ import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import { useSelector } from 'react-redux';
-import { type StateSchema } from '@/app/providers/StoreProvider';
 import { TeamRow } from './TeamRow';
 import { memo } from 'react';
 import TableHead from '@mui/material/TableHead';
@@ -23,6 +22,7 @@ import {
 import { Teammate } from '@/entities/Team/model/types/teammate';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import Paper from '@mui/material/Paper';
+import { getUserId } from '@/entities/User/model/selectors/userSelectors';
 
 interface TeamTableProps {
   teamList: Teammate[];
@@ -38,7 +38,7 @@ const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton 
 
 export const TeamTable = memo((props: TeamTableProps) => {
   const { mango, tasks, tickets, teamIsLoading, teamList, vacationStates, avatarsAndBirthday } = props;
-  const userId = useSelector((state: StateSchema) => state.user.user?.id);
+  const userId = useSelector(getUserId);
 
   const filterTeamList = (teammate: Teammate) => {
     return teammate.isManager && teammate.id !== userId;

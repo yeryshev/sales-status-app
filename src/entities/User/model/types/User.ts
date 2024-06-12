@@ -34,9 +34,9 @@ export interface User {
 }
 
 export interface UserSchema {
-  user?: User;
+  data?: User;
   loading: boolean;
   error: null | string;
-  authData?: User;
+
   mounted: boolean;
 }
