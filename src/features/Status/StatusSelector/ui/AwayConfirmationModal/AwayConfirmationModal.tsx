@@ -11,7 +11,7 @@ import Dialog from '@mui/material/Dialog';
 import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { AwayTimeInput } from '../../ui/AwayTimeInput/AwayTimeInput';
+import { AwayTimeInput } from '../AwayTimeInput/AwayTimeInput';
 
 const options = ['15 минут', '1 час', 'Другое'];
 

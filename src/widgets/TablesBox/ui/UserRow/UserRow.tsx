@@ -10,7 +10,7 @@ import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { StateSchema } from '@/app/providers/StoreProvider';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { UserAvatarsAndBirthday, UserTasks, UserTickets } from '@/entities/Team/model/types/tasksWebsocket';
-import { StatusSelector } from '@/features/StatusSelector/ui/StatusSelector';
+import { StatusSelector } from '@/features/Status/StatusSelector/ui/StatusSelector';
 
 interface UserRowProps {
   teammate: Teammate;

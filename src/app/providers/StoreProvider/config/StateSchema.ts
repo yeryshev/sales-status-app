@@ -2,15 +2,15 @@ import { CommentsSchema } from '@/entities/Comment';
 import { StatusSchema } from '@/entities/Status';
 import { TeamTableSchema } from 'src/entities/Team';
 import { UserSchema } from '@/entities/User';
-import { LoginSchema } from '@/features/AuthByEmail';
+import { LoginSchema } from '@/features/Authentication/AuthByEmail';
 import { CombinedState, EnhancedStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
 import { AnyAction } from 'redux';
 import { ProfileSchema } from '@/pages/ProfilePage';
 import { AxiosInstance } from 'axios';
-import { AddCommentFormSchema } from '@/features/AddCommentForm/model/types/addCommentForm';
-import { SelectCommentFormSchema } from '@/features/SelectCommentForm/model/types/selectCommentForm';
+import { AddCommentFormSchema } from '@/features/Comment/AddCommentForm/model/types/addCommentForm';
+import { SelectCommentFormSchema } from '@/features/Comment/SelectCommentForm/model/types/selectCommentForm';
 import { rtkApi } from '@/shared/api/rtkApi';
-import { StatusSelectorSchema } from '@/features/StatusSelector/model/types/statusSelector';
+import { StatusSelectorSchema } from '@/features/Status/StatusSelector/model/types/statusSelector';
 
 export interface StateSchema {
   user: UserSchema;
