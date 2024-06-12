@@ -1,4 +1,4 @@
 import { LoginSchema } from './model/types/loginSchema';
-import { LoginPageAsync } from './ui/LoginPage/LoginPage.async';
+import { LoginForm } from './ui/LoginForm';
 
-export { type LoginSchema, LoginPageAsync as LoginPage };
+export { type LoginSchema, LoginForm };

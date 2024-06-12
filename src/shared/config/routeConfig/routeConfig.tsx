@@ -1,9 +1,9 @@
+import { type RouteProps } from 'react-router-dom';
 import { MainPage } from 'src/pages/MainPage';
-import { LoginPage } from '@/features/AuthByEmail';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { ProfilePage } from '@/pages/ProfilePage';
-import { type RouteProps } from 'react-router-dom';
 import { TelegramChatsPage } from '@/pages/TelegramChatsPage';
+import { LoginPage } from '@/pages/LoginPage';
 
 export type AppRouteProps = RouteProps & {
   authOnly?: boolean;

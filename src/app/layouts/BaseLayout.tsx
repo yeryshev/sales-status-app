@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import { AppRouter } from './providers/router';
+import { AppRouter } from '../providers/router';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { checkUser } from '@/entities/User/model/actions/userActions';
 import { useSelector } from 'react-redux';
 import { getUserMounted } from '@/entities/User';
 
-const App = () => {
+const BaseLayout = () => {
   const dispatch = useAppDispatch();
   const userMounted = useSelector(getUserMounted);
 
@@ -16,4 +16,4 @@ const App = () => {
   return userMounted && <AppRouter />;
 };
 
-export default App;
+export default BaseLayout;
