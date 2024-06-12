@@ -1,1 +1,1 @@
-export { TablesBox } from './ui/TablesBox/TablesBox';
+export { TablesBox } from './ui/TablesBox';

@@ -18,7 +18,7 @@ import {
   UsersTasks,
   UsersTickets,
 } from '@/entities/Team/model/types/tasksWebsocket';
-import { UserRow } from '../UserRow/UserRow';
+import { UserRow } from './UserRow';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import Paper from '@mui/material/Paper';
 

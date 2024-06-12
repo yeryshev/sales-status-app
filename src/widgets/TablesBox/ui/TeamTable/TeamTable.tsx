@@ -3,7 +3,7 @@ import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import { useSelector } from 'react-redux';
 import { type StateSchema } from '@/app/providers/StoreProvider';
-import { TeamRow } from '../TeamRow/TeamRow';
+import { TeamRow } from './TeamRow';
 import { memo } from 'react';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
