@@ -27,9 +27,9 @@ class UserUpdate(BaseModel):
 
 class BusyTime(BaseModel):
     id: int
-    status_id: int
-    user_id: int
-    end_time: datetime
+    status_id: int = Field(None, serialization_alias="statusId")
+    user_id: int = Field(None, serialization_alias="userId")
+    end_time: datetime = Field(None, serialization_alias="endTime")
 
 
 class UserGet(BaseModel):
@@ -52,5 +52,5 @@ class UserGet(BaseModel):
     is_verified: bool = Field(None, serialization_alias="isVerified")
     status: Optional[StatusGet] = None
     comment: Optional[CommentGet] = None
-    busy_time: Optional[BusyTime] = None
+    busy_time: Optional[BusyTime] = Field(None, serialization_alias="busyTime")
     updated_at: datetime = Field(None, serialization_alias="updatedAt")
