@@ -15,7 +15,7 @@ const TgChatsApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
     getTgChats: build.query<TgChatsData, void>({
       query: () => ({
-        url: import.meta.env.VITE_TG_CHATS_LIST,
+        url: import.meta.env.VITE_API_URL + '/telegram/chats',
       }),
     }),
   }),
