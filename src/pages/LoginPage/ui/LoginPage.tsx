@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { memo } from 'react';
-import { LoginForm } from '@/features/AuthByEmail';
+import { LoginForm } from '@/features/Authentication/AuthByEmail';
 
 const LoginPage = memo(() => {
   return (
