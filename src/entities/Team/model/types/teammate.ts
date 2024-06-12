@@ -1,9 +1,5 @@
 import { Status } from '@/entities/Status';
-
-export interface TeammateComment {
-  id: number;
-  description: string;
-}
+import { Comment } from '@/entities/Comment';
 
 export interface Teammate {
   id: number;
@@ -19,6 +15,6 @@ export interface Teammate {
   isManager: boolean;
   isAccountManager: boolean;
   status: Status;
-  comment: TeammateComment;
+  comment: Comment;
   updatedAt: string;
 }

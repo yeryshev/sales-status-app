@@ -1,5 +1,12 @@
 import { Status } from '@/entities/Status';
-import { TeammateComment } from '@/entities/Team/model/types/teammate';
+import { Comment } from '@/entities/Comment';
+
+interface BusyTime {
+  id: number;
+  statusId: number;
+  userId: number;
+  endTime: string;
+}
 
 export interface User {
   id: number;
@@ -17,8 +24,12 @@ export interface User {
   isAccountManager: boolean;
   statusId: number;
   commentId: number | null;
+  isActive: boolean;
+  isSuperuser: boolean;
+  isVerified: boolean;
   status: Status;
-  comment: TeammateComment;
+  comment: Comment;
+  busyTime: BusyTime;
   updatedAt: string;
 }
 
