@@ -15,7 +15,12 @@ import { updateUser } from '@/entities/User/model/actions/userActions';
 import Typography from '@mui/material/Typography';
 import moment from 'moment/moment';
 
-const INTERVAL_MS = 10000;
+const INTERVAL_MS = 30000;
+
+const checkDeadline = (deadlineTime: number) => {
+  const currentTimeUTC = moment().utc().valueOf();
+  return currentTimeUTC >= deadlineTime;
+};
 
 const reducers: ReducersList = {
   selectStatus: statusSelectorReducer,
@@ -32,36 +37,23 @@ export const StatusSelector = memo(() => {
   const [isDeadlineReached, setIsDeadlineReached] = useState(false);
 
   useEffect(() => {
-    if (!deadline) {
-      console.error('Deadline is not provided');
+    if (!deadline || user?.busyTime.statusId !== user?.statusId) {
       return;
     }
 
     const deadlineTime = moment.utc(deadline).valueOf();
-
-    const checkDeadline = () => {
-      const now = moment().utc();
-      const currentTimeUTC = now.valueOf();
-      const readableDeadlineTime = moment.utc(deadline).format('YYYY-MM-DD HH:mm:ss');
-      const readableCurrentTime = now.format('YYYY-MM-DD HH:mm:ss');
-
-      console.log(`Readable Current Time: ${readableCurrentTime}`);
-      console.log(`Readable Deadline Time: ${readableDeadlineTime}`);
-      console.log(`Current Time UTC: ${currentTimeUTC}`);
-      console.log(`Deadline Time: ${deadlineTime}`);
-
-      if (currentTimeUTC >= deadlineTime) {
-        setIsDeadlineReached(true);
-        clearInterval(intervalId);
-      } else {
-        setIsDeadlineReached(false);
-      }
-    };
-
+    const isDeadlineReached = checkDeadline(deadlineTime);
     const intervalId = setInterval(checkDeadline, INTERVAL_MS);
 
+    if (isDeadlineReached) {
+      setIsDeadlineReached(true);
+      clearInterval(intervalId);
+    } else {
+      setIsDeadlineReached(false);
+    }
+
     return () => clearInterval(intervalId);
-  }, [deadline]);
+  }, [deadline, user?.busyTime.statusId, user?.statusId]);
 
   const cachedStatuses = useMemo(() => statuses, [statuses]);
   const cachedUserStatus = useMemo(() => user?.statusId, [user?.statusId]);
