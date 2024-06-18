@@ -37,7 +37,7 @@ export const StatusBox = () => {
     event.preventDefault();
     const statusId = Number(event.target.value);
     if (user) {
-      dispatch(updateUser({ ...user, statusId }));
+      dispatch(updateUser({ user: { ...user, statusId } }));
     }
   };
 

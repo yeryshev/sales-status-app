@@ -30,12 +30,12 @@ export const SelectCommentForm = memo(() => {
   }, [dispatch, user]);
 
   const handlePickComment = useCallback(() => {
-    user && dispatch(updateUser({ ...user, commentId: comment?.id || null }));
+    user && dispatch(updateUser({ user: { ...user, commentId: comment?.id || null } }));
     comment && dispatch(selectCommentFormActions.setCommentItem(undefined));
   }, [comment, dispatch, user]);
 
   const handleClearComment = useCallback(() => {
-    user && dispatch(updateUser({ ...user, commentId: null }));
+    user && dispatch(updateUser({ user: { ...user, commentId: null } }));
   }, [dispatch, user]);
 
   const handleDeleteComment = useCallback(() => {

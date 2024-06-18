@@ -26,7 +26,7 @@ export const UserRow = memo((props: UserRowProps) => {
   const dispatch = useAppDispatch();
 
   const handleSwitch = (e: ChangeEvent<HTMLInputElement>) => {
-    user && dispatch(updateUser({ ...user, isWorkingRemotely: e.target.checked }));
+    user && dispatch(updateUser({ user: { ...user, isWorkingRemotely: e.target.checked } }));
   };
 
   return (

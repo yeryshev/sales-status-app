@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {
-  Unstable_NumberInput as BaseNumberInput,
-  NumberInputProps,
   numberInputClasses,
+  NumberInputProps,
+  Unstable_NumberInput as BaseNumberInput,
 } from '@mui/base/Unstable_NumberInput';
 import { styled } from '@mui/system';
 
@@ -32,8 +32,13 @@ const NumberInput = React.forwardRef(function CustomNumberInput(
   );
 });
 
-export function AwayTimeInput() {
-  const [value, setValue] = React.useState<number | null>(null);
+interface AwayTimeInputProps {
+  value: number;
+  setValue: (value: number | null) => void;
+}
+
+export function AwayTimeInput(props: AwayTimeInputProps) {
+  const { value, setValue } = props;
   return (
     <NumberInput
       aria-label="Demo number input"
