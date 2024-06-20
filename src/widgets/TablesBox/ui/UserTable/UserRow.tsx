@@ -66,27 +66,23 @@ export const UserRow = memo((props: UserRowProps) => {
         )}
       </TableCell>
       <TableCell align="left" sx={{ width: '160px' }}>
+        {teamIsLoading ? <Skeleton variant="text" /> : <StatusSelector />}
+      </TableCell>
+      <TableCell align="left">
         {teamIsLoading ? (
           <Skeleton variant="text" />
         ) : (
-          <Box
-            display={'flex'}
-            alignItems={'start'}
-            justifyContent={'center'}
-            flexDirection={'column'}
-            gap={0.5}
-            width={'100%'}
-          >
-            <StatusSelector />
-            {userStatus?.isDeadlineRequired && (
-              <Typography variant="caption" color={`${isDeadlineReached ? 'error' : 'text.secondary'}`}>
-                ≈ до {deadlineTimeMsk}
-              </Typography>
-            )}
-          </Box>
+          userStatus?.isDeadlineRequired && (
+            <Typography
+              variant="body2"
+              color={`${isDeadlineReached ? 'error' : 'text.secondary'}`}
+              sx={{ opacity: isDeadlineReached ? 1 : 0.5 }}
+            >
+              до {deadlineTimeMsk}
+            </Typography>
+          )
         )}
       </TableCell>
-      <TableCell align="left">{teamIsLoading ? <Skeleton variant="text" /> : teammate.comment?.description}</TableCell>
       <TableCell align="center" sx={{ width: '60px' }}>
         {!teamIsLoading && tasks && Boolean(tasks.leads) && (
           <Tooltip title={'Первичные обращения'}>
