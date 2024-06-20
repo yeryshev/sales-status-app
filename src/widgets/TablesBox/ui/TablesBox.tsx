@@ -2,15 +2,20 @@ import { Tooltip } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { TeamTable } from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
-import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { UserTable } from './UserTable/UserTable';
-import { checkUser, getUserData } from '@/entities/User';
+import { checkUser, getUserData, User } from '@/entities/User';
 import { teamActions, teamReducer } from '@/entities/Team/model/slice/teamSlice';
 import { statusActions } from '@/entities/Status';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { fetchAllComments } from '@/entities/Comment';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
-import { getTeamIsLoading, getTeamList, getTeammate } from '@/entities/Team/model/selectors/teamSelectors';
+import {
+  getAccountManagerTeamList,
+  getInboundTeamList,
+  getTeamIsLoading,
+  getTeammate,
+} from '@/entities/Team/model/selectors/teamSelectors';
 import { fetchTeamList } from '@/entities/Team/model/services/fetchTeamList/fetchTeamList';
 import Box from '@mui/system/Box';
 import { useGetAdditionalTeamData } from '@/entities/Team/api/teamTasksApi';
@@ -21,6 +26,7 @@ import { CurrentWeekResultTable } from './TeamResults/CurrentWeekResult/CurrentW
 import Typography from '@mui/material/Typography';
 import { useLocation } from 'react-router-dom';
 import { AppRoutes, RoutePath } from '@/shared/config/routeConfig/routeConfig';
+import moment from 'moment/moment';
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -65,23 +71,62 @@ const handleVisibilityChange = (socket: WebSocket) => {
   }
 };
 
+const INTERVAL_MS = 30000;
+
 export const TablesBox = memo(() => {
   const user = useSelector(getUserData);
-  let teamList = useSelector(getTeamList);
+  const inboundTeamList = useSelector(getInboundTeamList);
+  const accountManagerTeamList = useSelector(getAccountManagerTeamList);
+  let teamList;
   const teammate = useSelector(getTeammate);
   const teamIsLoading = useSelector(getTeamIsLoading);
   const dispatch = useAppDispatch();
   const [tabNumber, setTabNumber] = useState(0);
   const location = useLocation();
+  const [deadlines, setDeadlines] = useState<Record<User['id'], boolean>>({});
 
   const isAccountManagersRoute = location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS];
-  const { data: additionalTeamData } = useGetAdditionalTeamData(isAccountManagersRoute ? 'account' : 'inbound');
 
   if (isAccountManagersRoute) {
-    teamList = teamList.filter((user) => user.isAccountManager);
+    teamList = accountManagerTeamList;
   } else {
-    teamList = teamList.filter((user) => !user.isAccountManager);
+    teamList = inboundTeamList;
   }
+
+  const { data: additionalTeamData } = useGetAdditionalTeamData(isAccountManagersRoute ? 'account' : 'inbound');
+
+  const deadlinesNumbersObj = useMemo(() => {
+    const obj: Record<User['id'], number> = {};
+    teamList.forEach((user) => {
+      if (user.busyTime) {
+        obj[user.id] = moment.utc(user.busyTime.endTime).valueOf();
+      }
+    });
+    return obj;
+  }, [teamList]);
+
+  const checkDeadlines = useCallback((deadlinesNumbersObj: Record<User['id'], number>) => {
+    const currentTimeUTC = moment().utc().valueOf();
+    const deadlinesStatesObj: Record<User['id'], boolean> = {};
+    for (const key in deadlinesNumbersObj) {
+      deadlinesStatesObj[key] = currentTimeUTC >= deadlinesNumbersObj[key];
+    }
+    return deadlinesStatesObj;
+  }, []);
+
+  useEffect(() => {
+    if (!teamIsLoading && teamList.length > 0) {
+      const isDeadlineReachedObject = checkDeadlines(deadlinesNumbersObj);
+      setDeadlines(isDeadlineReachedObject);
+
+      const intervalId = setInterval(() => {
+        const isDeadlineReachedObject = checkDeadlines(deadlinesNumbersObj);
+        setDeadlines(isDeadlineReachedObject);
+      }, INTERVAL_MS);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [teamIsLoading, teamList, deadlinesNumbersObj, checkDeadlines]);
 
   const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
   const shouldSeeUserTable = !teamIsLoading && teammate && userOnRightPage;
@@ -118,12 +163,13 @@ export const TablesBox = memo(() => {
       const { userId, updatedAt, isWorkingRemotely } = dataFromSocket;
 
       if ('statusId' in dataFromSocket && user) {
-        const { statusId, status } = dataFromSocket;
+        const { statusId, status, busyTime } = dataFromSocket;
         dispatch(
           teamActions.setTeamLocal({
             userId,
             statusId,
             status,
+            busyTime,
             isWorkingRemotely,
             updatedAt,
           }),
@@ -184,6 +230,7 @@ export const TablesBox = memo(() => {
             tickets={tickets}
             teamIsLoading={teamIsLoading}
             avatarsAndBirthday={avatarsAndBirthday}
+            isDeadlineReachedObject={deadlines}
           />
         </Grid>
       )}
@@ -214,6 +261,7 @@ export const TablesBox = memo(() => {
               tickets={tickets}
               vacationStates={vacation}
               avatarsAndBirthday={avatarsAndBirthday}
+              isDeadlineReachedObject={deadlines}
             />
           </CustomTabPanel>
           <CustomTabPanel value={tabNumber} index={1}>

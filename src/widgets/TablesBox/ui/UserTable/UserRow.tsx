@@ -11,6 +11,8 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { UserAvatarsAndBirthday, UserTasks, UserTickets } from '@/entities/Team/model/types/tasksWebsocket';
 import { StatusSelector } from '@/features/Status/StatusSelector/ui/StatusSelector';
 import { getUserData } from '@/entities/User';
+import Typography from '@mui/material/Typography';
+import moment from 'moment/moment';
 
 interface UserRowProps {
   teammate: Teammate;
@@ -18,12 +20,16 @@ interface UserRowProps {
   tickets: UserTickets;
   avatarsAndBirthday: UserAvatarsAndBirthday;
   teamIsLoading: boolean;
+  isDeadlineReached: boolean;
 }
 
 export const UserRow = memo((props: UserRowProps) => {
-  const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday } = props;
+  const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday, isDeadlineReached } = props;
   const user = useSelector(getUserData);
   const dispatch = useAppDispatch();
+  const userStatus = user?.status;
+  const deadline = teammate?.busyTime?.endTime;
+  const deadlineTimeMsk = moment.utc(deadline).utcOffset('+0300').format('HH:mm');
 
   const handleSwitch = (e: ChangeEvent<HTMLInputElement>) => {
     user && dispatch(updateUser({ user: { ...user, isWorkingRemotely: e.target.checked } }));
@@ -57,7 +63,18 @@ export const UserRow = memo((props: UserRowProps) => {
         )}
       </TableCell>
       <TableCell align="left" sx={{ width: '160px' }}>
-        {teamIsLoading ? <Skeleton variant="text" /> : <StatusSelector />}
+        {teamIsLoading ? (
+          <Skeleton variant="text" />
+        ) : (
+          <Box display={'flex'} alignItems={'center'} justifyContent={'center'} flexDirection={'column'} gap={0.5}>
+            <StatusSelector />
+            {userStatus?.isDeadlineRequired && (
+              <Typography variant="caption" color={`${isDeadlineReached ? 'error' : 'text.secondary'}`}>
+                до {deadlineTimeMsk}
+              </Typography>
+            )}
+          </Box>
+        )}
       </TableCell>
       <TableCell align="left">{teamIsLoading ? <Skeleton variant="text" /> : teammate.comment?.description}</TableCell>
       <TableCell align="center" sx={{ width: '60px' }}>

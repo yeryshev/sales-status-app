@@ -18,6 +18,7 @@ export const teamSlice = createSlice({
           if (Number(teammate.id) === Number(action.payload.userId)) {
             if ('status' in action.payload) {
               teammate.status = action.payload.status;
+              teammate.busyTime = action.payload.busyTime;
             }
             if ('comment' in action.payload) {
               teammate.comment = action.payload.comment;
@@ -28,7 +29,7 @@ export const teamSlice = createSlice({
           return teammate;
         })
         .sort((a, b) => {
-          if (a.status?.priority === b?.status.priority) {
+          if (a.status?.priority === b?.status?.priority) {
             return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
           }
           return b.status?.priority - a.status?.priority;

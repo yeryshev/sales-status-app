@@ -1,7 +1,7 @@
 import { Status } from '@/entities/Status';
 import { Comment } from '@/entities/Comment';
 
-interface BusyTime {
+export interface BusyTime {
   id: number;
   statusId: number;
   userId: number;

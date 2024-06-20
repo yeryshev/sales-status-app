@@ -11,3 +11,11 @@ export const getTeamIsLoading = (state: StateSchema) => state.teamTable?.loading
 export const getTeammate = createSelector(getTeamList, getUserData, (teamList, userData) => {
   return teamList.find((t) => t.id === userData?.id && t.isManager);
 });
+
+export const getInboundTeamList = createSelector(getTeamList, (teamList) => {
+  return teamList.filter((user) => !user.isAccountManager);
+});
+
+export const getAccountManagerTeamList = createSelector(getTeamList, (teamList) => {
+  return teamList.filter((user) => user.isAccountManager);
+});
