@@ -86,16 +86,16 @@ export const TeamRow = memo((props: TeamRowProps) => {
             sx={{ width: 50, height: 50, filter: vacationState?.onVacation ? 'grayscale(100%)' : 'none' }}
           />
         </TableCell>
-        <TableCell align="left" sx={{ width: '180px' }}>
+        <TableCell align="left" width={180}>
           <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={0.5}>
             {vacationState?.onVacation ? (
-              <Typography
-                variant={'body2'}
-                color={'text.secondary'}
-                sx={{ opacity: 0.5 }}
-              >{`${teammate.firstName} ${teammate.secondName}`}</Typography>
+              <Typography variant={'body2'} color={'text.secondary'} sx={{ opacity: 0.5 }}>{`${teammate.firstName}
+              ${teammate.secondName}`}</Typography>
             ) : (
-              <Typography variant={'body2'}>{`${teammate.firstName} ${teammate.secondName}`}</Typography>
+              <Box display={'flex'} flexDirection={'column'}>
+                <Typography variant={'body2'}>{`${teammate.firstName}`}</Typography>
+                <Typography variant={'body2'}>{` ${teammate.secondName}`}</Typography>
+              </Box>
             )}
             {teammate.isWorkingRemotely && !vacationState?.onVacation && (
               <Tooltip title={'Работаю из дома'}>
@@ -106,13 +106,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
         </TableCell>
         <TableCell align="left" sx={{ width: '160px' }}>
           <Tooltip disableFocusListener title={`Последнее обновление в ${updateTimeMsk}`}>
-            <Box
-              display={'flex'}
-              alignItems={'center'}
-              justifyContent={'space-between'}
-              gap={0.5}
-              flexDirection={'column'}
-            >
+            <Box display={'flex'} alignItems={'start'} justifyContent={'start'} gap={0.5} flexDirection={'column'}>
               <Chip
                 label={
                   mango ? (
@@ -141,7 +135,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
               />
               {teammateStatus?.isDeadlineRequired && (
                 <Typography variant="caption" color={`${isDeadlineReached ? 'error' : 'text.secondary'}`}>
-                  до {deadlineTimeMsk}
+                  ≈ до {deadlineTimeMsk}
                 </Typography>
               )}
             </Box>
@@ -153,7 +147,8 @@ export const TeamRow = memo((props: TeamRowProps) => {
               до {renderVacationDay(vacationState?.endDate)}
             </Typography>
           ) : (
-            teammate.comment?.description
+            // teammate.comment?.description
+            ''
           )}
         </TableCell>
         <TableCell align="center" sx={{ width: '60px' }}>

@@ -37,7 +37,7 @@ export const UserRow = memo((props: UserRowProps) => {
 
   return (
     <TableRow key={teammate.id} hover={false}>
-      <TableCell align="left" sx={{ width: '50px' }}>
+      <TableCell align="left" width={50}>
         {teamIsLoading ? (
           <Skeleton variant="circular" width={50} height={50} />
         ) : (
@@ -48,12 +48,15 @@ export const UserRow = memo((props: UserRowProps) => {
           />
         )}
       </TableCell>
-      <TableCell align="left" sx={{ width: '180px' }}>
+      <TableCell align="left" width={180}>
         {teamIsLoading ? (
           <Skeleton variant="text" />
         ) : (
-          <Box display={'flex'} alignItems={'center'} gap={1}>
-            {teammate.firstName} {teammate.secondName}{' '}
+          <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={0.5}>
+            <Box display={'flex'} flexDirection={'column'}>
+              <Typography variant={'body2'}>{`${teammate.firstName}`}</Typography>
+              <Typography variant={'body2'}>{` ${teammate.secondName}`}</Typography>
+            </Box>
             {teammate.isWorkingRemotely && (
               <Tooltip title={'Работаю из дома'}>
                 <HomeOutlinedIcon fontSize={'small'} />
@@ -66,11 +69,18 @@ export const UserRow = memo((props: UserRowProps) => {
         {teamIsLoading ? (
           <Skeleton variant="text" />
         ) : (
-          <Box display={'flex'} alignItems={'center'} justifyContent={'center'} flexDirection={'column'} gap={0.5}>
+          <Box
+            display={'flex'}
+            alignItems={'start'}
+            justifyContent={'center'}
+            flexDirection={'column'}
+            gap={0.5}
+            width={'100%'}
+          >
             <StatusSelector />
             {userStatus?.isDeadlineRequired && (
               <Typography variant="caption" color={`${isDeadlineReached ? 'error' : 'text.secondary'}`}>
-                до {deadlineTimeMsk}
+                ≈ до {deadlineTimeMsk}
               </Typography>
             )}
           </Box>
