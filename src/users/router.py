@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+import pytz
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -37,26 +38,23 @@ async def check_user(
 @router.patch("/me", response_model=UserGet, response_model_by_alias=True)
 async def update_user_router(
         user_update: UserUpdate,
-        deadline: datetime = datetime.utcnow(),
+        deadline: str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S"),
         session: AsyncSession = Depends(get_async_session),
         session_user: User = Depends(current_user)
 ):
-    user = await session.get(
-        User,
-        session_user.id,
-    )
+    user = await session.get(User, session_user.id)
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     if session_user.id != user.id:
         raise HTTPException(status_code=403, detail="Not authorized")
 
-    updated_user = await update_user(
-        user_update,
-        session,
-        user,
-        deadline
-    )
+    try:
+        deadline_dt = datetime.fromisoformat(deadline).astimezone(pytz.UTC).replace(tzinfo=None)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid datetime format: {str(e)}")
+
+    updated_user = await update_user(user_update, session, user, deadline_dt)
 
     query = (select(User)
              .where(User.id == updated_user.id)
@@ -70,6 +68,7 @@ async def update_user_router(
         "statusId": updated_user.status_id,
         "status": updated_user.status.to_dict(),
         "comment": updated_user.comment.to_dict() if updated_user.comment else None,
+        "busyTime": updated_user.busy_time.to_dict() if updated_user.busy_time else None,
         "commentId": updated_user.comment_id if updated_user.comment else None,
         "isWorkingRemotely": updated_user.is_working_remotely,
         "updatedAt": updated_user.updated_at.isoformat(),

@@ -102,7 +102,7 @@ class Status(Base):
         return {
             "id": self.id,
             "title": self.title,
-            "is_deadline_required": self.is_deadline_required,
+            "isDeadlineRequired": self.is_deadline_required,
             "priority": self.priority
         }
 
@@ -122,3 +122,11 @@ class BusyTime(Base):
 
     def __repr__(self):
         return f"id: {self.id}, status_id: {self.status_id}, user_id: {self.user_id}, end_time: {self.end_time}"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "statusId": self.status_id,
+            "userId": self.user_id,
+            "endTime": self.end_time.isoformat() if self.end_time else None,
+        }

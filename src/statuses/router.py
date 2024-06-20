@@ -10,7 +10,7 @@ from src.models import Status
 router = APIRouter(prefix="/status", tags=["Statuses"])
 
 
-@router.get("/", response_model=list[StatusGet], dependencies=[Depends(current_user)])
+@router.get("/", response_model=list[StatusGet])
 async def get_all_statuses(session: AsyncSession = Depends(get_async_session)):
     try:
         return await get_statuses(session)
