@@ -86,7 +86,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
             sx={{ width: 50, height: 50, filter: vacationState?.onVacation ? 'grayscale(100%)' : 'none' }}
           />
         </TableCell>
-        <TableCell align="left" width={180}>
+        <TableCell align="left" width={160}>
           <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={0.5}>
             {vacationState?.onVacation ? (
               <Typography variant={'body2'} color={'text.secondary'} sx={{ opacity: 0.5 }}>{`${teammate.firstName}

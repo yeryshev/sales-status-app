@@ -48,7 +48,7 @@ export const UserRow = memo((props: UserRowProps) => {
           />
         )}
       </TableCell>
-      <TableCell align="left" width={180}>
+      <TableCell align="left" width={160}>
         {teamIsLoading ? (
           <Skeleton variant="text" />
         ) : (

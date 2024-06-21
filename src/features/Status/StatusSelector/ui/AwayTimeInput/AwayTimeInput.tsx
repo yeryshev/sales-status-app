@@ -45,6 +45,7 @@ export function AwayTimeInput(props: AwayTimeInputProps) {
       placeholder="Введите количество минут..."
       value={value}
       onChange={(_, val) => setValue(val)}
+      min={1}
     />
   );
 }
