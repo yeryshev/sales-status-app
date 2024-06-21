@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from src.models import User
 from src.config import settings
@@ -15,25 +16,33 @@ router = APIRouter(prefix="/telegram", tags=["Telegram"])
 secret_key = settings.TELEGRAM_BOT_SECRET
 
 
+class GetUserStatus(BaseModel):
+    name: str
+    status: int
+    title: str
+    is_deadline_required: bool
+
+
 class UpdateTelegramRequest(BaseModel):
     username: str
     status: int
     secret: str
 
 
-@router.get("/")
+@router.get("/", response_model=GetUserStatus)
 async def get_first_name(
         username: str,
         session: AsyncSession = Depends(get_async_session)
 ):
-    query = select(User).where(func.lower(User.telegram) == username.lower())
+    query = select(User).where(func.lower(User.telegram) == username.lower()).options(selectinload(User.status))
     result = await session.execute(query)
     user = result.scalar_one_or_none()
     if user is None:
         raise HTTPException(status_code=404,
                             detail="Пользователь не найден. Убедись, что верно указал(а) свой телеграм-логин в "
                                    "профиле приложения ДРБ Статус.")
-    return {'name': user.first_name, 'status': user.status_id}
+    return {'name': user.first_name, 'status': user.status_id, 'title': user.status.title,
+            'is_deadline_required': user.status.is_deadline_required}
 
 
 @router.patch("/")
