@@ -53,6 +53,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     ext_number: Mapped[Optional[str]]
     telegram: Mapped[Optional[str]]
     inside_id: Mapped[Optional[int]] = mapped_column(unique=True, nullable=True)
+    mango_user_id: Mapped[Optional[int]] = mapped_column(unique=True, nullable=True)
     is_working_remotely: Mapped[bool] = mapped_column(default=False)
     is_coordinator: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
     is_female: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
