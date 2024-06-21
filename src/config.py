@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     AUTH_SECRET: str
     FRONTEND_ORIGINS: str
     TELEGRAM_BOT_SECRET: str
+    MANGO_SET_STATUS: str
 
     @property
     def DATABASE_URL(self):

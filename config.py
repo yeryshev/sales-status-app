@@ -12,3 +12,4 @@ AUTH_SECRET = os.environ.get("AUTH_SECRET")
 DB_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN")
 TELEGRAM_BOT_SECRET = os.environ.get("TELEGRAM_BOT_SECRET")
+MANGO_SET_STATUS = os.environ.get("MANGO_SET_STATUS")
