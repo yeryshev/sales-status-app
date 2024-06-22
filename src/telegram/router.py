@@ -60,7 +60,7 @@ async def update_telegram(
 
     query = select(User).where(func.lower(User.telegram) == request.username.lower())
     result = await session.execute(query)
-    user_id = result.scalar_one_or_none()
+    user_id = result.scalar_one_or_none().id
 
     user = await session.get(User, user_id)
 
