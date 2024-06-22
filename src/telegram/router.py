@@ -1,5 +1,7 @@
 import json
+from datetime import datetime
 
+import pytz
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import func, select
@@ -9,6 +11,8 @@ from sqlalchemy.orm import selectinload
 from src.models import User
 from src.config import settings
 from src.database import get_async_session
+from src.users.schemas import UserUpdate
+from src.users.service import update_user
 from src.websockets.router import manager
 
 router = APIRouter(prefix="/telegram", tags=["Telegram"])
@@ -48,26 +52,46 @@ async def get_first_name(
 @router.patch("/")
 async def update_telegram(
         request: UpdateTelegramRequest,
+        deadline: str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S"),
         session: AsyncSession = Depends(get_async_session)
 ):
     if request.secret != secret_key:
         raise HTTPException(status_code=403, detail="Неверный секретный ключ. Пожалуйста, обновите страницу.")
+
     query = select(User).where(func.lower(User.telegram) == request.username.lower())
     result = await session.execute(query)
-    user = result.scalar_one_or_none()
+    user_id = result.scalar_one_or_none()
+
+    user = await session.get(User, user_id)
+
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
+
+    try:
+        deadline_dt = datetime.fromisoformat(deadline).astimezone(pytz.UTC).replace(tzinfo=None)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid datetime format: {str(e)}")
+
     update_data = {'status_id': request.status}
+    user_update = UserUpdate(**update_data)
+    updated_user = await update_user(user_update, session, user, deadline_dt)
 
-    for key, value in update_data.items():
-        setattr(user, key, value)
+    query = (select(User)
+             .where(User.id == updated_user.id)
+             .options(selectinload(User.status), selectinload(User.comment), selectinload(User.busy_time))
+             )
+    result = await session.execute(query)
+    updated_user = result.scalars().first()
 
-    await session.commit()
-    await session.refresh(user)
     await manager.broadcast(json.dumps({
-        "userId": user.id,
-        "statusId": user.status_id,
-        "commentId": user.comment_id,
-        "isWorkingRemotely": user.is_working_remotely
+        "userId": updated_user.id,
+        "statusId": updated_user.status_id,
+        "status": updated_user.status.to_dict(),
+        "comment": updated_user.comment.to_dict() if updated_user.comment else None,
+        "busyTime": updated_user.busy_time.to_dict() if updated_user.busy_time else None,
+        "commentId": updated_user.comment_id if updated_user.comment else None,
+        "isWorkingRemotely": updated_user.is_working_remotely,
+        "updatedAt": updated_user.updated_at.isoformat(),
     }))
-    return user
+
+    return updated_user
