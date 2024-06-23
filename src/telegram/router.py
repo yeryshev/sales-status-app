@@ -72,7 +72,7 @@ async def update_telegram(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=f"Invalid datetime format: {str(e)}")
 
-    update_data = {'status_id': request.status}
+    update_data = {'statusId': request.status}
     user_update = UserUpdate(**update_data)
     updated_user = await update_user(user_update, session, user, deadline_dt)
 
