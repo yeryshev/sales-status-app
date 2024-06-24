@@ -82,10 +82,10 @@ async def update_telegram(
 
     if new_status_id in app_statuses['work']:
         mango_status_id = mango_statuses['online']
+    elif new_status_id in app_statuses['lunch/away']:
+        mango_status_id = mango_statuses['dont_disturb']
     elif new_status_id in app_statuses['busy/meeting']:
         mango_status_id = mango_statuses['dont_disturb']
-    elif new_status_id in app_statuses['lunch/away']:
-        mango_status_id = mango_statuses['break']
     elif new_status_id in app_statuses['offline']:
         mango_status_id = mango_statuses['offline']
     else:
