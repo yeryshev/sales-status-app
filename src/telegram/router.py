@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 
 import pytz
+import requests
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import func, select
@@ -74,6 +75,33 @@ async def update_telegram(
 
     update_data = {'statusId': request.status}
     user_update = UserUpdate(**update_data)
+
+    old_status_id = user.status_id
+    new_status_id = user_update.status_id if user_update.status_id is not None else old_status_id
+
+    if new_status_id == 1:
+        mango_status_id = 1
+    elif new_status_id in [2, 7]:
+        mango_status_id = 2
+    elif new_status_id in [5, 6]:
+        mango_status_id = 3
+    elif new_status_id == 3:
+        mango_status_id = 4
+    else:
+        mango_status_id = 1
+
+    if old_status_id != new_status_id and user.mango_user_id is not None:
+        api_url = settings.MANGO_SET_STATUS
+        payload = {
+            'abonent_id': user.mango_user_id,
+            'status': mango_status_id
+        }
+        headers = {'Content-Type': 'application/json'}
+        response = requests.post(api_url, json=payload, headers=headers)
+
+        if response.status_code != 200:
+            raise HTTPException(status_code=500, detail="Failed to notify mango API")
+
     updated_user = await update_user(user_update, session, user, deadline_dt)
 
     query = (select(User)
