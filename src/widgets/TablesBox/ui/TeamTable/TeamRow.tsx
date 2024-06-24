@@ -89,8 +89,18 @@ export const TeamRow = memo((props: TeamRowProps) => {
         <TableCell align="left" width={160}>
           <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={0.5}>
             {vacationState?.onVacation ? (
-              <Typography variant={'body2'} color={'text.secondary'} sx={{ opacity: 0.5 }}>{`${teammate.firstName}
-              ${teammate.secondName}`}</Typography>
+              <Box display={'flex'} flexDirection={'column'}>
+                <Typography
+                  variant={'body2'}
+                  color={'text.secondary'}
+                  sx={{ opacity: 0.5 }}
+                >{`${teammate.firstName}`}</Typography>
+                <Typography
+                  variant={'body2'}
+                  color={'text.secondary'}
+                  sx={{ opacity: 0.5 }}
+                >{` ${teammate.secondName}`}</Typography>
+              </Box>
             ) : (
               <Box display={'flex'} flexDirection={'column'}>
                 <Typography variant={'body2'}>{`${teammate.firstName}`}</Typography>
