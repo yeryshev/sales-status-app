@@ -16,6 +16,20 @@ from src.users.schemas import UserGet, UserUpdate
 from src.users.service import update_user, get_all_users
 from src.websockets.router import manager
 
+mango_statuses = {
+    'online': 1,
+    'dont_disturb': 2,
+    'break': 3,
+    'offline': 4
+}
+
+app_statuses = {
+    'work': [1],
+    'busy/meeting': [2, 7],
+    'lunch/away': [5, 6],
+    'offline': [3]
+}
+
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
@@ -59,16 +73,16 @@ async def update_user_router(
     old_status_id = user.status_id
     new_status_id = user_update.status_id if user_update.status_id is not None else old_status_id
 
-    if new_status_id == 1:
-        mango_status_id = 1
-    elif new_status_id in [2, 7]:
-        mango_status_id = 2
-    elif new_status_id in [5, 6]:
-        mango_status_id = 3
-    elif new_status_id == 3:
-        mango_status_id = 4
+    if new_status_id in app_statuses['work']:
+        mango_status_id = mango_statuses['online']
+    elif new_status_id in app_statuses['busy/meeting']:
+        mango_status_id = mango_statuses['dont_disturb']
+    elif new_status_id in app_statuses['lunch/away']:
+        mango_status_id = mango_statuses['break']
+    elif new_status_id in app_statuses['offline']:
+        mango_status_id = mango_statuses['offline']
     else:
-        mango_status_id = 1
+        mango_status_id = mango_statuses['online']
 
     if old_status_id != new_status_id and user.mango_user_id is not None:
         api_url = settings.MANGO_SET_STATUS

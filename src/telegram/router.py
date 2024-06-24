@@ -9,9 +9,10 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from src.models import User
 from src.config import settings
 from src.database import get_async_session
+from src.models import User
+from src.users.router import app_statuses, mango_statuses
 from src.users.schemas import UserUpdate
 from src.users.service import update_user
 from src.websockets.router import manager
@@ -79,16 +80,16 @@ async def update_telegram(
     old_status_id = user.status_id
     new_status_id = user_update.status_id if user_update.status_id is not None else old_status_id
 
-    if new_status_id == 1:
-        mango_status_id = 1
-    elif new_status_id in [2, 7]:
-        mango_status_id = 2
-    elif new_status_id in [5, 6]:
-        mango_status_id = 3
-    elif new_status_id == 3:
-        mango_status_id = 4
+    if new_status_id in app_statuses['work']:
+        mango_status_id = mango_statuses['online']
+    elif new_status_id in app_statuses['busy/meeting']:
+        mango_status_id = mango_statuses['dont_disturb']
+    elif new_status_id in app_statuses['lunch/away']:
+        mango_status_id = mango_statuses['break']
+    elif new_status_id in app_statuses['offline']:
+        mango_status_id = mango_statuses['offline']
     else:
-        mango_status_id = 1
+        mango_status_id = mango_statuses['online']
 
     if old_status_id != new_status_id and user.mango_user_id is not None:
         api_url = settings.MANGO_SET_STATUS
