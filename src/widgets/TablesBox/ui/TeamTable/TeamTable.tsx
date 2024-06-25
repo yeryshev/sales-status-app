@@ -2,8 +2,7 @@ import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import { useSelector } from 'react-redux';
-import { type StateSchema } from '@/app/providers/StoreProvider';
-import { TeamRow } from '../TeamRow/TeamRow';
+import { TeamRow } from './TeamRow';
 import { memo } from 'react';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
@@ -23,6 +22,8 @@ import {
 import { Teammate } from '@/entities/Team/model/types/teammate';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import Paper from '@mui/material/Paper';
+import { getUserId } from '@/entities/User/model/selectors/userSelectors';
+import { User } from '@/entities/User';
 
 interface TeamTableProps {
   teamList: Teammate[];
@@ -32,13 +33,23 @@ interface TeamTableProps {
   vacationStates: UsersVacation;
   avatarsAndBirthday: UsersAvatarsAndBirthday;
   teamIsLoading: boolean;
+  isDeadlineReachedObject: Record<User['id'], boolean>;
 }
 
 const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
 
 export const TeamTable = memo((props: TeamTableProps) => {
-  const { mango, tasks, tickets, teamIsLoading, teamList, vacationStates, avatarsAndBirthday } = props;
-  const userId = useSelector((state: StateSchema) => state.user.user?.id);
+  const {
+    mango,
+    tasks,
+    tickets,
+    teamIsLoading,
+    teamList,
+    vacationStates,
+    avatarsAndBirthday,
+    isDeadlineReachedObject,
+  } = props;
+  const userId = useSelector(getUserId);
 
   const filterTeamList = (teammate: Teammate) => {
     return teammate.isManager && teammate.id !== userId;
@@ -53,6 +64,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
       tickets={tickets[teammate.insideId]}
       vacationState={vacationStates[teammate.insideId]}
       avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}
+      isDeadlineReached={isDeadlineReachedObject[teammate.id]}
       teamIsLoading={teamIsLoading}
     />
   );

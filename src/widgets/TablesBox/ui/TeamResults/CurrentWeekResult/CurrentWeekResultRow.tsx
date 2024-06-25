@@ -6,7 +6,7 @@ import { Teammate } from '@/entities/Team/model/types/teammate';
 import { UserAvatarsAndBirthday, UserTasks } from '@/entities/Team/model/types/tasksWebsocket';
 import Typography from '@mui/material/Typography';
 import { useSelector } from 'react-redux';
-import { getUserAuthData } from '@/entities/User';
+import { getUserData } from '@/entities/User';
 
 interface CurrentWeekResultRowProps {
   teammate: Teammate;
@@ -18,7 +18,7 @@ interface CurrentWeekResultRowProps {
 
 export const CurrentWeekResultRow = memo((props: CurrentWeekResultRowProps) => {
   const { teammate, tasks, avatarsAndBirthday } = props;
-  const user = useSelector(getUserAuthData);
+  const user = useSelector(getUserData);
 
   return (
     <TableRow key={teammate.id} hover={true} selected={teammate.id === user?.id}>

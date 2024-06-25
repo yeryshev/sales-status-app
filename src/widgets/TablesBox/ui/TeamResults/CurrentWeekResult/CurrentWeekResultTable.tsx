@@ -16,19 +16,20 @@ interface TeamTableProps {
   tasks: UsersTasks;
   avatarsAndBirthday: UsersAvatarsAndBirthday;
   teamIsLoading: boolean;
+  isAccountManagersRoute: boolean;
 }
 
 const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
 
 export const CurrentWeekResultTable = memo((props: TeamTableProps) => {
-  const { tasks, teamIsLoading, teamList, avatarsAndBirthday } = props;
+  const { tasks, teamIsLoading, teamList, avatarsAndBirthday, isAccountManagersRoute } = props;
 
   const filterTeamList = (teammate: Teammate) => {
     const getDeals = tasks[teammate.insideId]?.deals || 0;
     return teammate.isManager && Number(getDeals) >= 0 && !teammate.isCoordinator;
   };
 
-  const sortTeamList = (a: Teammate, b: Teammate) => {
+  const sortTeamListByDeals = (a: Teammate, b: Teammate) => {
     const getScoreA = tasks[a.insideId]?.deals || 0;
     const getScoreB = tasks[b.insideId]?.deals || 0;
 
@@ -39,6 +40,18 @@ export const CurrentWeekResultTable = memo((props: TeamTableProps) => {
     }
 
     return Number(getScoreB) - Number(getScoreA);
+  };
+
+  const sortTeamListByBudget = (a: Teammate, b: Teammate) => {
+    const budgetA = tasks[a.insideId]?.budget || 0;
+    const budgetB = tasks[b.insideId]?.budget || 0;
+
+    if (budgetA === budgetB) {
+      const getScoreA = tasks[a.insideId]?.deals || 0;
+      const getScoreB = tasks[b.insideId]?.deals || 0;
+      return Number(getScoreB) - Number(getScoreA);
+    }
+    return Number(budgetB) - Number(budgetA);
   };
 
   const renderTeamList = (teammate: Teammate, index: number) => (
@@ -65,7 +78,12 @@ export const CurrentWeekResultTable = memo((props: TeamTableProps) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {teamList.length > 0 ? teamList.filter(filterTeamList).sort(sortTeamList).map(renderTeamList) : null}
+          {teamList.length > 0
+            ? teamList
+                .filter(filterTeamList)
+                .sort(isAccountManagersRoute ? sortTeamListByBudget : sortTeamListByDeals)
+                .map(renderTeamList)
+            : null}
           {teamIsLoading && getSkeletons()}
         </TableBody>
       </Table>

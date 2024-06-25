@@ -1,10 +1,12 @@
 import { rtkApi } from '@/shared/api/rtkApi';
 import { TasksData, WsTasksData, WsTypes } from '../model/types/tasksWebsocket';
 
-const inboundUrl = import.meta.env.VITE_INBOUND_TEAM;
-const inboundWsUrl = import.meta.env.VITE_INBOUND_TEAM_SOCKET;
-const accountUrl = import.meta.env.VITE_ACCOUNT_MANAGERS;
-const accountWsUrl = import.meta.env.VITE_ACCOUNT_MANAGERS_TEAM_SOCKET;
+const apiBaseUrl = import.meta.env.VITE_API_URL;
+
+const inboundUrl = apiBaseUrl + '/state';
+const inboundWsUrl = apiBaseUrl + '/ws/state';
+const accountUrl = apiBaseUrl + '/state/account';
+const accountWsUrl = apiBaseUrl + '/ws/state/account';
 
 const tasksApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({

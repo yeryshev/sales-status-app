@@ -9,9 +9,9 @@ import { type ChangeEvent, useEffect } from 'react';
 import { statusActions } from '../model/slice/statusSlice';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { getStatusData } from '../model/selectors/getStatusValue/getStatusData';
-import { StateSchema } from '@/app/providers/StoreProvider';
 import { useGetStatuses } from '../api/statusApi';
 import { Status } from '../model/types/Status';
+import { getUserData } from '@/entities/User';
 
 const mapStatusColors = (status_priority: Status['priority']) => {
   if (status_priority === 0) {
@@ -24,7 +24,7 @@ const mapStatusColors = (status_priority: Status['priority']) => {
 };
 
 export const StatusBox = () => {
-  const user = useSelector((state: StateSchema) => state.user.user);
+  const user = useSelector(getUserData);
   const dispatch = useAppDispatch();
   const status = useSelector(getStatusData);
   const { data: statuses } = useGetStatuses();
@@ -37,7 +37,7 @@ export const StatusBox = () => {
     event.preventDefault();
     const statusId = Number(event.target.value);
     if (user) {
-      dispatch(updateUser({ ...user, statusId }));
+      dispatch(updateUser({ user: { ...user, statusId } }));
     }
   };
 
