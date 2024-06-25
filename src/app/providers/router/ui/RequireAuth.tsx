@@ -1,11 +1,11 @@
 import { type ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import { getUserAuthData } from '@/entities/User';
+import { getUserData } from '@/entities/User';
 import { Navigate, useLocation } from 'react-router-dom';
 import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
 
 const RequireAuth = ({ children }: { children: ReactNode }) => {
-  const authData = useSelector(getUserAuthData);
+  const authData = useSelector(getUserData);
   const location = useLocation();
 
   if (!authData) {

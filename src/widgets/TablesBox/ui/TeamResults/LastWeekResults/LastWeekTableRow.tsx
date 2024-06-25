@@ -5,7 +5,7 @@ import { Teammate } from '@/entities/Team/model/types/teammate';
 import { UserLastWeekStats, UserTasks } from '@/entities/Team/model/types/tasksWebsocket';
 import Typography from '@mui/material/Typography';
 import { useSelector } from 'react-redux';
-import { getUserAuthData } from '@/entities/User';
+import { getUserData } from '@/entities/User';
 
 const medalMapper: Record<number, string> = {
   0: '🥇',
@@ -23,7 +23,7 @@ interface LastWeekTableRowProps {
 
 export const LastWeekTableRow = memo((props: LastWeekTableRowProps) => {
   const { teammate, lastWeekStats, index } = props;
-  const user = useSelector(getUserAuthData);
+  const user = useSelector(getUserData);
 
   return (
     <TableRow key={teammate.id} hover={true} selected={teammate.id === user?.id}>

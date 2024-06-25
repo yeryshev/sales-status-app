@@ -18,9 +18,10 @@ import {
   UsersTasks,
   UsersTickets,
 } from '@/entities/Team/model/types/tasksWebsocket';
-import { UserRow } from '../UserRow/UserRow';
+import { UserRow } from './UserRow';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import Paper from '@mui/material/Paper';
+import { User } from '@/entities/User';
 
 interface UserTableProps {
   teammate?: Teammate;
@@ -29,10 +30,11 @@ interface UserTableProps {
   tickets: UsersTickets;
   avatarsAndBirthday: UsersAvatarsAndBirthday;
   teamIsLoading: boolean;
+  isDeadlineReachedObject: Record<User['id'], boolean>;
 }
 
 export const UserTable = memo((props: UserTableProps) => {
-  const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday } = props;
+  const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday, isDeadlineReachedObject } = props;
 
   return (
     <TableContainer style={{ overflowX: 'auto' }} component={Paper}>
@@ -79,6 +81,7 @@ export const UserTable = memo((props: UserTableProps) => {
               tickets={tickets[teammate.insideId]}
               avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}
               teamIsLoading={teamIsLoading}
+              isDeadlineReached={isDeadlineReachedObject[teammate.id]}
             />
           ) : null}
           {teamIsLoading && <RowSkeleton />}

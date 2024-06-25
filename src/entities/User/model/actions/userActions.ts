@@ -33,25 +33,33 @@ export const clearUser = createAsyncThunk('auth/clearUser', async () => {
   }
 });
 
-export const updateUser = createAsyncThunk('user/updateUser', async (user: User) => {
-  try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/me`, {
-      method: 'PATCH',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        ...user,
-      }),
-    });
-    if (response.ok) {
-      const user: User = await response.json();
-      return user;
-    } else {
+export const updateUser = createAsyncThunk(
+  'user/updateUser',
+  async ({ user, deadline }: { user: User; deadline?: string }) => {
+    const url = deadline
+      ? `${import.meta.env.VITE_BACKEND_URL}/users/me?deadline=${deadline}`
+      : `${import.meta.env.VITE_BACKEND_URL}/users/me`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...user,
+        }),
+      });
+      if (response.ok) {
+        const user: User = await response.json();
+        return user;
+      } else {
+        console.log(await response.json());
+        return null;
+      }
+    } catch (error) {
       return null;
     }
-  } catch (error) {
-    return null;
-  }
-});
+  },
+);

@@ -12,7 +12,9 @@ export const userSlice = createSlice({
   name: 'user',
   initialState: userInitialState,
   reducers: {
-    setAuthData: (state, action: PayloadAction<User>) => void (state.user = action.payload),
+    setAuthData: (state, action: PayloadAction<User>) => {
+      state.data = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -21,28 +23,24 @@ export const userSlice = createSlice({
         state.loading = true;
       })
       .addCase(checkUser.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.authData = action.payload;
+        state.data = action.payload;
         state.mounted = true;
         state.error = null;
         state.loading = false;
       })
       .addCase(checkUser.rejected, (state, action) => {
-        state.user = undefined;
+        state.data = undefined;
         state.error = action.error.message || 'Error';
         state.loading = false;
       })
       .addCase(clearUser.pending, (state) => {
-        state.user = undefined;
-        state.authData = undefined;
+        state.data = undefined;
       })
       .addCase(clearUser.fulfilled, (state) => {
-        state.user = undefined;
-        state.authData = undefined;
+        state.data = undefined;
       })
       .addCase(clearUser.rejected, (state, action) => {
-        state.user = undefined;
-        state.authData = undefined;
+        state.data = undefined;
         state.error = action.error.message || 'Error';
       })
       .addCase(updateUser.pending, (state) => {
@@ -51,7 +49,8 @@ export const userSlice = createSlice({
       })
       .addCase(updateUser.fulfilled, (state, action) => {
         if (action.payload) {
-          state.user = action.payload;
+          state.data = action.payload;
+          state.error = null;
         }
         state.loading = false;
       })
