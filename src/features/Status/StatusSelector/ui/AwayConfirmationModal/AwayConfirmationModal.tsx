@@ -27,12 +27,12 @@ export function AwayConfirmationModal(props: AwayConfirmationModalProps) {
   };
 
   const handleOk = () => {
-    onClose(minutes || 60);
+    onClose(isOtherSelected ? minutes || 10 : minutes || 60);
   };
 
   const handleChangeRadio = (event: ChangeEvent<HTMLInputElement>) => {
     const value = Number(event.target.value);
-    setMinutes(value !== -1 ? value : null);
+    setMinutes(value !== -1 ? value : 10);
     setIsOtherSelected(value === -1);
   };
 
@@ -43,7 +43,6 @@ export function AwayConfirmationModal(props: AwayConfirmationModalProps) {
         <Box display={'flex'} flexDirection={'column'} gap={1} alignItems={'stretch'}>
           <FormControl>
             <RadioGroup
-              // row
               aria-labelledby="demo-row-radio-buttons-group-label"
               name="row-radio-buttons-group"
               onChange={handleChangeRadio}
