@@ -56,7 +56,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
   };
 
   const filterCoordinators = (teammate: Teammate) => {
-    return teammate.isCoordinator;
+    return teammate.isCoordinator && teammate.id !== userId;
   };
 
   const renderTeamList = (teammate: Teammate) => (
