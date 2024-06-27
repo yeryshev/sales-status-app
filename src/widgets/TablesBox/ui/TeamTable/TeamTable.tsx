@@ -24,8 +24,6 @@ import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import Paper from '@mui/material/Paper';
 import { getUserId } from '@/entities/User/model/selectors/userSelectors';
 import { User } from '@/entities/User';
-import Typography from '@mui/material/Typography';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 interface TeamTableProps {
   teamList: Teammate[];
@@ -109,13 +107,11 @@ export const TeamTable = memo((props: TeamTableProps) => {
         </TableHead>
         <TableBody>
           {teamList.length > 0 ? teamList.filter(filterTeamList).map(renderTeamList) : null}
-          <TableRow>
-            <TableCell colSpan={9}>
-              <Typography variant={'subtitle1'} display={'flex'} alignItems={'center'} gap={1}>
-                Координаторы <ArrowDownwardIcon fontSize={'small'} />
-              </Typography>
-            </TableCell>
-          </TableRow>
+          {teamList.find((teammate) => teammate.isCoordinator) && (
+            <TableRow>
+              <TableCell colSpan={9}></TableCell>
+            </TableRow>
+          )}
           {teamList.length > 0 ? teamList.filter(filterCoordinators).map(renderTeamList) : null}
           {teamIsLoading && getSkeletons()}
         </TableBody>
