@@ -24,6 +24,8 @@ import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import Paper from '@mui/material/Paper';
 import { getUserId } from '@/entities/User/model/selectors/userSelectors';
 import { User } from '@/entities/User';
+import Typography from '@mui/material/Typography';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 interface TeamTableProps {
   teamList: Teammate[];
@@ -52,7 +54,11 @@ export const TeamTable = memo((props: TeamTableProps) => {
   const userId = useSelector(getUserId);
 
   const filterTeamList = (teammate: Teammate) => {
-    return teammate.isManager && teammate.id !== userId;
+    return teammate.isManager && teammate.id !== userId && !teammate.isCoordinator;
+  };
+
+  const filterCoordinators = (teammate: Teammate) => {
+    return teammate.isCoordinator;
   };
 
   const renderTeamList = (teammate: Teammate) => (
@@ -103,6 +109,14 @@ export const TeamTable = memo((props: TeamTableProps) => {
         </TableHead>
         <TableBody>
           {teamList.length > 0 ? teamList.filter(filterTeamList).map(renderTeamList) : null}
+          <TableRow>
+            <TableCell colSpan={9}>
+              <Typography variant={'subtitle1'} display={'flex'} alignItems={'center'} gap={1}>
+                Координаторы <ArrowDownwardIcon fontSize={'small'} />
+              </Typography>
+            </TableCell>
+          </TableRow>
+          {teamList.length > 0 ? teamList.filter(filterCoordinators).map(renderTeamList) : null}
           {teamIsLoading && getSkeletons()}
         </TableBody>
       </Table>
