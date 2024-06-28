@@ -1,9 +1,7 @@
 import { Tooltip } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
 import { TeamTable } from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import { UserTable } from './UserTable/UserTable';
 import { checkUser, getUserData, User } from '@/entities/User';
 import { teamActions, teamReducer } from '@/entities/Team/model/slice/teamSlice';
 import { statusActions } from '@/entities/Status';
@@ -14,7 +12,6 @@ import {
   getAccountManagerTeamList,
   getInboundTeamList,
   getTeamIsLoading,
-  getTeammate,
 } from '@/entities/Team/model/selectors/teamSelectors';
 import { fetchTeamList } from '@/entities/Team/model/services/fetchTeamList/fetchTeamList';
 import Box from '@mui/system/Box';
@@ -77,8 +74,6 @@ export const TablesBox = memo(() => {
   const user = useSelector(getUserData);
   const inboundTeamList = useSelector(getInboundTeamList);
   const accountManagerTeamList = useSelector(getAccountManagerTeamList);
-  let teamList;
-  const teammate = useSelector(getTeammate);
   const teamIsLoading = useSelector(getTeamIsLoading);
   const dispatch = useAppDispatch();
   const [tabNumber, setTabNumber] = useState(0);
@@ -86,7 +81,7 @@ export const TablesBox = memo(() => {
   const [deadlines, setDeadlines] = useState<Record<User['id'], boolean>>({});
 
   const isAccountManagersRoute = location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS];
-
+  let teamList;
   if (isAccountManagersRoute) {
     teamList = accountManagerTeamList;
   } else {
@@ -127,9 +122,6 @@ export const TablesBox = memo(() => {
       return () => clearInterval(intervalId);
     }
   }, [teamIsLoading, teamList, deadlinesNumbersObj, checkDeadlines]);
-
-  const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
-  const shouldSeeUserTable = !teamIsLoading && teammate && userOnRightPage;
 
   const {
     tasks = {},
@@ -221,69 +213,55 @@ export const TablesBox = memo(() => {
 
   return (
     <DynamicModuleLoader reducers={reducers}>
-      {shouldSeeUserTable && (
-        <Grid xs={12}>
-          <UserTable
-            teammate={teammate}
+      <Box sx={{ width: '100%' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={tabNumber} onChange={handleChangeTab} aria-label="basic tabs">
+            <Tab label="Команда" {...a11yProps(0)} />
+            <Tooltip
+              title={
+                <Typography variant={'inherit'}>
+                  Рейтинг менеджеров по новым клиентам
+                  <br />
+                  ТОП 3 получают бейджи каждую неделю
+                </Typography>
+              }
+            >
+              <Tab label="Успехи" {...a11yProps(1)} />
+            </Tooltip>
+          </Tabs>
+        </Box>
+        <CustomTabPanel value={tabNumber} index={0}>
+          <TeamTable
+            teamList={teamList}
+            teamIsLoading={teamIsLoading}
             mango={mango}
             tasks={tasks}
             tickets={tickets}
-            teamIsLoading={teamIsLoading}
+            vacationStates={vacation}
             avatarsAndBirthday={avatarsAndBirthday}
             isDeadlineReachedObject={deadlines}
+            isAccountManagersRoute={isAccountManagersRoute}
           />
-        </Grid>
-      )}
-      <Grid xs={12}>
-        <Box sx={{ width: '100%' }}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={tabNumber} onChange={handleChangeTab} aria-label="basic tabs">
-              <Tab label="Команда" {...a11yProps(0)} />
-              <Tooltip
-                title={
-                  <Typography variant={'inherit'}>
-                    Рейтинг менеджеров по новым клиентам
-                    <br />
-                    ТОП 3 получают бейджи каждую неделю
-                  </Typography>
-                }
-              >
-                <Tab label="Успехи" {...a11yProps(1)} />
-              </Tooltip>
-            </Tabs>
-          </Box>
-          <CustomTabPanel value={tabNumber} index={0}>
-            <TeamTable
+        </CustomTabPanel>
+        <CustomTabPanel value={tabNumber} index={1}>
+          <Box display={'flex'} gap={2} flexDirection={{ sm: 'column', md: 'row' }}>
+            <CurrentWeekResultTable
               teamList={teamList}
               teamIsLoading={teamIsLoading}
-              mango={mango}
               tasks={tasks}
-              tickets={tickets}
-              vacationStates={vacation}
               avatarsAndBirthday={avatarsAndBirthday}
-              isDeadlineReachedObject={deadlines}
+              isAccountManagersRoute={isAccountManagersRoute}
             />
-          </CustomTabPanel>
-          <CustomTabPanel value={tabNumber} index={1}>
-            <Box display={'flex'} gap={2}>
-              <CurrentWeekResultTable
-                teamList={teamList}
-                teamIsLoading={teamIsLoading}
-                tasks={tasks}
-                avatarsAndBirthday={avatarsAndBirthday}
-                isAccountManagersRoute={isAccountManagersRoute}
-              />
-              <LastWeekTable
-                teamList={teamList}
-                teamIsLoading={teamIsLoading}
-                tasks={tasks}
-                lastWeekStats={lastWeekStat}
-                isAccountManagersRoute={isAccountManagersRoute}
-              />
-            </Box>
-          </CustomTabPanel>
-        </Box>
-      </Grid>
+            <LastWeekTable
+              teamList={teamList}
+              teamIsLoading={teamIsLoading}
+              tasks={tasks}
+              lastWeekStats={lastWeekStat}
+              isAccountManagersRoute={isAccountManagersRoute}
+            />
+          </Box>
+        </CustomTabPanel>
+      </Box>
     </DynamicModuleLoader>
   );
 });

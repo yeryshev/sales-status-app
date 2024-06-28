@@ -23,7 +23,7 @@ interface UserRowProps {
   isDeadlineReached: boolean;
 }
 
-export const UserRow = memo((props: UserRowProps) => {
+export const HeroRow = memo((props: UserRowProps) => {
   const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday, isDeadlineReached } = props;
   const user = useSelector(getUserData);
   const dispatch = useAppDispatch();

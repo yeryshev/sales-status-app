@@ -1,17 +1,13 @@
-import TableContainer from '@mui/material/TableContainer';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { TeamRow } from './TeamRow';
 import { memo } from 'react';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
+import { styled } from '@mui/material/styles';
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
-import { Tooltip } from '@mui/material';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import {
   UsersAvatarsAndBirthday,
   UsersMango,
@@ -21,9 +17,10 @@ import {
 } from '@/entities/Team/model/types/tasksWebsocket';
 import { Teammate } from '@/entities/Team/model/types/teammate';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
-import Paper from '@mui/material/Paper';
-import { getUserId } from '@/entities/User/model/selectors/userSelectors';
+import { getUserData, getUserId } from '@/entities/User/model/selectors/userSelectors';
 import { User } from '@/entities/User';
+import { HeroRow } from './HeroRow';
+import { getTeammate } from '@/entities/Team/model/selectors/teamSelectors';
 
 interface TeamTableProps {
   teamList: Teammate[];
@@ -34,9 +31,14 @@ interface TeamTableProps {
   avatarsAndBirthday: UsersAvatarsAndBirthday;
   teamIsLoading: boolean;
   isDeadlineReachedObject: Record<User['id'], boolean>;
+  isAccountManagersRoute: boolean;
 }
 
 const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
+}));
 
 export const TeamTable = memo((props: TeamTableProps) => {
   const {
@@ -48,14 +50,20 @@ export const TeamTable = memo((props: TeamTableProps) => {
     vacationStates,
     avatarsAndBirthday,
     isDeadlineReachedObject,
+    isAccountManagersRoute,
   } = props;
-  const userId = useSelector(getUserId);
 
-  const filterTeamList = (teammate: Teammate) => {
+  const userId = useSelector(getUserId);
+  const user = useSelector(getUserData);
+  const teammate = useSelector(getTeammate);
+  const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
+  const shouldSeeHeroRow = !teamIsLoading && teammate && userOnRightPage;
+
+  const showManagers = (teammate: Teammate) => {
     return teammate.isManager && teammate.id !== userId && !teammate.isCoordinator;
   };
 
-  const filterCoordinators = (teammate: Teammate) => {
+  const showCoordinators = (teammate: Teammate) => {
     return teammate.isCoordinator && teammate.id !== userId;
   };
 
@@ -102,17 +110,40 @@ export const TeamTable = memo((props: TeamTableProps) => {
                 <FeedbackOutlinedIcon fontSize={'small'} />
               </TableCell>
             </Tooltip>
-            <TableCell align="center"></TableCell>
+            {teammate?.isManager ? (
+              <Tooltip title={'Работаю из дома'}>
+                <TableCell align="center">
+                  <HomeOutlinedIcon fontSize={'small'} />
+                </TableCell>
+              </Tooltip>
+            ) : (
+              <TableCell align="center"></TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
-          {teamList.length > 0 ? teamList.filter(filterTeamList).map(renderTeamList) : null}
-          {teamList.find((teammate) => teammate.isCoordinator) && (
-            <TableRow>
-              <TableCell colSpan={9}></TableCell>
-            </TableRow>
+          {shouldSeeHeroRow && (
+            <>
+              <HeroRow
+                teammate={teammate}
+                tasks={tasks[teammate.insideId]}
+                tickets={tickets[teammate.insideId]}
+                avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}
+                teamIsLoading={teamIsLoading}
+                isDeadlineReached={isDeadlineReachedObject[teammate.id]}
+              />
+              <StyledTableRow>
+                <TableCell colSpan={9}></TableCell>
+              </StyledTableRow>
+            </>
           )}
-          {teamList.length > 0 ? teamList.filter(filterCoordinators).map(renderTeamList) : null}
+          {teamList.length > 0 ? teamList.filter(showManagers).map(renderTeamList) : null}
+          {teamList.find((teammate) => teammate.isCoordinator) && (
+            <StyledTableRow>
+              <TableCell colSpan={9}></TableCell>
+            </StyledTableRow>
+          )}
+          {teamList.length > 0 ? teamList.filter(showCoordinators).map(renderTeamList) : null}
           {teamIsLoading && getSkeletons()}
         </TableBody>
       </Table>
