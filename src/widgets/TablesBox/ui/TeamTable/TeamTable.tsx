@@ -1,6 +1,6 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { TeamRow } from './TeamRow';
+import { TeamRow } from './TeamRow/TeamRow';
 import { memo } from 'react';
 import { styled } from '@mui/material/styles';
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
@@ -19,7 +19,7 @@ import { Teammate } from '@/entities/Team/model/types/teammate';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import { getUserData, getUserId } from '@/entities/User/model/selectors/userSelectors';
 import { User } from '@/entities/User';
-import { HeroRow } from './HeroRow';
+import { HeroRow } from './HeroRow/HeroRow';
 import { getTeammate } from '@/entities/Team/model/selectors/teamSelectors';
 
 interface TeamTableProps {
