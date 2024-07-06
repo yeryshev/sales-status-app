@@ -12,16 +12,19 @@ services:
       - certs:/etc/nginx/certs:ro
 
   lego-acme:
-    image: cilenco/lego-cron-wrapper
+    image: eryshev/lego-cron-wrapper
     container_name: lego-acme
     restart: always
     command: >
-      --accept-tos --email=example@gmail.com --dns selectel
-      --domains=*.status.sales.example.org --domains=status.sales.example.org
+      --accept-tos --email=test@gmail.com --dns selectelv2
+      --domains=*.status.sales.localhost.org --domains=status.sales.localhost.org
     environment:
       - RUN_ARGUMENTS=--run-hook=/app/deploy
       - RENEW_ARGUMENTS=--renew-hook=/app/deploy
-      - SELECTEL_API_TOKEN=ENTER_TOKEN_HERE
+      - SELECTELV2_USERNAME=XXXXXXX
+      - SELECTELV2_PASSWORD=XXXXXXX
+      - SELECTELV2_ACCOUNT_ID=XXXXXXX
+      - SELECTELV2_PROJECT_ID=XXXXXXX
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/app/certificates
@@ -32,7 +35,7 @@ services:
     container_name: frontend
     restart: always
     environment:
-      - VIRTUAL_HOST=status.sales.example.org
+      - VIRTUAL_HOST=status.sales.localhost.org
     depends_on:
       - backend
       - nginx-proxy
@@ -50,7 +53,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - VIRTUAL_PORT=8000
-      - VIRTUAL_HOST=api.status.sales.example.org
+      - VIRTUAL_HOST=api.status.sales.localhost.org
     depends_on:
       - redis
       - nginx-proxy
@@ -85,20 +88,10 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - VIRTUAL_PORT=5555
-      - VIRTUAL_HOST=flower.status.sales.example.org
+      - VIRTUAL_HOST=flower.status.sales.localhost.org
     depends_on:
       - celery
-
-  telegram-bot:
-    build: ../telegram
-    restart: always
-    container_name: telegram-bot
-    volumes:
-      - telegram-data:/app/
-    depends_on:
-      - backend
 
 volumes:
   certs:
   redis-data:
-  telegram-data:
