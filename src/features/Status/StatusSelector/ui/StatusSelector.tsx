@@ -2,7 +2,7 @@ import { memo, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { useGetStatuses } from '@/entities/Status/api/statusApi';
-import { getUserData } from '@/entities/User';
+import { getUserData, getUserIsLoading } from '@/entities/User';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -20,6 +20,7 @@ const reducers: ReducersList = {
 
 export const StatusSelector = memo(() => {
   const user = useSelector(getUserData);
+  const userIsLoading = useSelector(getUserIsLoading);
   const dispatch = useAppDispatch();
   const { data: statuses } = useGetStatuses();
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -59,7 +60,13 @@ export const StatusSelector = memo(() => {
     <DynamicModuleLoader reducers={reducers}>
       <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={0.5} flexDirection={'column'}>
         <FormControl fullWidth>
-          <Select value={userStatus?.title || ''} onChange={handleChangeMainStatus} size={'small'} fullWidth>
+          <Select
+            value={userStatus?.title || ''}
+            onChange={handleChangeMainStatus}
+            size={'small'}
+            fullWidth
+            disabled={userIsLoading}
+          >
             {cachedStatuses?.map((status) => (
               <MenuItem key={status.id} value={status.title} disabled={user?.statusId === status.id}>
                 {feminizeWord(status.title, user?.isFemale)}
