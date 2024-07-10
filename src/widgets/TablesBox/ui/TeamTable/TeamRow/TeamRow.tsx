@@ -20,11 +20,21 @@ export interface TeamRowProps {
   avatarsAndBirthday: UserAvatarsAndBirthday;
   teamIsLoading: boolean;
   isDeadlineReached: boolean;
+  isAccountManagersRoute: boolean;
 }
 
 export const TeamRow = memo((props: TeamRowProps) => {
-  const { teammate, mango, tasks, tickets, vacationState, teamIsLoading, avatarsAndBirthday, isDeadlineReached } =
-    props;
+  const {
+    teammate,
+    mango,
+    tasks,
+    tickets,
+    vacationState,
+    teamIsLoading,
+    avatarsAndBirthday,
+    isDeadlineReached,
+    isAccountManagersRoute,
+  } = props;
   const [expandRow, setExpandRow] = useState(false);
 
   const exampleProps = {
@@ -36,6 +46,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
     avatarsAndBirthday,
     teamIsLoading,
     isDeadlineReached,
+    isAccountManagersRoute,
     expandRow,
     setExpandRow,
   };

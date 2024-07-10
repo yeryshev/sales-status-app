@@ -32,6 +32,7 @@ export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     teamIsLoading,
     avatarsAndBirthday,
     isDeadlineReached,
+    isAccountManagersRoute,
     expandRow,
     setExpandRow,
   } = props;
@@ -50,7 +51,7 @@ export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'left',
       width: 160,
-      content: (
+      content: !isAccountManagersRoute && (
         <StatusCell
           teammate={teammate}
           mango={mango}

@@ -58,6 +58,8 @@ export const TeamTable = memo((props: TeamTableProps) => {
   const teammate = useSelector(getTeammate);
   const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
   const shouldSeeHeroRow = !teamIsLoading && teammate && userOnRightPage;
+  const teamListIsNotEmpty = teamList.length > 0;
+  const thereAreCoordinators = teamList.find((teammate) => teammate.isCoordinator);
 
   const showManagers = (teammate: Teammate) => {
     return teammate.isManager && teammate.id !== userId && !teammate.isCoordinator;
@@ -78,6 +80,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
       avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}
       isDeadlineReached={isDeadlineReachedObject[teammate.id]}
       teamIsLoading={teamIsLoading}
+      isAccountManagersRoute={isAccountManagersRoute}
     />
   );
 
@@ -137,13 +140,13 @@ export const TeamTable = memo((props: TeamTableProps) => {
               </StyledTableRow>
             </>
           )}
-          {teamList.length > 0 ? teamList.filter(showManagers).map(renderTeamList) : null}
-          {teamList.find((teammate) => teammate.isCoordinator) && (
+          {teamListIsNotEmpty && teamList.filter(showManagers).map(renderTeamList)}
+          {thereAreCoordinators && (
             <StyledTableRow>
               <TableCell colSpan={9}></TableCell>
             </StyledTableRow>
           )}
-          {teamList.length > 0 ? teamList.filter(showCoordinators).map(renderTeamList) : null}
+          {teamListIsNotEmpty && teamList.filter(showCoordinators).map(renderTeamList)}
           {teamIsLoading && getSkeletons()}
         </TableBody>
       </Table>
