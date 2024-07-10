@@ -113,7 +113,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
                 <FeedbackOutlinedIcon fontSize={'small'} />
               </TableCell>
             </Tooltip>
-            {teammate?.isManager ? (
+            {shouldSeeHeroRow ? (
               <Tooltip title={'Работаю из дома'}>
                 <TableCell align="center">
                   <HomeOutlinedIcon fontSize={'small'} />
@@ -134,6 +134,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
                 avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}
                 teamIsLoading={teamIsLoading}
                 isDeadlineReached={isDeadlineReachedObject[teammate.id]}
+                isAccountManagersRoute={isAccountManagersRoute}
               />
               <StyledTableRow>
                 <TableCell colSpan={9}></TableCell>

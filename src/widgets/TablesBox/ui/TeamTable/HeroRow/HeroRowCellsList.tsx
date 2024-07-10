@@ -16,7 +16,16 @@ interface TeamRowCellsListProps extends HeroRowProps {
 }
 
 export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] => {
-  const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday, isDeadlineReached, handleSwitch } = props;
+  const {
+    teammate,
+    tasks,
+    tickets,
+    teamIsLoading,
+    avatarsAndBirthday,
+    isDeadlineReached,
+    isAccountManagersRoute,
+    handleSwitch,
+  } = props;
 
   return [
     {
@@ -32,7 +41,7 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'left',
       width: 160,
-      content: teamIsLoading ? <Skeleton variant="text" /> : <StatusSelector />,
+      content: teamIsLoading ? <Skeleton variant="text" /> : !isAccountManagersRoute && <StatusSelector />,
     },
     {
       align: 'left',
@@ -61,7 +70,7 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'center',
       width: 72,
-      content: (
+      content: !isAccountManagersRoute && (
         <Switch name="isWorkingRemotely" checked={teammate.isWorkingRemotely} size={'small'} onChange={handleSwitch} />
       ),
     },

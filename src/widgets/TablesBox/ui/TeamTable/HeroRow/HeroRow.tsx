@@ -16,10 +16,12 @@ export interface HeroRowProps {
   avatarsAndBirthday: UserAvatarsAndBirthday;
   teamIsLoading: boolean;
   isDeadlineReached: boolean;
+  isAccountManagersRoute: boolean;
 }
 
 export const HeroRow = memo((props: HeroRowProps) => {
-  const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday, isDeadlineReached } = props;
+  const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday, isDeadlineReached, isAccountManagersRoute } =
+    props;
   const user = useSelector(getUserData);
   const dispatch = useAppDispatch();
 
@@ -37,6 +39,7 @@ export const HeroRow = memo((props: HeroRowProps) => {
     teamIsLoading,
     avatarsAndBirthday,
     isDeadlineReached,
+    isAccountManagersRoute,
     handleSwitch,
   };
 
