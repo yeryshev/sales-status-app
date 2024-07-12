@@ -2,11 +2,9 @@ import { type ChangeEvent, memo, useCallback } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import { useSelector } from 'react-redux';
-import { Teammate } from '@/entities/Team/model/types/teammate';
-import { updateUser } from '@/entities/User/model/actions/userActions';
+import { Teammate, UserAvatarsAndBirthday, UserTasks, UserTickets } from '@/entities/Team';
+import { getUserData, updateUser } from '@/entities/User';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { UserAvatarsAndBirthday, UserTasks, UserTickets } from '@/entities/Team/model/types/tasksWebsocket';
-import { getUserData } from '@/entities/User';
 import { HeroRowCellsList } from './HeroRowCellsList';
 
 export interface HeroRowProps {

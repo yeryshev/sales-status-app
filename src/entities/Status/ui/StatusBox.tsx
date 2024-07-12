@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { updateUser } from '@/entities/User/model/actions/userActions';
+import { getUserData, updateUser } from '@/entities/User';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -11,7 +11,6 @@ import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { getStatusData } from '../model/selectors/getStatusValue/getStatusData';
 import { useGetStatuses } from '../api/statusApi';
 import { Status } from '../model/types/Status';
-import { getUserData } from '@/entities/User';
 
 const mapStatusColors = (status_priority: Status['priority']) => {
   if (status_priority === 0) {

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Chip, Tooltip } from '@mui/material';
-import { UserTasks, UserVacation } from '@/entities/Team/model/types/tasksWebsocket';
+import { UserTasks, UserVacation } from '@/entities/Team';
 import { StateLabel } from './StateLabel';
 
 interface LeadsCellProps {

@@ -18,6 +18,7 @@ module.exports = {
         patterns: ["@mui/*/*/*"]
       }
     ],
-    "@eryshev/fsd/path-checker": ["error", { "alias": "@" }],
+    "@eryshev/fsd/path-checker": ["error", { alias: "@" }],
+    "@eryshev/fsd/public-api-imports": ["error", { alias: "@" }],
   }
 };

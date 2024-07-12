@@ -4,7 +4,7 @@ import Typography from '@mui/material/Typography';
 import { Tooltip } from '@mui/material';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import { Teammate } from '@/entities/Team';
-import { UserVacation } from '@/entities/Team/model/types/tasksWebsocket';
+import { UserVacation } from '@/entities/Team';
 
 interface UserNameCellProps {
   teammate: Teammate;

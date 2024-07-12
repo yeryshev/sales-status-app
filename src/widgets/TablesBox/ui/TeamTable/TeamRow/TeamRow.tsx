@@ -1,15 +1,9 @@
 import { memo, useState } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import { Teammate } from '@/entities/Team/model/types/teammate';
+import { Teammate, UserAvatarsAndBirthday, UserTasks, UserTickets, UserVacation } from '@/entities/Team';
 import { TeamRowCellsList } from './TeamRowCellsList';
 import { ExpandRow } from '../RowCells/ExpandRow';
-import {
-  UserAvatarsAndBirthday,
-  UserTasks,
-  UserTickets,
-  UserVacation,
-} from '@/entities/Team/model/types/tasksWebsocket';
 
 export interface TeamRowProps {
   teammate: Teammate;

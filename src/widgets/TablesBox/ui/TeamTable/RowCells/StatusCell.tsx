@@ -5,7 +5,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import Typography from '@mui/material/Typography';
 import { feminizeWord } from '@/shared/lib/feminizeWords/feminizeWords';
 import { Teammate } from '@/entities/Team';
-import { UserVacation } from '@/entities/Team/model/types/tasksWebsocket';
+import { UserVacation } from '@/entities/Team';
 import moment from 'moment/moment';
 import { Status } from '@/entities/Status';
 import { OverridableStringUnion } from '@mui/types';

@@ -1,17 +1,15 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { useGetStatuses } from '@/entities/Status/api/statusApi';
-import { getUserData, getUserIsLoading } from '@/entities/User';
+import { statusActions, useGetStatuses } from '@/entities/Status';
+import { getUserData, getUserIsLoading, updateUser } from '@/entities/User';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { statusActions } from '@/entities/Status';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import { statusSelectorReducer } from '../model/slices/statusSelectorSlice';
 import { feminizeWord } from '@/shared/lib/feminizeWords/feminizeWords';
 import { AwayConfirmationModal } from './AwayConfirmationModal/AwayConfirmationModal';
-import { updateUser } from '@/entities/User/model/actions/userActions';
 import Box from '@mui/material/Box';
 
 const reducers: ReducersList = {

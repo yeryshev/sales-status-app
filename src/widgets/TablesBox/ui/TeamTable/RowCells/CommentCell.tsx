@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import Typography from '@mui/material/Typography';
-import { UserVacation } from '@/entities/Team/model/types/tasksWebsocket';
+import { UserVacation } from '@/entities/Team';
 
 const renderVacationDay = (dateString: string) => {
   const date = new Date(dateString);

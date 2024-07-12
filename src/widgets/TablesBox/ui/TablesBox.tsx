@@ -3,19 +3,11 @@ import { TeamTable } from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { checkUser, getUserData, User } from '@/entities/User';
-import { teamActions, teamReducer } from '@/entities/Team/model/slice/teamSlice';
 import { statusActions } from '@/entities/Status';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { fetchAllComments } from '@/entities/Comment';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
-import {
-  getAccountManagerTeamList,
-  getInboundTeamList,
-  getTeamIsLoading,
-} from '@/entities/Team/model/selectors/teamSelectors';
-import { fetchTeamList } from '@/entities/Team/model/services/fetchTeamList/fetchTeamList';
 import Box from '@mui/system/Box';
-import { useGetAdditionalTeamData } from '@/entities/Team/api/teamTasksApi';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { LastWeekTable } from './TeamResults/LastWeekResults/LastWeekTable';
@@ -24,6 +16,15 @@ import Typography from '@mui/material/Typography';
 import { useLocation } from 'react-router-dom';
 import { AppRoutes, RoutePath } from '@/shared/config/routeConfig/routeConfig';
 import moment from 'moment/moment';
+import {
+  fetchTeamList,
+  getAccountManagerTeamList,
+  getInboundTeamList,
+  getTeamIsLoading,
+  teamActions,
+  teamReducer,
+  useGetAdditionalTeamData,
+} from '@/entities/Team';
 
 interface TabPanelProps {
   children?: ReactNode;

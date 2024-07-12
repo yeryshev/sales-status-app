@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Chip, Tooltip } from '@mui/material';
 import { StateLabel } from './StateLabel';
-import { UserTasks, UserVacation } from '@/entities/Team/model/types/tasksWebsocket';
+import { UserTasks, UserVacation } from '@/entities/Team';
 
 interface ConversationsCellProps {
   teamIsLoading: boolean;

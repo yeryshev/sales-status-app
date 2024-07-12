@@ -8,19 +8,18 @@ import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlin
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
+import { getUserData, getUserId, User } from '@/entities/User';
+import { HeroRow } from './HeroRow/HeroRow';
 import {
+  getTeammate,
+  Teammate,
   UsersAvatarsAndBirthday,
   UsersMango,
   UsersTasks,
   UsersTickets,
   UsersVacation,
-} from '@/entities/Team/model/types/tasksWebsocket';
-import { Teammate } from '@/entities/Team/model/types/teammate';
-import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
-import { getUserData, getUserId } from '@/entities/User/model/selectors/userSelectors';
-import { User } from '@/entities/User';
-import { HeroRow } from './HeroRow/HeroRow';
-import { getTeammate } from '@/entities/Team/model/selectors/teamSelectors';
+} from '@/entities/Team';
 
 interface TeamTableProps {
   teamList: Teammate[];

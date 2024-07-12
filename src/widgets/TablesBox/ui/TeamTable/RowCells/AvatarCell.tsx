@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { Teammate } from '@/entities/Team';
 import { Avatar } from '@mui/material';
-import { UserAvatarsAndBirthday, UserVacation } from '@/entities/Team/model/types/tasksWebsocket';
+import { UserAvatarsAndBirthday, UserVacation } from '@/entities/Team';
 
 interface AvatarCellProps {
   teammate: Teammate;
