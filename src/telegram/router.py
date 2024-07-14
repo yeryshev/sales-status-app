@@ -1,4 +1,3 @@
-import json
 from datetime import datetime
 
 import pytz
@@ -15,7 +14,7 @@ from src.models import User
 from src.users.router import app_statuses, mango_statuses
 from src.users.schemas import UserUpdate
 from src.users.service import update_user
-from src.websockets.router import manager
+from src.websockets.utils import send_ws_after_user_update
 
 router = APIRouter(prefix="/telegram", tags=["Telegram"])
 
@@ -58,7 +57,7 @@ async def update_telegram(
         session: AsyncSession = Depends(get_async_session)
 ):
     if request.secret != secret_key:
-        raise HTTPException(status_code=403, detail="Неверный секретный ключ. Пожалуйста, обновите страницу.")
+        raise HTTPException(status_code=403, detail="Invalid secret key")
 
     query = select(User).where(func.lower(User.telegram) == request.username.lower())
     result = await session.execute(query)
@@ -112,15 +111,6 @@ async def update_telegram(
     result = await session.execute(query)
     updated_user = result.scalars().first()
 
-    await manager.broadcast(json.dumps({
-        "userId": updated_user.id,
-        "statusId": updated_user.status_id,
-        "status": updated_user.status.to_dict(),
-        "comment": updated_user.comment.to_dict() if updated_user.comment else None,
-        "busyTime": updated_user.busy_time.to_dict() if updated_user.busy_time else None,
-        "commentId": updated_user.comment_id if updated_user.comment else None,
-        "isWorkingRemotely": updated_user.is_working_remotely,
-        "updatedAt": updated_user.updated_at.isoformat(),
-    }))
+    await send_ws_after_user_update(updated_user)
 
     return updated_user
