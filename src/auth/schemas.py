@@ -17,7 +17,6 @@ class UserRead(schemas.BaseUser[int]):
     is_manager: bool = Field(None, serialization_alias="isManager")
     is_account_manager: bool = Field(None, serialization_alias="isAccountManager")
     status_id: Optional[int] = Field(None, serialization_alias="statusId")
-    comment_id: Optional[int] = Field(None, serialization_alias="commentId")
     is_active: bool = Field(None, serialization_alias="isActive")
     is_superuser: bool = Field(None, serialization_alias="isSuperuser")
     is_verified: bool = Field(None, serialization_alias="isVerified")

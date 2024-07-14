@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.auth.router import router as auth_router
-from src.comments.router import router as comments_router
 from src.config import settings
 from src.statuses.router import router as statuses_router
 from src.users.router import users_router as users_router, telegram_router as telegram_router
@@ -22,7 +21,6 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(users_router)
-app.include_router(comments_router)
 app.include_router(websocket_router)
 app.include_router(telegram_router)
 app.include_router(statuses_router)

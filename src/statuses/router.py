@@ -49,7 +49,7 @@ async def update_status(
 
 
 @router.delete("/{status_id}", response_model=StatusGet, dependencies=[Depends(current_superuser)])
-async def delete_comment(
+async def delete_status(
         status_id: int,
         session: AsyncSession = Depends(get_async_session)):
     try:

@@ -14,7 +14,7 @@ async def get_all_users(session: AsyncSession) -> Sequence[User]:
     try:
         query = (select(User)
                  .join(User.status)
-                 .options(selectinload(User.status), selectinload(User.comment), selectinload(User.busy_time))
+                 .options(selectinload(User.status), selectinload(User.busy_time))
                  .order_by(desc(Status.priority), desc(User.updated_at))
                  )
 

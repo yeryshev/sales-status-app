@@ -23,27 +23,6 @@ updated_at = Annotated[
     )]
 
 
-class Comment(Base):
-    __tablename__ = "comment"
-
-    id: Mapped[int_primary_key]
-    description: Mapped[str]
-    owner_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), index=True)
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at]
-
-    owner: Mapped["User"] = relationship("User", back_populates="comments", foreign_keys=[owner_id])
-
-    def __repr__(self):
-        return f"id: {self.id}, description: {self.description}"
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "description": self.description
-        }
-
-
 class User(SQLAlchemyBaseUserTable[int], Base):
     id: Mapped[int_primary_key]
     email: Mapped[str] = mapped_column(String(length=320), unique=True, index=True, nullable=False)
@@ -60,7 +39,6 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_manager: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False, server_default='true')
     is_account_manager: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
     status_id: Mapped[Optional[int]] = mapped_column(ForeignKey("status.id", ondelete="SET NULL"), index=True)
-    comment_id: Mapped[Optional[int]] = mapped_column(ForeignKey("comment.id", ondelete="SET NULL"))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     is_superuser: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
@@ -69,17 +47,9 @@ class User(SQLAlchemyBaseUserTable[int], Base):
 
     status: Mapped[Optional["Status"]] = relationship("Status", back_populates="users")
     busy_time: Mapped[Optional["BusyTime"]] = relationship("BusyTime", back_populates="user", uselist=False)
-    comment: Mapped[Optional["Comment"]] = relationship("Comment", foreign_keys=[comment_id])
-    comments: Mapped[list["Comment"]] = relationship("Comment",
-                                                     back_populates="owner",
-                                                     foreign_keys=[Comment.owner_id],
-                                                     cascade='save-update, merge, delete',
-                                                     passive_deletes=True,
-                                                     )
 
     def __repr__(self):
-        return (f"id: {self.id}, email: {self.email} first_name: {self.first_name} second_name: {self.second_name},"
-                f"comments: {self.comments}")
+        return f"id: {self.id}, email: {self.email} first_name: {self.first_name} second_name: {self.second_name}"
 
 
 class Status(Base):

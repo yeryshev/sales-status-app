@@ -3,7 +3,6 @@ from typing import Optional
 
 from pydantic import Field, BaseModel
 
-from src.comments.schemas import CommentGet
 from src.statuses.schemas import StatusGet
 
 
@@ -19,7 +18,6 @@ class UserUpdate(BaseModel):
     is_manager: Optional[bool] = Field(None, alias="isManager")
     is_account_manager: Optional[bool] = Field(None, alias="isAccountManager")
     status_id: Optional[int] = Field(None, alias="statusId")
-    comment_id: Optional[int] = Field(None, alias="commentId")
     is_active: Optional[bool] = Field(None, alias="isActive")
     is_superuser: Optional[bool] = Field(None, alias="isSuperuser")
     is_verified: Optional[bool] = Field(None, alias="isVerified")
@@ -46,11 +44,9 @@ class UserGet(BaseModel):
     is_manager: bool = Field(None, serialization_alias="isManager")
     is_account_manager: bool = Field(None, serialization_alias="isAccountManager")
     status_id: int = Field(None, serialization_alias="statusId")
-    comment_id: Optional[int] = Field(None, serialization_alias="commentId")
     is_active: bool = Field(None, serialization_alias="isActive")
     is_superuser: bool = Field(None, serialization_alias="isSuperuser")
     is_verified: bool = Field(None, serialization_alias="isVerified")
     status: Optional[StatusGet] = None
-    comment: Optional[CommentGet] = None
     busy_time: Optional[BusyTime] = Field(None, serialization_alias="busyTime")
     updated_at: datetime = Field(None, serialization_alias="updatedAt")

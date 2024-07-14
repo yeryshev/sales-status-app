@@ -56,7 +56,7 @@ async def check_user(
 ):
     query = (select(User)
              .where(User.id == user.id)
-             .options(selectinload(User.status), selectinload(User.comment), selectinload(User.busy_time))
+             .options(selectinload(User.status), selectinload(User.busy_time))
              )
     result = await session.execute(query)
     user_data = result.scalars().first()
@@ -116,7 +116,7 @@ async def update_user_router(
 
     query = (select(User)
              .where(User.id == updated_user.id)
-             .options(selectinload(User.status), selectinload(User.comment), selectinload(User.busy_time))
+             .options(selectinload(User.status), selectinload(User.busy_time))
              )
     result = await session.execute(query)
     updated_user = result.scalars().first()
@@ -227,7 +227,7 @@ async def update_telegram(
 
     query = (select(User)
              .where(User.id == updated_user.id)
-             .options(selectinload(User.status), selectinload(User.comment), selectinload(User.busy_time))
+             .options(selectinload(User.status), selectinload(User.busy_time))
              )
     result = await session.execute(query)
     updated_user = result.scalars().first()
