@@ -5,6 +5,7 @@ from celery import Celery
 from celery.schedules import crontab
 from fastapi import HTTPException
 
+import src.config
 from src.config import settings
 from src.database import sync_session_factory
 from src.models import User
@@ -31,7 +32,7 @@ def set_offline_users():
     with sync_session_factory() as session:
         users_to_update = session.query(User).filter(User.status_id != offline_status_id).all()
 
-        api_url = settings.MANGO_SET_STATUS
+        api_url = src.config.MANGO_SET_STATUS
         headers = {'Content-Type': 'application/json'}
 
         for user in users_to_update:

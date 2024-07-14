@@ -8,6 +8,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+import src.config
 from src.auth.base_config import current_user, current_superuser
 from src.config import settings
 from src.database import get_async_session
@@ -19,7 +20,7 @@ from src.websockets.utils import send_ws_after_user_update
 users_router = APIRouter(prefix="/users", tags=["Users"])
 telegram_router = APIRouter(prefix="/telegram", tags=["Telegram"])
 
-telegram_secret_key = settings.TELEGRAM_BOT_SECRET
+telegram_secret_key = src.config.TELEGRAM_BOT_SECRET
 
 mango_statuses = {
     'online': 1,
@@ -101,7 +102,7 @@ async def update_user_router(
         mango_status_id = mango_statuses['online']
 
     if old_status_id != new_status_id and user.mango_user_id is not None:
-        api_url = settings.MANGO_SET_STATUS
+        api_url = src.config.MANGO_SET_STATUS
         payload = {
             'abonent_id': user.mango_user_id,
             'status': mango_status_id
@@ -212,7 +213,7 @@ async def update_telegram(
         mango_status_id = mango_statuses['online']
 
     if old_status_id != new_status_id and user.mango_user_id is not None:
-        api_url = settings.MANGO_SET_STATUS
+        api_url = src.config.MANGO_SET_STATUS
         payload = {
             'abonent_id': user.mango_user_id,
             'status': mango_status_id
