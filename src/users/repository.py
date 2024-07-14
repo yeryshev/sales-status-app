@@ -10,6 +10,40 @@ from src.models import User, Status, BusyTime
 from .schemas import UserUpdate
 
 
+class BusyTimeRepository:
+    @classmethod
+    async def get_busy_time_record(cls, user: Type[User], session: AsyncSession):
+        current_busy_time = await session.execute(select(BusyTime).where(BusyTime.user_id == user.id))
+        return current_busy_time.scalars().first()
+
+    @classmethod
+    async def add_busy_time(cls, session: AsyncSession, user: Type[User], value: int, deadline: datetime):
+        try:
+            new_busy_time = BusyTime(
+                user_id=user.id,
+                status_id=value,
+                end_time=deadline
+            )
+            session.add(new_busy_time)
+
+        except SQLAlchemyError as e:
+            print(str(e))
+
+    @classmethod
+    def update_busy_time_record(cls, current_busy_time_record: BusyTime, value: int, deadline: datetime):
+        current_busy_time_record.end_time = deadline
+        if value is not None:
+            current_busy_time_record.status_id = value
+
+
+async def handle_busy_time(session: AsyncSession, user: Type[User], value: int, deadline: datetime):
+    current_busy_time_record = await BusyTimeRepository.get_busy_time_record(user, session)
+    if current_busy_time_record:
+        BusyTimeRepository.update_busy_time_record(current_busy_time_record, value, deadline)
+    else:
+        await BusyTimeRepository.add_busy_time(session, user, value, deadline)
+
+
 class UserRepository:
     @classmethod
     async def get_user_by_id(
@@ -79,21 +113,7 @@ class UserRepository:
             if key == 'status_id':
                 status = await session.get(Status, value)
                 if status.is_deadline_required:
-                    current_busy_time = await session.execute(select(BusyTime).where(BusyTime.user_id == user.id))
-                    current_busy_time_record = current_busy_time.scalars().first()
-
-                    if current_busy_time_record:
-                        current_busy_time_record.end_time = deadline
-                        if value is not None:
-                            current_busy_time_record.status_id = value
-                    else:
-                        new_busy_time = BusyTime(
-                            user_id=user.id,
-                            status_id=value,
-                            end_time=deadline
-                        )
-                        session.add(new_busy_time)
-
+                    await handle_busy_time(session, user, value, deadline)
                 user.status_id = value
             else:
                 setattr(user, key, value)
