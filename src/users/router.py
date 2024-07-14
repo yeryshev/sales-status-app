@@ -10,31 +10,17 @@ from sqlalchemy.orm import selectinload
 
 import src.config
 from src.auth.base_config import current_user, current_superuser
-from src.config import settings
 from src.database import get_async_session
 from src.models import User
-from src.users.schemas import UserGet, UserUpdate
-from src.users.service import update_user, get_all_users
 from src.websockets.utils import send_ws_after_user_update
+from .repository import UserRepository
+from .schemas import UserGet, UserUpdate
+from .utils import get_new_mago_status_id
 
 users_router = APIRouter(prefix="/users", tags=["Users"])
 telegram_router = APIRouter(prefix="/telegram", tags=["Telegram"])
 
 telegram_secret_key = src.config.TELEGRAM_BOT_SECRET
-
-mango_statuses = {
-    'online': 1,
-    'dont_disturb': 2,
-    'break': 3,
-    'offline': 4
-}
-
-app_statuses = {
-    'work': [1],
-    'busy/meeting': [2, 7],
-    'lunch/away': [5, 6],
-    'offline': [3]
-}
 
 
 class GetUserStatus(BaseModel):
@@ -52,20 +38,15 @@ class UpdateTelegramRequest(BaseModel):
 
 @users_router.get("/me", response_model=UserGet)
 async def check_user(
-        user: UserGet = Depends(current_user),
+        user=Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
 ):
-    query = (select(User)
-             .where(User.id == user.id)
-             .options(selectinload(User.status), selectinload(User.busy_time))
-             )
-    result = await session.execute(query)
-    user_data = result.scalars().first()
+    db_user = await UserRepository.get_user_by_id(user.id, session)
 
-    if not user_data:
+    if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return user_data
+    return db_user
 
 
 @users_router.patch("/me", response_model=UserGet, response_model_by_alias=True)
@@ -90,16 +71,7 @@ async def update_user_router(
     old_status_id = user.status_id
     new_status_id = user_update.status_id if user_update.status_id is not None else old_status_id
 
-    if new_status_id in app_statuses['work']:
-        mango_status_id = mango_statuses['online']
-    elif new_status_id in app_statuses['lunch/away']:
-        mango_status_id = mango_statuses['dont_disturb']
-    elif new_status_id in app_statuses['busy/meeting']:
-        mango_status_id = mango_statuses['dont_disturb']
-    elif new_status_id in app_statuses['offline']:
-        mango_status_id = mango_statuses['offline']
-    else:
-        mango_status_id = mango_statuses['online']
+    mango_status_id = get_new_mago_status_id(new_status_id)
 
     if old_status_id != new_status_id and user.mango_user_id is not None:
         api_url = src.config.MANGO_SET_STATUS
@@ -113,7 +85,7 @@ async def update_user_router(
         if response.status_code != 200:
             raise HTTPException(status_code=500, detail="Failed to notify mango API")
 
-    updated_user = await update_user(user_update, session, user, deadline_dt)
+    updated_user = await UserRepository.update_user(user_update, session, user, deadline_dt)
 
     query = (select(User)
              .where(User.id == updated_user.id)
@@ -150,7 +122,7 @@ async def delete_user_router(
 async def get_users_router(
         session: AsyncSession = Depends(get_async_session)):
     try:
-        all_users = await get_all_users(session)
+        all_users = await UserRepository.get_all_users(session)
         return all_users
     except Exception:
         raise HTTPException(status_code=404, detail="Users not found")
@@ -168,8 +140,12 @@ async def get_first_name(
         raise HTTPException(status_code=404,
                             detail="Пользователь не найден. Убедись, что верно указал(а) свой телеграм-логин в "
                                    "профиле приложения ДРБ Статус.")
-    return {'name': user.first_name, 'status': user.status_id, 'title': user.status.title,
-            'is_deadline_required': user.status.is_deadline_required}
+    return {
+        'name': user.first_name,
+        'status': user.status_id,
+        'title': user.status.title,
+        'is_deadline_required': user.status.is_deadline_required
+    }
 
 
 @telegram_router.patch("/")
@@ -181,13 +157,11 @@ async def update_telegram(
     if request.secret != telegram_secret_key:
         raise HTTPException(status_code=403, detail="Invalid secret key")
 
-    query = select(User).where(func.lower(User.telegram) == request.username.lower())
-    result = await session.execute(query)
-    user_id = result.scalar_one_or_none().id
+    telegram_user = await UserRepository.get_user_by_telegram(request.username, session)
+    telegram_user_id = telegram_user.id
+    db_user = await session.get(User, telegram_user_id)
 
-    user = await session.get(User, user_id)
-
-    if user is None:
+    if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
     try:
@@ -198,24 +172,15 @@ async def update_telegram(
     update_data = {'statusId': request.status}
     user_update = UserUpdate(**update_data)
 
-    old_status_id = user.status_id
+    old_status_id = db_user.status_id
     new_status_id = user_update.status_id if user_update.status_id is not None else old_status_id
 
-    if new_status_id in app_statuses['work']:
-        mango_status_id = mango_statuses['online']
-    elif new_status_id in app_statuses['lunch/away']:
-        mango_status_id = mango_statuses['dont_disturb']
-    elif new_status_id in app_statuses['busy/meeting']:
-        mango_status_id = mango_statuses['dont_disturb']
-    elif new_status_id in app_statuses['offline']:
-        mango_status_id = mango_statuses['offline']
-    else:
-        mango_status_id = mango_statuses['online']
+    mango_status_id = get_new_mago_status_id(new_status_id)
 
-    if old_status_id != new_status_id and user.mango_user_id is not None:
+    if old_status_id != new_status_id and db_user.mango_user_id is not None:
         api_url = src.config.MANGO_SET_STATUS
         payload = {
-            'abonent_id': user.mango_user_id,
+            'abonent_id': db_user.mango_user_id,
             'status': mango_status_id
         }
         headers = {'Content-Type': 'application/json'}
@@ -224,7 +189,7 @@ async def update_telegram(
         if response.status_code != 200:
             raise HTTPException(status_code=500, detail="Failed to notify mango API")
 
-    updated_user = await update_user(user_update, session, user, deadline_dt)
+    updated_user = await UserRepository.update_user(user_update, session, db_user, deadline_dt)
 
     query = (select(User)
              .where(User.id == updated_user.id)

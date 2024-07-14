@@ -6,7 +6,6 @@ from celery.schedules import crontab
 from fastapi import HTTPException
 
 import src.config
-from src.config import settings
 from src.database import sync_session_factory
 from src.models import User
 from src.users.router import mango_statuses
