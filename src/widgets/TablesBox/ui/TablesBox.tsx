@@ -13,7 +13,6 @@ import { LastWeekTable } from './TeamResults/LastWeekResults/LastWeekTable';
 import { CurrentWeekResultTable } from './TeamResults/CurrentWeekResult/CurrentWeekResultTable';
 import Typography from '@mui/material/Typography';
 import { useLocation } from 'react-router-dom';
-import { AppRoutes, RoutePath } from '@/shared/config/routeConfig/routeConfig';
 import moment from 'moment/moment';
 import {
   fetchTeamList,
@@ -24,6 +23,7 @@ import {
   teamReducer,
   useGetAdditionalTeamData,
 } from '@/entities/Team';
+import { AppRoutes, RoutePath } from '@/shared/const/router';
 
 interface TabPanelProps {
   children?: ReactNode;

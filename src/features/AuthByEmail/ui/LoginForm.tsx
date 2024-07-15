@@ -13,7 +13,8 @@ import { getLoginIsLoading } from '../model/selectors/getLoginIsLoading/getLogin
 import { getLoginError } from '../model/selectors/getLoginError/getLoginError';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
+
+import { RoutePath } from '@/shared/const/router';
 
 const initialReducers: ReducersList = {
   loginForm: loginReducer,
