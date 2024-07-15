@@ -5,7 +5,6 @@ import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useSt
 import { getUserData, User } from '@/entities/User';
 import { statusActions } from '@/entities/Status';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { fetchAllComments } from '@/entities/Comment';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import Box from '@mui/system/Box';
 import Tabs from '@mui/material/Tabs';
@@ -179,7 +178,6 @@ export const TablesBox = memo(() => {
 
   useEffect(() => {
     dispatch(fetchTeamList());
-    dispatch(fetchAllComments());
   }, [dispatch]);
 
   return (
