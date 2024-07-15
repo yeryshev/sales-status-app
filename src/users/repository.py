@@ -112,7 +112,7 @@ class UserRepository:
         for key, value in update_data.items():
             if key == 'status_id':
                 status = await session.get(Status, value)
-                if status.is_deadline_required:
+                if status.is_deadline_required and status.id != user.status_id:
                     await handle_busy_time(session, user, value, deadline)
                 user.status_id = value
             else:
