@@ -2,7 +2,7 @@ import { Tooltip } from '@mui/material';
 import { TeamTable } from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import { checkUser, getUserData, User } from '@/entities/User';
+import { getUserData, User } from '@/entities/User';
 import { statusActions } from '@/entities/Status';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
 import { fetchAllComments } from '@/entities/Comment';
@@ -148,7 +148,6 @@ export const TablesBox = memo(() => {
 
   const handleStatusChange = useCallback(
     (event: MessageEvent) => {
-      dispatch(checkUser());
       const dataFromSocket = JSON.parse(event.data);
       const { userId, updatedAt, isWorkingRemotely } = dataFromSocket;
 
@@ -165,32 +164,6 @@ export const TablesBox = memo(() => {
           }),
         );
         dispatch(statusActions.changeStatus(user.statusId));
-      }
-
-      if ('commentId' in dataFromSocket && user) {
-        const { commentId, comment } = dataFromSocket;
-        if (comment) {
-          dispatch(
-            teamActions.setTeamLocal({
-              userId,
-              commentId,
-              comment,
-              isWorkingRemotely,
-              updatedAt,
-            }),
-          );
-        } else if (commentId === null) {
-          dispatch(
-            teamActions.setTeamLocal({
-              userId,
-              comment: null,
-              isWorkingRemotely,
-              updatedAt,
-            }),
-          );
-        } else {
-          dispatch(fetchTeamList());
-        }
       }
     },
     [dispatch, user],
