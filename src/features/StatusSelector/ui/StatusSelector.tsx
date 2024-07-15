@@ -1,17 +1,15 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { useGetStatuses } from '@/entities/Status/api/statusApi';
-import { getUserData } from '@/entities/User';
+import { statusActions, useGetStatuses } from '@/entities/Status';
+import { getUserData, getUserIsLoading, updateUser } from '@/entities/User';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { statusActions } from '@/entities/Status';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import { statusSelectorReducer } from '../model/slices/statusSelectorSlice';
 import { feminizeWord } from '@/shared/lib/feminizeWords/feminizeWords';
 import { AwayConfirmationModal } from './AwayConfirmationModal/AwayConfirmationModal';
-import { updateUser } from '@/entities/User/model/actions/userActions';
 import Box from '@mui/material/Box';
 
 const reducers: ReducersList = {
@@ -20,6 +18,7 @@ const reducers: ReducersList = {
 
 export const StatusSelector = memo(() => {
   const user = useSelector(getUserData);
+  const userIsLoading = useSelector(getUserIsLoading);
   const dispatch = useAppDispatch();
   const { data: statuses } = useGetStatuses();
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -59,7 +58,13 @@ export const StatusSelector = memo(() => {
     <DynamicModuleLoader reducers={reducers}>
       <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={0.5} flexDirection={'column'}>
         <FormControl fullWidth>
-          <Select value={userStatus?.title || ''} onChange={handleChangeMainStatus} size={'small'} fullWidth>
+          <Select
+            value={userStatus?.title || ''}
+            onChange={handleChangeMainStatus}
+            size={'small'}
+            fullWidth
+            disabled={userIsLoading}
+          >
             {cachedStatuses?.map((status) => (
               <MenuItem key={status.id} value={status.title} disabled={user?.statusId === status.id}>
                 {feminizeWord(status.title, user?.isFemale)}

@@ -5,15 +5,13 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Unstable_Grid2';
 import Button from '@mui/material/Button';
-import { updateUser } from '@/entities/User/model/actions/userActions';
-import { fetchCommentsByUserId, getUserComments } from '@/entities/Comment';
+import { getUserData, updateUser } from '@/entities/User';
+import { deleteComment, fetchCommentsByUserId, getUserComments } from '@/entities/Comment';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { deleteComment } from '@/entities/Comment/model/services/deleteComment/deleteComment';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import { selectCommentFormActions, selectCommentFormReducer } from '../model/slices/selectCommentFormSlice';
 import { getCommentSelectItem } from '../model/selectors/selectCommentFormSelectors';
-import { getUserData } from '@/entities/User';
 
 const reducers: ReducersList = {
   selectComment: selectCommentFormReducer,

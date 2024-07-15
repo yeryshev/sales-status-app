@@ -1,24 +1,12 @@
 import { Tooltip } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
 import { TeamTable } from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import { UserTable } from './UserTable/UserTable';
-import { checkUser, getUserData, User } from '@/entities/User';
-import { teamActions, teamReducer } from '@/entities/Team/model/slice/teamSlice';
+import { getUserData, User } from '@/entities/User';
 import { statusActions } from '@/entities/Status';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { fetchAllComments } from '@/entities/Comment';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
-import {
-  getAccountManagerTeamList,
-  getInboundTeamList,
-  getTeamIsLoading,
-  getTeammate,
-} from '@/entities/Team/model/selectors/teamSelectors';
-import { fetchTeamList } from '@/entities/Team/model/services/fetchTeamList/fetchTeamList';
 import Box from '@mui/system/Box';
-import { useGetAdditionalTeamData } from '@/entities/Team/api/teamTasksApi';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { LastWeekTable } from './TeamResults/LastWeekResults/LastWeekTable';
@@ -27,6 +15,15 @@ import Typography from '@mui/material/Typography';
 import { useLocation } from 'react-router-dom';
 import { AppRoutes, RoutePath } from '@/shared/config/routeConfig/routeConfig';
 import moment from 'moment/moment';
+import {
+  fetchTeamList,
+  getAccountManagerTeamList,
+  getInboundTeamList,
+  getTeamIsLoading,
+  teamActions,
+  teamReducer,
+  useGetAdditionalTeamData,
+} from '@/entities/Team';
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -77,8 +74,6 @@ export const TablesBox = memo(() => {
   const user = useSelector(getUserData);
   const inboundTeamList = useSelector(getInboundTeamList);
   const accountManagerTeamList = useSelector(getAccountManagerTeamList);
-  let teamList;
-  const teammate = useSelector(getTeammate);
   const teamIsLoading = useSelector(getTeamIsLoading);
   const dispatch = useAppDispatch();
   const [tabNumber, setTabNumber] = useState(0);
@@ -87,11 +82,8 @@ export const TablesBox = memo(() => {
 
   const isAccountManagersRoute = location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS];
 
-  if (isAccountManagersRoute) {
-    teamList = accountManagerTeamList;
-  } else {
-    teamList = inboundTeamList;
-  }
+  let teamList;
+  isAccountManagersRoute ? (teamList = accountManagerTeamList) : (teamList = inboundTeamList);
 
   const { data: additionalTeamData } = useGetAdditionalTeamData(isAccountManagersRoute ? 'account' : 'inbound');
 
@@ -128,9 +120,6 @@ export const TablesBox = memo(() => {
     }
   }, [teamIsLoading, teamList, deadlinesNumbersObj, checkDeadlines]);
 
-  const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
-  const shouldSeeUserTable = !teamIsLoading && teammate && userOnRightPage;
-
   const {
     tasks = {},
     tickets = {},
@@ -158,7 +147,6 @@ export const TablesBox = memo(() => {
 
   const handleStatusChange = useCallback(
     (event: MessageEvent) => {
-      dispatch(checkUser());
       const dataFromSocket = JSON.parse(event.data);
       const { userId, updatedAt, isWorkingRemotely } = dataFromSocket;
 
@@ -176,32 +164,6 @@ export const TablesBox = memo(() => {
         );
         dispatch(statusActions.changeStatus(user.statusId));
       }
-
-      if ('commentId' in dataFromSocket && user) {
-        const { commentId, comment } = dataFromSocket;
-        if (comment) {
-          dispatch(
-            teamActions.setTeamLocal({
-              userId,
-              commentId,
-              comment,
-              isWorkingRemotely,
-              updatedAt,
-            }),
-          );
-        } else if (commentId === null) {
-          dispatch(
-            teamActions.setTeamLocal({
-              userId,
-              comment: null,
-              isWorkingRemotely,
-              updatedAt,
-            }),
-          );
-        } else {
-          dispatch(fetchTeamList());
-        }
-      }
     },
     [dispatch, user],
   );
@@ -216,74 +178,59 @@ export const TablesBox = memo(() => {
 
   useEffect(() => {
     dispatch(fetchTeamList());
-    dispatch(fetchAllComments());
   }, [dispatch]);
 
   return (
     <DynamicModuleLoader reducers={reducers}>
-      {shouldSeeUserTable && (
-        <Grid xs={12}>
-          <UserTable
-            teammate={teammate}
+      <Box sx={{ width: '100%' }}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={tabNumber} onChange={handleChangeTab} aria-label="basic tabs">
+            <Tab label="Команда" {...a11yProps(0)} />
+            <Tooltip
+              title={
+                <Typography variant={'inherit'}>
+                  Рейтинг менеджеров по новым клиентам
+                  <br />
+                  ТОП 3 получают бейджи каждую неделю
+                </Typography>
+              }
+            >
+              <Tab label="Успехи" {...a11yProps(1)} />
+            </Tooltip>
+          </Tabs>
+        </Box>
+        <CustomTabPanel value={tabNumber} index={0}>
+          <TeamTable
+            teamList={teamList}
+            teamIsLoading={teamIsLoading}
             mango={mango}
             tasks={tasks}
             tickets={tickets}
-            teamIsLoading={teamIsLoading}
+            vacationStates={vacation}
             avatarsAndBirthday={avatarsAndBirthday}
             isDeadlineReachedObject={deadlines}
+            isAccountManagersRoute={isAccountManagersRoute}
           />
-        </Grid>
-      )}
-      <Grid xs={12}>
-        <Box sx={{ width: '100%' }}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={tabNumber} onChange={handleChangeTab} aria-label="basic tabs">
-              <Tab label="Команда" {...a11yProps(0)} />
-              <Tooltip
-                title={
-                  <Typography variant={'inherit'}>
-                    Рейтинг менеджеров по новым клиентам
-                    <br />
-                    ТОП 3 получают бейджи каждую неделю
-                  </Typography>
-                }
-              >
-                <Tab label="Успехи" {...a11yProps(1)} />
-              </Tooltip>
-            </Tabs>
-          </Box>
-          <CustomTabPanel value={tabNumber} index={0}>
-            <TeamTable
+        </CustomTabPanel>
+        <CustomTabPanel value={tabNumber} index={1}>
+          <Box display={'flex'} gap={2} flexDirection={{ sm: 'column', md: 'row' }}>
+            <CurrentWeekResultTable
               teamList={teamList}
               teamIsLoading={teamIsLoading}
-              mango={mango}
               tasks={tasks}
-              tickets={tickets}
-              vacationStates={vacation}
               avatarsAndBirthday={avatarsAndBirthday}
-              isDeadlineReachedObject={deadlines}
+              isAccountManagersRoute={isAccountManagersRoute}
             />
-          </CustomTabPanel>
-          <CustomTabPanel value={tabNumber} index={1}>
-            <Box display={'flex'} gap={2}>
-              <CurrentWeekResultTable
-                teamList={teamList}
-                teamIsLoading={teamIsLoading}
-                tasks={tasks}
-                avatarsAndBirthday={avatarsAndBirthday}
-                isAccountManagersRoute={isAccountManagersRoute}
-              />
-              <LastWeekTable
-                teamList={teamList}
-                teamIsLoading={teamIsLoading}
-                tasks={tasks}
-                lastWeekStats={lastWeekStat}
-                isAccountManagersRoute={isAccountManagersRoute}
-              />
-            </Box>
-          </CustomTabPanel>
-        </Box>
-      </Grid>
+            <LastWeekTable
+              teamList={teamList}
+              teamIsLoading={teamIsLoading}
+              tasks={tasks}
+              lastWeekStats={lastWeekStat}
+              isAccountManagersRoute={isAccountManagersRoute}
+            />
+          </Box>
+        </CustomTabPanel>
+      </Box>
     </DynamicModuleLoader>
   );
 });

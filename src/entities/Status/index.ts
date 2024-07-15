@@ -1,7 +1,5 @@
-import { StatusBox } from './ui/StatusBox';
-import { statusReducer } from './model/slice/statusSlice';
-import { StatusSchema } from './model/types/StatusSchema';
-import { Status } from './model/types/Status';
-
-export { statusReducer, StatusBox, type StatusSchema, type Status };
-export { statusActions } from './model/slice/statusSlice';
+export { StatusBox } from './ui/StatusBox';
+export { statusReducer, statusActions } from './model/slice/statusSlice';
+export { type StatusSchema } from './model/types/StatusSchema';
+export { type Status } from './model/types/Status';
+export { useGetStatuses } from './api/statusApi';

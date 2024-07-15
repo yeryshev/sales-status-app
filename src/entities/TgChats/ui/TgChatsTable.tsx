@@ -8,14 +8,29 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { useGetTgChats } from '../api/TgChatsApi';
 import { Link as RouterLink } from 'react-router-dom';
-import { Link as MuiLink } from '@mui/material';
+import { Link as MuiLink, Skeleton } from '@mui/material';
+
+const TgChatsRowSkeleton = memo(() => {
+  return (
+    <TableRow>
+      <TableCell component="th" scope="row" width={'190px'}>
+        <Skeleton variant={'text'} />
+      </TableCell>
+      <TableCell align="left">
+        <Skeleton variant={'text'} />
+      </TableCell>
+    </TableRow>
+  );
+});
+
+const getSkeletons = () => new Array(12).fill(0).map((_, index) => <TgChatsRowSkeleton key={index} />);
 
 export const TgChatsTable = memo(() => {
-  const { data: rows } = useGetTgChats();
+  const { data: rows, isLoading } = useGetTgChats();
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table aria-label="chats table">
         <TableHead>
           <TableRow>
             <TableCell>Название</TableCell>
@@ -23,16 +38,18 @@ export const TgChatsTable = memo(() => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows?.chats.map((row) => (
-            <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-              <TableCell component="th" scope="row">
-                <MuiLink component={RouterLink} to={row.link} key={row.id} target={'_blank'}>
-                  {row.name}
-                </MuiLink>
-              </TableCell>
-              <TableCell align="left">{row.description}</TableCell>
-            </TableRow>
-          ))}
+          {isLoading
+            ? getSkeletons()
+            : rows?.chats.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell component="th" scope="row">
+                    <MuiLink component={RouterLink} to={row.link} key={row.id} target={'_blank'}>
+                      {row.name}
+                    </MuiLink>
+                  </TableCell>
+                  <TableCell align="left">{row.description}</TableCell>
+                </TableRow>
+              ))}
         </TableBody>
       </Table>
     </TableContainer>

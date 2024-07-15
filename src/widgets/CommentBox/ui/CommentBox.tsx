@@ -1,6 +1,6 @@
 import { memo } from 'react';
-import { AddCommentForm } from 'src/features/Comment/AddCommentForm';
-import { SelectCommentForm } from 'src/features/Comment/SelectCommentForm';
+import { AddCommentForm } from '@/features/AddCommentForm';
+import { SelectCommentForm } from '@/features/SelectCommentForm';
 import FormLabel from '@mui/material/FormLabel';
 
 export const CommentBox = memo(() => {

@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 import { AppRouter } from '../providers/router';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { checkUser } from '@/entities/User/model/actions/userActions';
+import { checkUser, getUserMounted } from '@/entities/User';
 import { useSelector } from 'react-redux';
-import { getUserMounted } from '@/entities/User';
 
 const BaseLayout = () => {
   const dispatch = useAppDispatch();

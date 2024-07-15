@@ -1,7 +1,8 @@
 import { type ReactNode, useMemo, useState } from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import { ThemeContext, Theme } from '../lib/ThemeContext';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Theme, ThemeContext } from '../lib/ThemeContext';
 import { LOCAL_STORAGE_THEME_KEY } from '@/shared/const/localStorage';
+import { grey } from '@mui/material/colors';
 
 const defaultTheme = (localStorage.getItem(LOCAL_STORAGE_THEME_KEY) as Theme) || Theme.LIGHT;
 
@@ -36,7 +37,7 @@ const ToggleColorMode = ({ children }: { children: ReactNode }) => {
         palette: {
           mode,
           ...(mode === Theme.DARK && {
-            background: { paper: 'palette.action.disabledBackground' },
+            background: { paper: grey[900] },
           }),
         },
       }),

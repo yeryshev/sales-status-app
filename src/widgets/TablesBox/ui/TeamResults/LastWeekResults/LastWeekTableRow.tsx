@@ -1,8 +1,7 @@
 import { memo } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import { Teammate } from '@/entities/Team/model/types/teammate';
-import { UserLastWeekStats, UserTasks } from '@/entities/Team/model/types/tasksWebsocket';
+import { Teammate, UserLastWeekStats, UserTasks } from '@/entities/Team';
 import Typography from '@mui/material/Typography';
 import { useSelector } from 'react-redux';
 import { getUserData } from '@/entities/User';
