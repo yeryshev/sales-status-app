@@ -10,7 +10,7 @@ import Alert from '@mui/material/Alert';
 import { addCommentFormActions, addCommentFormReducer } from '../../model/slices/addCommentFormSlice';
 import { getAddCommentFormText } from '../../model/selectors/addCommentFormSelectors';
 import { useSelector } from 'react-redux';
-import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { addComment } from '@/entities/Comment';
 
 const reducers: ReducersList = {

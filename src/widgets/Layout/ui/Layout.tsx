@@ -1,8 +1,8 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { type ReactNode, useCallback, useState } from 'react';
-import { Navbar } from '@/widgets/Navbar';
 import Box from '@mui/material/Box';
-import { Sidebar } from '@/widgets/Sidebar';
+import { Sidebar } from '../../Sidebar';
+import { Navbar } from '../../Navbar';
 
 interface LayoutProps {
   children: ReactNode;

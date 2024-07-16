@@ -1,4 +1,4 @@
-import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { Layout } from '@/widgets/Layout';
 import Container from '@mui/material/Container';
 import { useCallback, useEffect } from 'react';

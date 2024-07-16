@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { AppRouter } from '../providers/router';
-import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { checkUser, getUserMounted } from '@/entities/User';
 import { useSelector } from 'react-redux';
 

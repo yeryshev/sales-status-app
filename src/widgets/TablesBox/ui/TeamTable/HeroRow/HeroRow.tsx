@@ -4,7 +4,7 @@ import TableRow from '@mui/material/TableRow';
 import { useSelector } from 'react-redux';
 import { Teammate, UserAvatarsAndBirthday, UserTasks, UserTickets } from '@/entities/Team';
 import { getUserData, updateUser } from '@/entities/User';
-import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { HeroRowCellsList } from './HeroRowCellsList';
 
 export interface HeroRowProps {

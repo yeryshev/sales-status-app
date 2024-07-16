@@ -1,8 +1,8 @@
 import Loader from '@/shared/ui/Loader/Loader';
 import { Suspense, useCallback } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import RequireAuth from '@/app/providers/router/ui/RequireAuth';
-import { routerConfig } from '@/app/providers/router/config/routerConfig';
+import RequireAuth from './RequireAuth';
+import { routerConfig } from '../config/routerConfig';
 import { AppRouteProps } from '@/shared/types/router';
 
 const AppRouter = () => {

@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import { getUserData, updateUser } from '@/entities/User';
 import { deleteComment, fetchCommentsByUserId, getUserComments } from '@/entities/Comment';
 import { useSelector } from 'react-redux';
-import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import { selectCommentFormActions, selectCommentFormReducer } from '../model/slices/selectCommentFormSlice';
 import { getCommentSelectItem } from '../model/selectors/selectCommentFormSelectors';

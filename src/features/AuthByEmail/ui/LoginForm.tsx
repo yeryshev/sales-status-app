@@ -1,4 +1,4 @@
-import { useAppDispatch } from '../../../shared/lib/hooks/AppDispatch';
+import { useAppDispatch } from '../../../shared/lib/hooks/useAppDispatch';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
