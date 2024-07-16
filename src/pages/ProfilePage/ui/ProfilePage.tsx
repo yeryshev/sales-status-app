@@ -14,7 +14,7 @@ import { updateProfileData } from '../model/services/updateProfileData/updatePro
 import { getProfileValidateErrors } from '../model/selectors/getProfileValidateError/getProfileValidateErrors';
 import Alert from '@mui/material/Alert';
 import { getProfileData } from '../model/selectors/getProfileData/getProfileData';
-import { PageWrapper } from '@/shared/ui/PageWrapper/PageWrapper';
+import { PageWrapper } from '@/shared/ui/PageWrapper';
 import { ValidateProfileError } from '../model/consts/consts';
 
 const reducers: ReducersList = {

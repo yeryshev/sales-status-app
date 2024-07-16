@@ -1,4 +1,3 @@
-import { CommentsSchema } from '@/entities/Comment';
 import { StatusSchema } from '@/entities/Status';
 import { TeamTableSchema } from 'src/entities/Team';
 import { UserSchema } from '@/entities/User';
@@ -7,22 +6,17 @@ import { CombinedState, EnhancedStore, Reducer, ReducersMapObject } from '@redux
 import { AnyAction } from 'redux';
 import { ProfileSchema } from '@/pages/ProfilePage';
 import { AxiosInstance } from 'axios';
-import { AddCommentFormSchema } from '@/features/AddCommentForm';
-import { SelectCommentFormSchema } from '@/features/SelectCommentForm';
 import { rtkApi } from '@/shared/api/rtkApi';
 import { StatusSelectorSchema } from '@/features/StatusSelector';
 
 export interface StateSchema {
   user: UserSchema;
-  comments: CommentsSchema;
   status: StatusSchema;
   [rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>;
 
   // Асинхронные редюсеры
   loginForm?: LoginSchema;
   profile?: ProfileSchema;
-  addCommentForm?: AddCommentFormSchema;
-  selectComment?: SelectCommentFormSchema;
   selectStatus?: StatusSelectorSchema;
   teamTable?: TeamTableSchema;
 }

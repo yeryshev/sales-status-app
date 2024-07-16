@@ -1,4 +1,4 @@
-import Loader from '@/shared/ui/Loader/Loader';
+import { Loader } from '@/shared/ui/Loader';
 import { Suspense, useCallback } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import RequireAuth from './RequireAuth';

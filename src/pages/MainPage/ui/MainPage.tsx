@@ -2,7 +2,7 @@ import Container from '@mui/material/Container';
 import { Layout } from '@/widgets/Layout';
 import { memo } from 'react';
 import { TablesBox } from '@/widgets/TablesBox';
-import { PageWrapper } from '@/shared/ui/PageWrapper/PageWrapper';
+import { PageWrapper } from '@/shared/ui/PageWrapper';
 
 const MainPage = memo(() => {
   return (
