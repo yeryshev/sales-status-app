@@ -16,6 +16,7 @@ import Alert from '@mui/material/Alert';
 import { getProfileData } from '../model/selectors/getProfileData/getProfileData';
 import { PageWrapper } from '@/shared/ui/PageWrapper';
 import { ValidateProfileError } from '../model/consts/consts';
+import { Helmet } from 'react-helmet';
 
 const reducers: ReducersList = {
   profile: profileReducer,
@@ -88,6 +89,9 @@ const ProfilePage = () => {
     <DynamicModuleLoader reducers={reducers}>
       <Layout>
         <PageWrapper>
+          <Helmet>
+            <title>Профиль</title>
+          </Helmet>
           <Container maxWidth="lg" className="container">
             <ProfileCard
               formData={formData}

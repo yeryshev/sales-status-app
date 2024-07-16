@@ -24,6 +24,7 @@ import {
   useGetAdditionalTeamData,
 } from '@/entities/Team';
 import { AppRoutes, RoutePath } from '@/shared/const/router';
+import { Helmet } from 'react-helmet';
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -182,6 +183,9 @@ export const TablesBox = memo(() => {
 
   return (
     <DynamicModuleLoader reducers={reducers}>
+      <Helmet>
+        <title>{isAccountManagersRoute ? 'Аккаунт менеджеры' : 'Входящие'}</title>
+      </Helmet>
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={tabNumber} onChange={handleChangeTab} aria-label="basic tabs">

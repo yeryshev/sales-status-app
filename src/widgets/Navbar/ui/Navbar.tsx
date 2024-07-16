@@ -44,7 +44,7 @@ export const Navbar = memo(({ toggleSideBar }: NavbarProps) => {
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
             <Link to={RoutePath.main} style={{ textDecoration: 'none', color: 'inherit' }}>
-              Sales Team
+              Sales Status
             </Link>
           </Typography>
           <ThemeSwitcher />
