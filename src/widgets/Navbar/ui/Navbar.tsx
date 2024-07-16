@@ -9,7 +9,8 @@ import { clearUser } from '@/entities/User';
 import { ThemeSwitcher } from '@/widgets/ThemeSwitcher';
 import { memo, useCallback } from 'react';
 import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
+
+import { RoutePath } from '@/shared/const/router';
 
 interface NavbarProps {
   toggleSideBar: () => () => void;

@@ -1,8 +1,9 @@
 import Loader from '@/shared/ui/Loader/Loader';
-import { AppRouteProps, routeConfig } from '@/shared/config/routeConfig/routeConfig';
 import { Suspense, useCallback } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import RequireAuth from '@/app/providers/router/ui/RequireAuth';
+import { routerConfig } from '@/app/providers/router/config/routerConfig';
+import { AppRouteProps } from '@/shared/types/router';
 
 const AppRouter = () => {
   const renderWithWrapper = useCallback((route: AppRouteProps) => {
@@ -16,7 +17,7 @@ const AppRouter = () => {
     );
   }, []);
 
-  return <Routes>{Object.values(routeConfig).map(renderWithWrapper)}</Routes>;
+  return <Routes>{Object.values(routerConfig).map(renderWithWrapper)}</Routes>;
 };
 
 export default AppRouter;
