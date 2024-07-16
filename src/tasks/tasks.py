@@ -8,7 +8,8 @@ from fastapi import HTTPException
 import src.config
 from src.database import sync_session_factory
 from src.models import User
-from src.users.router import mango_statuses
+
+from src.users.consts import mango_statuses
 
 celery = Celery('tasks')
 celery.conf.broker_url = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379")
