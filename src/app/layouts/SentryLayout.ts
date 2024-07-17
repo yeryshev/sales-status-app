@@ -5,7 +5,6 @@ import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType }
 Sentry.init({
   dsn: import.meta.env.VITE_SENTRY_DSN,
   integrations: [
-    Sentry.browserTracingIntegration(),
     Sentry.replayIntegration(),
     Sentry.reactRouterV6BrowserTracingIntegration({
       useEffect,
