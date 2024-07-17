@@ -17,12 +17,7 @@ export {
   type UserVacation,
 } from './model/types/tasksWebsocket';
 
-export {
-  getTeammate,
-  getAccountManagerTeamList,
-  getInboundTeamList,
-  getTeamIsLoading,
-} from './model/selectors/teamSelectors';
+export { getAccountManagerTeamList, getInboundTeamList, getTeamIsLoading } from './model/selectors/teamSelectors';
 
 export { fetchTeamList } from './model/services/fetchTeamList/fetchTeamList';
 

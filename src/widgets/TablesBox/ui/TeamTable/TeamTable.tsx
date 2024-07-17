@@ -12,7 +12,6 @@ import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import { getUserData, getUserId, User } from '@/entities/User';
 import { HeroRow } from './HeroRow/HeroRow';
 import {
-  getTeammate,
   Teammate,
   UsersAvatarsAndBirthday,
   UsersMango,
@@ -54,9 +53,8 @@ export const TeamTable = memo((props: TeamTableProps) => {
 
   const userId = useSelector(getUserId);
   const user = useSelector(getUserData);
-  const teammate = useSelector(getTeammate);
   const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
-  const shouldSeeHeroRow = !teamIsLoading && teammate && userOnRightPage;
+  const shouldSeeHeroRow = !teamIsLoading && user?.isManager && userOnRightPage;
   const teamListIsNotEmpty = teamList.length > 0;
   const thereAreCoordinators = teamList.find((teammate) => teammate.isCoordinator);
 
@@ -127,12 +125,12 @@ export const TeamTable = memo((props: TeamTableProps) => {
           {shouldSeeHeroRow && (
             <>
               <HeroRow
-                teammate={teammate}
-                tasks={tasks[teammate.insideId]}
-                tickets={tickets[teammate.insideId]}
-                avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}
+                teammate={user}
+                tasks={tasks[user.insideId]}
+                tickets={tickets[user.insideId]}
+                avatarsAndBirthday={avatarsAndBirthday[user.insideId]}
                 teamIsLoading={teamIsLoading}
-                isDeadlineReached={isDeadlineReachedObject[teammate.id]}
+                isDeadlineReached={isDeadlineReachedObject[user.id]}
                 isAccountManagersRoute={isAccountManagersRoute}
               />
               <StyledTableRow>

@@ -16,12 +16,13 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       tsconfigPaths(),
-      sentryVitePlugin({
-        org: env.VITE_SENTRY_ORGANIZATION,
-        project: env.VITE_SENTRY_PROJECT,
-        authToken: env.VITE_SENTRY_AUTH_TOKEN,
-        telemetry: false,
-      }),
+      mode === 'production' &&
+        sentryVitePlugin({
+          org: env.VITE_SENTRY_ORGANIZATION,
+          project: env.VITE_SENTRY_PROJECT,
+          authToken: env.VITE_SENTRY_AUTH_TOKEN,
+          telemetry: false,
+        }),
     ],
     optimizeDeps: {
       include: ['@mui/material/Tooltip', '@emotion/styled', '@mui/material/Unstable_Grid2'],
