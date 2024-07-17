@@ -1,3 +1,4 @@
+import './layouts/SentryLayout';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import BaseLayout from './layouts/BaseLayout';
