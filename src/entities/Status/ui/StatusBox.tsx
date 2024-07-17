@@ -7,7 +7,7 @@ import FormLabel from '@mui/material/FormLabel';
 import Grid from '@mui/material/Unstable_Grid2';
 import { type ChangeEvent, useEffect } from 'react';
 import { statusActions } from '../model/slice/statusSlice';
-import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { getStatusData } from '../model/selectors/getStatusValue/getStatusData';
 import { useGetStatuses } from '../api/statusApi';
 import { Status } from '../model/types/Status';

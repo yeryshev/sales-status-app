@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { statusActions, useGetStatuses } from '@/entities/Status';
 import { getUserData, getUserIsLoading, updateUser } from '@/entities/User';
 import FormControl from '@mui/material/FormControl';

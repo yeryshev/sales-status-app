@@ -20,9 +20,6 @@ export const teamSlice = createSlice({
               teammate.status = action.payload.status;
               teammate.busyTime = action.payload.busyTime;
             }
-            if ('comment' in action.payload) {
-              teammate.comment = action.payload.comment;
-            }
             teammate.updatedAt = action.payload.updatedAt;
             teammate.isWorkingRemotely = action.payload.isWorkingRemotely;
           }

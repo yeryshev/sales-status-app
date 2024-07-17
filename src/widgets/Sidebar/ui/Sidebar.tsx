@@ -6,7 +6,7 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import { memo } from 'react';
-import { SidebarItemsList } from '../model/items';
+import { SidebarItemsList } from './SidebarItem/items';
 import { SidebarItem } from './SidebarItem/SidebarItem';
 
 interface SidebarProps {

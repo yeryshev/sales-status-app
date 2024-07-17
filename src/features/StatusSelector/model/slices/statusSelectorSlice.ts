@@ -6,7 +6,7 @@ const initialState: StatusSelectorSchema = {
   statusSelectItem: undefined,
 };
 
-export const selectCommentFormSlice = createSlice({
+export const statusSelectorSlice = createSlice({
   name: 'selectCommentFormSlice',
   initialState,
   reducers: {
@@ -16,5 +16,5 @@ export const selectCommentFormSlice = createSlice({
   },
 });
 
-export const { actions: statusSelectorActions } = selectCommentFormSlice;
-export const { reducer: statusSelectorReducer } = selectCommentFormSlice;
+export const { actions: statusSelectorActions } = statusSelectorSlice;
+export const { reducer: statusSelectorReducer } = statusSelectorSlice;

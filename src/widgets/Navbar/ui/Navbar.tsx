@@ -6,9 +6,9 @@ import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { clearUser } from '@/entities/User';
-import { ThemeSwitcher } from '@/widgets/ThemeSwitcher';
+import { ThemeSwitcher } from '@/features/ThemeSwitcher';
 import { memo, useCallback } from 'react';
-import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 
 import { RoutePath } from '@/shared/const/router';
 
@@ -44,7 +44,7 @@ export const Navbar = memo(({ toggleSideBar }: NavbarProps) => {
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
             <Link to={RoutePath.main} style={{ textDecoration: 'none', color: 'inherit' }}>
-              Sales Team
+              Sales Status
             </Link>
           </Typography>
           <ThemeSwitcher />

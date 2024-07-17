@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { getUserData, User } from '@/entities/User';
 import { statusActions } from '@/entities/Status';
-import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import Box from '@mui/system/Box';
 import Tabs from '@mui/material/Tabs';
@@ -24,6 +24,7 @@ import {
   useGetAdditionalTeamData,
 } from '@/entities/Team';
 import { AppRoutes, RoutePath } from '@/shared/const/router';
+import { Helmet } from 'react-helmet';
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -182,6 +183,9 @@ export const TablesBox = memo(() => {
 
   return (
     <DynamicModuleLoader reducers={reducers}>
+      <Helmet>
+        <title>{isAccountManagersRoute ? 'Аккаунт менеджеры' : 'Входящие'}</title>
+      </Helmet>
       <Box sx={{ width: '100%' }}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={tabNumber} onChange={handleChangeTab} aria-label="basic tabs">

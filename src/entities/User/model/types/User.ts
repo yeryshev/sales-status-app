@@ -1,5 +1,4 @@
 import { Status } from '@/entities/Status';
-import { Comment } from '@/entities/Comment';
 
 export interface BusyTime {
   id: number;
@@ -23,12 +22,10 @@ export interface User {
   isManager: boolean;
   isAccountManager: boolean;
   statusId: number;
-  commentId: number | null;
   isActive: boolean;
   isSuperuser: boolean;
   isVerified: boolean;
   status: Status;
-  comment: Comment;
   busyTime: BusyTime;
   updatedAt: string;
 }

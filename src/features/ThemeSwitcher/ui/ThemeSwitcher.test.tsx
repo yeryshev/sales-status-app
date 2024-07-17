@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { ThemeSwitcher } from '..';
+import { ThemeSwitcher } from '../index';
 import { render } from '@testing-library/react';
 
 describe('ThemeSwitcher', () => {
