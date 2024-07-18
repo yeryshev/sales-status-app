@@ -6,11 +6,15 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import { memo } from 'react';
-import { LoginForm } from '@/features/Authentication/AuthByEmail';
+import { LoginForm } from '@/features/AuthByEmail';
+import { Helmet } from 'react-helmet';
 
 const LoginPage = memo(() => {
   return (
     <>
+      <Helmet>
+        <title>Авторизация</title>
+      </Helmet>
       <CssBaseline />
       <AppBar position="relative">
         <Toolbar>

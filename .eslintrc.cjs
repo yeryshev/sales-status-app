@@ -18,6 +18,20 @@ module.exports = {
         patterns: ["@mui/*/*/*"]
       }
     ],
-    "@eryshev/fsd/path-checker": ["error", { "alias": "@" }],
+    "@eryshev/fsd/path-checker": ["error", { alias: "@" }],
+    "@eryshev/fsd/public-api-imports": [
+      'error',
+      {
+        alias: '@',
+        testFilesPatterns: ['**/*.test.*', '**/*.story.*', '**/StoreDecorator.tsx'],
+      },
+    ],
+    "@eryshev/fsd/layer-imports": [
+      'error',
+      {
+        alias: '@',
+        ignoreImportPatterns: ['**/StoreProvider', '**/testing'],
+      },
+    ],
   }
 };

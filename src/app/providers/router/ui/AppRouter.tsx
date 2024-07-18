@@ -1,8 +1,10 @@
-import Loader from '@/shared/ui/Loader/Loader';
-import { AppRouteProps, routeConfig } from '@/shared/config/routeConfig/routeConfig';
+import { Loader } from '@/shared/ui/Loader';
 import { Suspense, useCallback } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import RequireAuth from '@/app/providers/router/ui/RequireAuth';
+import RequireAuth from './RequireAuth';
+import { routerConfig } from '../config/routerConfig';
+import { AppRouteProps } from '@/shared/types/router';
+import { Helmet } from 'react-helmet';
 
 const AppRouter = () => {
   const renderWithWrapper = useCallback((route: AppRouteProps) => {
@@ -16,7 +18,14 @@ const AppRouter = () => {
     );
   }, []);
 
-  return <Routes>{Object.values(routeConfig).map(renderWithWrapper)}</Routes>;
+  return (
+    <>
+      <Helmet>
+        <title>Status App</title>
+      </Helmet>
+      <Routes>{Object.values(routerConfig).map(renderWithWrapper)}</Routes>
+    </>
+  );
 };
 
 export default AppRouter;

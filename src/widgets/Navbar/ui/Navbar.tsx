@@ -5,11 +5,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { clearUser } from '@/entities/User/model/actions/userActions';
-import { ThemeSwitcher } from '@/widgets/ThemeSwitcher';
+import { clearUser } from '@/entities/User';
+import { ThemeSwitcher } from '@/features/ThemeSwitcher';
 import { memo, useCallback } from 'react';
-import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
-import { RoutePath } from '@/shared/config/routeConfig/routeConfig';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
+
+import { RoutePath } from '@/shared/const/router';
 
 interface NavbarProps {
   toggleSideBar: () => () => void;
@@ -43,7 +44,7 @@ export const Navbar = memo(({ toggleSideBar }: NavbarProps) => {
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
             <Link to={RoutePath.main} style={{ textDecoration: 'none', color: 'inherit' }}>
-              Sales Team
+              Sales Status
             </Link>
           </Typography>
           <ThemeSwitcher />

@@ -1,4 +1,4 @@
-import { useAppDispatch } from '@/shared/lib/hooks/AppDispatch';
+import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { Layout } from '@/widgets/Layout';
 import Container from '@mui/material/Container';
 import { useCallback, useEffect } from 'react';
@@ -14,8 +14,9 @@ import { updateProfileData } from '../model/services/updateProfileData/updatePro
 import { getProfileValidateErrors } from '../model/selectors/getProfileValidateError/getProfileValidateErrors';
 import Alert from '@mui/material/Alert';
 import { getProfileData } from '../model/selectors/getProfileData/getProfileData';
-import { PageWrapper } from '@/shared/ui/PageWrapper/PageWrapper';
+import { PageWrapper } from '@/shared/ui/PageWrapper';
 import { ValidateProfileError } from '../model/consts/consts';
+import { Helmet } from 'react-helmet';
 
 const reducers: ReducersList = {
   profile: profileReducer,
@@ -88,6 +89,9 @@ const ProfilePage = () => {
     <DynamicModuleLoader reducers={reducers}>
       <Layout>
         <PageWrapper>
+          <Helmet>
+            <title>Профиль</title>
+          </Helmet>
           <Container maxWidth="lg" className="container">
             <ProfileCard
               formData={formData}
