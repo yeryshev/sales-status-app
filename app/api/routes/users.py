@@ -15,8 +15,7 @@ from app.crud import UserRepository
 from app.models import User
 from app.schemas import UserRead, UserUpdate, UserGet, UpdateTelegramRequest, GetUserStatus
 from app.utils import get_new_mago_status_id, send_ws_after_user_update
-
-telegram_secret_key = app.core.config.TELEGRAM_BOT_SECRET
+from app.core.config import settings
 
 users_router = APIRouter()
 telegram_router = APIRouter()
@@ -78,7 +77,7 @@ async def update_user_router(
     mango_status_id = get_new_mago_status_id(new_status_id)
 
     if old_status_id != new_status_id and user.mango_user_id is not None:
-        api_url = app.core.config.MANGO_SET_STATUS
+        api_url = settings.MANGO_SET_STATUS
         payload = {
             'abonent_id': user.mango_user_id,
             'status': mango_status_id
@@ -145,7 +144,7 @@ async def update_telegram(
         deadline: str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S"),
         session: AsyncSession = Depends(get_async_session)
 ):
-    if request.secret != telegram_secret_key:
+    if request.secret != settings.TELEGRAM_BOT_SECRET:
         raise HTTPException(status_code=403, detail="Invalid secret key")
 
     telegram_user = await UserRepository.get_user_by_telegram(request.username, session)

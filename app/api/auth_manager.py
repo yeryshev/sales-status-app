@@ -5,9 +5,11 @@ from fastapi_users import BaseUserManager, IntegerIDMixin
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.config import AUTH_SECRET as SECRET
+from app.core.config import settings
 from app.core.db import get_async_session
 from app.models import User
+
+SECRET = settings.AUTH_SECRET
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):

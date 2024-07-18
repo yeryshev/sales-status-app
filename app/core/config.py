@@ -1,22 +1,8 @@
-import os
 from typing import Any, Annotated
 
-from dotenv import load_dotenv
-from pydantic import AnyUrl, BeforeValidator
+from pydantic import AnyUrl, BeforeValidator, PostgresDsn, computed_field
+from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
-load_dotenv()
-
-DB_HOST = os.environ.get("DB_HOST")
-DB_USER = os.environ.get("DB_USER")
-DB_PASSWORD = os.environ.get("DB_PASSWORD")
-DB_PORT = os.environ.get("DB_PORT")
-DB_NAME = os.environ.get("DB_NAME")
-AUTH_SECRET = os.environ.get("AUTH_SECRET")
-DB_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN")
-TELEGRAM_BOT_SECRET = os.environ.get("TELEGRAM_BOT_SECRET")
-MANGO_SET_STATUS = os.environ.get("MANGO_SET_STATUS")
 
 
 def parse_cors(v: Any) -> list[str] | str:
@@ -28,28 +14,45 @@ def parse_cors(v: Any) -> list[str] | str:
 
 
 class Settings(BaseSettings):
-    DB_HOST: str
-    DB_PORT: int
-    DB_USER: str
-    DB_PASSWORD: str
-    DB_NAME: str
+    model_config = SettingsConfigDict(env_file=".env", env_ignore_empty=True, extra="ignore")
+
+    MANGO_SET_STATUS: str
     AUTH_SECRET: str
     TELEGRAM_BOT_SECRET: str
-    MANGO_SET_STATUS: str
 
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str, BeforeValidator(parse_cors)
     ] = []
 
+    POSTGRES_SERVER: str
+    POSTGRES_PORT: int = 5432
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str = ""
+
+    @computed_field  # type: ignore[misc]
     @property
-    def DATABASE_URL(self):
-        return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+    def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
+        return MultiHostUrl.build(
+            scheme="postgresql",
+            username=self.POSTGRES_USER,
+            password=self.POSTGRES_PASSWORD,
+            host=self.POSTGRES_SERVER,
+            port=self.POSTGRES_PORT,
+            path=self.POSTGRES_DB,
+        )
 
+    @computed_field  # type: ignore[misc]
     @property
-    def DATABASE_URL_asyncpg(self):
-        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+    def SQLALCHEMY_DATABASE_URI_ASYNC(self) -> PostgresDsn:
+        return MultiHostUrl.build(
+            scheme="postgresql+asyncpg",
+            username=self.POSTGRES_USER,
+            password=self.POSTGRES_PASSWORD,
+            host=self.POSTGRES_SERVER,
+            port=self.POSTGRES_PORT,
+            path=self.POSTGRES_DB,
+        )
 
-    model_config = SettingsConfigDict(env_file=".env")
 
-
-settings = Settings()
+settings = Settings()  # type: ignore
