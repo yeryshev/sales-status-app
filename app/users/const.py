@@ -1,4 +1,4 @@
-import src.config
+import app.config
 
 mango_statuses = {
     'online': 1,
@@ -12,4 +12,4 @@ app_statuses = {
     'lunch/away': [5, 6],
     'offline': [3]
 }
-telegram_secret_key = src.config.TELEGRAM_BOT_SECRET
+telegram_secret_key = app.config.TELEGRAM_BOT_SECRET

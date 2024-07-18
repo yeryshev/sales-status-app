@@ -7,9 +7,9 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-import src.config
-from src.users.repository import UserRepository
-from src.users.utils import get_new_mago_status_id
+import app.config
+from app.users.repository import UserRepository
+from app.users.utils import get_new_mago_status_id
 from .base_config import fastapi_users, auth_backend, current_user, current_superuser
 from .const import telegram_secret_key
 from .schemas import UserRead, UserCreate, UserUpdate, UserGet, UpdateTelegramRequest, GetUserStatus
@@ -82,7 +82,7 @@ async def update_user_router(
     mango_status_id = get_new_mago_status_id(new_status_id)
 
     if old_status_id != new_status_id and user.mango_user_id is not None:
-        api_url = src.config.MANGO_SET_STATUS
+        api_url = app.config.MANGO_SET_STATUS
         payload = {
             'abonent_id': user.mango_user_id,
             'status': mango_status_id
@@ -173,7 +173,7 @@ async def update_telegram(
     mango_status_id = get_new_mago_status_id(new_status_id)
 
     if old_status_id != new_status_id and db_user.mango_user_id is not None:
-        api_url = src.config.MANGO_SET_STATUS
+        api_url = app.config.MANGO_SET_STATUS
         payload = {
             'abonent_id': db_user.mango_user_id,
             'status': mango_status_id

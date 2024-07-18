@@ -1,4 +1,4 @@
-from src.users.const import mango_statuses, app_statuses
+from app.users.const import mango_statuses, app_statuses
 
 
 def get_new_mago_status_id(new_status_id: int) -> int:

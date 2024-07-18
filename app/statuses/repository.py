@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.models import Status
+from app.models import Status
 
 
 async def get_statuses(session: AsyncSession) -> list[Status]:

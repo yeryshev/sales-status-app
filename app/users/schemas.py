@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi_users import schemas
 from pydantic import Field, BaseModel
 
-from src.statuses.schemas import StatusGet
+from app.statuses.schemas import StatusGet
 
 
 class UserRead(schemas.BaseUser[int]):
