@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.models import User, Status, BusyTime
-from .schemas import UserUpdate
+from src.users.schemas import UserUpdate
 
 
 class BusyTimeRepository:

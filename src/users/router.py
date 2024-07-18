@@ -3,40 +3,48 @@ from datetime import datetime
 import pytz
 import requests
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 import src.config
-from src.auth.base_config import current_user, current_superuser
-from src.database import get_async_session
-from src.models import User
-from src.websockets.utils import send_ws_after_user_update
-from .repository import UserRepository
-from .schemas import UserGet, UserUpdate
-from .utils import get_new_mago_status_id
+from src.users.repository import UserRepository
+from src.users.utils import get_new_mago_status_id
+from .base_config import fastapi_users, auth_backend, current_user, current_superuser
+from .const import telegram_secret_key
+from .schemas import UserRead, UserCreate, UserUpdate, UserGet, UpdateTelegramRequest, GetUserStatus
+from ..database import get_async_session
+from ..models import User
+from ..websockets.utils import send_ws_after_user_update
 
+auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 users_router = APIRouter(prefix="/users", tags=["Users"])
 telegram_router = APIRouter(prefix="/telegram", tags=["Telegram"])
+fastapi_users_router = APIRouter(prefix="/fastapi-users", tags=["FastAPI-Users"])
 
-telegram_secret_key = src.config.TELEGRAM_BOT_SECRET
+auth_router.include_router(fastapi_users.get_auth_router(auth_backend))
+auth_router.include_router(fastapi_users.get_register_router(UserRead, UserCreate))
+auth_router.include_router(fastapi_users.get_reset_password_router())
 
-
-class GetUserStatus(BaseModel):
-    name: str
-    status: int
-    title: str
-    is_deadline_required: bool
+fastapi_users_router.include_router(fastapi_users.get_users_router(UserRead, UserUpdate))
 
 
-class UpdateTelegramRequest(BaseModel):
-    username: str
-    status: int
-    secret: str
+@users_router.get("/",
+                  response_model=list[UserGet],
+                  response_model_by_alias=True,
+                  dependencies=[Depends(current_user)],
+                  summary="Get All Users",
+                  )
+async def get_users_router(
+        session: AsyncSession = Depends(get_async_session)):
+    try:
+        all_users = await UserRepository.get_all_users(session)
+        return all_users
+    except Exception:
+        raise HTTPException(status_code=404, detail="Users not found")
 
 
-@users_router.get("/me", response_model=UserGet)
+@users_router.get("/me", response_model=UserGet, summary="Get Current User")
 async def check_user(
         user=Depends(current_user),
         session: AsyncSession = Depends(get_async_session)
@@ -49,7 +57,7 @@ async def check_user(
     return db_user
 
 
-@users_router.patch("/me", response_model=UserGet, response_model_by_alias=True)
+@users_router.patch("/me", response_model=UserGet, response_model_by_alias=True, summary="Patch Current User")
 async def update_user_router(
         user_update: UserUpdate,
         deadline: str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S"),
@@ -99,7 +107,7 @@ async def update_user_router(
     return updated_user
 
 
-@users_router.delete("/{user_id}", dependencies=[Depends(current_superuser)])
+@users_router.delete("/{user_id}", dependencies=[Depends(current_superuser)], summary="Delete User")
 async def delete_user_router(
         user_id: int,
         session: AsyncSession = Depends(get_async_session),
@@ -113,19 +121,6 @@ async def delete_user_router(
         await session.commit()
     except Exception:
         raise HTTPException(status_code=500, detail="Could not delete user")
-
-
-@users_router.get("/team",
-                  response_model=list[UserGet],
-                  response_model_by_alias=True,
-                  dependencies=[Depends(current_user)])
-async def get_users_router(
-        session: AsyncSession = Depends(get_async_session)):
-    try:
-        all_users = await UserRepository.get_all_users(session)
-        return all_users
-    except Exception:
-        raise HTTPException(status_code=404, detail="Users not found")
 
 
 @telegram_router.get("/", response_model=GetUserStatus)

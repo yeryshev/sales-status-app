@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.auth.router import router as auth_router
 from src.config import settings
 from src.statuses.router import router as statuses_router
-from src.users.router import users_router as users_router, telegram_router as telegram_router
+from src.users.router import auth_router, users_router, telegram_router, fastapi_users_router
 from src.websockets.router import router as websocket_router
 
 app = FastAPI(title='Team Status API')
@@ -22,6 +21,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(users_router)
-app.include_router(websocket_router)
+app.include_router(fastapi_users_router)
 app.include_router(telegram_router)
+app.include_router(websocket_router)
 app.include_router(statuses_router)
