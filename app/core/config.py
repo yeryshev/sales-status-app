@@ -1,6 +1,8 @@
 import os
+from typing import Any, Annotated
 
 from dotenv import load_dotenv
+from pydantic import AnyUrl, BeforeValidator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
@@ -17,6 +19,14 @@ TELEGRAM_BOT_SECRET = os.environ.get("TELEGRAM_BOT_SECRET")
 MANGO_SET_STATUS = os.environ.get("MANGO_SET_STATUS")
 
 
+def parse_cors(v: Any) -> list[str] | str:
+    if isinstance(v, str) and not v.startswith("["):
+        return [i.strip() for i in v.split(",")]
+    elif isinstance(v, list | str):
+        return v
+    raise ValueError(v)
+
+
 class Settings(BaseSettings):
     DB_HOST: str
     DB_PORT: int
@@ -24,9 +34,12 @@ class Settings(BaseSettings):
     DB_PASSWORD: str
     DB_NAME: str
     AUTH_SECRET: str
-    FRONTEND_ORIGINS: str
     TELEGRAM_BOT_SECRET: str
     MANGO_SET_STATUS: str
+
+    BACKEND_CORS_ORIGINS: Annotated[
+        list[AnyUrl] | str, BeforeValidator(parse_cors)
+    ] = []
 
     @property
     def DATABASE_URL(self):
