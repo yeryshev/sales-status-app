@@ -41,7 +41,7 @@ export default function RegisterPage() {
         return;
       case 201:
         user = await response.json();
-        dispatch(userActions.setAuthData(user));
+        dispatch(userActions.setUserData(user));
         navigate('/');
         return;
       default:
