@@ -1,7 +1,7 @@
 import json
 
 from app.models import User
-from app.websockets.router import manager
+from app.api.routes.websockets import manager
 
 
 async def send_ws_after_user_update(updated_user: User):

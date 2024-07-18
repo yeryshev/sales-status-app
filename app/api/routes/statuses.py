@@ -8,7 +8,7 @@ from app.statuses.repository import add_status_to_db, delete_status_from_db, get
 from app.statuses.schemas import StatusGet, StatusCreate, StatusUpdate
 from app.users.base_config import current_superuser
 
-router = APIRouter(prefix="/status", tags=["Statuses"])
+router = APIRouter()
 
 
 @router.get("/", response_model=list[StatusGet])

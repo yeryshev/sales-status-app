@@ -8,23 +8,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 import app.config
+from app.database import get_async_session
+from app.models import User
+from app.users.base_config import fastapi_users, current_user, current_superuser
+from app.users.const import telegram_secret_key
 from app.users.repository import UserRepository
+from app.users.schemas import UserRead, UserUpdate, UserGet, UpdateTelegramRequest, GetUserStatus
 from app.users.utils import get_new_mago_status_id
-from .base_config import fastapi_users, auth_backend, current_user, current_superuser
-from .const import telegram_secret_key
-from .schemas import UserRead, UserCreate, UserUpdate, UserGet, UpdateTelegramRequest, GetUserStatus
-from ..database import get_async_session
-from ..models import User
-from ..websockets.utils import send_ws_after_user_update
+from app.websockets.utils import send_ws_after_user_update
 
-auth_router = APIRouter(prefix="/auth", tags=["Auth"])
-users_router = APIRouter(prefix="/users", tags=["Users"])
-telegram_router = APIRouter(prefix="/telegram", tags=["Telegram"])
-fastapi_users_router = APIRouter(prefix="/fastapi-users", tags=["FastAPI-Users"])
-
-auth_router.include_router(fastapi_users.get_auth_router(auth_backend))
-auth_router.include_router(fastapi_users.get_register_router(UserRead, UserCreate))
-auth_router.include_router(fastapi_users.get_reset_password_router())
+users_router = APIRouter()
+telegram_router = APIRouter()
+fastapi_users_router = APIRouter()
 
 fastapi_users_router.include_router(fastapi_users.get_users_router(UserRead, UserUpdate))
 
