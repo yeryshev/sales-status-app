@@ -6,7 +6,7 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from app.config import DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_NAME
+from app.core.config import DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_NAME
 from app.models import Base
 
 sys.path.append(os.path.join(sys.path[0], "app"))

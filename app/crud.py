@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.models import User, Status, BusyTime
-from app.users.schemas import UserUpdate
+from app.schemas import UserUpdate
 
 
 class BusyTimeRepository:
@@ -121,3 +121,37 @@ class UserRepository:
         await session.commit()
         await session.refresh(user)
         return user
+
+
+async def get_statuses(session: AsyncSession) -> list[Status]:
+    try:
+        query = select(Status).order_by(Status.priority.desc())
+        result = await session.execute(query)
+        statuses = result.scalars().all()
+        return list(statuses)
+    except SQLAlchemyError as e:
+        print(str(e))
+        return []
+
+
+async def add_status_to_db(
+        session: AsyncSession,
+        status: Status) -> Status:
+    try:
+        session.add(status)
+        await session.commit()
+        return status
+    except SQLAlchemyError as e:
+        print(str(e))
+
+
+async def delete_status_from_db(
+        status: Type[Status],
+        session: AsyncSession
+):
+    try:
+        await session.delete(status)
+        await session.commit()
+        return status
+    except SQLAlchemyError as e:
+        print(str(e))

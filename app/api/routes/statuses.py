@@ -1,12 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import get_async_session
+from app.core.db import get_async_session
 from app.models import Status
-from app.statuses.repository import add_status_to_db, delete_status_from_db, get_statuses
-from app.statuses.schemas import StatusGet, StatusCreate, StatusUpdate
-from app.users.base_config import current_superuser
+from app.crud import get_statuses, add_status_to_db, delete_status_from_db
+from app.schemas import StatusCreate, StatusGet, StatusUpdate
+from app.api.auth_config import current_superuser
 
 router = APIRouter()
 

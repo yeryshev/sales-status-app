@@ -5,7 +5,7 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import text, String, Boolean, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-from app.database import Base
+from app.core.db import Base
 
 int_primary_key = Annotated[int, mapped_column(primary_key=True)]
 
