@@ -2,7 +2,7 @@ import { memo, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { statusActions, useGetStatuses } from '@/entities/Status';
-import { getUserData, getUserIsLoading, updateUser } from '@/entities/User';
+import { checkUser, getUserData, getUserIsLoading, updateUser, userActions } from '@/entities/User';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -34,7 +34,7 @@ export const StatusSelector = memo(() => {
     user && dispatch(statusActions.changeStatus(user.statusId));
   }, [dispatch, user]);
 
-  const handleChangeMainStatus = (_: SelectChangeEvent, child: unknown) => {
+  const handleChangeMainStatus = async (_: SelectChangeEvent, child: unknown) => {
     // @ts-expect-error ts(2322): Type 'unknown' is not assignable to type 'never'.
     const statusId = Number(child.key.slice(-1) || cachedUserStatus);
     setNewStatusId(statusId);
@@ -42,7 +42,11 @@ export const StatusSelector = memo(() => {
     if (newStatus?.isDeadlineRequired) {
       setModalIsOpen(true);
     } else {
-      user && dispatch(updateUser({ user: { ...user, statusId } }));
+      if (user && newStatus) {
+        dispatch(userActions.setUserData({ ...user, statusId, status: newStatus }));
+        const { payload: updatedUser } = await dispatch(updateUser({ user: { ...user, statusId } }));
+        if (!updatedUser) dispatch(checkUser());
+      }
     }
   };
 

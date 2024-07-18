@@ -33,7 +33,7 @@ export const loginByUsername = createAsyncThunk<string, LoginByUsernameProps, Th
       const response = await extra.api.post(url, formData, requestConfig);
 
       const user = await dispatch(checkUser()).unwrap();
-      user && dispatch(userActions.setAuthData(user));
+      user && dispatch(userActions.setUserData(user));
 
       return response.data;
     } catch (error) {

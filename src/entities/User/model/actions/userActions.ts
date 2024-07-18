@@ -36,9 +36,8 @@ export const clearUser = createAsyncThunk('auth/clearUser', async () => {
 export const updateUser = createAsyncThunk(
   'user/updateUser',
   async ({ user, deadline }: { user: User; deadline?: string }) => {
-    const url = deadline
-      ? `${import.meta.env.VITE_BACKEND_URL}/users/me?deadline=${deadline}`
-      : `${import.meta.env.VITE_BACKEND_URL}/users/me`;
+    const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/users/me`;
+    const url = deadline ? `${baseUrl}?deadline=${deadline}` : `${baseUrl}`;
 
     try {
       const response = await fetch(url, {
@@ -55,7 +54,6 @@ export const updateUser = createAsyncThunk(
         const user: User = await response.json();
         return user;
       } else {
-        console.log(await response.json());
         return null;
       }
     } catch (error) {
