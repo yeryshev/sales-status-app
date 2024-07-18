@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import SQLAlchemyError, NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_async_session
@@ -16,6 +17,20 @@ async def get_all_statuses(session: AsyncSession = Depends(get_async_session)):
         return await get_statuses(session)
     except Exception:
         raise HTTPException(status_code=404, detail="Statuses not found")
+
+
+@router.get("/{status_id}", response_model=StatusGet)
+async def get_status_by_id(status_id: int, session: AsyncSession = Depends(get_async_session)):
+    try:
+        status = await session.get(Status, status_id)
+
+        if status is None:
+            raise HTTPException(status_code=404, detail="Status not found")
+
+        return status
+
+    except Exception:
+        raise HTTPException(status_code=500, detail="An unknown error occurred")
 
 
 @router.post("/", response_model=StatusGet, dependencies=[Depends(current_superuser)])
