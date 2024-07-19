@@ -8,7 +8,7 @@ export const fetchTeamList = createAsyncThunk<Teammate[], void, ThunkConfig<stri
     const { extra, rejectWithValue } = thunkAPI;
 
     try {
-      const response = await extra.api.get<Teammate[]>('/users/team');
+      const response = await extra.api.get<Teammate[]>('/users/');
 
       if (!response.data) {
         throw new Error('Произошла ошибка при загрузке списка коллег');
