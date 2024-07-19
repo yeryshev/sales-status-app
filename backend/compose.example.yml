@@ -41,7 +41,7 @@ services:
       - nginx-proxy
 
   backend:
-    build: .
+    build: ..
     container_name: backend
     restart: always
     command: gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000
@@ -66,7 +66,7 @@ services:
       - redis-data:/data
 
   celery:
-    build: .
+    build: ..
     container_name: celery
     restart: always
     command: celery -A app.tasks:celery worker -B --loglevel=info
@@ -80,7 +80,7 @@ services:
       - redis
 
   flower:
-    build: .
+    build: ..
     container_name: flower
     restart: always
     command: celery --broker=redis://redis:6379/0 flower --port=5555
