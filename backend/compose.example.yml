@@ -1,0 +1,97 @@
+services:
+
+  nginx-proxy:
+    image: nginxproxy/nginx-proxy
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs:ro
+
+  lego-acme:
+    image: eryshev/lego-cron-wrapper
+    container_name: lego-acme
+    restart: always
+    command: >
+      --accept-tos --email=test@gmail.com --dns selectelv2
+      --domains=*.status.sales.localhost.org --domains=status.sales.localhost.org
+    environment:
+      - RUN_ARGUMENTS=--run-hook=/app/deploy
+      - RENEW_ARGUMENTS=--renew-hook=/app/deploy
+      - SELECTELV2_USERNAME=XXXXXXX
+      - SELECTELV2_PASSWORD=XXXXXXX
+      - SELECTELV2_ACCOUNT_ID=XXXXXXX
+      - SELECTELV2_PROJECT_ID=XXXXXXX
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certs:/app/certificates
+      - ../deploy.sh:/app/deploy
+
+  frontend:
+    build: ../frontend
+    container_name: frontend
+    restart: always
+    environment:
+      - VIRTUAL_HOST=status.sales.localhost.org
+    depends_on:
+      - backend
+      - nginx-proxy
+
+  backend:
+    build: ..
+    container_name: backend
+    restart: always
+    command: gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000
+    ports:
+      - '8000:8000'
+    volumes:
+      - ./:/usr/src/app
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - VIRTUAL_PORT=8000
+      - VIRTUAL_HOST=api.status.sales.localhost.org
+    depends_on:
+      - redis
+      - nginx-proxy
+
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    volumes:
+      - redis-data:/data
+
+  celery:
+    build: ..
+    container_name: celery
+    restart: always
+    command: celery -A app.tasks:celery worker -B --loglevel=info
+    volumes:
+      - ./:/usr/src/app
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - backend
+      - redis
+
+  flower:
+    build: ..
+    container_name: flower
+    restart: always
+    command: celery --broker=redis://redis:6379/0 flower --port=5555
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - VIRTUAL_PORT=5555
+      - VIRTUAL_HOST=flower.status.sales.localhost.org
+    depends_on:
+      - celery
+
+volumes:
+  certs:
+  redis-data:
