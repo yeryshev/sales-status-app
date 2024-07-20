@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from backend.app.api.routes import users, statuses, websockets
-from backend.app.api.routes import auth
+from app.api.routes import users, statuses, websockets
+from app.api.routes import auth
 
 api_router = APIRouter()
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])

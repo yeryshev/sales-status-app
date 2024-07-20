@@ -5,10 +5,10 @@ from celery import Celery
 from celery.schedules import crontab
 from fastapi import HTTPException
 
-from backend.app.core.db import sync_session_factory
-from backend.app.models import User
+from app.core.db import sync_session_factory
+from app.models import User
 
-from backend.app.utils import mango_statuses
+from app.utils import mango_statuses
 
 celery = Celery('tasks')
 celery.conf.broker_url = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379")

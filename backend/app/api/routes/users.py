@@ -7,13 +7,13 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from backend.app.api.auth_config import fastapi_users, current_user, current_superuser
-from backend.app.core.db import get_async_session
-from backend.app.crud import UserRepository
-from backend.app.models import User
-from backend.app.schemas import UserRead, UserUpdate, UserGet, UpdateTelegramRequest, GetUserStatus
-from backend.app.utils import get_new_mago_status_id, send_ws_after_user_update
-from backend.app.core.config import settings
+from app.api.auth_config import fastapi_users, current_user, current_superuser
+from app.core.db import get_async_session
+from app.crud import UserRepository
+from app.models import User
+from app.schemas import UserRead, UserUpdate, UserGet, UpdateTelegramRequest, GetUserStatus
+from app.utils import get_new_mago_status_id, send_ws_after_user_update
+from app.core.config import settings
 
 users_router = APIRouter()
 telegram_router = APIRouter()

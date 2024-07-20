@@ -1,3 +1,4 @@
-npm run build
+cd frontend
 npm run lint:ts:fix
+npm run build
 npm run test:unit

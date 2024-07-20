@@ -6,8 +6,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from backend.app.models import User, Status, BusyTime
-from backend.app.schemas import UserUpdate
+from app.models import User, Status, BusyTime
+from app.schemas import UserUpdate
 
 
 class BusyTimeRepository:

@@ -13,15 +13,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Staring Node.js ${{ matrix.node-version }}
+
+      - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: install modules
+
+      - name: Change directory to frontend
+        run: cd frontend
+
+      - name: Install modules
         run: npm install
-      - name: build production project
+        working-directory: ./frontend
+
+      - name: Build production project
         run: npm run build
-      - name: linting typescript
+        working-directory: ./frontend
+
+      - name: Linting TypeScript
         run: npm run lint:ts
-      - name: unit testing
+        working-directory: ./frontend
+
+      - name: Unit testing
         run: npm run test:unit
+        working-directory: ./frontend

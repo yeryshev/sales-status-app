@@ -1,7 +1,7 @@
 import json
 
-from backend.app.api.routes.websockets import manager
-from backend.app.models import User
+from app.api.routes.websockets import manager
+from app.models import User
 
 mango_statuses = {
     'online': 1,
