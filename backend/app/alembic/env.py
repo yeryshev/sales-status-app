@@ -6,7 +6,7 @@ from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from app.core.config import DB_HOST, DB_USER, DB_PASSWORD, DB_PORT, DB_NAME
+from app.core.config import settings
 from app.models import Base
 
 sys.path.append(os.path.join(sys.path[0], "app"))
@@ -16,11 +16,11 @@ sys.path.append(os.path.join(sys.path[0], "app"))
 config = context.config
 
 section = config.config_ini_section
-config.set_section_option(section, "DB_HOST", DB_HOST)
-config.set_section_option(section, "DB_USER", DB_USER)
-config.set_section_option(section, "DB_PASSWORD", DB_PASSWORD)
-config.set_section_option(section, "DB_PORT", DB_PORT)
-config.set_section_option(section, "DB_NAME", DB_NAME)
+config.set_section_option(section, "POSTGRES_SERVER", settings.POSTGRES_SERVER)
+config.set_section_option(section, "POSTGRES_USER", settings.POSTGRES_USER)
+config.set_section_option(section, "POSTGRES_PASSWORD", settings.POSTGRES_PASSWORD)
+config.set_section_option(section, "POSTGRES_PORT", str(settings.POSTGRES_PORT))
+config.set_section_option(section, "POSTGRES_DB", settings.POSTGRES_DB)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
