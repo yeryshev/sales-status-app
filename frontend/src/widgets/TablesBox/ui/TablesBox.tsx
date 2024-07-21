@@ -83,7 +83,7 @@ export const TablesBox = memo(() => {
 
   const isAccountManagersRoute = location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS];
 
-  let teamList;
+  let teamList: User[];
   isAccountManagersRoute ? (teamList = accountManagerTeamList) : (teamList = inboundTeamList);
 
   const { data: additionalTeamData } = useGetAdditionalTeamData(isAccountManagersRoute ? 'account' : 'inbound');
