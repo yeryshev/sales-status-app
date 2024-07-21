@@ -2,8 +2,7 @@ import { Tooltip } from '@mui/material';
 import { TeamTable } from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import { getUserData, User } from '@/entities/User';
-import { statusActions } from '@/entities/Status';
+import { getUserData, User, userActions } from '@/entities/User';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import Box from '@mui/system/Box';
@@ -25,6 +24,15 @@ import {
 } from '@/entities/Team';
 import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { Helmet } from 'react-helmet';
+
+export interface UserWsUpdates {
+  userId: User['id'];
+  statusId: User['statusId'];
+  status: User['status'];
+  busyTime: User['busyTime'];
+  isWorkingRemotely: User['isWorkingRemotely'];
+  updatedAt: User['updatedAt'];
+}
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -148,14 +156,14 @@ export const TablesBox = memo(() => {
 
   const handleStatusChange = useCallback(
     (event: MessageEvent) => {
-      const dataFromSocket = JSON.parse(event.data);
+      const dataFromSocket: UserWsUpdates = JSON.parse(event.data);
       const { userId, updatedAt, isWorkingRemotely } = dataFromSocket;
 
       if ('statusId' in dataFromSocket && user) {
         const { statusId, status, busyTime } = dataFromSocket;
         dispatch(
           teamActions.setTeamLocal({
-            userId,
+            id: userId,
             statusId,
             status,
             busyTime,
@@ -163,7 +171,9 @@ export const TablesBox = memo(() => {
             updatedAt,
           }),
         );
-        dispatch(statusActions.changeStatus(user.statusId));
+        if (userId === user.id) {
+          dispatch(userActions.updateUserLocal({ statusId, status, busyTime, isWorkingRemotely }));
+        }
       }
     },
     [dispatch, user],

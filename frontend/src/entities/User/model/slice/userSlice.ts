@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { User, UserSchema } from '../types/User';
 
 const userInitialState: UserSchema = {
+  data: undefined,
   loading: false,
   error: null,
   mounted: false,
@@ -14,6 +15,11 @@ export const userSlice = createSlice({
   reducers: {
     setUserData: (state, action: PayloadAction<User>) => {
       state.data = action.payload;
+    },
+    updateUserLocal: (state, action: PayloadAction<Partial<User>>) => {
+      if (state.data) {
+        state.data = { ...state.data, ...action.payload };
+      }
     },
   },
   extraReducers: (builder) => {

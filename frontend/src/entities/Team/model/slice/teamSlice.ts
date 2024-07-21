@@ -1,6 +1,7 @@
 import { type TeamTableSchema } from '../types/teamTableSchema';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchTeamList } from '../services/fetchTeamList/fetchTeamList';
+import { User } from '@/entities/User';
 
 const initialState: TeamTableSchema = {
   list: [],
@@ -12,16 +13,16 @@ export const teamSlice = createSlice({
   name: 'team',
   initialState,
   reducers: {
-    setTeamLocal: (state, action) => {
+    setTeamLocal: (state: TeamTableSchema, action: PayloadAction<Partial<User>>) => {
       state.list = state.list
         .map((teammate) => {
-          if (Number(teammate.id) === Number(action.payload.userId)) {
-            if ('status' in action.payload) {
-              teammate.status = action.payload.status;
-              teammate.busyTime = action.payload.busyTime;
-            }
-            teammate.updatedAt = action.payload.updatedAt;
-            teammate.isWorkingRemotely = action.payload.isWorkingRemotely;
+          if (Number(teammate.id) === Number(action.payload.id)) {
+            const { statusId, status, busyTime, updatedAt, isWorkingRemotely } = action.payload;
+            if (statusId) teammate.statusId = statusId;
+            if (status) teammate.status = status;
+            if (busyTime) teammate.busyTime = busyTime;
+            if (updatedAt) teammate.updatedAt = updatedAt;
+            if (isWorkingRemotely) teammate.isWorkingRemotely = isWorkingRemotely;
           }
           return teammate;
         })

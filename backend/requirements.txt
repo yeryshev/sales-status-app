@@ -47,6 +47,7 @@ prompt-toolkit==3.0.40
 psycopg==3.1.12
 psycopg-binary==3.1.12
 psycopg2==2.9.9
+psycopg2-binary==2.9.9
 pwdlib==0.2.0
 pycparser==2.21
 pydantic==2.7.1
