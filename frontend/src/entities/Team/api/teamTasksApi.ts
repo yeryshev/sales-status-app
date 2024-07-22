@@ -1,5 +1,5 @@
 import { rtkApi } from '@/shared/api/rtkApi';
-import { TasksData, WsTasksData, WsTypes } from '../model/types/tasksWebsocket';
+import { TasksData, WsTasksData, WsTypes } from '../model/types/teamWebsocket';
 
 const apiBaseUrl = import.meta.env.VITE_API_URL;
 

@@ -1,4 +1,5 @@
 import { Teammate } from '../../model/types/teammate';
+import { User } from '@/entities/User';
 
 export interface UserTasks {
   name: string;
@@ -78,3 +79,5 @@ export type TasksData = {
   [WsTypes.LAST_WEEK_STATS]: UsersLastWeekStats;
   [WsTypes.AVATARS_AND_BIRTHDAY]: UsersAvatarsAndBirthday;
 };
+
+export type UserWsUpdates = Pick<User, 'id' | 'statusId' | 'status' | 'busyTime' | 'updatedAt' | 'isWorkingRemotely'>

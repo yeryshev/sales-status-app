@@ -15,7 +15,8 @@ export {
   type UserLastWeekStats,
   type UserTickets,
   type UserVacation,
-} from './model/types/tasksWebsocket';
+  type UserWsUpdates,
+} from './model/types/teamWebsocket';
 
 export { getAccountManagerTeamList, getInboundTeamList, getTeamIsLoading } from './model/selectors/teamSelectors';
 

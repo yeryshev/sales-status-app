@@ -17,7 +17,7 @@ app_statuses = {
 }
 
 
-def get_new_mago_status_id(new_status_id: int) -> int:
+def get_new_mango_status_id(new_status_id: int) -> int:
     if new_status_id in app_statuses['work']:
         return mango_statuses['online']
     elif new_status_id in app_statuses['lunch/away']:
@@ -32,7 +32,7 @@ def get_new_mago_status_id(new_status_id: int) -> int:
 
 async def send_ws_after_user_update(updated_user: User):
     await manager.broadcast(json.dumps({
-        "userId": updated_user.id,
+        "id": updated_user.id,
         "statusId": updated_user.status_id,
         "status": updated_user.status.to_dict(),
         "busyTime": updated_user.busy_time.to_dict() if updated_user.busy_time else None,

@@ -21,18 +21,11 @@ import {
   teamActions,
   teamReducer,
   useGetAdditionalTeamData,
+  UserWsUpdates,
 } from '@/entities/Team';
 import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { Helmet } from 'react-helmet';
 
-export interface UserWsUpdates {
-  userId: User['id'];
-  statusId: User['statusId'];
-  status: User['status'];
-  busyTime: User['busyTime'];
-  isWorkingRemotely: User['isWorkingRemotely'];
-  updatedAt: User['updatedAt'];
-}
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -157,13 +150,13 @@ export const TablesBox = memo(() => {
   const handleStatusChange = useCallback(
     (event: MessageEvent) => {
       const dataFromSocket: UserWsUpdates = JSON.parse(event.data);
-      const { userId, updatedAt, isWorkingRemotely } = dataFromSocket;
+      const { id, updatedAt, isWorkingRemotely } = dataFromSocket;
 
       if ('statusId' in dataFromSocket && user) {
         const { statusId, status, busyTime } = dataFromSocket;
         dispatch(
           teamActions.setTeamLocal({
-            id: userId,
+            id,
             statusId,
             status,
             busyTime,
@@ -171,7 +164,7 @@ export const TablesBox = memo(() => {
             updatedAt,
           }),
         );
-        if (userId === user.id) {
+        if (id === user.id) {
           dispatch(userActions.updateUserLocal({ statusId, status, busyTime, isWorkingRemotely }));
         }
       }
