@@ -2,7 +2,7 @@ import { memo, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { statusActions, useGetStatuses } from '@/entities/Status';
-import { checkUser, getUserData, getUserIsLoading, updateUser, userActions } from '@/entities/User';
+import { checkUser, getUserData, updateUser, userActions } from '@/entities/User';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -18,16 +18,15 @@ const reducers: ReducersList = {
 
 export const StatusSelector = memo(() => {
   const user = useSelector(getUserData);
-  const userIsLoading = useSelector(getUserIsLoading);
   const dispatch = useAppDispatch();
   const { data: statuses } = useGetStatuses();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newStatusId, setNewStatusId] = useState(user?.statusId);
   const cachedStatuses = useMemo(() => statuses, [statuses]);
-  const cachedUserStatus = useMemo(() => user?.statusId, [user?.statusId]);
+  const cachedUserStatusId = useMemo(() => user?.statusId, [user?.statusId]);
   const userStatus = useMemo(
-    () => cachedStatuses?.find((status) => status.id === cachedUserStatus),
-    [cachedStatuses, cachedUserStatus],
+    () => cachedStatuses?.find((status) => status.id === cachedUserStatusId),
+    [cachedStatuses, cachedUserStatusId],
   );
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export const StatusSelector = memo(() => {
 
   const handleChangeMainStatus = async (_: SelectChangeEvent, child: unknown) => {
     // @ts-expect-error ts(2322): Type 'unknown' is not assignable to type 'never'.
-    const statusId = Number(child.key.slice(-1) || cachedUserStatus);
+    const statusId = Number(child.key.slice(-1) || cachedUserStatusId);
     setNewStatusId(statusId);
     const newStatus = cachedStatuses?.find((status) => status.id === statusId);
     if (newStatus?.isDeadlineRequired) {
@@ -50,11 +49,20 @@ export const StatusSelector = memo(() => {
     }
   };
 
-  const handleModalClose = (minutes?: number) => {
+  const handleModalClose = async (minutes?: number) => {
     setModalIsOpen(false);
     if (minutes && user) {
       const deadline = new Date(Date.now() + minutes * 60000).toISOString();
-      dispatch(updateUser({ user: { ...user, statusId: newStatusId || user.statusId }, deadline }));
+      dispatch(
+        userActions.updateUserLocal({
+          statusId: newStatusId,
+          status: { ...user.status, isDeadlineRequired: true },
+          busyTime: { ...user.busyTime, endTime: deadline },
+        }),
+      );
+      const dataToUpdate = { user: { ...user, statusId: newStatusId || user.statusId }, deadline };
+      const { payload: updatedUser } = await dispatch(updateUser(dataToUpdate));
+      if (!updatedUser) dispatch(checkUser());
     }
   };
 
@@ -62,13 +70,7 @@ export const StatusSelector = memo(() => {
     <DynamicModuleLoader reducers={reducers}>
       <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={0.5} flexDirection={'column'}>
         <FormControl fullWidth>
-          <Select
-            value={userStatus?.title || ''}
-            onChange={handleChangeMainStatus}
-            size={'small'}
-            fullWidth
-            disabled={userIsLoading}
-          >
+          <Select value={userStatus?.title || ''} onChange={handleChangeMainStatus} size={'small'} fullWidth>
             {cachedStatuses?.map((status) => (
               <MenuItem key={status.id} value={status.title} disabled={user?.statusId === status.id}>
                 {feminizeWord(status.title, user?.isFemale)}

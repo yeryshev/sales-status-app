@@ -26,7 +26,6 @@ import {
 import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { Helmet } from 'react-helmet';
 
-
 interface TabPanelProps {
   children?: ReactNode;
   index: number;
