@@ -166,7 +166,7 @@ async def update_telegram(
     mango_status_id = get_new_mago_status_id(new_status_id)
 
     if old_status_id != new_status_id and db_user.mango_user_id is not None:
-        api_url = backend.app.core.config.MANGO_SET_STATUS
+        api_url = settings.MANGO_SET_STATUS
         payload = {
             'abonent_id': db_user.mango_user_id,
             'status': mango_status_id
