@@ -36,7 +36,7 @@ export const clearUser = createAsyncThunk('auth/clearUser', async () => {
 export const updateUser = createAsyncThunk(
   'user/updateUser',
   async ({ user, deadline }: { user: User; deadline?: string }) => {
-    const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/users/mee`;
+    const baseUrl = `${import.meta.env.VITE_BACKEND_URL}/users/me`;
     const url = deadline ? `${baseUrl}?deadline=${deadline}` : `${baseUrl}`;
 
     try {
