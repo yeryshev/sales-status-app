@@ -1,3 +1,0 @@
-npm run build
-npm run lint:ts:fix
-npm run test:unit
