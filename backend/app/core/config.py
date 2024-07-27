@@ -1,4 +1,4 @@
-from typing import Any, Annotated
+from typing import Annotated, Any
 
 from pydantic import AnyUrl, BeforeValidator, PostgresDsn, computed_field
 from pydantic_core import MultiHostUrl
@@ -14,7 +14,9 @@ def parse_cors(v: Any) -> list[str] | str:
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_ignore_empty=True, extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env", env_ignore_empty=True, extra="ignore"
+    )
 
     MANGO_SET_STATUS: str
     AUTH_SECRET: str
