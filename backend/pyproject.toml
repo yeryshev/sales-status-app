@@ -12,10 +12,10 @@ fastapi = "^0.111.1"
 alembic = "^1.13.2"
 gunicorn = "^22.0.0"
 fastapi-users = { extras = ["sqlalchemy"], version = "^13.0.0" }
+celery = { extras = ["redis"], version = "^5.4.0" }
 requests = "^2.32.3"
 asyncpg = "^0.29.0"
 psycopg2-binary = "^2.9.9"
-celery = "^5.4.0"
 pydantic-settings = "^2.3.4"
 pytz = "^2024.1"
 
