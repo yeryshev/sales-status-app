@@ -7,7 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.api.auth_config import current_superuser, current_user, fastapi_users
+from app.api.auth_config import current_user, fastapi_users
 from app.core.config import settings
 from app.core.db import get_async_session
 from app.crud import UserRepository
@@ -116,24 +116,6 @@ async def update_user_router(
     await send_ws_after_user_update(updated_user)
 
     return updated_user
-
-
-@users_router.delete(
-    "/{user_id}", dependencies=[Depends(current_superuser)], summary="Delete User"
-)
-async def delete_user_router(
-    user_id: int,
-    session: AsyncSession = Depends(get_async_session),
-):
-    user = await session.get(User, user_id)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    try:
-        await session.delete(user)
-        await session.commit()
-    except Exception:
-        raise HTTPException(status_code=500, detail="Could not delete user")
 
 
 @telegram_router.get("/", response_model=GetUserStatus)
