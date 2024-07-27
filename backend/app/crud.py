@@ -152,7 +152,9 @@ async def add_status_to_db(session: AsyncSession, status: Status) -> Status:
         print(str(e))
 
 
-async def delete_status_from_db(status: type[Status], session: AsyncSession):
+async def delete_status_from_db(
+    status: type[Status], session: AsyncSession
+) -> type[Status]:
     try:
         await session.delete(status)
         await session.commit()

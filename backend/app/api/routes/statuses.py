@@ -71,7 +71,7 @@ async def update_status(
 )
 async def delete_status(
     status_id: int, session: AsyncSession = Depends(get_async_session)
-):
+) -> type[Status]:
     try:
         status = await session.get(Status, status_id)
         if not status:
