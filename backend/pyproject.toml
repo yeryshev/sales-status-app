@@ -21,6 +21,9 @@ pydantic-settings = "^2.3.4"
 pytz = "^2024.1"
 
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.5.5"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
