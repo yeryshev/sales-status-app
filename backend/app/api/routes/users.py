@@ -65,7 +65,7 @@ async def check_user(
 )
 async def update_user_router(
     user_update: UserUpdate,
-    deadline: str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S"),
+    deadline: str = datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
     session: AsyncSession = Depends(get_async_session),
     session_user: User = Depends(current_user),
 ):
@@ -132,8 +132,8 @@ async def get_first_name(
     if user is None:
         raise HTTPException(
             status_code=404,
-            detail="Пользователь не найден. Убедись, что верно указал(а) свой телеграм-логин в "
-            "профиле приложения ДРБ Статус.",
+            detail="User not found. Make sure you have correctly entered your Telegram username in the application "
+            "profile of Sales Status.",
         )
     return {
         "name": user.first_name,
@@ -146,7 +146,7 @@ async def get_first_name(
 @telegram_router.patch("/")
 async def update_telegram(
     request: UpdateTelegramRequest,
-    deadline: str = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S"),
+    deadline: str = datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
     session: AsyncSession = Depends(get_async_session),
 ):
     if request.secret != settings.TELEGRAM_BOT_SECRET:
