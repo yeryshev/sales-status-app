@@ -4,6 +4,7 @@ from typing import Annotated, Optional
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import Boolean, ForeignKey, String, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlmodel import SQLModel
 
 from app.core.db import Base
 
@@ -124,3 +125,7 @@ class BusyTime(Base):
             "userId": self.user_id,
             "endTime": self.end_time.isoformat() if self.end_time else None,
         }
+
+
+class Message(SQLModel):
+    message: str

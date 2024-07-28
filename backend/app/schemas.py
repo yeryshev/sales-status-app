@@ -18,7 +18,6 @@ class StatusGet(BaseModel):
 
 
 class StatusUpdate(BaseModel):
-    id: int
     title: str | None = Field(None)
     is_deadline_required: bool | None = Field(None, alias="isDeadlineRequired")
     priority: int
