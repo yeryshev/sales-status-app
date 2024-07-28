@@ -20,7 +20,7 @@ offline_status_id = 3
 
 
 @celery.on_after_configure.connect
-def setup_periodic_tasks(sender):
+def setup_periodic_tasks(sender, **kwargs):  # noqa: ARG001
     sender.add_periodic_task(
         crontab(hour="16", minute="00"),
         set_offline_users.s(),
