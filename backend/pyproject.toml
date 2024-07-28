@@ -20,6 +20,7 @@ psycopg2-binary = "^2.9.9"
 pydantic-settings = "^2.3.4"
 pytz = "^2024.1"
 sqlmodel = "^0.0.21"
+sentry-sdk = {extras = ["fastapi"], version = "^2.11.0"}
 
 
 [tool.poetry.group.dev.dependencies]
