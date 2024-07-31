@@ -7,11 +7,11 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.api.auth_config import current_user, fastapi_users
+from app.api.auth_config import current_superuser, current_user, fastapi_users
 from app.core.config import settings
 from app.core.db import get_async_session
 from app.crud import UserRepository
-from app.models import User
+from app.models import Message, User
 from app.schemas import (
     GetUserStatus,
     UpdateTelegramRequest,
@@ -19,7 +19,8 @@ from app.schemas import (
     UserRead,
     UserUpdate,
 )
-from app.utils import get_new_mango_status_id, send_ws_after_user_update
+from app.tasks import offline_status_id
+from app.utils import get_new_mango_status_id, mango_statuses, send_ws_after_user_update
 
 users_router = APIRouter()
 telegram_router = APIRouter()
@@ -116,6 +117,31 @@ async def update_user_router(
     await send_ws_after_user_update(updated_user)
 
     return updated_user
+
+
+@users_router.post(
+    "/set-all-offline",
+    dependencies=[Depends(current_superuser)],
+    summary="Set All Users Offline",
+)
+async def set_all_offline(session: AsyncSession = Depends(get_async_session)):
+    statement = select(User)
+    result = await session.execute(statement)
+    users = result.scalars().all()
+
+    for user in users:
+        user.status_id = offline_status_id
+        if user.mango_user_id is not None:
+            api_url = settings.MANGO_SET_STATUS
+            payload = {
+                "abonent_id": user.mango_user_id,
+                "status": mango_statuses["offline"],
+            }
+            headers = {"Content-Type": "application/json"}
+            requests.post(api_url, json=payload, headers=headers)
+
+    await session.commit()
+    return Message(message="All users set to offline")
 
 
 @telegram_router.get("/", response_model=GetUserStatus)
