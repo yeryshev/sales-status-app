@@ -15,7 +15,7 @@ export const fetchTeamList = createAsyncThunk<Teammate[], void, ThunkConfig<stri
       }
 
       return response.data;
-    } catch (error) {
+    } catch {
       return rejectWithValue('Что-то пошло не так');
     }
   },
