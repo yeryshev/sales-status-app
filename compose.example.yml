@@ -48,7 +48,7 @@ services:
     ports:
       - '8000:8000'
     volumes:
-      - ./backend:/usr/src/app
+      - ./backend:/app
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
@@ -71,7 +71,7 @@ services:
     restart: always
     command: celery -A app.tasks:celery worker -B --loglevel=info
     volumes:
-      - ./backend:/usr/src/app
+      - ./backend:/app
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0

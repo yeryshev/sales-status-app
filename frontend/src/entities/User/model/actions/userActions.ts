@@ -13,7 +13,7 @@ export const checkUser = createAsyncThunk('auth/checkUser', async () => {
       const user: User = await response.json();
       return user;
     }
-  } catch (error) {
+  } catch {
     return undefined;
   }
 });
@@ -28,7 +28,7 @@ export const clearUser = createAsyncThunk('auth/clearUser', async () => {
       },
     });
     return response.ok;
-  } catch (error) {
+  } catch {
     return false;
   }
 });
@@ -56,7 +56,7 @@ export const updateUser = createAsyncThunk(
       } else {
         return null;
       }
-    } catch (error) {
+    } catch {
       return null;
     }
   },

@@ -1,6 +1,6 @@
-from typing import Any, Annotated
+from typing import Annotated, Any, Literal
 
-from pydantic import AnyUrl, BeforeValidator, PostgresDsn, computed_field
+from pydantic import AnyUrl, BeforeValidator, HttpUrl, PostgresDsn, computed_field
 from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -14,15 +14,21 @@ def parse_cors(v: Any) -> list[str] | str:
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_ignore_empty=True, extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env", env_ignore_empty=True, extra="ignore"
+    )
 
     MANGO_SET_STATUS: str
     AUTH_SECRET: str
     TELEGRAM_BOT_SECRET: str
 
+    ENVIRONMENT: Literal["local", "staging", "production"] = "local"
+
     BACKEND_CORS_ORIGINS: Annotated[
         list[AnyUrl] | str, BeforeValidator(parse_cors)
     ] = []
+
+    SENTRY_DSN: HttpUrl | None = None
 
     POSTGRES_SERVER: str
     POSTGRES_PORT: int = 5432

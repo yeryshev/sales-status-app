@@ -1,13 +1,12 @@
 from datetime import datetime
-from typing import Optional
 
 from fastapi_users import schemas
-from pydantic import Field, BaseModel
+from pydantic import BaseModel, Field
 
 
 class StatusCreate(BaseModel):
     title: str
-    is_deadline_required: Optional[bool] = Field(None, alias="isDeadlineRequired")
+    is_deadline_required: bool | None = Field(None, alias="isDeadlineRequired")
     priority: int
 
 
@@ -19,9 +18,8 @@ class StatusGet(BaseModel):
 
 
 class StatusUpdate(BaseModel):
-    id: int
-    title: Optional[str] = Field(None)
-    is_deadline_required: Optional[bool] = Field(None, alias="isDeadlineRequired")
+    title: str | None = Field(None)
+    is_deadline_required: bool | None = Field(None, alias="isDeadlineRequired")
     priority: int
 
 
@@ -29,17 +27,17 @@ class UserRead(schemas.BaseUser[int]):
     is_active: bool = Field(None, serialization_alias="isActive")
     is_superuser: bool = Field(None, serialization_alias="isSuperuser")
     is_verified: bool = Field(None, serialization_alias="isVerified")
-    first_name: Optional[str] = Field(None, serialization_alias="firstName")
-    second_name: Optional[str] = Field(None, serialization_alias="secondName")
-    ext_number: Optional[str] = Field(None, serialization_alias="extNumber")
-    telegram: Optional[str] = Field(None, serialization_alias="telegram")
-    inside_id: Optional[int] = Field(None, serialization_alias="insideId")
+    first_name: str | None = Field(None, serialization_alias="firstName")
+    second_name: str | None = Field(None, serialization_alias="secondName")
+    ext_number: str | None = Field(None, serialization_alias="extNumber")
+    telegram: str | None = Field(None, serialization_alias="telegram")
+    inside_id: int | None = Field(None, serialization_alias="insideId")
     is_working_remotely: bool = Field(None, serialization_alias="isWorkingRemotely")
     is_coordinator: bool = Field(None, serialization_alias="isCoordinator")
     is_female: bool = Field(None, serialization_alias="isFemale")
     is_manager: bool = Field(None, serialization_alias="isManager")
     is_account_manager: bool = Field(None, serialization_alias="isAccountManager")
-    status_id: Optional[int] = Field(None, serialization_alias="statusId")
+    status_id: int | None = Field(None, serialization_alias="statusId")
     updated_at: datetime = Field(None, serialization_alias="updatedAt")
 
     class Config:
@@ -51,20 +49,20 @@ class UserCreate(schemas.BaseUserCreate):
 
 
 class UserUpdate(schemas.BaseUserUpdate):
-    is_active: Optional[bool] = Field(None, alias="isActive")
-    is_superuser: Optional[bool] = Field(None, alias="isSuperuser")
-    is_verified: Optional[bool] = Field(None, alias="isVerified")
-    first_name: Optional[str] = Field(None, alias="firstName")
-    second_name: Optional[str] = Field(None, alias="secondName")
-    ext_number: Optional[str] = Field(None, alias="extNumber")
-    telegram: Optional[str] = Field(None, alias="telegram")
-    inside_id: Optional[int] = Field(None, alias="insideId")
-    is_working_remotely: Optional[bool] = Field(None, alias="isWorkingRemotely")
-    is_coordinator: Optional[bool] = Field(None, alias="isCoordinator")
-    is_female: Optional[bool] = Field(None, alias="isFemale")
-    is_manager: Optional[bool] = Field(None, alias="isManager")
-    is_account_manager: Optional[bool] = Field(None, alias="isAccountManager")
-    status_id: Optional[int] = Field(None, alias="statusId")
+    is_active: bool | None = Field(None, alias="isActive")
+    is_superuser: bool | None = Field(None, alias="isSuperuser")
+    is_verified: bool | None = Field(None, alias="isVerified")
+    first_name: str | None = Field(None, alias="firstName")
+    second_name: str | None = Field(None, alias="secondName")
+    ext_number: str | None = Field(None, alias="extNumber")
+    telegram: str | None = Field(None, alias="telegram")
+    inside_id: int | None = Field(None, alias="insideId")
+    is_working_remotely: bool | None = Field(None, alias="isWorkingRemotely")
+    is_coordinator: bool | None = Field(None, alias="isCoordinator")
+    is_female: bool | None = Field(None, alias="isFemale")
+    is_manager: bool | None = Field(None, alias="isManager")
+    is_account_manager: bool | None = Field(None, alias="isAccountManager")
+    status_id: int | None = Field(None, alias="statusId")
 
 
 class BusyTime(BaseModel):
@@ -75,8 +73,8 @@ class BusyTime(BaseModel):
 
 
 class UserGet(UserRead):
-    status: Optional[StatusGet] = None
-    busy_time: Optional[BusyTime] = Field(None, serialization_alias="busyTime")
+    status: StatusGet | None = None
+    busy_time: BusyTime | None = Field(None, serialization_alias="busyTime")
 
 
 class GetUserStatus(BaseModel):
