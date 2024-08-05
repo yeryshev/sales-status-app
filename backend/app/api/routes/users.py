@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pytz
-import requests
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,7 +19,12 @@ from app.schemas import (
     UserUpdate,
 )
 from app.tasks import offline_status_id
-from app.utils import get_new_mango_status_id, mango_statuses, send_ws_after_user_update
+from app.utils import (
+    change_mango_status,
+    get_new_mango_status_id,
+    mango_statuses,
+    send_ws_after_user_update,
+)
 
 users_router = APIRouter()
 telegram_router = APIRouter()
@@ -94,13 +98,7 @@ async def update_user_router(
     mango_status_id = get_new_mango_status_id(new_status_id)
 
     if old_status_id != new_status_id and user.mango_user_id is not None:
-        api_url = settings.MANGO_SET_STATUS
-        payload = {"abonent_id": user.mango_user_id, "status": mango_status_id}
-        headers = {"Content-Type": "application/json"}
-        response = requests.post(api_url, json=payload, headers=headers)
-
-        if response.status_code != 200:
-            raise HTTPException(status_code=500, detail="Failed to notify mango API")
+        await change_mango_status(user, mango_status_id)
 
     updated_user = await UserRepository.update_user(
         user_update, session, user, deadline_dt
@@ -131,14 +129,7 @@ async def set_all_offline(session: AsyncSession = Depends(get_async_session)):
 
     for user in users:
         user.status_id = offline_status_id
-        if user.mango_user_id is not None:
-            api_url = settings.MANGO_SET_STATUS
-            payload = {
-                "abonent_id": user.mango_user_id,
-                "status": mango_statuses["offline"],
-            }
-            headers = {"Content-Type": "application/json"}
-            requests.post(api_url, json=payload, headers=headers)
+        await change_mango_status(user, mango_statuses["offline"])
 
     await session.commit()
     return Message(message="All users set to offline")
@@ -205,13 +196,7 @@ async def update_telegram(
     mango_status_id = get_new_mango_status_id(new_status_id)
 
     if old_status_id != new_status_id and db_user.mango_user_id is not None:
-        api_url = settings.MANGO_SET_STATUS
-        payload = {"abonent_id": db_user.mango_user_id, "status": mango_status_id}
-        headers = {"Content-Type": "application/json"}
-        response = requests.post(api_url, json=payload, headers=headers)
-
-        if response.status_code != 200:
-            raise HTTPException(status_code=500, detail="Failed to notify mango API")
+        await change_mango_status(db_user, mango_status_id)
 
     updated_user = await UserRepository.update_user(
         user_update, session, db_user, deadline_dt
