@@ -35,7 +35,7 @@ export const CurrentWeekResultRow = memo((props: CurrentWeekResultRowProps) => {
         <Typography variant={'body2'}>{tasks?.deals || 0}</Typography>
       </TableCell>
       <TableCell align="center">
-        <Typography variant={'body2'}>{tasks?.budget.toLocaleString('ru-RU') || 0}</Typography>
+        <Typography variant={'body2'}>{tasks?.budget?.toLocaleString('ru-RU') || 0}</Typography>
       </TableCell>
     </TableRow>
   );
