@@ -33,7 +33,7 @@
     "redux": "^4.2.1"
   },
   "devDependencies": {
-    "@eryshev/eslint-plugin-fsd": "^0.0.9",
+    "@eryshev/eslint-plugin-fsd": "^0.0.10",
     "@eslint/compat": "^1.1.1",
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.8.0",
