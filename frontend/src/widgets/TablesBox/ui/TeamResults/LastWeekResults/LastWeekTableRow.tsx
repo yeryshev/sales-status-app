@@ -32,10 +32,10 @@ export const LastWeekTableRow = memo((props: LastWeekTableRowProps) => {
         >{`${teammate.firstName} ${teammate.secondName} ${medalMapper[index] || ''}`}</Typography>
       </TableCell>
       <TableCell align="center">
-        <Typography variant={'body2'}>{lastWeekStats?.deals || 0}</Typography>
+        <Typography variant={'body2'}>{Number(lastWeekStats?.deals) || 0}</Typography>
       </TableCell>
       <TableCell align="center">
-        <Typography variant={'body2'}>{`${lastWeekStats?.budget.toLocaleString('ru-RU') || 0}`}</Typography>
+        <Typography variant={'body2'}>{`${lastWeekStats?.budget?.toLocaleString('ru-RU') || 0}`}</Typography>
       </TableCell>
     </TableRow>
   );

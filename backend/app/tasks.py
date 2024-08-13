@@ -1,14 +1,11 @@
 import os
 
-import requests
 from celery import Celery
 from celery.schedules import crontab
-from fastapi import HTTPException
 
-from app.core.config import settings
 from app.core.db import sync_session_factory
 from app.models import User
-from app.utils import mango_statuses
+from app.utils import change_mango_status, mango_statuses
 
 celery = Celery("tasks")
 celery.conf.broker_url = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379")
@@ -35,20 +32,9 @@ def set_offline_users():
             session.query(User).filter(User.status_id != offline_status_id).all()
         )
 
-        api_url = settings.MANGO_SET_STATUS
-        headers = {"Content-Type": "application/json"}
-
         for user in users_to_update:
             user.status_id = offline_status_id
-            if user.mango_user_id is not None:
-                payload = {
-                    "abonent_id": user.mango_user_id,
-                    "status": mango_statuses["offline"],
-                }
-                response = requests.post(api_url, json=payload, headers=headers)
-
-                if response.status_code != 200:
-                    raise HTTPException(
-                        status_code=500, detail="Failed to notify mango API"
-                    )
+            change_mango_status(user, mango_statuses["offline"])
         session.commit()
+        session.close()
+    return "All users are offline now"
