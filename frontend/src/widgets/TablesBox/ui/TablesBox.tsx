@@ -1,4 +1,3 @@
-import { Tooltip } from '@mui/material';
 import { TeamTable } from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
@@ -6,11 +5,8 @@ import { getUserData, User, userActions } from '@/entities/User';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import Box from '@mui/system/Box';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 import { LastWeekTable } from './TeamResults/LastWeekResults/LastWeekTable';
 import { CurrentWeekResultTable } from './TeamResults/CurrentWeekResult/CurrentWeekResultTable';
-import Typography from '@mui/material/Typography';
 import { useLocation } from 'react-router-dom';
 import moment from 'moment/moment';
 import {
@@ -25,6 +21,7 @@ import {
 } from '@/entities/Team';
 import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { Helmet } from 'react-helmet';
+import { TeamTableTabs } from '@/features/TeamTableTabs';
 
 interface TabPanelProps {
   children?: ReactNode;
@@ -46,13 +43,6 @@ function CustomTabPanel(props: TabPanelProps) {
       {value === index && <Box>{children}</Box>}
     </div>
   );
-}
-
-function a11yProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
 }
 
 const reducers: ReducersList = {
@@ -130,9 +120,9 @@ export const TablesBox = memo(() => {
     avatarsAndBirthday = {},
   } = additionalTeamData || {};
 
-  const handleChangeTab = (_: SyntheticEvent, newTab: number) => {
+  const handleChangeTab = useCallback((_: SyntheticEvent, newTab: number) => {
     setTabNumber(newTab);
-  };
+  }, []);
 
   useEffect(() => {
     document.addEventListener('visibilitychange', () => {
@@ -189,22 +179,7 @@ export const TablesBox = memo(() => {
         <title>{isAccountManagersRoute ? 'Аккаунт менеджеры' : 'Входящие'}</title>
       </Helmet>
       <Box sx={{ width: '100%' }}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={tabNumber} onChange={handleChangeTab} aria-label="basic tabs">
-            <Tab label="Команда" {...a11yProps(0)} />
-            <Tooltip
-              title={
-                <Typography variant={'inherit'}>
-                  Рейтинг менеджеров по новым клиентам
-                  <br />
-                  ТОП 3 получают бейджи каждую неделю
-                </Typography>
-              }
-            >
-              <Tab label="Успехи" {...a11yProps(1)} />
-            </Tooltip>
-          </Tabs>
-        </Box>
+        <TeamTableTabs tabNumber={tabNumber} handleChangeTab={handleChangeTab} />
         <CustomTabPanel value={tabNumber} index={0}>
           <TeamTable
             teamList={teamList}
