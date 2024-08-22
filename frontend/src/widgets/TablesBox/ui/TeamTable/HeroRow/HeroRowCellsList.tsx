@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react';
 import { Skeleton, Switch } from '@mui/material';
-import { StatusSelector } from 'src/features/StatusSelector';
+import { StatusSelector } from '@/features/StatusSelector';
 import { AvatarCell } from '../RowCells/AvatarCell';
 import { UserNameCell } from '../RowCells/UserNameCell';
 import { LeadsCell } from '../RowCells/LeadsCell';

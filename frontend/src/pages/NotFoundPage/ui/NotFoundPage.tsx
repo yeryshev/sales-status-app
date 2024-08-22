@@ -18,6 +18,7 @@ export default function NotFoundPage() {
           height: '100%',
           gap: 2,
         }}
+        data-testid="not-found-page"
       >
         <Typography component="h1" variant="h5">
           404
