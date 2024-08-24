@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:server": "cd ../backend && poetry run uvicorn app.main:app --reload",
+    "start": "npm run dev & npm run dev:server",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "start:preview": "npm run preview & npm run dev:server",
     "prettier": "prettier --write \"**/*.{ts,tsx,json}\"",
     "lint:ts": "eslint \"**/*.{ts,tsx}\"",
     "lint:ts:fix": "eslint \"**/*.{ts,tsx}\" --fix",
