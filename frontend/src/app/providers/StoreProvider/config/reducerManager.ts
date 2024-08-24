@@ -1,7 +1,6 @@
-import { AnyAction, combineReducers } from 'redux';
-import { ReducersMapObject } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux';
+import { Action, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
 import { ReducerManager, StateSchema, StateSchemaKey } from './StateSchema';
-import { Reducer } from '@reduxjs/toolkit';
 
 export function createReducerManager(initialReducers: ReducersMapObject<StateSchema>): ReducerManager {
   const reducers = { ...initialReducers };
@@ -10,7 +9,8 @@ export function createReducerManager(initialReducers: ReducersMapObject<StateSch
 
   return {
     getReducerMap: () => reducers,
-    reduce: (state: StateSchema, action: AnyAction) => {
+
+    reduce: (state: DeepPartial<StateSchema> | undefined, action: Action) => {
       if (keysToRemove.length > 0) {
         state = { ...state };
         for (const key of keysToRemove) {
@@ -18,6 +18,7 @@ export function createReducerManager(initialReducers: ReducersMapObject<StateSch
         }
         keysToRemove = [];
       }
+      // @ts-expect-error временно
       return combinedReducer(state, action);
     },
 

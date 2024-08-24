@@ -1,7 +1,7 @@
 import { userReducer } from '@/entities/User';
 import { statusReducer } from '@/entities/Status';
-import { CombinedState, configureStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
-import { StateSchema, ThunkExtraArg } from './StateSchema';
+import { configureStore, ReducersMapObject } from '@reduxjs/toolkit';
+import { ReduxStoreWithManager, StateSchema, ThunkExtraArg } from './StateSchema';
 import { createReducerManager } from './reducerManager';
 import { $api } from '@/shared/api/api';
 import { rtkApi } from '@/shared/api/rtkApi';
@@ -21,7 +21,7 @@ export function createReduxStore(initialState?: StateSchema, asyncReducers?: Red
   };
 
   const store = configureStore({
-    reducer: reducerManager.reduce as Reducer<CombinedState<StateSchema>>,
+    reducer: reducerManager.reduce,
     devTools: import.meta.env.DEV,
     preloadedState: initialState,
     middleware: (getDefaultMiddleware) => {
@@ -33,8 +33,7 @@ export function createReduxStore(initialState?: StateSchema, asyncReducers?: Red
     },
   });
 
-  // @ts-expect-error временно
-  store.reducerManager = reducerManager;
+  (store as ReduxStoreWithManager).reducerManager = reducerManager;
 
   return store;
 }
