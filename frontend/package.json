@@ -16,6 +16,9 @@
     "test:unit": "vitest run --config ./config/vitest/vitest.config.ts",
     "prepare": "cd .. && husky frontend/.husky"
   },
+  "lint-staged": {
+    "**/*.{ts,tsx}": "eslint"
+  },
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
@@ -58,6 +61,7 @@
     "globals": "^15.8.0",
     "husky": "^9.1.1",
     "jsdom": "^24.0.0",
+    "lint-staged": "^15.2.9",
     "prettier": "^3.3.3",
     "sass": "^1.77.8",
     "ts-node": "^10.9.2",
