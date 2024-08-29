@@ -1,6 +1,6 @@
 import { TeamTable } from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
-import { memo, ReactNode, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { getUserData, User, userActions } from '@/entities/User';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
@@ -21,29 +21,7 @@ import {
 } from '@/entities/Team';
 import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { Helmet } from 'react-helmet';
-import { TeamTableTabs } from '@/features/TeamTableTabs';
-
-interface TabPanelProps {
-  children?: ReactNode;
-  index: number;
-  value: number;
-}
-
-function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box>{children}</Box>}
-    </div>
-  );
-}
+import { TeamTableTabPanel, TeamTableTabs } from '@/features/TeamTableTabs';
 
 const reducers: ReducersList = {
   teamTable: teamReducer,
@@ -180,7 +158,7 @@ export const TablesBox = memo(() => {
       </Helmet>
       <Box sx={{ width: '100%' }}>
         <TeamTableTabs tabNumber={tabNumber} handleChangeTab={handleChangeTab} />
-        <CustomTabPanel value={tabNumber} index={0}>
+        <TeamTableTabPanel value={tabNumber} index={0}>
           <TeamTable
             teamList={teamList}
             teamIsLoading={teamIsLoading}
@@ -192,8 +170,8 @@ export const TablesBox = memo(() => {
             isDeadlineReachedObject={deadlines}
             isAccountManagersRoute={isAccountManagersRoute}
           />
-        </CustomTabPanel>
-        <CustomTabPanel value={tabNumber} index={1}>
+        </TeamTableTabPanel>
+        <TeamTableTabPanel value={tabNumber} index={1}>
           <Box display={'flex'} gap={2} flexDirection={{ sm: 'column', md: 'row' }}>
             <CurrentWeekResultTable
               teamList={teamList}
@@ -210,7 +188,7 @@ export const TablesBox = memo(() => {
               isAccountManagersRoute={isAccountManagersRoute}
             />
           </Box>
-        </CustomTabPanel>
+        </TeamTableTabPanel>
       </Box>
     </DynamicModuleLoader>
   );
