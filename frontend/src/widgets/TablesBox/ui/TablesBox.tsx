@@ -1,6 +1,6 @@
 import { TeamTable } from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
-import { memo, SyntheticEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, SyntheticEvent, useCallback, useEffect, useState } from 'react';
 import { getUserData, User, userActions } from '@/entities/User';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
@@ -8,7 +8,6 @@ import Box from '@mui/system/Box';
 import { LastWeekTable } from './TeamResults/LastWeekResults/LastWeekTable';
 import { CurrentWeekResultTable } from './TeamResults/CurrentWeekResult/CurrentWeekResultTable';
 import { useLocation } from 'react-router-dom';
-import moment from 'moment/moment';
 import {
   fetchTeamList,
   getAccountManagerTeamList,
@@ -22,6 +21,7 @@ import {
 import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { Helmet } from 'react-helmet';
 import { TeamTableTabPanel, TeamTableTabs } from '@/features/TeamTableTabs';
+import { checkDeadlines, getDeadlineNumbersObject } from '../lib/deadlineHelpers';
 
 const reducers: ReducersList = {
   teamTable: teamReducer,
@@ -48,32 +48,22 @@ export const TablesBox = memo(() => {
   const [tabNumber, setTabNumber] = useState(0);
   const location = useLocation();
   const [deadlines, setDeadlines] = useState<Record<User['id'], boolean>>({});
-
   const isAccountManagersRoute = location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS];
+  const { data: additionalTeamData } = useGetAdditionalTeamData(isAccountManagersRoute ? 'account' : 'inbound');
+
+  const {
+    tasks = {},
+    tickets = {},
+    mango = {},
+    vacation = {},
+    lastWeekStat = {},
+    avatarsAndBirthday = {},
+  } = additionalTeamData || {};
 
   let teamList: User[];
   isAccountManagersRoute ? (teamList = accountManagerTeamList) : (teamList = inboundTeamList);
 
-  const { data: additionalTeamData } = useGetAdditionalTeamData(isAccountManagersRoute ? 'account' : 'inbound');
-
-  const deadlinesNumbersObj = useMemo(() => {
-    const obj: Record<User['id'], number> = {};
-    teamList.forEach((user) => {
-      if (user.busyTime) {
-        obj[user.id] = moment.utc(user.busyTime.endTime).valueOf();
-      }
-    });
-    return obj;
-  }, [teamList]);
-
-  const checkDeadlines = useCallback((deadlinesNumbersObj: Record<User['id'], number>) => {
-    const currentTimeUTC = moment().utc().valueOf();
-    const deadlinesStatesObj: Record<User['id'], boolean> = {};
-    for (const key in deadlinesNumbersObj) {
-      deadlinesStatesObj[key] = currentTimeUTC >= deadlinesNumbersObj[key];
-    }
-    return deadlinesStatesObj;
-  }, []);
+  const deadlinesNumbersObj = getDeadlineNumbersObject(teamList);
 
   useEffect(() => {
     if (!teamIsLoading && teamList.length > 0) {
@@ -87,16 +77,7 @@ export const TablesBox = memo(() => {
 
       return () => clearInterval(intervalId);
     }
-  }, [teamIsLoading, teamList, deadlinesNumbersObj, checkDeadlines]);
-
-  const {
-    tasks = {},
-    tickets = {},
-    mango = {},
-    vacation = {},
-    lastWeekStat = {},
-    avatarsAndBirthday = {},
-  } = additionalTeamData || {};
+  }, [teamIsLoading, teamList, deadlinesNumbersObj]);
 
   const handleChangeTab = useCallback((_: SyntheticEvent, newTab: number) => {
     setTabNumber(newTab);
