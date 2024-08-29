@@ -9,7 +9,7 @@ import { ConversationsCell } from '../RowCells/ConversationsCell';
 import { TicketsCell } from '../RowCells/TicketsCell';
 import { TeamRowCell } from '../TeamRow/TeamRowCellsList';
 import { HeroRowProps } from './HeroRow';
-import { CommentCell } from './HeroRowCells/CommentCell';
+import { CommentCell } from './CommentCell';
 
 interface TeamRowCellsListProps extends HeroRowProps {
   handleSwitch: (e: ChangeEvent<HTMLInputElement>) => void;

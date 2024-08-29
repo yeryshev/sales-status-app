@@ -1,15 +1,9 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip } from '@mui/material';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { TeamRow } from './TeamRow/TeamRow';
 import { memo } from 'react';
 import { styled } from '@mui/material/styles';
-import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
-import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
-import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
-import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
-import { getUserData, getUserId, User } from '@/entities/User';
+import { getUserData, getUserId, getUserIsManager, User } from '@/entities/User';
 import { HeroRow } from './HeroRow/HeroRow';
 import {
   Teammate,
@@ -19,6 +13,9 @@ import {
   UsersTickets,
   UsersVacation,
 } from '@/entities/Team';
+import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
+import { getTeamTableHeadersList } from './Headers/getTeamTableHeadersList';
+import { TeamTableHeaderItem } from '../TeamTable/Headers/TeamTableHeaderItem';
 
 interface TeamTableProps {
   teamList: Teammate[];
@@ -53,10 +50,12 @@ export const TeamTable = memo((props: TeamTableProps) => {
 
   const userId = useSelector(getUserId);
   const user = useSelector(getUserData);
+  const userIsManager = useSelector(getUserIsManager);
   const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
-  const shouldSeeHeroRow = !teamIsLoading && user?.isManager && userOnRightPage;
+  const shouldSeeHeroRow = !teamIsLoading && userIsManager && userOnRightPage;
   const teamListIsNotEmpty = teamList.length > 0;
   const thereAreCoordinators = teamList.find((teammate) => teammate.isCoordinator);
+  const headersList = getTeamTableHeadersList(shouldSeeHeroRow);
 
   const showManagers = (teammate: Teammate) => {
     return teammate.isManager && teammate.id !== userId && !teammate.isCoordinator;
@@ -86,39 +85,9 @@ export const TeamTable = memo((props: TeamTableProps) => {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell></TableCell>
-            <TableCell align="left"></TableCell>
-            <TableCell align="left"></TableCell>
-            <TableCell align="left"></TableCell>
-            <Tooltip title={'Первичные обращения'}>
-              <TableCell align="center">
-                <RequestQuoteOutlinedIcon fontSize={'small'} />
-              </TableCell>
-            </Tooltip>
-            <Tooltip title={'Просроченные задачи'}>
-              <TableCell align="center">
-                <HourglassBottomOutlinedIcon fontSize={'small'} />
-              </TableCell>
-            </Tooltip>
-            <Tooltip title={'Количество открытых чатов'}>
-              <TableCell align="center">
-                <QuestionAnswerOutlinedIcon fontSize={'small'} />
-              </TableCell>
-            </Tooltip>
-            <Tooltip title={'Назначенные тикеты'}>
-              <TableCell align="center">
-                <FeedbackOutlinedIcon fontSize={'small'} />
-              </TableCell>
-            </Tooltip>
-            {shouldSeeHeroRow ? (
-              <Tooltip title={'Работаю из дома'}>
-                <TableCell align="center">
-                  <HomeOutlinedIcon fontSize={'small'} />
-                </TableCell>
-              </Tooltip>
-            ) : (
-              <TableCell align="center"></TableCell>
-            )}
+            {headersList.map((header, index) => (
+              <TeamTableHeaderItem key={index} item={header} />
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -134,14 +103,14 @@ export const TeamTable = memo((props: TeamTableProps) => {
                 isAccountManagersRoute={isAccountManagersRoute}
               />
               <StyledTableRow>
-                <TableCell colSpan={9}></TableCell>
+                <TableCell colSpan={headersList.length}></TableCell>
               </StyledTableRow>
             </>
           )}
           {teamListIsNotEmpty && teamList.filter(showManagers).map(renderTeamList)}
           {thereAreCoordinators && (
             <StyledTableRow>
-              <TableCell colSpan={9}></TableCell>
+              <TableCell colSpan={headersList.length}></TableCell>
             </StyledTableRow>
           )}
           {teamListIsNotEmpty && teamList.filter(showCoordinators).map(renderTeamList)}
