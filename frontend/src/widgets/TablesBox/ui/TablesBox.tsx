@@ -37,19 +37,18 @@ const handleVisibilityChange = (socket: WebSocket) => {
   }
 };
 
-const INTERVAL_MS = 30000;
-
 export const TablesBox = memo(() => {
-  const user = useSelector(getUserData);
+  const dispatch = useAppDispatch();
+  const location = useLocation();
+  const isAccountManagersRoute = location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS];
+  const teamIsLoading = useSelector(getTeamIsLoading);
   const inboundTeamList = useSelector(getInboundTeamList);
   const accountManagerTeamList = useSelector(getAccountManagerTeamList);
-  const teamIsLoading = useSelector(getTeamIsLoading);
-  const dispatch = useAppDispatch();
-  const [tabNumber, setTabNumber] = useState(0);
-  const location = useLocation();
-  const [deadlines, setDeadlines] = useState<Record<User['id'], boolean>>({});
-  const isAccountManagersRoute = location.pathname === RoutePath[AppRoutes.ACCOUNT_MANAGERS];
+  const teamList = isAccountManagersRoute ? accountManagerTeamList : inboundTeamList;
   const { data: additionalTeamData } = useGetAdditionalTeamData(isAccountManagersRoute ? 'account' : 'inbound');
+  const user = useSelector(getUserData);
+  const [tabNumber, setTabNumber] = useState(0);
+  const [deadlines, setDeadlines] = useState<Record<User['id'], boolean>>({});
 
   const {
     tasks = {},
@@ -60,28 +59,28 @@ export const TablesBox = memo(() => {
     avatarsAndBirthday = {},
   } = additionalTeamData || {};
 
-  let teamList: User[];
-  isAccountManagersRoute ? (teamList = accountManagerTeamList) : (teamList = inboundTeamList);
-
-  const deadlinesNumbersObj = getDeadlineNumbersObject(teamList);
-
-  useEffect(() => {
-    if (!teamIsLoading && teamList.length > 0) {
-      const isDeadlineReachedObject = checkDeadlines(deadlinesNumbersObj);
-      setDeadlines(isDeadlineReachedObject);
-
-      const intervalId = setInterval(() => {
-        const isDeadlineReachedObject = checkDeadlines(deadlinesNumbersObj);
-        setDeadlines(isDeadlineReachedObject);
-      }, INTERVAL_MS);
-
-      return () => clearInterval(intervalId);
-    }
-  }, [teamIsLoading, teamList, deadlinesNumbersObj]);
-
   const handleChangeTab = useCallback((_: SyntheticEvent, newTab: number) => {
     setTabNumber(newTab);
   }, []);
+
+  useEffect(() => {
+    dispatch(fetchTeamList());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!teamIsLoading && teamList.length > 0) {
+      const deadlinesNumbersObject = getDeadlineNumbersObject(teamList);
+      const isDeadlineReachedObject = checkDeadlines(deadlinesNumbersObject);
+      setDeadlines(isDeadlineReachedObject);
+
+      const checkDeadlinesInterval = setInterval(() => {
+        const isDeadlineReachedObject = checkDeadlines(deadlinesNumbersObject);
+        setDeadlines(isDeadlineReachedObject);
+      }, 30000);
+
+      return () => clearInterval(checkDeadlinesInterval);
+    }
+  }, [teamIsLoading, teamList]);
 
   useEffect(() => {
     document.addEventListener('visibilitychange', () => {
@@ -127,10 +126,6 @@ export const TablesBox = memo(() => {
       statusCommentsSocket.removeEventListener('message', handleStatusChange);
     };
   }, [handleStatusChange]);
-
-  useEffect(() => {
-    dispatch(fetchTeamList());
-  }, [dispatch]);
 
   return (
     <DynamicModuleLoader reducers={reducers}>
