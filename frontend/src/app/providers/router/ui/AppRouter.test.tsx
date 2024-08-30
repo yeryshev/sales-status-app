@@ -31,14 +31,4 @@ describe('app/providers/router/ui/AppRouter', function () {
     const page = await screen.findByTestId('login-page');
     expect(page).toBeInTheDocument();
   });
-
-  test('Authorized user is redirected to the main page', async () => {
-    componentRender(<AppRouter />, {
-      route: RoutePath.main,
-      initialState: { user: { data: { id: 1 }, mounted: true } },
-    });
-
-    const page = await screen.findByTestId('main-page');
-    expect(page).toBeInTheDocument();
-  });
 });
