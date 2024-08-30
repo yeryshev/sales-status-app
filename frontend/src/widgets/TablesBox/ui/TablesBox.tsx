@@ -1,7 +1,7 @@
 import { TeamTable } from './TeamTable/TeamTable';
 import { useSelector } from 'react-redux';
 import { memo, SyntheticEvent, useCallback, useEffect, useState } from 'react';
-import { getUserData, User, userActions } from '@/entities/User';
+import { getUserData, userActions } from '@/entities/User';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import Box from '@mui/system/Box';
@@ -21,8 +21,8 @@ import {
 import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { Helmet } from 'react-helmet';
 import { TeamTableTabPanel, TeamTableTabs } from '@/features/TeamTableTabs';
-import { checkDeadlines, getDeadlineNumbersObject } from '../lib/deadlineHelpers';
 import { handleVisibilityChange } from '../lib/visibilityChangeHandler';
+import { useDeadlinesCheck } from '../lib/useDeadlines';
 
 const reducers: ReducersList = {
   teamTable: teamReducer,
@@ -41,7 +41,7 @@ export const TablesBox = memo(() => {
   const { data: additionalTeamData } = useGetAdditionalTeamData(isAccountManagersRoute ? 'account' : 'inbound');
   const user = useSelector(getUserData);
   const [tabNumber, setTabNumber] = useState(0);
-  const [deadlines, setDeadlines] = useState<Record<User['id'], boolean>>({});
+  const deadlines = useDeadlinesCheck(teamList, teamIsLoading);
 
   const {
     tasks = {},
@@ -59,21 +59,6 @@ export const TablesBox = memo(() => {
   useEffect(() => {
     dispatch(fetchTeamList());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (!teamIsLoading && teamList.length > 0) {
-      const deadlinesNumbersObject = getDeadlineNumbersObject(teamList);
-      const isDeadlineReachedObject = checkDeadlines(deadlinesNumbersObject);
-      setDeadlines(isDeadlineReachedObject);
-
-      const checkDeadlinesInterval = setInterval(() => {
-        const isDeadlineReachedObject = checkDeadlines(deadlinesNumbersObject);
-        setDeadlines(isDeadlineReachedObject);
-      }, 30000);
-
-      return () => clearInterval(checkDeadlinesInterval);
-    }
-  }, [teamIsLoading, teamList]);
 
   useEffect(() => {
     document.addEventListener('visibilitychange', () => {
