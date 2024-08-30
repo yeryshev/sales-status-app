@@ -19,7 +19,7 @@ const LoginPage = memo(() => {
       <AppBar position="relative">
         <Toolbar>
           <Typography variant="h6" color="inherit" noWrap>
-            Inbound Sales
+            Sales Status
           </Typography>
         </Toolbar>
       </AppBar>
