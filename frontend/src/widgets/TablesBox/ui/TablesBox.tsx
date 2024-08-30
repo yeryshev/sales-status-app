@@ -22,20 +22,13 @@ import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { Helmet } from 'react-helmet';
 import { TeamTableTabPanel, TeamTableTabs } from '@/features/TeamTableTabs';
 import { checkDeadlines, getDeadlineNumbersObject } from '../lib/deadlineHelpers';
+import { handleVisibilityChange } from '../lib/visibilityChangeHandler';
 
 const reducers: ReducersList = {
   teamTable: teamReducer,
 };
 
 const statusCommentsSocket = new WebSocket(import.meta.env.VITE_SOCKET_URL);
-
-const handleVisibilityChange = (socket: WebSocket) => {
-  if (!document.hidden) {
-    if (socket.readyState !== WebSocket.OPEN) {
-      window.location.reload();
-    }
-  }
-};
 
 export const TablesBox = memo(() => {
   const dispatch = useAppDispatch();
