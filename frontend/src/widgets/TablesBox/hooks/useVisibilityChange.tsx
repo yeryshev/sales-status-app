@@ -1,21 +1,19 @@
 import { useEffect } from 'react';
 
-export const handleVisibilityChange = (socket: WebSocket) => {
-  if (!document.hidden) {
-    if (socket.readyState !== WebSocket.OPEN) {
-      window.location.reload();
-    }
-  }
-};
-
 export const useVisibilityChange = (statusCommentsSocket: WebSocket) => {
   useEffect(() => {
-    const handleVisibility = () => handleVisibilityChange(statusCommentsSocket);
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        if (statusCommentsSocket.readyState !== WebSocket.OPEN) {
+          window.location.reload();
+        }
+      }
+    };
 
-    document.addEventListener('visibilitychange', handleVisibility);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibility);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [statusCommentsSocket]);
 };
