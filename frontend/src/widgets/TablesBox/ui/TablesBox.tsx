@@ -21,8 +21,8 @@ import {
 import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { Helmet } from 'react-helmet';
 import { TeamTableTabPanel, TeamTableTabs } from '@/features/TeamTableTabs';
-import { handleVisibilityChange } from '../lib/visibilityChangeHandler';
-import { useDeadlinesCheck } from '../lib/useDeadlines';
+import { useVisibilityChange } from '../hooks/useVisibilityChange';
+import { useDeadlinesCheck } from '../hooks/useDeadlines';
 
 const reducers: ReducersList = {
   teamTable: teamReducer,
@@ -60,17 +60,7 @@ export const TablesBox = memo(() => {
     dispatch(fetchTeamList());
   }, [dispatch]);
 
-  useEffect(() => {
-    document.addEventListener('visibilitychange', () => {
-      handleVisibilityChange(statusCommentsSocket);
-    });
-
-    return () => {
-      document.removeEventListener('visibilitychange', () => {
-        handleVisibilityChange(statusCommentsSocket);
-      });
-    };
-  }, []);
+  useVisibilityChange(statusCommentsSocket);
 
   const handleStatusChange = useCallback(
     (event: MessageEvent) => {
