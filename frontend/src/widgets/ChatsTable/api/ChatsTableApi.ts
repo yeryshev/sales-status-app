@@ -11,7 +11,7 @@ interface TgChatsData {
   chats: TgChat[];
 }
 
-const TgChatsApi = rtkApi.injectEndpoints({
+const ChatsTableApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
     getTgChats: build.query<TgChatsData, void>({
       query: () => ({
@@ -21,4 +21,4 @@ const TgChatsApi = rtkApi.injectEndpoints({
   }),
 });
 
-export const useGetTgChats = TgChatsApi.useGetTgChatsQuery;
+export const useGetTgChats = ChatsTableApi.useGetTgChatsQuery;

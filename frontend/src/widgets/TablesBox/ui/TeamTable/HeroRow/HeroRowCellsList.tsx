@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react';
 import { Skeleton, Switch } from '@mui/material';
-import { StatusSelector } from 'src/features/StatusSelector';
+import { StatusSelector } from '@/features/StatusSelector';
 import { AvatarCell } from '../RowCells/AvatarCell';
 import { UserNameCell } from '../RowCells/UserNameCell';
 import { LeadsCell } from '../RowCells/LeadsCell';
@@ -9,7 +9,7 @@ import { ConversationsCell } from '../RowCells/ConversationsCell';
 import { TicketsCell } from '../RowCells/TicketsCell';
 import { TeamRowCell } from '../TeamRow/TeamRowCellsList';
 import { HeroRowProps } from './HeroRow';
-import { CommentCell } from './HeroRowCells/CommentCell';
+import { CommentCell } from './CommentCell';
 
 interface TeamRowCellsListProps extends HeroRowProps {
   handleSwitch: (e: ChangeEvent<HTMLInputElement>) => void;
