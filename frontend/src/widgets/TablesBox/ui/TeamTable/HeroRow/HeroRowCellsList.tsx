@@ -10,6 +10,8 @@ import { TicketsCell } from '../RowCells/TicketsCell';
 import { TeamRowCell } from '../TeamRow/TeamRowCellsList';
 import { HeroRowProps } from './HeroRow';
 import { CommentCell } from './HeroRowCells/CommentCell';
+import { DealsCell } from '../RowCells/DealsCell';
+import { BudgetCell } from '../RowCells/BudgetCell';
 
 interface TeamRowCellsListProps extends HeroRowProps {
   handleSwitch: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -46,6 +48,16 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'left',
       content: <CommentCell teammate={teammate} teamIsLoading={teamIsLoading} isDeadlineReached={isDeadlineReached} />,
+    },
+    {
+      align: 'left',
+      width: 60,
+      content: <DealsCell tasks={tasks} />,
+    },
+    {
+      align: 'left',
+      width: 60,
+      content: <BudgetCell tasks={tasks} />,
     },
     {
       align: 'center',

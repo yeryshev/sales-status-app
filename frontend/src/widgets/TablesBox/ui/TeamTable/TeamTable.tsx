@@ -90,6 +90,8 @@ export const TeamTable = memo((props: TeamTableProps) => {
             <TableCell align="left"></TableCell>
             <TableCell align="left"></TableCell>
             <TableCell align="left"></TableCell>
+            <TableCell align="left">Успешных сделок</TableCell>
+            <TableCell align="left">Бюджет</TableCell>
             <Tooltip title={'Первичные обращения'}>
               <TableCell align="center">
                 <RequestQuoteOutlinedIcon fontSize={'small'} />
@@ -134,14 +136,14 @@ export const TeamTable = memo((props: TeamTableProps) => {
                 isAccountManagersRoute={isAccountManagersRoute}
               />
               <StyledTableRow>
-                <TableCell colSpan={9}></TableCell>
+                <TableCell colSpan={11}></TableCell>
               </StyledTableRow>
             </>
           )}
           {teamListIsNotEmpty && teamList.filter(showManagers).map(renderTeamList)}
           {thereAreCoordinators && (
             <StyledTableRow>
-              <TableCell colSpan={9}></TableCell>
+              <TableCell colSpan={11}></TableCell>
             </StyledTableRow>
           )}
           {teamListIsNotEmpty && teamList.filter(showCoordinators).map(renderTeamList)}
