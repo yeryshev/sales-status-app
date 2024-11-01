@@ -52,7 +52,4 @@ async def change_mango_status(user: User | type(User), status_id: int):
         payload = {"abonent_id": user.mango_user_id, "status": status_id}
         headers = {"Content-Type": "application/json"}
         response = requests.post(api_url, json=payload, headers=headers)
-
-        if response.status_code != requests.codes.ok:
-            raise HTTPException(status_code=500, detail="Failed to notify mango API")
         return response
