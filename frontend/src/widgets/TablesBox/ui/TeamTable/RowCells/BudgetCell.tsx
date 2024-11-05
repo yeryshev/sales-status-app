@@ -1,14 +1,16 @@
 import { memo } from 'react';
 import Typography from '@mui/material/Typography';
-import { UserTasks } from '@/entities/Team';
+import { Teammate, UserTasks } from '@/entities/Team';
 
-interface CommentCellProps {
+interface BudgetCellProps {
   tasks: UserTasks;
+  teammate: Teammate;
 }
 
-export const BudgetCell = memo((props: CommentCellProps) => {
-  const { tasks } = props;
-  const budget = tasks?.budget?.toLocaleString('ru-RU');
+export const BudgetCell = memo((props: BudgetCellProps) => {
+  const { tasks, teammate } = props;
+  const budget = tasks?.budget?.toLocaleString('ru-RU') || '0';
+  const emptyValue = teammate?.isCoordinator ? '' : 0;
 
-  return <Typography variant={'body2'}>{budget === '0' ? '' : budget}</Typography>;
+  return tasks && <Typography variant={'body2'}>{budget === '0' ? emptyValue : budget}</Typography>;
 });

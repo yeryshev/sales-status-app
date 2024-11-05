@@ -1,13 +1,15 @@
 import { memo } from 'react';
 import Typography from '@mui/material/Typography';
-import { UserTasks } from '@/entities/Team';
+import { Teammate, UserTasks } from '@/entities/Team';
 
-interface CommentCellProps {
+interface DealsCellProps {
   tasks: UserTasks;
+  teammate: Teammate;
 }
 
-export const DealsCell = memo((props: CommentCellProps) => {
-  const { tasks } = props;
+export const DealsCell = memo((props: DealsCellProps) => {
+  const { tasks, teammate } = props;
+  const emptyValue = teammate?.isCoordinator ? '' : 0;
 
-  return <Typography variant={'body2'}>{tasks?.deals || ''}</Typography>;
+  return tasks && <Typography variant={'body2'}>{tasks?.deals || emptyValue}</Typography>;
 });

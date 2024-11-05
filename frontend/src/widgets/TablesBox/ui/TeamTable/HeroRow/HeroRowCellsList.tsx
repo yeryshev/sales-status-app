@@ -52,12 +52,12 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'left',
       width: 60,
-      content: <DealsCell tasks={tasks} />,
+      content: <DealsCell tasks={tasks} teammate={teammate} />,
     },
     {
       align: 'left',
       width: 60,
-      content: <BudgetCell tasks={tasks} />,
+      content: <BudgetCell tasks={tasks} teammate={teammate} />,
     },
     {
       align: 'center',
