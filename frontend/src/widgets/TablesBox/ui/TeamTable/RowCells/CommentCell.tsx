@@ -26,7 +26,6 @@ export const CommentCell = memo((props: CommentCellProps) => {
       до {renderVacationDay(vacationState?.endDate)}
     </Typography>
   ) : (
-    // teammate.comment?.description
     ''
   );
 });

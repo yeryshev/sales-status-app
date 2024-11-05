@@ -47,16 +47,16 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     },
     {
       align: 'left',
+      width: 250,
       content: <CommentCell teammate={teammate} teamIsLoading={teamIsLoading} isDeadlineReached={isDeadlineReached} />,
     },
     {
-      align: 'left',
+      align: 'center',
       width: 60,
       content: <DealsCell tasks={tasks} teammate={teammate} />,
     },
     {
       align: 'left',
-      width: 60,
       content: <BudgetCell tasks={tasks} teammate={teammate} />,
     },
     {
