@@ -19,7 +19,7 @@ export const ExpandRow = memo((props: ExpandRowProps) => {
 
   return (
     <TableRow>
-      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={9}>
+      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={11}>
         <Collapse in={expandRow} timeout="auto" unmountOnExit>
           <Box sx={{ margin: 1 }}>
             <Table size="small" aria-label="purchases">

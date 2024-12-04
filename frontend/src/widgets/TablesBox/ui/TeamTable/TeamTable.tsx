@@ -8,6 +8,8 @@ import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlin
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import CurrencyRubleIcon from '@mui/icons-material/CurrencyRuble';
+import FiberNewOutlinedIcon from '@mui/icons-material/FiberNewOutlined';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import { getUserData, getUserId, User } from '@/entities/User';
 import { HeroRow } from './HeroRow/HeroRow';
@@ -90,32 +92,42 @@ export const TeamTable = memo((props: TeamTableProps) => {
             <TableCell align="left"></TableCell>
             <TableCell align="left"></TableCell>
             <TableCell align="left"></TableCell>
-            <Tooltip title={'Первичные обращения'}>
-              <TableCell align="center">
-                <RequestQuoteOutlinedIcon fontSize={'small'} />
-              </TableCell>
-            </Tooltip>
-            <Tooltip title={'Просроченные задачи'}>
-              <TableCell align="center">
-                <HourglassBottomOutlinedIcon fontSize={'small'} />
-              </TableCell>
-            </Tooltip>
-            <Tooltip title={'Количество открытых чатов'}>
-              <TableCell align="center">
-                <QuestionAnswerOutlinedIcon fontSize={'small'} />
-              </TableCell>
-            </Tooltip>
-            <Tooltip title={'Назначенные тикеты'}>
-              <TableCell align="center">
-                <FeedbackOutlinedIcon fontSize={'small'} />
-              </TableCell>
-            </Tooltip>
-            {shouldSeeHeroRow ? (
-              <Tooltip title={'Работаю из дома'}>
-                <TableCell align="center">
-                  <HomeOutlinedIcon fontSize={'small'} />
-                </TableCell>
+            <TableCell align="center">
+              <Tooltip title={'Количество успешных сделок на этой неделе'}>
+                <FiberNewOutlinedIcon fontSize={'large'} />
               </Tooltip>
+            </TableCell>
+            <TableCell align="left">
+              <Tooltip title={'Бюджет успешных сделок на этой неделе'}>
+                <CurrencyRubleIcon fontSize={'small'} />
+              </Tooltip>
+            </TableCell>
+            <TableCell align="left">
+              <Tooltip title={'Первичные обращения'}>
+                <RequestQuoteOutlinedIcon fontSize={'small'} />
+              </Tooltip>
+            </TableCell>
+            <TableCell align="center">
+              <Tooltip title={'Просроченные задачи'}>
+                <HourglassBottomOutlinedIcon fontSize={'small'} />
+              </Tooltip>
+            </TableCell>
+            <TableCell align="center">
+              <Tooltip title={'Количество открытых чатов'}>
+                <QuestionAnswerOutlinedIcon fontSize={'small'} />
+              </Tooltip>
+            </TableCell>
+            <TableCell align="center">
+              <Tooltip title={'Назначенные тикеты'}>
+                <FeedbackOutlinedIcon fontSize={'small'} />
+              </Tooltip>
+            </TableCell>
+            {shouldSeeHeroRow ? (
+              <TableCell align="center">
+                <Tooltip title={'Работаю из дома'}>
+                  <HomeOutlinedIcon fontSize={'small'} />
+                </Tooltip>
+              </TableCell>
             ) : (
               <TableCell align="center"></TableCell>
             )}
@@ -134,14 +146,14 @@ export const TeamTable = memo((props: TeamTableProps) => {
                 isAccountManagersRoute={isAccountManagersRoute}
               />
               <StyledTableRow>
-                <TableCell colSpan={9}></TableCell>
+                <TableCell colSpan={11}></TableCell>
               </StyledTableRow>
             </>
           )}
           {teamListIsNotEmpty && teamList.filter(showManagers).map(renderTeamList)}
           {thereAreCoordinators && (
             <StyledTableRow>
-              <TableCell colSpan={9}></TableCell>
+              <TableCell colSpan={11}></TableCell>
             </StyledTableRow>
           )}
           {teamListIsNotEmpty && teamList.filter(showCoordinators).map(renderTeamList)}

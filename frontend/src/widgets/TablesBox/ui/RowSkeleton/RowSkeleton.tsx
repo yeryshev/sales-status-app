@@ -30,6 +30,12 @@ export const RowSkeleton = memo(() => {
       <TableCell align="center" sx={{ width: '60px' }}>
         <Skeleton variant="text" />
       </TableCell>
+      <TableCell align="center" sx={{ width: '60px' }}>
+        <Skeleton variant="text" />
+      </TableCell>
+      <TableCell align="center" sx={{ width: '60px' }}>
+        <Skeleton variant="text" />
+      </TableCell>
       <TableCell align="center" sx={{ width: '72px' }}>
         <Skeleton variant="text" />
       </TableCell>
