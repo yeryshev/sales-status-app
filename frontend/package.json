@@ -29,7 +29,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@sentry/react": "^8.18.0",
     "@sentry/vite-plugin": "^2.21.1",
-    "axios": "^1.6.0",
+    "axios": "1.7.4",
     "moment": "^2.29.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -67,7 +67,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "typescript-plugin-css-modules": "^5.1.0",
-    "vite": "^5.3.5",
+    "vite": "5.4.6",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^2.0.5"
   }
