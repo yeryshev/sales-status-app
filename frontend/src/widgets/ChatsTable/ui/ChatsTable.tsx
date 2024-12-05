@@ -6,11 +6,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { useGetTgChats } from '../api/TgChatsApi';
+import { useGetTgChats } from '../api/ChatsTableApi';
 import { Link as RouterLink } from 'react-router-dom';
 import { Link as MuiLink, Skeleton } from '@mui/material';
 
-const TgChatsRowSkeleton = memo(() => {
+const ChatsRowSkeleton = memo(() => {
   return (
     <TableRow>
       <TableCell component="th" scope="row" width={'190px'}>
@@ -23,9 +23,9 @@ const TgChatsRowSkeleton = memo(() => {
   );
 });
 
-const getSkeletons = () => new Array(12).fill(0).map((_, index) => <TgChatsRowSkeleton key={index} />);
+const getSkeletons = () => new Array(12).fill(0).map((_, index) => <ChatsRowSkeleton key={index} />);
 
-export const TgChatsTable = memo(() => {
+export const ChatsTable = memo(() => {
   const { data: rows, isLoading } = useGetTgChats();
 
   return (

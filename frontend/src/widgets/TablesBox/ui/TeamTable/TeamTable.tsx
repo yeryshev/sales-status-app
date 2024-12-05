@@ -11,7 +11,7 @@ import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CurrencyRubleIcon from '@mui/icons-material/CurrencyRuble';
 import FiberNewOutlinedIcon from '@mui/icons-material/FiberNewOutlined';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
-import { getUserData, getUserId, User } from '@/entities/User';
+import { getUserData, getUserId, getUserIsManager, User } from '@/entities/User';
 import { HeroRow } from './HeroRow/HeroRow';
 import {
   Teammate,
@@ -21,6 +21,8 @@ import {
   UsersTickets,
   UsersVacation,
 } from '@/entities/Team';
+// import { getTeamTableHeadersList } from './Headers/getTeamTableHeadersList';
+// import { TeamTableHeaderItem } from '../TeamTable/Headers/TeamTableHeaderItem';
 
 interface TeamTableProps {
   teamList: Teammate[];
@@ -55,10 +57,12 @@ export const TeamTable = memo((props: TeamTableProps) => {
 
   const userId = useSelector(getUserId);
   const user = useSelector(getUserData);
+  const userIsManager = useSelector(getUserIsManager);
   const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
-  const shouldSeeHeroRow = !teamIsLoading && user?.isManager && userOnRightPage;
+  const shouldSeeHeroRow = !teamIsLoading && userIsManager && userOnRightPage;
   const teamListIsNotEmpty = teamList.length > 0;
   const thereAreCoordinators = teamList.find((teammate) => teammate.isCoordinator);
+  // const headersList = getTeamTableHeadersList(shouldSeeHeroRow);
 
   const showManagers = (teammate: Teammate) => {
     return teammate.isManager && teammate.id !== userId && !teammate.isCoordinator;
@@ -131,6 +135,9 @@ export const TeamTable = memo((props: TeamTableProps) => {
             ) : (
               <TableCell align="center"></TableCell>
             )}
+            {/*{headersList.map((header, index) => (*/}
+            {/*  <TeamTableHeaderItem key={index} item={header} />*/}
+            {/*))}*/}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -147,6 +154,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
               />
               <StyledTableRow>
                 <TableCell colSpan={11}></TableCell>
+                {/*<TableCell colSpan={headersList.length}></TableCell>*/}
               </StyledTableRow>
             </>
           )}
@@ -154,6 +162,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
           {thereAreCoordinators && (
             <StyledTableRow>
               <TableCell colSpan={11}></TableCell>
+              {/*<TableCell colSpan={headersList.length}></TableCell>*/}
             </StyledTableRow>
           )}
           {teamListIsNotEmpty && teamList.filter(showCoordinators).map(renderTeamList)}

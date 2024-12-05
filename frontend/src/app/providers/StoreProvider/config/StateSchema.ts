@@ -2,8 +2,7 @@ import { StatusSchema } from '@/entities/Status';
 import { TeamTableSchema } from 'src/entities/Team';
 import { UserSchema } from '@/entities/User';
 import { LoginSchema } from '@/features/AuthByEmail';
-import { CombinedState, EnhancedStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
-import { AnyAction } from 'redux';
+import { EnhancedStore, Reducer, ReducersMapObject } from '@reduxjs/toolkit';
 import { ProfileSchema } from '@/pages/ProfilePage';
 import { AxiosInstance } from 'axios';
 import { rtkApi } from '@/shared/api/rtkApi';
@@ -25,7 +24,7 @@ export type StateSchemaKey = keyof StateSchema;
 
 export interface ReducerManager {
   getReducerMap: () => ReducersMapObject<StateSchema>;
-  reduce: (state: StateSchema, action: AnyAction) => CombinedState<StateSchema>;
+  reduce: Reducer<StateSchema>;
   add: (key: StateSchemaKey, reducer: Reducer) => void;
   remove: (key: StateSchemaKey) => void;
 }

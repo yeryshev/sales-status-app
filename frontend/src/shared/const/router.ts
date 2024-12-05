@@ -4,7 +4,6 @@ export enum AppRoutes {
   TELEGRAM_CHATS = 'telegramChats',
   PROFILE = 'profile',
   LOGIN = 'login',
-  REGISTER = 'register',
   NOT_FOUND = 'error',
 }
 
@@ -14,6 +13,5 @@ export const RoutePath: Record<AppRoutes, string> = {
   [AppRoutes.TELEGRAM_CHATS]: '/telegram-chats',
   [AppRoutes.PROFILE]: '/profile',
   [AppRoutes.LOGIN]: '/auth/login',
-  [AppRoutes.REGISTER]: '/auth/register',
   [AppRoutes.NOT_FOUND]: '*',
 };

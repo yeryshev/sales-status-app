@@ -1,4 +1,4 @@
 cd frontend
-npm run lint:ts:fix
+npx lint-staged
 npm run build
 npm run test:unit

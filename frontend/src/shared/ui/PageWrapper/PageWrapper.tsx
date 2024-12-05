@@ -1,8 +1,9 @@
 import { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
+import { TestProps } from '@/shared/types/tests';
 
-interface PageProps {
+interface PageProps extends TestProps {
   children: ReactNode;
 }
 
@@ -19,6 +20,7 @@ export const PageWrapper = (props: PageProps) => {
         height: '100vh',
         overflow: 'auto',
       }}
+      data-testid={props['data-testid'] ?? 'page-wrapper'}
     >
       <Toolbar />
       {children}
