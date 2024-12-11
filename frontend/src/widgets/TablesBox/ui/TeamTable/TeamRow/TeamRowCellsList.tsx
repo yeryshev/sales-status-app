@@ -10,6 +10,8 @@ import { TasksCell } from '../RowCells/TasksCell';
 import { TicketsCell } from '../RowCells/TicketsCell';
 import { ArrowDownCell } from '../RowCells/ArrowDownCell';
 import { ConversationsCell } from '../RowCells/ConversationsCell';
+import { DealsCell } from '../RowCells/DealsCell';
+import { BudgetCell } from '../RowCells/BudgetCell';
 
 export interface TeamRowCell {
   align: TableCellProps['align'];
@@ -62,7 +64,17 @@ export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     },
     {
       align: 'left',
+      width: 250,
       content: <CommentCell vacationState={vacationState} />,
+    },
+    {
+      align: 'center',
+      width: 60,
+      content: <DealsCell tasks={tasks} teammate={teammate} />,
+    },
+    {
+      align: 'left',
+      content: <BudgetCell tasks={tasks} teammate={teammate} />,
     },
     {
       align: 'center',

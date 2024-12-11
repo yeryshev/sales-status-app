@@ -5,6 +5,8 @@ import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutl
 import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import FiberNewOutlinedIcon from '@mui/icons-material/FiberNewOutlined';
+import CurrencyRubleIcon from '@mui/icons-material/CurrencyRuble';
 
 export type TeamTableHeaderItemType = {
   align?: TableCellProps['align'];
@@ -23,6 +25,16 @@ export const getTeamTableHeadersList = (shouldSeeHeroRow: boolean): TeamTableHea
     },
     {
       align: 'left',
+    },
+    {
+      align: 'center',
+      title: 'Количество успешных сделок на этой неделе',
+      content: <FiberNewOutlinedIcon fontSize={'large'} />,
+    },
+    {
+      align: 'left',
+      title: 'Бюджет успешных сделок на этой неделе',
+      content: <CurrencyRubleIcon fontSize={'small'} />,
     },
     {
       align: 'center',

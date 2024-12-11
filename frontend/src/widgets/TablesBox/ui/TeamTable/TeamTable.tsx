@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { TeamRow } from './TeamRow/TeamRow';
 import { memo } from 'react';
 import { styled } from '@mui/material/styles';
+import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import { getUserData, getUserId, getUserIsManager, User } from '@/entities/User';
 import { HeroRow } from './HeroRow/HeroRow';
 import {
@@ -13,7 +14,6 @@ import {
   UsersTickets,
   UsersVacation,
 } from '@/entities/Team';
-import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import { getTeamTableHeadersList } from './Headers/getTeamTableHeadersList';
 import { TeamTableHeaderItem } from './Headers/TeamTableHeaderItem';
 
