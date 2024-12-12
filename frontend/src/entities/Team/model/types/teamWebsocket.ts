@@ -80,4 +80,6 @@ export type TasksData = {
   [WsTypes.AVATARS_AND_BIRTHDAY]: UsersAvatarsAndBirthday;
 };
 
-export type UserWsUpdates = Pick<User, 'id' | 'statusId' | 'status' | 'busyTime' | 'updatedAt' | 'isWorkingRemotely'>;
+export type UserFromWs = Pick<User, 'id' | 'statusId' | 'status' | 'busyTime' | 'updatedAt' | 'isWorkingRemotely'>;
+
+export type UserWsUpdates = { user: UserFromWs } | { users: Array<UserFromWs> };

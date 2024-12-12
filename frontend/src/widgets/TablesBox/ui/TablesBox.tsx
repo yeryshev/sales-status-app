@@ -65,22 +65,32 @@ export const TablesBox = memo(() => {
   const handleStatusChange = useCallback(
     (event: MessageEvent) => {
       const dataFromSocket: UserWsUpdates = JSON.parse(event.data);
-      const { id, updatedAt, isWorkingRemotely } = dataFromSocket;
+      if ('users' in dataFromSocket) {
+        dispatch(teamActions.setTeamLocalByAllUsers(dataFromSocket.users));
+        const currentUserFromWs = dataFromSocket.users.find((user) => user.id === user?.id);
+        if (currentUserFromWs) {
+          const { statusId, status, busyTime, updatedAt, isWorkingRemotely } = currentUserFromWs;
+          dispatch(userActions.updateUserLocal({ statusId, status, busyTime, isWorkingRemotely, updatedAt }));
+        }
+      }
 
-      if ('statusId' in dataFromSocket && user) {
-        const { statusId, status, busyTime } = dataFromSocket;
-        dispatch(
-          teamActions.setTeamLocal({
-            id,
-            statusId,
-            status,
-            busyTime,
-            isWorkingRemotely,
-            updatedAt,
-          }),
-        );
-        if (id === user.id) {
-          dispatch(userActions.updateUserLocal({ statusId, status, busyTime, isWorkingRemotely }));
+      if ('user' in dataFromSocket) {
+        const { id, updatedAt, isWorkingRemotely } = dataFromSocket.user;
+        if ('statusId' in dataFromSocket.user && user) {
+          const { statusId, status, busyTime } = dataFromSocket.user;
+          dispatch(
+            teamActions.setTeamLocalByOneUser({
+              id,
+              statusId,
+              status,
+              busyTime,
+              isWorkingRemotely,
+              updatedAt,
+            }),
+          );
+          if (id === user.id) {
+            dispatch(userActions.updateUserLocal({ statusId, status, busyTime, isWorkingRemotely }));
+          }
         }
       }
     },

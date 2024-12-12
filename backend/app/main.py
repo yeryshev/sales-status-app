@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.main import api_router
 from app.core.config import settings
-from app.tasks import toggle_users
+from app.tasks import set_offline_users
 
 if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
     sentry_sdk.init(
@@ -44,7 +44,7 @@ app.include_router(api_router)
 @app.on_event("startup")
 async def startup_event():
     scheduler.add_job(
-        toggle_users, CronTrigger(hour=14, minute=17, second=00, timezone="UTC")
+        set_offline_users, CronTrigger(hour=16, minute=00, second=00, timezone="UTC")
     )
     scheduler.start()
 
