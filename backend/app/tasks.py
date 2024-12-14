@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from app.core.db import async_session_maker
-from app.models import User
+from app.models import Status, User
 from app.utils import (
     app_statuses,
     change_mango_status,
@@ -31,8 +31,11 @@ async def set_offline_users():
         result = await session.execute(query)
         users = result.scalars().all()
 
+        offline_status_object = await session.get(Status, offline_status_id)
+
         for user in users:
             user.status_id = offline_status_id
+            user.status = offline_status_object
             await change_mango_status(user, mango_statuses["offline"])
         await session.commit()
         result = await session.execute(query)

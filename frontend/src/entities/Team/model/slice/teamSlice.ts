@@ -17,13 +17,10 @@ export const teamSlice = createSlice({
       state.list = state.list
         .map((teammate) => {
           if (Number(teammate.id) === Number(action.payload.id)) {
-            const { statusId, status, busyTime, updatedAt, isWorkingRemotely } = action.payload;
-            teammate.statusId = statusId;
-            teammate.status = status;
-            teammate.busyTime = busyTime;
-            teammate.updatedAt = updatedAt;
-            teammate.isWorkingRemotely = isWorkingRemotely;
-          }
+            return {
+              ...teammate,
+              ...action.payload
+            }}
           return teammate;
         })
         .sort((a, b) => {
@@ -38,12 +35,10 @@ export const teamSlice = createSlice({
         .map((teammate) => {
           const userFromWs = action.payload.find((user) => Number(user.id) === Number(teammate.id));
           if (userFromWs) {
-            const { statusId, status, busyTime, updatedAt, isWorkingRemotely } = userFromWs;
-            teammate.statusId = statusId;
-            teammate.status = status;
-            teammate.busyTime = busyTime;
-            teammate.updatedAt = updatedAt;
-            teammate.isWorkingRemotely = isWorkingRemotely;
+            return {
+              ...teammate,
+              ...userFromWs
+            }
           }
           return teammate;
         })
