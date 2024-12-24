@@ -19,8 +19,9 @@ export const teamSlice = createSlice({
           if (Number(teammate.id) === Number(action.payload.id)) {
             return {
               ...teammate,
-              ...action.payload
-            }}
+              ...action.payload,
+            };
+          }
           return teammate;
         })
         .sort((a, b) => {
@@ -37,8 +38,8 @@ export const teamSlice = createSlice({
           if (userFromWs) {
             return {
               ...teammate,
-              ...userFromWs
-            }
+              ...userFromWs,
+            };
           }
           return teammate;
         })
