@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import * as Sentry from '@sentry/react';
 import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType } from 'react-router-dom';
 
-import.meta.env.PROD &&
+if (import.meta.env.PROD) {
   Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_DSN,
     integrations: [
@@ -20,3 +20,4 @@ import.meta.env.PROD &&
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
   });
+}
