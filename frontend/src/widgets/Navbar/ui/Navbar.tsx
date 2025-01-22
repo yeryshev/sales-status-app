@@ -9,6 +9,9 @@ import { memo } from 'react';
 
 import { RoutePath } from '@/shared/const/router';
 import { LogoutUser } from '@/features/LogoutUser';
+import Box from '@mui/material/Box';
+import { NavbarItemsList } from './NavbarItem/items';
+import { NavbarItem } from './NavbarItem/NavbarItem';
 
 interface NavbarProps {
   toggleSideBar: () => () => void;
@@ -38,6 +41,13 @@ export const Navbar = memo(({ toggleSideBar }: NavbarProps) => {
               Sales Status
             </Link>
           </Typography>
+
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            {NavbarItemsList.map((item) => (
+              <NavbarItem key={item.path} item={item} />
+            ))}
+          </Box>
+
           <ThemeSwitcher />
           <LogoutUser />
         </Toolbar>
