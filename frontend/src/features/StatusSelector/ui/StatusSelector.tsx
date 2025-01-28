@@ -30,7 +30,9 @@ export const StatusSelector = memo(() => {
   );
 
   useEffect(() => {
-    user && dispatch(statusActions.changeStatus(user.statusId));
+    if (user) {
+      dispatch(statusActions.changeStatus(user.statusId));
+    }
   }, [dispatch, user]);
 
   const handleChangeMainStatus = async (_: SelectChangeEvent, child: unknown) => {

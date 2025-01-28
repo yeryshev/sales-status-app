@@ -15,7 +15,7 @@ import {
   UsersVacation,
 } from '@/entities/Team';
 import { getTeamTableHeadersList } from './Headers/getTeamTableHeadersList';
-import { TeamTableHeaderItem } from '../TeamTable/Headers/TeamTableHeaderItem';
+import { TeamTableHeaderItem } from './Headers/TeamTableHeaderItem';
 
 interface TeamTableProps {
   teamList: Teammate[];

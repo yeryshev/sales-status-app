@@ -1,7 +1,7 @@
 import { type TeamTableSchema } from '../types/teamTableSchema';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { fetchTeamList } from '../services/fetchTeamList/fetchTeamList';
-import { UserWsUpdates } from '../types/teamWebsocket';
+import { UserFromWs } from '../types/teamWebsocket';
 
 const initialState: TeamTableSchema = {
   list: [],
@@ -13,16 +13,33 @@ export const teamSlice = createSlice({
   name: 'team',
   initialState,
   reducers: {
-    setTeamLocal: (state: TeamTableSchema, action: PayloadAction<UserWsUpdates>) => {
+    setTeamLocalByOneUser: (state: TeamTableSchema, action: PayloadAction<UserFromWs>) => {
       state.list = state.list
         .map((teammate) => {
           if (Number(teammate.id) === Number(action.payload.id)) {
-            const { statusId, status, busyTime, updatedAt, isWorkingRemotely } = action.payload;
-            teammate.statusId = statusId;
-            teammate.status = status;
-            teammate.busyTime = busyTime;
-            teammate.updatedAt = updatedAt;
-            teammate.isWorkingRemotely = isWorkingRemotely;
+            return {
+              ...teammate,
+              ...action.payload,
+            };
+          }
+          return teammate;
+        })
+        .sort((a, b) => {
+          if (a.status?.priority === b?.status?.priority) {
+            return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+          }
+          return b.status?.priority - a.status?.priority;
+        });
+    },
+    setTeamLocalByAllUsers: (state: TeamTableSchema, action: PayloadAction<UserFromWs[]>) => {
+      state.list = state.list
+        .map((teammate) => {
+          const userFromWs = action.payload.find((user) => Number(user.id) === Number(teammate.id));
+          if (userFromWs) {
+            return {
+              ...teammate,
+              ...userFromWs,
+            };
           }
           return teammate;
         })

@@ -1,9 +1,12 @@
 import sentry_sdk
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.cron import CronTrigger
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.main import api_router
 from app.core.config import settings
+from app.tasks import set_offline_users
 
 if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
     sentry_sdk.init(
@@ -14,6 +17,7 @@ if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
     )
 
 app = FastAPI(title="Team Status API")
+scheduler = AsyncIOScheduler()
 
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(
@@ -35,3 +39,16 @@ if settings.BACKEND_CORS_ORIGINS:
     )
 
 app.include_router(api_router)
+
+
+@app.on_event("startup")
+async def startup_event():
+    scheduler.add_job(
+        set_offline_users, CronTrigger(hour=16, minute=00, second=00, timezone="UTC")
+    )
+    scheduler.start()
+
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    scheduler.shutdown()

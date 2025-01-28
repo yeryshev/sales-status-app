@@ -7,7 +7,9 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from app.core.config import settings
 
 async_engine = create_async_engine(
-    settings.SQLALCHEMY_DATABASE_URI_ASYNC.unicode_string()
+    settings.SQLALCHEMY_DATABASE_URI_ASYNC.unicode_string(),
+    pool_pre_ping=True,
+    pool_recycle=1800,
 )
 sync_engine = create_engine(
     url=settings.SQLALCHEMY_DATABASE_URI.unicode_string(),

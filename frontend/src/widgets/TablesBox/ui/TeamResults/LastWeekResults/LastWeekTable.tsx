@@ -9,6 +9,7 @@ import { Teammate, UsersLastWeekStats, UsersTasks } from '@/entities/Team';
 import { RowSkeleton } from '../../RowSkeleton/RowSkeleton';
 import { LastWeekTableRow } from './LastWeekTableRow';
 import Paper from '@mui/material/Paper';
+import { getTotalBudget } from '../getTotalBudget';
 
 interface TeamTableProps {
   teamList: Teammate[];
@@ -21,24 +22,11 @@ interface TeamTableProps {
 const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
 
 export const LastWeekTable = memo((props: TeamTableProps) => {
-  const { tasks, teamIsLoading, teamList, lastWeekStats, isAccountManagersRoute } = props;
+  const { tasks, teamIsLoading, teamList, lastWeekStats } = props;
 
   const filterTeamList = (teammate: Teammate) => {
     const getDeals = lastWeekStats[teammate.insideId]?.deals || 0;
     return teammate.isManager && Number(getDeals) >= 0 && !teammate.isCoordinator;
-  };
-
-  const sortTeamListByDeals = (a: Teammate, b: Teammate) => {
-    const getScoreA = lastWeekStats[a.insideId]?.deals || 0;
-    const getScoreB = lastWeekStats[b.insideId]?.deals || 0;
-
-    if (getScoreA === getScoreB) {
-      const budgetA = lastWeekStats[a.insideId]?.budget || 0;
-      const budgetB = lastWeekStats[b.insideId]?.budget || 0;
-      return Number(budgetB) - Number(budgetA);
-    }
-
-    return Number(getScoreB) - Number(getScoreA);
   };
 
   const sortTeamListByBudget = (a: Teammate, b: Teammate) => {
@@ -67,7 +55,7 @@ export const LastWeekTable = memo((props: TeamTableProps) => {
   return (
     <TableContainer style={{ overflowX: 'auto' }} component={Paper}>
       <Table size="small">
-        <caption>За прошлую неделю</caption>
+        <caption>{`За прошлую неделю собрано ${getTotalBudget(teamList, lastWeekStats).toLocaleString('ru-RU')} ₽`}</caption>
         <TableHead>
           <TableRow>
             <TableCell align="center"></TableCell>
@@ -76,12 +64,7 @@ export const LastWeekTable = memo((props: TeamTableProps) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {teamList.length > 0
-            ? teamList
-                .filter(filterTeamList)
-                .sort(isAccountManagersRoute ? sortTeamListByBudget : sortTeamListByDeals)
-                .map(renderTeamList)
-            : null}
+          {teamList.length > 0 ? teamList.filter(filterTeamList).sort(sortTeamListByBudget).map(renderTeamList) : null}
           {teamIsLoading && getSkeletons()}
         </TableBody>
       </Table>
