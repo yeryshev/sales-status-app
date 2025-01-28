@@ -9,6 +9,7 @@ import { Teammate, UsersLastWeekStats, UsersTasks } from '@/entities/Team';
 import { RowSkeleton } from '../../RowSkeleton/RowSkeleton';
 import { LastWeekTableRow } from './LastWeekTableRow';
 import Paper from '@mui/material/Paper';
+import { getTotalBudget } from '../getTotalBudget';
 
 interface TeamTableProps {
   teamList: Teammate[];
@@ -54,7 +55,7 @@ export const LastWeekTable = memo((props: TeamTableProps) => {
   return (
     <TableContainer style={{ overflowX: 'auto' }} component={Paper}>
       <Table size="small">
-        <caption>За прошлую неделю</caption>
+        <caption>{`За прошлую неделю собрано ${getTotalBudget(teamList, lastWeekStats).toLocaleString('ru-RU')} ₽`}</caption>
         <TableHead>
           <TableRow>
             <TableCell align="center"></TableCell>
