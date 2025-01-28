@@ -1,29 +1,23 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import MenuIcon from '@mui/icons-material/Menu';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { clearUser } from '@/entities/User';
 import { ThemeSwitcher } from '@/features/ThemeSwitcher';
-import { memo, useCallback } from 'react';
-import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
+import { memo } from 'react';
 
 import { RoutePath } from '@/shared/const/router';
+import { LogoutUser } from '@/features/LogoutUser';
+import Box from '@mui/material/Box';
+import { NavbarItemsList } from './NavbarItem/items';
+import { NavbarItem } from './NavbarItem/NavbarItem';
 
 interface NavbarProps {
   toggleSideBar: () => () => void;
 }
 
 export const Navbar = memo(({ toggleSideBar }: NavbarProps) => {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-
-  const handleLogout = useCallback(() => {
-    dispatch(clearUser()).then(() => navigate(RoutePath.login));
-  }, [dispatch, navigate]);
-
   return (
     <>
       <AppBar position="absolute">
@@ -47,10 +41,15 @@ export const Navbar = memo(({ toggleSideBar }: NavbarProps) => {
               Sales Status
             </Link>
           </Typography>
+
+          <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+            {NavbarItemsList.map((item) => (
+              <NavbarItem key={item.path} item={item} />
+            ))}
+          </Box>
+
           <ThemeSwitcher />
-          <IconButton color="inherit" onClick={handleLogout}>
-            <LogoutIcon />
-          </IconButton>
+          <LogoutUser />
         </Toolbar>
       </AppBar>
     </>

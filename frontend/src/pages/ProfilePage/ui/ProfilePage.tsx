@@ -88,7 +88,7 @@ const ProfilePage = () => {
   return (
     <DynamicModuleLoader reducers={reducers}>
       <Layout>
-        <PageWrapper>
+        <PageWrapper data-testid={'profile-page'}>
           <Helmet>
             <title>Профиль</title>
           </Helmet>

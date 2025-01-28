@@ -23,7 +23,7 @@ const LoginPage = memo(() => {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="xs" data-testid={'login-page'}>
         <Box
           sx={{
             marginTop: 8,

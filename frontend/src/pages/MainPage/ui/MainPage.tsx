@@ -7,7 +7,7 @@ import { PageWrapper } from '@/shared/ui/PageWrapper';
 const MainPage = memo(() => {
   return (
     <Layout>
-      <PageWrapper>
+      <PageWrapper data-testid={'main-page'}>
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
           <TablesBox />
         </Container>

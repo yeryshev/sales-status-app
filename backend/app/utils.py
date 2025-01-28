@@ -1,7 +1,6 @@
 import json
 
 import requests
-from fastapi import HTTPException
 
 from app.api.routes.websockets import manager
 from app.core.config import settings
@@ -30,20 +29,35 @@ def get_new_mango_status_id(new_status_id: int) -> int:
 
 
 async def send_ws_after_user_update(updated_user: User):
-    await manager.broadcast(
-        json.dumps(
+    user_to_send = {
+        "id": updated_user.id,
+        "statusId": updated_user.status_id,
+        "status": updated_user.status.to_dict(),
+        "busyTime": (
+            updated_user.busy_time.to_dict() if updated_user.busy_time else None
+        ),
+        "isWorkingRemotely": updated_user.is_working_remotely,
+        "updatedAt": updated_user.updated_at.isoformat(),
+    }
+
+    await manager.broadcast(json.dumps({"user": user_to_send}))
+
+
+async def send_ws_with_all_users(users: list[User]):
+    users_to_send = []
+    for user in users:
+        users_to_send.append(
             {
-                "id": updated_user.id,
-                "statusId": updated_user.status_id,
-                "status": updated_user.status.to_dict(),
-                "busyTime": (
-                    updated_user.busy_time.to_dict() if updated_user.busy_time else None
-                ),
-                "isWorkingRemotely": updated_user.is_working_remotely,
-                "updatedAt": updated_user.updated_at.isoformat(),
+                "id": user.id,
+                "statusId": user.status_id,
+                "status": user.status.to_dict(),
+                "busyTime": (user.busy_time.to_dict() if user.busy_time else None),
+                "isWorkingRemotely": user.is_working_remotely,
+                "updatedAt": user.updated_at.isoformat(),
             }
         )
-    )
+
+    await manager.broadcast(json.dumps({"users": users_to_send}))
 
 
 async def change_mango_status(user: User | type(User), status_id: int):

@@ -3,7 +3,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { Layout } from '@/widgets/Layout';
 import { memo } from 'react';
 import { PageWrapper } from '@/shared/ui/PageWrapper';
-import { TgChatsTable } from '@/entities/TgChats';
+import { ChatsTable } from 'src/widgets/ChatsTable';
 import { Helmet } from 'react-helmet';
 
 const TelegramChatsPage = memo(() => {
@@ -15,7 +15,7 @@ const TelegramChatsPage = memo(() => {
         </Helmet>
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
           <Grid container>
-            <TgChatsTable />
+            <ChatsTable />
           </Grid>
         </Container>
       </PageWrapper>

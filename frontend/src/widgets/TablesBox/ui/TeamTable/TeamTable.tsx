@@ -1,17 +1,10 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip } from '@mui/material';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { TeamRow } from './TeamRow/TeamRow';
 import { memo } from 'react';
 import { styled } from '@mui/material/styles';
-import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
-import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
-import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
-import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import CurrencyRubleIcon from '@mui/icons-material/CurrencyRuble';
-import FiberNewOutlinedIcon from '@mui/icons-material/FiberNewOutlined';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
-import { getUserData, getUserId, User } from '@/entities/User';
+import { getUserData, getUserId, getUserIsManager, User } from '@/entities/User';
 import { HeroRow } from './HeroRow/HeroRow';
 import {
   Teammate,
@@ -21,6 +14,8 @@ import {
   UsersTickets,
   UsersVacation,
 } from '@/entities/Team';
+import { getTeamTableHeadersList } from './Headers/getTeamTableHeadersList';
+import { TeamTableHeaderItem } from './Headers/TeamTableHeaderItem';
 
 interface TeamTableProps {
   teamList: Teammate[];
@@ -55,10 +50,12 @@ export const TeamTable = memo((props: TeamTableProps) => {
 
   const userId = useSelector(getUserId);
   const user = useSelector(getUserData);
+  const userIsManager = useSelector(getUserIsManager);
   const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
-  const shouldSeeHeroRow = !teamIsLoading && user?.isManager && userOnRightPage;
+  const shouldSeeHeroRow = !teamIsLoading && userIsManager && userOnRightPage;
   const teamListIsNotEmpty = teamList.length > 0;
   const thereAreCoordinators = teamList.find((teammate) => teammate.isCoordinator);
+  const headersList = getTeamTableHeadersList(shouldSeeHeroRow);
 
   const showManagers = (teammate: Teammate) => {
     return teammate.isManager && teammate.id !== userId && !teammate.isCoordinator;
@@ -88,49 +85,9 @@ export const TeamTable = memo((props: TeamTableProps) => {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell></TableCell>
-            <TableCell align="left"></TableCell>
-            <TableCell align="left"></TableCell>
-            <TableCell align="left"></TableCell>
-            <TableCell align="center">
-              <Tooltip title={'Количество успешных сделок на этой неделе'}>
-                <FiberNewOutlinedIcon fontSize={'large'} />
-              </Tooltip>
-            </TableCell>
-            <TableCell align="left">
-              <Tooltip title={'Бюджет успешных сделок на этой неделе'}>
-                <CurrencyRubleIcon fontSize={'small'} />
-              </Tooltip>
-            </TableCell>
-            <TableCell align="left">
-              <Tooltip title={'Первичные обращения'}>
-                <RequestQuoteOutlinedIcon fontSize={'small'} />
-              </Tooltip>
-            </TableCell>
-            <TableCell align="center">
-              <Tooltip title={'Просроченные задачи'}>
-                <HourglassBottomOutlinedIcon fontSize={'small'} />
-              </Tooltip>
-            </TableCell>
-            <TableCell align="center">
-              <Tooltip title={'Количество открытых чатов'}>
-                <QuestionAnswerOutlinedIcon fontSize={'small'} />
-              </Tooltip>
-            </TableCell>
-            <TableCell align="center">
-              <Tooltip title={'Назначенные тикеты'}>
-                <FeedbackOutlinedIcon fontSize={'small'} />
-              </Tooltip>
-            </TableCell>
-            {shouldSeeHeroRow ? (
-              <TableCell align="center">
-                <Tooltip title={'Работаю из дома'}>
-                  <HomeOutlinedIcon fontSize={'small'} />
-                </Tooltip>
-              </TableCell>
-            ) : (
-              <TableCell align="center"></TableCell>
-            )}
+            {headersList.map((header, index) => (
+              <TeamTableHeaderItem key={index} item={header} />
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -146,14 +103,14 @@ export const TeamTable = memo((props: TeamTableProps) => {
                 isAccountManagersRoute={isAccountManagersRoute}
               />
               <StyledTableRow>
-                <TableCell colSpan={11}></TableCell>
+                <TableCell colSpan={headersList.length}></TableCell>
               </StyledTableRow>
             </>
           )}
           {teamListIsNotEmpty && teamList.filter(showManagers).map(renderTeamList)}
           {thereAreCoordinators && (
             <StyledTableRow>
-              <TableCell colSpan={11}></TableCell>
+              <TableCell colSpan={headersList.length}></TableCell>
             </StyledTableRow>
           )}
           {teamListIsNotEmpty && teamList.filter(showCoordinators).map(renderTeamList)}
