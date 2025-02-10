@@ -20,6 +20,7 @@ pytz = "^2024.1"
 sqlmodel = "^0.0.21"
 sentry-sdk = {extras = ["fastapi"], version = "^2.11.0"}
 apscheduler = "^3.11.0"
+httpx = "^0.28.1"
 
 
 [tool.poetry.group.dev.dependencies]
