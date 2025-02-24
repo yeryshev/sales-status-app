@@ -1,7 +1,5 @@
 import json
-
 import httpx
-import requests
 
 from app.api.routes.websockets import manager
 from app.core.config import settings
@@ -66,8 +64,16 @@ async def change_mango_status(user: User | type(User), status_id: int):
         api_url = settings.MANGO_SET_STATUS
         payload = {"abonent_id": user.mango_user_id, "status": status_id}
         headers = {"Content-Type": "application/json"}
-        response = requests.post(api_url, json=payload, headers=headers)
-        return response
+
+        timeout = httpx.Timeout(20.0, connect=10.0)
+
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                response = await client.post(api_url, json=payload, headers=headers)
+            return response
+        except httpx.ReadTimeout:
+            print("Request timed out")
+            return None
 
 
 async def send_password_reset_notification(user: User, token: str):
