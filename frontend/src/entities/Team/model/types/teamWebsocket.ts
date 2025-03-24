@@ -15,6 +15,7 @@ export type UserTickets = string | number;
 export type UserVacation = {
   onVacation: boolean;
   endDate: string | null;
+  description: string | null;
 };
 
 export type UserLastWeekStats = {
