@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     ] = []
 
     SENTRY_DSN: HttpUrl | None = None
+    N8N_STATUS_ADMIN_BOT_WEBHOOK: HttpUrl | None = None
 
     POSTGRES_SERVER: str
     POSTGRES_PORT: int = 5432

@@ -5,8 +5,7 @@ import { getUserData, userActions } from '@/entities/User';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { DynamicModuleLoader, ReducersList } from '@/shared/lib/components/DynamicModuleLoader/DynamicModuleLoader';
 import Box from '@mui/system/Box';
-import { LastWeekTable } from './TeamResults/LastWeekResults/LastWeekTable';
-import { CurrentWeekResultTable } from './TeamResults/CurrentWeekResult/CurrentWeekResultTable';
+import { TeamResultsTable } from './TeamResults/TeamResultsTable';
 import { useLocation } from 'react-router-dom';
 import {
   fetchTeamList,
@@ -126,18 +125,22 @@ export const TablesBox = memo(() => {
           />
         </TeamTableTabPanel>
         <TeamTableTabPanel value={tabNumber} index={1}>
-          <Box display={'flex'} gap={2} flexDirection={{ sm: 'column', md: 'row' }}>
-            <CurrentWeekResultTable
+          <Box display={'flex'} gap={2} flexDirection={{ xs: 'column', md: 'row' }}>
+            <TeamResultsTable
+              type="currentWeek"
               teamList={teamList}
               teamIsLoading={teamIsLoading}
               tasks={tasks}
               avatarsAndBirthday={avatarsAndBirthday}
+              lastWeekStats={lastWeekStat}
               isAccountManagersRoute={isAccountManagersRoute}
             />
-            <LastWeekTable
+            <TeamResultsTable
+              type="lastWeek"
               teamList={teamList}
               teamIsLoading={teamIsLoading}
               tasks={tasks}
+              avatarsAndBirthday={avatarsAndBirthday}
               lastWeekStats={lastWeekStat}
               isAccountManagersRoute={isAccountManagersRoute}
             />

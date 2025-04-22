@@ -3,12 +3,12 @@ from fastapi_users import BaseUserManager, IntegerIDMixin
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.utils import send_password_has_changed_notification, send_password_reset_notification
 from app.core.config import settings
 from app.core.db import get_async_session
 from app.models import User
 
 SECRET = settings.AUTH_SECRET
-
 
 class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
     reset_password_token_secret = SECRET
@@ -21,9 +21,11 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         self, user: User, token: str, request: Request | None = None
     ):
         print(f"User {user.id} has forgot their password. Reset token: {token}", flush=True)
+        await send_password_reset_notification(user, token)
 
     async def on_after_reset_password(self, user: User, request: Request | None = None):
         print(f"User {user.id} has reset their password.")
+        await send_password_has_changed_notification(user)
 
     async def on_before_delete(self, user: User, request: Request | None = None):
         print(f"User {user.id} is going to be deleted")
