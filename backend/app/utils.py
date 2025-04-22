@@ -1,6 +1,5 @@
 import json
-
-import requests
+import httpx
 
 from app.api.routes.websockets import manager
 from app.core.config import settings
@@ -65,5 +64,56 @@ async def change_mango_status(user: User | type(User), status_id: int):
         api_url = settings.MANGO_SET_STATUS
         payload = {"abonent_id": user.mango_user_id, "status": status_id}
         headers = {"Content-Type": "application/json"}
-        response = requests.post(api_url, json=payload, headers=headers)
-        return response
+
+        timeout = httpx.Timeout(20.0, connect=10.0)
+
+        try:
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                response = await client.post(api_url, json=payload, headers=headers)
+            return response
+        except httpx.ReadTimeout:
+            print("Request timed out")
+            return None
+
+
+async def send_password_reset_notification(user: User, token: str):
+    url = str(settings.N8N_STATUS_ADMIN_BOT_WEBHOOK)
+    data = {
+        "type": "password_reset",
+        "body": {
+            "user_id": user.id,
+            "email": user.email,
+            "reset_token": token,
+        }
+    }
+
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(url, json=data)
+            response.raise_for_status()
+            print("Notification sent successfully:", response.json())
+        except httpx.HTTPStatusError as e:
+            print(f"Error sending notification: {e.response.status_code} {e.response.text}")
+        except Exception as e:
+            print(f"Unexpected error: {str(e)}")
+
+
+async def send_password_has_changed_notification(user: User):
+    url = str(settings.N8N_STATUS_ADMIN_BOT_WEBHOOK)
+    data = {
+        "type": "password_has_changed",
+        "body": {
+            "user_id": user.id,
+            "email": user.email,
+        }
+    }
+
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(url, json=data)
+            response.raise_for_status()
+            print("Notification sent successfully:", response.json())
+        except httpx.HTTPStatusError as e:
+            print(f"Error sending notification: {e.response.status_code} {e.response.text}")
+        except Exception as e:
+            print(f"Unexpected error: {str(e)}")
