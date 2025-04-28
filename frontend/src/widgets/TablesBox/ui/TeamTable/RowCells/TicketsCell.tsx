@@ -1,27 +1,25 @@
 import { memo } from 'react';
 import { Chip, Tooltip } from '@mui/material';
 import { StateLabel } from './StateLabel';
-import { UserTickets, UserVacation } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
 
 interface TicketsCellProps {
-  teamIsLoading: boolean;
-  tickets: UserTickets;
-  vacationState?: UserVacation;
+  tickets: AdditionalUserData['tickets'];
+  absence?: AdditionalUserData['absence'];
 }
 
 export const TicketsCell = memo((props: TicketsCellProps) => {
-  const { teamIsLoading, tickets, vacationState } = props;
+  const { tickets, absence } = props;
 
   return (
-    !teamIsLoading &&
     Boolean(tickets) && (
       <Tooltip title={'Назначенные тикеты'}>
         <Chip
-          label={StateLabel(tickets, vacationState?.onVacation)}
+          label={StateLabel(tickets, absence?.isAbsence)}
           variant={'outlined'}
           size={'small'}
           color={
-            vacationState?.onVacation
+            absence?.isAbsence
               ? 'default'
               : Number(tickets) >= 3
                 ? 'error'

@@ -25,76 +25,62 @@ interface TeamRowCellsListProps extends TeamRowProps {
 }
 
 export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] => {
-  const {
-    teammate,
-    mango,
-    tasks,
-    tickets,
-    vacationState,
-    teamIsLoading,
-    avatarsAndBirthday,
-    isDeadlineReached,
-    isAccountManagersRoute,
-    expandRow,
-    setExpandRow,
-  } = props;
+  const { teammate, additionalUserData, isDeadlineReached, isAccountManagersRoute, expandRow, setExpandRow } = props;
+
+  const { avatar, absence, mangoState, deals, budget, leads, overdueTasks, conversations, tickets } =
+    additionalUserData;
 
   return [
     {
       align: 'left',
       width: 50,
-      content: <AvatarCell teammate={teammate} avatarsAndBirthday={avatarsAndBirthday} vacationState={vacationState} />,
+      content: <AvatarCell teammate={teammate} avatar={avatar} absence={absence} />,
     },
     {
       align: 'left',
       width: 160,
-      content: <UserNameCell teammate={teammate} vacationState={vacationState} />,
+      content: <UserNameCell teammate={teammate} absence={absence} />,
     },
     {
       align: 'left',
       width: 160,
       content: !isAccountManagersRoute && (
-        <StatusCell
-          teammate={teammate}
-          mango={mango}
-          vacationState={vacationState}
-          isDeadlineReached={isDeadlineReached}
-        />
+        <StatusCell teammate={teammate} mango={mangoState} absence={absence} isDeadlineReached={isDeadlineReached} />
       ),
     },
     {
       align: 'left',
       width: 250,
-      content: <CommentCell vacationState={vacationState} />,
+      content: <CommentCell absence={absence} />,
     },
     {
       align: 'center',
       width: 60,
-      content: <DealsCell tasks={tasks} teammate={teammate} />,
+      content: <DealsCell deals={deals} teammate={teammate} />,
     },
     {
       align: 'left',
-      content: <BudgetCell tasks={tasks} teammate={teammate} />,
+      content: <BudgetCell budget={budget} teammate={teammate} />,
     },
     {
       align: 'center',
       width: 60,
-      content: <LeadsCell teamIsLoading={teamIsLoading} tasks={tasks} vacationState={vacationState} />,
+      content: <LeadsCell leads={leads} absence={absence} />,
     },
     {
       align: 'center',
       width: 60,
-      content: <TasksCell teamIsLoading={teamIsLoading} tasks={tasks} vacationState={vacationState} />,
+      content: <TasksCell overdueTasks={overdueTasks} absence={absence} />,
     },
     {
       align: 'center',
       width: 60,
-      content: <ConversationsCell teamIsLoading={teamIsLoading} tasks={tasks} vacationState={vacationState} />,
+      content: <ConversationsCell conversations={conversations} absence={absence} />,
     },
     {
       align: 'center',
       width: 60,
-      content: <TicketsCell tickets={tickets} vacationState={vacationState} teamIsLoading={teamIsLoading} />,
+      content: <TicketsCell tickets={tickets} absence={absence} />,
     },
     {
       align: 'center',
