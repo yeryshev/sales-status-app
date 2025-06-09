@@ -5,7 +5,7 @@ const statusApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
     getStatuses: build.query<Status[], void>({
       query: () => ({
-        url: import.meta.env.VITE_BACKEND_URL + '/status',
+        url: '/status', // RTK Query автоматически добавит базовый URL
       }),
     }),
   }),

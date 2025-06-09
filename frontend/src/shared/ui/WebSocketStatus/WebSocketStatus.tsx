@@ -39,23 +39,24 @@ export const WebSocketStatus = memo((props: WebSocketStatusProps) => {
         label: 'Подключение...',
         color: orange[500],
         icon: <SyncIcon className="animate-spin" />,
-        tooltip: reconnectAttempts > 0 
-          ? `Переподключение... Попытка ${reconnectAttempts}/${maxReconnectAttempts}`
-          : 'Установка соединения...',
+        tooltip:
+          reconnectAttempts > 0
+            ? `Переподключение... Попытка ${reconnectAttempts}/${maxReconnectAttempts}`
+            : 'Установка соединения...',
       };
     }
 
     // Определяем причину отключения
     let tooltip = 'Соединение потеряно. Данные могут быть неактуальными.';
     let label = 'Отключено';
-    
+
     if (!isOnline) {
       tooltip = 'Нет подключения к интернету. Проверьте сетевое соединение.';
       label = 'Нет интернета';
     } else if (reconnectAttempts >= maxReconnectAttempts) {
       tooltip = 'Соединение потеряно. Превышено максимальное количество попыток переподключения.';
     }
-    
+
     return {
       label,
       color: red[500],
@@ -85,4 +86,4 @@ export const WebSocketStatus = memo((props: WebSocketStatusProps) => {
       </Tooltip>
     </Box>
   );
-}); 
+});

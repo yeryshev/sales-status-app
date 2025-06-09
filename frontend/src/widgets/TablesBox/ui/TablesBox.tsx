@@ -36,7 +36,9 @@ export const TablesBox = memo(() => {
   const inboundTeamList = useSelector(getInboundTeamList);
   const accountManagerTeamList = useSelector(getAccountManagerTeamList);
   const teamList = isAccountManagersRoute ? accountManagerTeamList : inboundTeamList;
-  const { data: additionalTeamData = [] } = useGetAdditionalTeamData();
+  const { data: additionalTeamData = [] } = useGetAdditionalTeamData(undefined, {
+    skip: !import.meta.env.VITE_NEW_API_URL, // Не выполнять запрос, если URL не настроен
+  });
   const user = useSelector(getUserData);
   const [tabNumber, setTabNumber] = useState(0);
   const deadlines = useDeadlinesCheck(teamList, teamIsLoading);
@@ -114,13 +116,15 @@ export const TablesBox = memo(() => {
         <title>{isAccountManagersRoute ? 'Аккаунт менеджеры' : 'Входящие'}</title>
       </Helmet>
       <Box sx={{ width: '100%' }}>
-        <Box sx={{ 
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          paddingRight: 2,
-          marginBottom: 1,
-        }}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            paddingRight: 2,
+            marginBottom: 1,
+          }}
+        >
           <TeamTableTabs tabNumber={tabNumber} handleChangeTab={handleChangeTab} />
           <WebSocketStatus
             isConnected={isConnected}

@@ -26,7 +26,9 @@ const ChatsRowSkeleton = memo(() => {
 const getSkeletons = () => new Array(12).fill(0).map((_, index) => <ChatsRowSkeleton key={index} />);
 
 export const ChatsTable = memo(() => {
-  const { data: rows, isLoading } = useGetTgChats();
+  const { data: rows, isLoading } = useGetTgChats(undefined, {
+    skip: !import.meta.env.VITE_API_URL, // Не выполнять запрос, если URL не настроен
+  });
 
   return (
     <TableContainer component={Paper}>

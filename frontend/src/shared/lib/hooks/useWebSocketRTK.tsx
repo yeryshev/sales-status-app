@@ -36,19 +36,23 @@ export const useWebSocketRTK = (config: UseWebSocketRTKConfig) => {
     }
   }, []);
 
-  const startHeartbeat = useCallback((socket: WebSocket) => {
-    clearTimers();
-    heartbeatTimerRef.current = setInterval(() => {
-      if (socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ type: 'ping' }));
-      }
-    }, heartbeatInterval);
-  }, [heartbeatInterval, clearTimers]);
+  const startHeartbeat = useCallback(
+    (socket: WebSocket) => {
+      clearTimers();
+      heartbeatTimerRef.current = setInterval(() => {
+        if (socket.readyState === WebSocket.OPEN) {
+          socket.send(JSON.stringify({ type: 'ping' }));
+        }
+      }, heartbeatInterval);
+    },
+    [heartbeatInterval, clearTimers],
+  );
 
   const connect = useCallback(() => {
-    if (wsRef.current && 
-        (wsRef.current.readyState === WebSocket.CONNECTING || 
-         wsRef.current.readyState === WebSocket.OPEN)) {
+    if (
+      wsRef.current &&
+      (wsRef.current.readyState === WebSocket.CONNECTING || wsRef.current.readyState === WebSocket.OPEN)
+    ) {
       return wsRef.current;
     }
 
@@ -68,7 +72,7 @@ export const useWebSocketRTK = (config: UseWebSocketRTKConfig) => {
           if (data.type === 'pong') {
             return;
           }
-        } catch (e) {
+        } catch {
           // Если не JSON, обрабатываем как обычное сообщение
         }
         onMessage(event);
@@ -80,11 +84,10 @@ export const useWebSocketRTK = (config: UseWebSocketRTKConfig) => {
         wsRef.current = null;
 
         // Автоматическое переподключение
-        if (!isManuallyClosedRef.current && 
-            reconnectAttemptsRef.current < maxReconnectAttempts) {
+        if (!isManuallyClosedRef.current && reconnectAttemptsRef.current < maxReconnectAttempts) {
           reconnectAttemptsRef.current += 1;
           console.log(`RTK WebSocket reconnecting... Attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts}`);
-          
+
           reconnectTimerRef.current = setTimeout(() => {
             connect();
           }, reconnectInterval);
@@ -101,16 +104,17 @@ export const useWebSocketRTK = (config: UseWebSocketRTKConfig) => {
       console.error('Failed to create RTK WebSocket:', error);
       return null;
     }
-  }, [url, onMessage, onError, startHeartbeat, maxReconnectAttempts, reconnectInterval]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url, onMessage, onError, startHeartbeat, maxReconnectAttempts, reconnectInterval]); // clearTimers стабилен через useCallback
 
   const disconnect = useCallback(() => {
     isManuallyClosedRef.current = true;
     clearTimers();
-    
+
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.close();
     }
-    
+
     wsRef.current = null;
     reconnectAttemptsRef.current = 0;
   }, [clearTimers]);
@@ -157,4 +161,4 @@ export const useWebSocketRTK = (config: UseWebSocketRTKConfig) => {
     disconnect,
     getSocket: () => wsRef.current,
   };
-}; 
+};

@@ -65,49 +65,52 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
     }
   }, []);
 
-  const startHeartbeat = useCallback((socket: WebSocket) => {
-    if (!enableHeartbeat) {
-      return;
-    }
-    
-    clearTimers();
-    heartbeatTimerRef.current = setInterval(() => {
-      if (socket.readyState === WebSocket.OPEN && navigator.onLine) {
-        // Отправляем ping и запускаем таймер ожидания ответа
-        lastPingTimeRef.current = Date.now();
-        socket.send(JSON.stringify({ type: 'ping' }));
-        
-        // Устанавливаем таймер ожидания ответа
-        heartbeatTimeoutRef.current = setTimeout(() => {
-          // Если за 10 секунд не получили pong, считаем соединение потерянным
-          console.warn('Heartbeat timeout - no pong received');
-          setState(prev => ({ ...prev, isConnected: false }));
-          
-          // Принудительно закрываем сокет и переподключаемся
-          if (socket.readyState === WebSocket.OPEN) {
-            socket.close();
-          }
-        }, heartbeatTimeoutDuration);
-      } else if (!navigator.onLine) {
-        // Если нет интернета, обновляем статус
-        setState(prev => ({ ...prev, isConnected: false, isOnline: false }));
+  const startHeartbeat = useCallback(
+    (socket: WebSocket) => {
+      if (!enableHeartbeat) {
+        return;
       }
-    }, heartbeatInterval);
-  }, [heartbeatInterval, enableHeartbeat, clearTimers, heartbeatTimeoutDuration]);
+
+      clearTimers();
+      heartbeatTimerRef.current = setInterval(() => {
+        if (socket.readyState === WebSocket.OPEN && navigator.onLine) {
+          // Отправляем ping и запускаем таймер ожидания ответа
+          lastPingTimeRef.current = Date.now();
+          socket.send(JSON.stringify({ type: 'ping' }));
+
+          // Устанавливаем таймер ожидания ответа
+          heartbeatTimeoutRef.current = setTimeout(() => {
+            // Если за 10 секунд не получили pong, считаем соединение потерянным
+            console.warn('Heartbeat timeout - no pong received');
+            setState((prev) => ({ ...prev, isConnected: false }));
+
+            // Принудительно закрываем сокет и переподключаемся
+            if (socket.readyState === WebSocket.OPEN) {
+              socket.close();
+            }
+          }, heartbeatTimeoutDuration);
+        } else if (!navigator.onLine) {
+          // Если нет интернета, обновляем статус
+          setState((prev) => ({ ...prev, isConnected: false, isOnline: false }));
+        }
+      }, heartbeatInterval);
+    },
+    [heartbeatInterval, enableHeartbeat, clearTimers, heartbeatTimeoutDuration],
+  );
 
   const connect = useCallback(() => {
     if (state.isConnecting || (state.socket && state.socket.readyState === WebSocket.CONNECTING)) {
       return;
     }
 
-    setState(prev => ({ ...prev, isConnecting: true }));
+    setState((prev) => ({ ...prev, isConnecting: true }));
 
     try {
       const socket = new WebSocket(url);
 
       socket.onopen = () => {
         console.log('WebSocket connected');
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           socket,
           isConnected: true,
@@ -131,14 +134,14 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
               heartbeatTimeoutRef.current = null;
             }
             // Обновляем статус соединения
-            setState(prev => ({ 
-              ...prev, 
-              isConnected: true, 
-              isOnline: navigator.onLine 
+            setState((prev) => ({
+              ...prev,
+              isConnected: true,
+              isOnline: navigator.onLine,
             }));
             return;
           }
-        } catch (e) {
+        } catch {
           // Если не JSON, обрабатываем как обычное сообщение
         }
         onMessage?.(event);
@@ -147,19 +150,19 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
       socket.onclose = (event) => {
         console.log('WebSocket disconnected', event.code, event.reason);
         clearTimers();
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           socket: null,
           isConnected: false,
           isConnecting: false,
           isOnline: navigator.onLine,
         }));
-        
+
         onDisconnect?.();
 
         // Автоматическое переподключение, если соединение не было закрыто вручную
         if (!isManuallyClosedRef.current && state.reconnectAttempts < maxReconnectAttempts) {
-          setState(prev => ({ ...prev, reconnectAttempts: prev.reconnectAttempts + 1 }));
+          setState((prev) => ({ ...prev, reconnectAttempts: prev.reconnectAttempts + 1 }));
           reconnectTimerRef.current = setTimeout(() => {
             connect();
           }, reconnectInterval);
@@ -168,34 +171,46 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
 
       socket.onerror = (event) => {
         console.error('WebSocket error:', event);
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           lastError: event,
           isConnecting: false,
         }));
         onError?.(event);
       };
-
     } catch (error) {
       console.error('Failed to create WebSocket:', error);
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         isConnecting: false,
         lastError: error as Event,
       }));
     }
-  }, [url, state.isConnecting, state.socket, state.reconnectAttempts, maxReconnectAttempts, 
-      reconnectInterval, startHeartbeat, onConnect, onMessage, onDisconnect, onError]);
+  }, [
+    url,
+    state.isConnecting,
+    state.socket,
+    state.reconnectAttempts,
+    maxReconnectAttempts,
+    reconnectInterval,
+    startHeartbeat,
+    onConnect,
+    onMessage,
+    onDisconnect,
+    onError,
+    clearTimers,
+    enableHeartbeat,
+  ]);
 
   const disconnect = useCallback(() => {
     isManuallyClosedRef.current = true;
     clearTimers();
-    
+
     if (state.socket && state.socket.readyState === WebSocket.OPEN) {
       state.socket.close();
     }
-    
-    setState(prev => ({
+
+    setState((prev) => ({
       ...prev,
       socket: null,
       isConnected: false,
@@ -205,20 +220,23 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
   }, [state.socket, clearTimers]);
 
   const reconnect = useCallback(() => {
-    setState(prev => ({ ...prev, reconnectAttempts: 0 }));
+    setState((prev) => ({ ...prev, reconnectAttempts: 0 }));
     isManuallyClosedRef.current = false;
     disconnect();
     setTimeout(connect, 100);
   }, [disconnect, connect]);
 
-  const sendMessage = useCallback((data: any) => {
-    if (state.socket && state.socket.readyState === WebSocket.OPEN) {
-      const message = typeof data === 'string' ? data : JSON.stringify(data);
-      state.socket.send(message);
-      return true;
-    }
-    return false;
-  }, [state.socket]);
+  const sendMessage = useCallback(
+    (data: unknown) => {
+      if (state.socket && state.socket.readyState === WebSocket.OPEN) {
+        const message = typeof data === 'string' ? data : JSON.stringify(data);
+        state.socket.send(message);
+        return true;
+      }
+      return false;
+    },
+    [state.socket],
+  );
 
   // Обработка изменения видимости вкладки
   useEffect(() => {
@@ -240,8 +258,8 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
   useEffect(() => {
     const handleOnline = () => {
       console.log('Internet connection restored');
-      setState(prev => ({ ...prev, isOnline: true }));
-      
+      setState((prev) => ({ ...prev, isOnline: true }));
+
       if (!state.isConnected && !state.isConnecting) {
         isManuallyClosedRef.current = false;
         connect();
@@ -250,7 +268,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
 
     const handleOffline = () => {
       console.log('Internet connection lost');
-      setState(prev => ({ ...prev, isOnline: false, isConnected: false }));
+      setState((prev) => ({ ...prev, isOnline: false, isConnected: false }));
       clearTimers();
     };
 
@@ -261,7 +279,8 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [state.isConnected, state.isConnecting, connect, clearTimers]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.isConnected, state.isConnecting]); // connect и clearTimers стабильны через useCallback
 
   // Инициализация соединения
   useEffect(() => {
@@ -275,7 +294,8 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
         state.socket.close();
       }
     };
-  }, [url]); // Только при изменении URL
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url]); // Только при изменении URL, остальные зависимости через ref
 
   // Cleanup при размонтировании
   useEffect(() => {
@@ -285,7 +305,8 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
         state.socket.close();
       }
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Выполняется только при размонтировании
 
   return {
     socket: state.socket,
@@ -299,4 +320,4 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
     reconnect,
     sendMessage,
   };
-}; 
+};

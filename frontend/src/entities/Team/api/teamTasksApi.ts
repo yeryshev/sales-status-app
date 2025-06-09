@@ -58,13 +58,13 @@ class WebSocketManager {
           const data = JSON.parse(event.data);
           // Игнорируем pong сообщения только если heartbeat включен для этого URL
           if (data.type === 'pong' && this.heartbeatEnabledUrls.has(url)) return;
-        } catch (e) {
+        } catch {
           // Не JSON, обрабатываем как обычное сообщение
         }
 
         const listeners = this.listeners.get(url);
         if (listeners) {
-          listeners.forEach(listener => listener(event));
+          listeners.forEach((listener) => listener(event));
         }
       };
 
@@ -77,11 +77,11 @@ class WebSocketManager {
         if (attempts < this.maxReconnectAttempts) {
           this.reconnectAttempts.set(url, attempts + 1);
           console.log(`Tasks RTK WebSocket reconnecting... Attempt ${attempts + 1}/${this.maxReconnectAttempts}`);
-          
+
           const timer = setTimeout(() => {
             this.createConnection(url);
           }, this.reconnectInterval);
-          
+
           this.reconnectTimers.set(url, timer);
         }
       };
@@ -89,7 +89,6 @@ class WebSocketManager {
       ws.onerror = (event) => {
         console.error('Tasks RTK WebSocket error:', url, event);
       };
-
     } catch (error) {
       console.error('Failed to create Tasks RTK WebSocket:', error);
     }
@@ -100,7 +99,7 @@ class WebSocketManager {
     if (!this.heartbeatEnabledUrls.has(url)) {
       return;
     }
-    
+
     this.clearHeartbeat(url);
     const timer = setInterval(() => {
       if (ws.readyState === WebSocket.OPEN) {
@@ -135,11 +134,11 @@ class WebSocketManager {
     const listeners = this.listeners.get(url);
     if (listeners) {
       listeners.delete(onMessage);
-      
+
       if (listeners.size === 0) {
         this.listeners.delete(url);
         this.clearTimers(url);
-        
+
         const ws = this.connections.get(url);
         if (ws && ws.readyState === WebSocket.OPEN) {
           ws.close();
@@ -153,9 +152,9 @@ class WebSocketManager {
 
   handleVisibilityChange() {
     if (!document.hidden && navigator.onLine) {
-      this.connections.forEach((ws, url) => {
-        if (ws.readyState !== WebSocket.OPEN && this.listeners.has(url)) {
-          this.createConnection(url);
+      this.connections.forEach((ws, wsUrl) => {
+        if (ws.readyState !== WebSocket.OPEN && this.listeners.has(wsUrl)) {
+          this.createConnection(wsUrl);
         }
       });
     }
@@ -163,16 +162,16 @@ class WebSocketManager {
 
   handleOnline() {
     console.log('Internet connection restored - checking Tasks RTK WebSocket connections');
-    this.connections.forEach((ws, url) => {
-      if (ws.readyState !== WebSocket.OPEN && this.listeners.has(url)) {
-        this.createConnection(url);
+    this.connections.forEach((ws, wsUrl) => {
+      if (ws.readyState !== WebSocket.OPEN && this.listeners.has(wsUrl)) {
+        this.createConnection(wsUrl);
       }
     });
   }
 
   handleOffline() {
     console.log('Internet connection lost - Tasks RTK WebSocket connections affected');
-    this.connections.forEach((ws, url) => {
+    this.connections.forEach((ws) => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.close();
       }
@@ -211,7 +210,7 @@ const tasksApi = rtkApi.injectEndpoints({
       }),
       async onCacheEntryAdded(teamType, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
         const wsUrl = teamType === 'inbound' ? inboundWsUrl : accountWsUrl;
-        
+
         const listener = (event: MessageEvent) => {
           try {
             const dataFromSocket: WsTasksData = JSON.parse(event.data);
