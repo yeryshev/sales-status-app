@@ -20,14 +20,13 @@ import {
 import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { Helmet } from 'react-helmet';
 import { TeamTableTabPanel, TeamTableTabs } from '@/features/TeamTableTabs';
-import { useVisibilityChange } from '../hooks/useVisibilityChange';
+import { useWebSocket } from '@/shared/lib/hooks/useWebSocket';
 import { useDeadlinesCheck } from '../hooks/useDeadlines';
+import { WebSocketStatus } from '@/shared/ui/WebSocketStatus/WebSocketStatus';
 
 const reducers: ReducersList = {
   teamTable: teamReducer,
 };
-
-const statusCommentsSocket = new WebSocket(import.meta.env.VITE_SOCKET_URL);
 
 export const TablesBox = memo(() => {
   const dispatch = useAppDispatch();
@@ -50,14 +49,12 @@ export const TablesBox = memo(() => {
     dispatch(fetchTeamList());
   }, [dispatch]);
 
-  useVisibilityChange(statusCommentsSocket);
-
   const handleStatusChange = useCallback(
     (event: MessageEvent) => {
       const dataFromSocket: UserWsUpdates = JSON.parse(event.data);
       if ('users' in dataFromSocket) {
         dispatch(teamActions.setTeamLocalByAllUsers(dataFromSocket.users));
-        const currentUserFromWs = dataFromSocket.users.find((user) => user.id === user?.id);
+        const currentUserFromWs = dataFromSocket.users.find((wsUser) => wsUser.id === user?.id);
         if (currentUserFromWs) {
           const { statusId, status, busyTime, updatedAt, isWorkingRemotely } = currentUserFromWs;
           dispatch(userActions.updateUserLocal({ statusId, status, busyTime, isWorkingRemotely, updatedAt }));
@@ -87,13 +84,29 @@ export const TablesBox = memo(() => {
     [dispatch, user],
   );
 
-  useEffect(() => {
-    statusCommentsSocket.addEventListener('message', handleStatusChange);
+  const handleWebSocketConnect = useCallback(() => {
+    console.log('Status WebSocket connected successfully');
+  }, []);
 
-    return () => {
-      statusCommentsSocket.removeEventListener('message', handleStatusChange);
-    };
-  }, [handleStatusChange]);
+  const handleWebSocketDisconnect = useCallback(() => {
+    console.log('Status WebSocket disconnected');
+  }, []);
+
+  const handleWebSocketError = useCallback((event: Event) => {
+    console.error('Status WebSocket error:', event);
+  }, []);
+
+  const { isConnected, isConnecting, reconnectAttempts, isOnline } = useWebSocket({
+    url: import.meta.env.VITE_SOCKET_URL,
+    onMessage: handleStatusChange,
+    onConnect: handleWebSocketConnect,
+    onDisconnect: handleWebSocketDisconnect,
+    onError: handleWebSocketError,
+    heartbeatInterval: 30000, // 30 секунд
+    reconnectInterval: 3000, // 3 секунды
+    maxReconnectAttempts: 5,
+    enableHeartbeat: true, // Для VITE_SOCKET_URL включаем heartbeat (ваш сервис)
+  });
 
   return (
     <DynamicModuleLoader reducers={reducers}>
@@ -101,7 +114,22 @@ export const TablesBox = memo(() => {
         <title>{isAccountManagersRoute ? 'Аккаунт менеджеры' : 'Входящие'}</title>
       </Helmet>
       <Box sx={{ width: '100%' }}>
-        <TeamTableTabs tabNumber={tabNumber} handleChangeTab={handleChangeTab} />
+        <Box sx={{ 
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingRight: 2,
+          marginBottom: 1,
+        }}>
+          <TeamTableTabs tabNumber={tabNumber} handleChangeTab={handleChangeTab} />
+          <WebSocketStatus
+            isConnected={isConnected}
+            isConnecting={isConnecting}
+            reconnectAttempts={reconnectAttempts}
+            maxReconnectAttempts={5}
+            isOnline={isOnline}
+          />
+        </Box>
         <TeamTableTabPanel value={tabNumber} index={0}>
           <TeamTable
             teamList={teamList}
