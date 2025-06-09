@@ -1,5 +1,6 @@
 import { rtkApi } from '@/shared/api/rtkApi';
 import { AdditionalUserData } from '../model/types/teamNewWebsocket';
+import { triggerGlobalDataRefresh } from '@/shared/lib/hooks/useGlobalDataRefresh';
 
 const n8nApiUrl = import.meta.env.VITE_NEW_API_URL;
 const apiWsUrl = import.meta.env.VITE_API_URL + '/ws/state';
@@ -49,6 +50,13 @@ class WebSocketManager {
         // Запускаем heartbeat только если URL его поддерживает
         if (this.heartbeatEnabledUrls.has(url)) {
           this.startHeartbeat(url, ws);
+        }
+
+        // При восстановлении соединения обновляем данные
+        const attempts = this.reconnectAttempts.get(url) || 0;
+        if (attempts > 0) {
+          console.log('🔄 RTK WebSocket reconnected, refreshing data...');
+          triggerGlobalDataRefresh();
         }
       };
 

@@ -25,3 +25,4 @@ export { getAccountManagerTeamList, getInboundTeamList, getTeamIsLoading } from 
 export { fetchTeamList } from './model/services/fetchTeamList/fetchTeamList';
 
 export { useGetAdditionalTeamData } from './api/teamInfoApi';
+export { useGetAdditionalTeamData as useGetTeamTasksData } from './api/teamTasksApi';

@@ -23,6 +23,8 @@ import { TeamTableTabPanel, TeamTableTabs } from '@/features/TeamTableTabs';
 import { useWebSocket } from '@/shared/lib/hooks/useWebSocket';
 import { useDeadlinesCheck } from '../hooks/useDeadlines';
 import { WebSocketStatus } from '@/shared/ui/WebSocketStatus/WebSocketStatus';
+import { useDataRefresh } from '@/shared/lib/hooks/useDataRefresh';
+import { useGlobalDataRefresh, setGlobalRefreshFunction } from '@/shared/lib/hooks/useGlobalDataRefresh';
 
 const reducers: ReducersList = {
   teamTable: teamReducer,
@@ -42,6 +44,8 @@ export const TablesBox = memo(() => {
   const user = useSelector(getUserData);
   const [tabNumber, setTabNumber] = useState(0);
   const deadlines = useDeadlinesCheck(teamList, teamIsLoading);
+  const { refreshAllData } = useDataRefresh();
+  const { refreshGlobalData } = useGlobalDataRefresh();
 
   const handleChangeTab = useCallback((_: SyntheticEvent, newTab: number) => {
     setTabNumber(newTab);
@@ -50,6 +54,11 @@ export const TablesBox = memo(() => {
   useEffect(() => {
     dispatch(fetchTeamList());
   }, [dispatch]);
+
+  // Устанавливаем глобальную функцию для обновления данных
+  useEffect(() => {
+    setGlobalRefreshFunction(refreshGlobalData);
+  }, [refreshGlobalData]);
 
   const handleStatusChange = useCallback(
     (event: MessageEvent) => {
@@ -88,7 +97,8 @@ export const TablesBox = memo(() => {
 
   const handleWebSocketConnect = useCallback(() => {
     console.log('Status WebSocket connected successfully');
-  }, []);
+    refreshAllData();
+  }, [refreshAllData]);
 
   const handleWebSocketDisconnect = useCallback(() => {
     console.log('Status WebSocket disconnected');

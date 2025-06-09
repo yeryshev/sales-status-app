@@ -1,5 +1,6 @@
 import { rtkApi } from '@/shared/api/rtkApi';
 import { TasksData, WsTasksData, WsTypes } from '../model/types/teamWebsocket';
+import { triggerGlobalDataRefresh } from '@/shared/lib/hooks/useGlobalDataRefresh';
 
 const apiBaseUrl = import.meta.env.VITE_API_URL;
 
@@ -50,6 +51,13 @@ class WebSocketManager {
         // Запускаем heartbeat только если URL его поддерживает
         if (this.heartbeatEnabledUrls.has(url)) {
           this.startHeartbeat(url, ws);
+        }
+
+        // При восстановлении соединения обновляем данные
+        const attempts = this.reconnectAttempts.get(url) || 0;
+        if (attempts > 0) {
+          console.log('🔄 Tasks RTK WebSocket reconnected, refreshing data...');
+          triggerGlobalDataRefresh();
         }
       };
 
