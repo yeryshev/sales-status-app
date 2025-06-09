@@ -121,8 +121,6 @@ export const TablesBox = memo(() => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            paddingRight: 2,
-            marginBottom: 1,
           }}
         >
           <TeamTableTabs tabNumber={tabNumber} handleChangeTab={handleChangeTab} />
