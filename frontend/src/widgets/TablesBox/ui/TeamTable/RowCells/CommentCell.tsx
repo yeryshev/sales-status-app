@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import Typography from '@mui/material/Typography';
-import { UserVacation } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
 
 const renderVacationDay = (dateString: string) => {
   const date = new Date(dateString);
@@ -15,15 +15,15 @@ const renderVacationDay = (dateString: string) => {
 };
 
 interface CommentCellProps {
-  vacationState?: UserVacation;
+  absence: AdditionalUserData['absence'];
 }
 
 export const CommentCell = memo((props: CommentCellProps) => {
-  const { vacationState } = props;
+  const { absence } = props;
 
-  return vacationState?.endDate ? (
+  return absence?.endDate ? (
     <Typography color={'text.secondary'} sx={{ opacity: 0.5 }} variant={'body2'}>
-      до {renderVacationDay(vacationState?.endDate)}
+      до {renderVacationDay(absence?.endDate)}
     </Typography>
   ) : (
     ''

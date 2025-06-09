@@ -18,22 +18,16 @@ interface TeamRowCellsListProps extends HeroRowProps {
 }
 
 export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] => {
-  const {
-    teammate,
-    tasks,
-    tickets,
-    teamIsLoading,
-    avatarsAndBirthday,
-    isDeadlineReached,
-    isAccountManagersRoute,
-    handleSwitch,
-  } = props;
+  const { teammate, teamIsLoading, additionalUserData, isDeadlineReached, isAccountManagersRoute, handleSwitch } =
+    props;
+
+  const { avatar, deals, budget, leads, overdueTasks, conversations, tickets } = additionalUserData ?? {};
 
   return [
     {
       align: 'left',
       width: 50,
-      content: <AvatarCell teammate={teammate} avatarsAndBirthday={avatarsAndBirthday} />,
+      content: <AvatarCell teammate={teammate} avatar={avatar} />,
     },
     {
       align: 'left',
@@ -53,31 +47,31 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'center',
       width: 60,
-      content: <DealsCell tasks={tasks} teammate={teammate} />,
+      content: <DealsCell deals={deals} teammate={teammate} />,
     },
     {
       align: 'left',
-      content: <BudgetCell tasks={tasks} teammate={teammate} />,
+      content: <BudgetCell budget={budget} teammate={teammate} />,
     },
     {
       align: 'center',
       width: 60,
-      content: <LeadsCell teamIsLoading={teamIsLoading} tasks={tasks} />,
+      content: <LeadsCell leads={leads} />,
     },
     {
       align: 'center',
       width: 60,
-      content: <TasksCell teamIsLoading={teamIsLoading} tasks={tasks} />,
+      content: <TasksCell overdueTasks={overdueTasks} />,
     },
     {
       align: 'center',
       width: 60,
-      content: <ConversationsCell teamIsLoading={teamIsLoading} tasks={tasks} />,
+      content: <ConversationsCell conversations={conversations} />,
     },
     {
       align: 'center',
       width: 60,
-      content: <TicketsCell tickets={tickets} teamIsLoading={teamIsLoading} />,
+      content: <TicketsCell tickets={tickets} />,
     },
     {
       align: 'center',

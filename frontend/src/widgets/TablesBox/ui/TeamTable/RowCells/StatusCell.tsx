@@ -4,8 +4,7 @@ import Box from '@mui/material/Box';
 import PhoneIcon from '@mui/icons-material/Phone';
 import Typography from '@mui/material/Typography';
 import { feminizeWord } from '@/shared/lib/feminizeWords/feminizeWords';
-import { Teammate } from '@/entities/Team';
-import { UserVacation } from '@/entities/Team';
+import { AdditionalUserData, Teammate } from '@/entities/Team';
 import moment from 'moment/moment';
 import { Status } from '@/entities/Status';
 import { OverridableStringUnion } from '@mui/types';
@@ -24,13 +23,13 @@ const mapStatusColors = (
 
 interface StatusCellProps {
   teammate: Teammate;
-  mango: boolean;
-  vacationState?: UserVacation;
+  mango: AdditionalUserData['mangoState'];
+  absence: AdditionalUserData['absence'];
   isDeadlineReached: boolean;
 }
 
 export const StatusCell = memo((props: StatusCellProps) => {
-  const { teammate, mango, vacationState, isDeadlineReached } = props;
+  const { teammate, mango, absence, isDeadlineReached } = props;
   const teammateStatus = teammate.status;
 
   const deadline = teammate?.busyTime?.endTime;
@@ -47,8 +46,8 @@ export const StatusCell = memo((props: StatusCellProps) => {
                 <PhoneIcon fontSize={'small'} />
                 <Typography variant={'body2'}>на звонке</Typography>
               </Box>
-            ) : vacationState?.onVacation ? (
-              <Typography variant={'body2'}>{vacationState.description?.toLowerCase() || 'в отпуске'}</Typography>
+            ) : absence?.isAbsence ? (
+              <Typography variant={'body2'}>{absence?.description?.toLowerCase() || 'в отпуске'}</Typography>
             ) : (
               <Typography variant={'body2'}>{feminizeWord(teammate.status?.title, teammate.isFemale)}</Typography>
             )

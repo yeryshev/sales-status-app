@@ -1,22 +1,21 @@
 import { memo } from 'react';
-import { Teammate } from '@/entities/Team';
+import { AdditionalUserData, Teammate } from '@/entities/Team';
 import { Avatar } from '@mui/material';
-import { UserAvatarsAndBirthday, UserVacation } from '@/entities/Team';
 
 interface AvatarCellProps {
   teammate: Teammate;
-  avatarsAndBirthday: UserAvatarsAndBirthday;
-  vacationState?: UserVacation;
+  avatar: AdditionalUserData['avatar'];
+  absence?: AdditionalUserData['absence'];
 }
 
 export const AvatarCell = memo((props: AvatarCellProps) => {
-  const { teammate, avatarsAndBirthday, vacationState } = props;
+  const { teammate, avatar, absence } = props;
 
   return (
     <Avatar
       alt={`${teammate.firstName} ${teammate.secondName}`}
-      src={avatarsAndBirthday?.avatar}
-      sx={{ width: 50, height: 50, filter: vacationState?.onVacation ? 'grayscale(100%)' : 'none' }}
+      src={avatar}
+      sx={{ width: 50, height: 50, filter: absence?.isAbsence ? 'grayscale(100%)' : 'none' }}
     />
   );
 });

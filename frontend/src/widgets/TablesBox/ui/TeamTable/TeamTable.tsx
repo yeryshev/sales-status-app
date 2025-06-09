@@ -6,27 +6,16 @@ import { styled } from '@mui/material/styles';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import { getUserData, getUserId, getUserIsManager, User } from '@/entities/User';
 import { HeroRow } from './HeroRow/HeroRow';
-import {
-  Teammate,
-  UsersAvatarsAndBirthday,
-  UsersMango,
-  UsersTasks,
-  UsersTickets,
-  UsersVacation,
-} from '@/entities/Team';
+import { Teammate, AdditionalUserData } from '@/entities/Team';
 import { getTeamTableHeadersList } from './Headers/getTeamTableHeadersList';
 import { TeamTableHeaderItem } from './Headers/TeamTableHeaderItem';
 
 interface TeamTableProps {
   teamList: Teammate[];
-  mango: UsersMango;
-  tasks: UsersTasks;
-  tickets: UsersTickets;
-  vacationStates: UsersVacation;
-  avatarsAndBirthday: UsersAvatarsAndBirthday;
   teamIsLoading: boolean;
   isDeadlineReachedObject: Record<User['id'], boolean>;
   isAccountManagersRoute: boolean;
+  additionalTeamData: Array<AdditionalUserData>;
 }
 
 const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
@@ -35,18 +24,42 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
 }));
 
+const matchAdditionalUserData = (usersData: Array<AdditionalUserData>, insideId: number) => {
+  return (
+    usersData?.find((data) => data.idInside === insideId) ?? {
+      idAmoCRM: 0,
+      idInside: 0,
+      idChatwoot: 0,
+      budget: {
+        newSale: 0,
+        newSaleAndUpsale: 0,
+      },
+      deals: {
+        newSale: 0,
+        newSaleAndUpsale: 0,
+      },
+      overdueTasks: 0,
+      conversations: 0,
+      tickets: 0,
+      avatar: '',
+      isBirthday: false,
+      absence: {
+        isAbsence: false,
+        endDate: null,
+        description: null,
+      },
+      mangoState: false,
+      leads: 0,
+      lastWeek: {
+        budget: 0,
+        deals: 0,
+      },
+    }
+  );
+};
+
 export const TeamTable = memo((props: TeamTableProps) => {
-  const {
-    mango,
-    tasks,
-    tickets,
-    teamIsLoading,
-    teamList,
-    vacationStates,
-    avatarsAndBirthday,
-    isDeadlineReachedObject,
-    isAccountManagersRoute,
-  } = props;
+  const { teamIsLoading, teamList, isDeadlineReachedObject, isAccountManagersRoute, additionalTeamData } = props;
 
   const userId = useSelector(getUserId);
   const user = useSelector(getUserData);
@@ -69,11 +82,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
     <TeamRow
       key={teammate.id}
       teammate={teammate}
-      mango={mango[teammate.extNumber]}
-      tasks={tasks[teammate.insideId]}
-      tickets={tickets[teammate.insideId]}
-      vacationState={vacationStates[teammate.insideId]}
-      avatarsAndBirthday={avatarsAndBirthday[teammate.insideId]}
+      additionalUserData={matchAdditionalUserData(additionalTeamData, teammate.insideId)}
       isDeadlineReached={isDeadlineReachedObject[teammate.id]}
       teamIsLoading={teamIsLoading}
       isAccountManagersRoute={isAccountManagersRoute}
@@ -95,9 +104,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
             <>
               <HeroRow
                 teammate={user}
-                tasks={tasks[user.insideId]}
-                tickets={tickets[user.insideId]}
-                avatarsAndBirthday={avatarsAndBirthday[user.insideId]}
+                additionalUserData={matchAdditionalUserData(additionalTeamData, user.insideId)}
                 teamIsLoading={teamIsLoading}
                 isDeadlineReached={isDeadlineReachedObject[user.id]}
                 isAccountManagersRoute={isAccountManagersRoute}

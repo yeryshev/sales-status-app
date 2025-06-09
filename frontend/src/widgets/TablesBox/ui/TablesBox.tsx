@@ -37,19 +37,10 @@ export const TablesBox = memo(() => {
   const inboundTeamList = useSelector(getInboundTeamList);
   const accountManagerTeamList = useSelector(getAccountManagerTeamList);
   const teamList = isAccountManagersRoute ? accountManagerTeamList : inboundTeamList;
-  const { data: additionalTeamData } = useGetAdditionalTeamData(isAccountManagersRoute ? 'account' : 'inbound');
+  const { data: additionalTeamData = [] } = useGetAdditionalTeamData();
   const user = useSelector(getUserData);
   const [tabNumber, setTabNumber] = useState(0);
   const deadlines = useDeadlinesCheck(teamList, teamIsLoading);
-
-  const {
-    tasks = {},
-    tickets = {},
-    mango = {},
-    vacation = {},
-    lastWeekStat = {},
-    avatarsAndBirthday = {},
-  } = additionalTeamData || {};
 
   const handleChangeTab = useCallback((_: SyntheticEvent, newTab: number) => {
     setTabNumber(newTab);
@@ -115,11 +106,7 @@ export const TablesBox = memo(() => {
           <TeamTable
             teamList={teamList}
             teamIsLoading={teamIsLoading}
-            mango={mango}
-            tasks={tasks}
-            tickets={tickets}
-            vacationStates={vacation}
-            avatarsAndBirthday={avatarsAndBirthday}
+            additionalTeamData={additionalTeamData}
             isDeadlineReachedObject={deadlines}
             isAccountManagersRoute={isAccountManagersRoute}
           />
@@ -130,18 +117,14 @@ export const TablesBox = memo(() => {
               type="currentWeek"
               teamList={teamList}
               teamIsLoading={teamIsLoading}
-              tasks={tasks}
-              avatarsAndBirthday={avatarsAndBirthday}
-              lastWeekStats={lastWeekStat}
+              additionalTeamData={additionalTeamData}
               isAccountManagersRoute={isAccountManagersRoute}
             />
             <TeamResultsTable
               type="lastWeek"
               teamList={teamList}
               teamIsLoading={teamIsLoading}
-              tasks={tasks}
-              avatarsAndBirthday={avatarsAndBirthday}
-              lastWeekStats={lastWeekStat}
+              additionalTeamData={additionalTeamData}
               isAccountManagersRoute={isAccountManagersRoute}
             />
           </Box>

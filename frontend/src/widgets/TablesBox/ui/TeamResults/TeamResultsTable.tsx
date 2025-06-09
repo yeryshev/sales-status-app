@@ -5,7 +5,7 @@ import { memo, useState, MouseEvent, useMemo } from 'react';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import { Teammate, UsersAvatarsAndBirthday, UsersLastWeekStats, UsersTasks } from '@/entities/Team';
+import { AdditionalUserData, Teammate } from '@/entities/Team';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import Paper from '@mui/material/Paper';
 import { getTotalBudget } from './getTotalBudget';
@@ -147,15 +147,17 @@ function SortedTableHead(props: SortedTableProps) {
 interface TeamResultsTableProps {
   type: 'currentWeek' | 'lastWeek';
   teamList: Teammate[];
-  tasks: UsersTasks;
-  lastWeekStats: UsersLastWeekStats;
-  avatarsAndBirthday: UsersAvatarsAndBirthday;
   teamIsLoading: boolean;
   isAccountManagersRoute: boolean;
+  additionalTeamData: Array<AdditionalUserData>;
 }
 
+const matchAdditionalUserData = (usersData: Array<AdditionalUserData>, insideId: number) => {
+  return usersData.find((data) => data.idInside === insideId);
+};
+
 export const TeamResultsTable = memo((props: TeamResultsTableProps) => {
-  const { type, tasks, lastWeekStats, teamIsLoading, teamList, avatarsAndBirthday } = props;
+  const { type, teamIsLoading, teamList, additionalTeamData } = props;
   const [order, setOrder] = useState<Order>('desc');
   const [orderBy, setOrderBy] = useState<keyof Data>('budget');
   const user = useSelector(getUserData);
@@ -163,7 +165,9 @@ export const TeamResultsTable = memo((props: TeamResultsTableProps) => {
   const isCurrentWeek = type === 'currentWeek';
 
   const filterTeamList = (teammate: Teammate) => {
-    const getDeals = tasks[teammate.insideId]?.deals || 0;
+    const additionalUserData = matchAdditionalUserData(additionalTeamData, teammate.insideId);
+
+    const getDeals = additionalUserData?.deals.newSale || 0;
     return teammate.isManager && Number(getDeals) >= 0 && !teammate.isCoordinator;
   };
 
@@ -173,18 +177,22 @@ export const TeamResultsTable = memo((props: TeamResultsTableProps) => {
     setOrderBy(property);
   };
 
-  const rows = teamList.filter(filterTeamList).map((teammate) => {
+  const teamListOnlyMangers = teamList.filter(filterTeamList);
+
+  const rows = teamListOnlyMangers.map((teammate) => {
+    const additionalUserData = matchAdditionalUserData(additionalTeamData, teammate.insideId);
+
     const deals = isCurrentWeek
-      ? Number(tasks[teammate.insideId]?.deals) || 0
-      : Number(lastWeekStats[teammate.insideId]?.deals) || 0;
+      ? Number(additionalUserData?.deals.newSale) || 0
+      : Number(additionalUserData?.lastWeek.deals) || 0;
 
     const budget = isCurrentWeek
-      ? Number(tasks[teammate.insideId]?.budget) || 0
-      : Number(lastWeekStats[teammate.insideId]?.budget) || 0;
+      ? Number(additionalUserData?.budget.newSaleAndUpsale) || 0
+      : Number(additionalUserData?.lastWeek.budget) || 0;
 
     return createData(
       teammate.id,
-      avatarsAndBirthday[teammate.insideId]?.avatar,
+      additionalUserData?.avatar || '',
       `${teammate.firstName} ${teammate.secondName}`,
       deals,
       budget,
@@ -210,9 +218,13 @@ export const TeamResultsTable = memo((props: TeamResultsTableProps) => {
     <TableContainer style={{ overflowX: 'auto' }} component={Paper}>
       <Table size="small">
         {isCurrentWeek ? (
-          <caption>{`За текущую неделю собрано ${getTotalBudget(teamList, tasks).toLocaleString('ru-RU')} ₽`}</caption>
+          <caption>{`За текущую неделю собрано ${getTotalBudget(
+            teamListOnlyMangers,
+            additionalTeamData,
+            true,
+          )} ₽`}</caption>
         ) : (
-          <caption>{`За прошлую неделю собрано ${getTotalBudget(teamList, lastWeekStats).toLocaleString('ru-RU')} ₽`}</caption>
+          <caption>{`За прошлую неделю собрано ${getTotalBudget(teamListOnlyMangers, additionalTeamData, false)} ₽`}</caption>
         )}
         <SortedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
         <TableBody>
