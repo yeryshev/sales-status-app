@@ -82,7 +82,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
           // Устанавливаем таймер ожидания ответа
           heartbeatTimeoutRef.current = setTimeout(() => {
             // Если за 10 секунд не получили pong, считаем соединение потерянным
-            logger.warn('Heartbeat timeout - no pong received');
+            logger.warn('💓⚠️  Heartbeat timeout - no pong received, connection may be lost');
             setState((prev) => ({ ...prev, isConnected: false }));
 
             // Принудительно закрываем сокет и переподключаемся
@@ -110,7 +110,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
       const socket = new WebSocket(url);
 
       socket.onopen = () => {
-        logger.log('WebSocket connected');
+        logger.log('🔌 WebSocket connected to:', url);
         setState((prev) => ({
           ...prev,
           socket,
@@ -149,7 +149,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
       };
 
       socket.onclose = (event) => {
-        logger.log('WebSocket disconnected', event.code, event.reason);
+        logger.log('🔌❌ WebSocket disconnected from:', url, '- Code:', event.code, 'Reason:', event.reason);
         clearTimers();
         setState((prev) => ({
           ...prev,
@@ -171,7 +171,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
       };
 
       socket.onerror = (event) => {
-        logger.error('WebSocket error:', event);
+        logger.error('🔌⚠️  WebSocket error for:', url, event);
         setState((prev) => ({
           ...prev,
           lastError: event,
@@ -258,7 +258,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
   // Обработка события перехода в онлайн/офлайн
   useEffect(() => {
     const handleOnline = () => {
-      logger.log('Internet connection restored');
+      logger.log('🌐 Internet connection restored');
       setState((prev) => ({ ...prev, isOnline: true }));
 
       if (!state.isConnected && !state.isConnecting) {
@@ -268,7 +268,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
     };
 
     const handleOffline = () => {
-      logger.log('Internet connection lost');
+      logger.log('🌐❌ Internet connection lost');
       setState((prev) => ({ ...prev, isOnline: false, isConnected: false }));
       clearTimers();
     };

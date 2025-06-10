@@ -34,6 +34,9 @@ export const useTablesBoxViewModel = (teamList: User[], teamIsLoading: boolean) 
   }, [refreshGlobalData]);
 
   // WebSocket обработчики
+  // Примечание: В консоли будут видны два типа сообщений WebSocket:
+  // 1. "🔌 WebSocket connected to: ..." - общее техническое подключение (из useWebSocket hook)
+  // 2. "✅ Status updates WebSocket ready - ..." - готовность системы обновления статусов (этот callback)
   const handleStatusChange = useCallback(
     (event: MessageEvent) => {
       const dataFromSocket: UserWsUpdates = JSON.parse(event.data);
@@ -89,16 +92,16 @@ export const useTablesBoxViewModel = (teamList: User[], teamIsLoading: boolean) 
   );
 
   const handleWebSocketConnect = useCallback(() => {
-    logger.log('Status WebSocket connected successfully');
+    logger.log('✅ Status updates WebSocket ready - real-time status synchronization active');
     refreshAllData();
   }, [refreshAllData]);
 
   const handleWebSocketDisconnect = useCallback(() => {
-    logger.log('Status WebSocket disconnected');
+    logger.log('❌ Status updates WebSocket disconnected - real-time synchronization paused');
   }, []);
 
   const handleWebSocketError = useCallback((event: Event) => {
-    logger.error('Status WebSocket error:', event);
+    logger.error('⚠️  Status updates WebSocket error:', event);
   }, []);
 
   const websocketState = useWebSocket({

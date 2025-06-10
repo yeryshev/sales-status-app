@@ -46,7 +46,7 @@ class WebSocketManager {
       this.connections.set(url, ws);
 
       ws.onopen = () => {
-        logger.log('RTK WebSocket connected:', url);
+        logger.log('🔗 RTK WebSocket connected to:', url);
         this.reconnectAttempts.set(url, 0);
         // Запускаем heartbeat только если URL его поддерживает
         if (this.heartbeatEnabledUrls.has(url)) {
@@ -56,7 +56,7 @@ class WebSocketManager {
         // При восстановлении соединения обновляем данные
         const attempts = this.reconnectAttempts.get(url) || 0;
         if (attempts > 0) {
-          logger.log('🔄 RTK WebSocket reconnected, refreshing data...');
+          logger.log('🔄 RTK WebSocket reconnected to:', url, '- refreshing data...');
           triggerGlobalDataRefresh();
         }
       };
@@ -77,7 +77,7 @@ class WebSocketManager {
       };
 
       ws.onclose = (event) => {
-        logger.log('RTK WebSocket disconnected:', url, event.code, event.reason);
+        logger.log('🔗❌ RTK WebSocket disconnected from:', url, '- Code:', event.code, 'Reason:', event.reason);
         this.clearTimers(url);
         this.connections.delete(url);
 
@@ -85,7 +85,7 @@ class WebSocketManager {
         const attempts = this.reconnectAttempts.get(url) || 0;
         if (attempts < this.maxReconnectAttempts) {
           this.reconnectAttempts.set(url, attempts + 1);
-          logger.log(`RTK WebSocket reconnecting... Attempt ${attempts + 1}/${this.maxReconnectAttempts}`);
+          logger.log(`🔄 RTK WebSocket reconnecting to ${url}... Attempt ${attempts + 1}/${this.maxReconnectAttempts}`);
 
           const timer = setTimeout(() => {
             this.createConnection(url);
@@ -96,7 +96,7 @@ class WebSocketManager {
       };
 
       ws.onerror = (event) => {
-        logger.error('RTK WebSocket error:', url, event);
+        logger.error('🔗⚠️  RTK WebSocket error for:', url, event);
       };
     } catch (error) {
       logger.error('Failed to create RTK WebSocket:', error);
@@ -174,7 +174,7 @@ class WebSocketManager {
 
   // Обработка восстановления интернет-соединения
   handleOnline() {
-    logger.log('Internet connection restored - checking RTK WebSocket connections');
+    logger.log('🌐 Internet connection restored - checking RTK WebSocket connections');
     this.connections.forEach((ws, wsUrl) => {
       if (ws.readyState !== WebSocket.OPEN && this.listeners.has(wsUrl)) {
         this.createConnection(wsUrl);
@@ -184,7 +184,7 @@ class WebSocketManager {
 
   // Обработка потери интернет-соединения
   handleOffline() {
-    logger.log('Internet connection lost - RTK WebSocket connections affected');
+    logger.log('🌐❌ Internet connection lost - RTK WebSocket connections affected');
     // Закрываем все соединения при потере интернета
     this.connections.forEach((ws) => {
       if (ws.readyState === WebSocket.OPEN) {
