@@ -1,4 +1,3 @@
-import { Teammate } from '../../model/types/teammate';
 import { User } from '@/entities/User';
 
 export interface UserTasks {
@@ -28,12 +27,12 @@ export type UserAvatarsAndBirthday = {
   isBirthday: boolean;
 };
 
-export type UsersMango = Record<Teammate['extNumber'], boolean>;
-export type UsersTasks = Record<Teammate['insideId'], UserTasks>;
-export type UsersTickets = Record<Teammate['insideId'], UserTickets>;
-export type UsersVacation = Record<Teammate['insideId'], UserVacation>;
-export type UsersLastWeekStats = Record<Teammate['insideId'], UserLastWeekStats>;
-export type UsersAvatarsAndBirthday = Record<Teammate['insideId'], UserAvatarsAndBirthday>;
+export type UsersMango = Record<User['extNumber'], boolean>;
+export type UsersTasks = Record<User['insideId'], UserTasks>;
+export type UsersTickets = Record<User['insideId'], UserTickets>;
+export type UsersVacation = Record<User['insideId'], UserVacation>;
+export type UsersLastWeekStats = Record<User['insideId'], UserLastWeekStats>;
+export type UsersAvatarsAndBirthday = Record<User['insideId'], UserAvatarsAndBirthday>;
 
 export enum WsTypes {
   MANGO = 'mango',

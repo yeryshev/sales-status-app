@@ -4,7 +4,8 @@ import Box from '@mui/material/Box';
 import PhoneIcon from '@mui/icons-material/Phone';
 import Typography from '@mui/material/Typography';
 import { feminizeWord } from '@/shared/lib/feminizeWords/feminizeWords';
-import { AdditionalUserData, Teammate } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
+import { User } from '@/entities/User';
 import moment from 'moment/moment';
 import { Status } from '@/entities/Status';
 import { OverridableStringUnion } from '@mui/types';
@@ -22,7 +23,7 @@ const mapStatusColors = (
 };
 
 interface StatusCellProps {
-  teammate: Teammate;
+  teammate: User;
   mango: AdditionalUserData['mangoState'];
   absence: AdditionalUserData['absence'];
   isDeadlineReached: boolean;

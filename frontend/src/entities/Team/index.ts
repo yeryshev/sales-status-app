@@ -1,4 +1,3 @@
-export { type Teammate } from './model/types/teammate';
 export { type TeamTableSchema } from './model/types/teamTableSchema';
 
 export { teamReducer, teamActions } from './model/slice/teamSlice';

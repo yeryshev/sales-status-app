@@ -6,12 +6,12 @@ import { styled } from '@mui/material/styles';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import { getUserData, getUserId, getUserIsManager, User } from '@/entities/User';
 import { HeroRow } from './HeroRow/HeroRow';
-import { Teammate, AdditionalUserData } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
 import { getTeamTableHeadersList } from './Headers/getTeamTableHeadersList';
 import { TeamTableHeaderItem } from './Headers/TeamTableHeaderItem';
 
 interface TeamTableProps {
-  teamList: Teammate[];
+  teamList: User[];
   teamIsLoading: boolean;
   isDeadlineReachedObject: Record<User['id'], boolean>;
   isAccountManagersRoute: boolean;
@@ -70,15 +70,15 @@ export const TeamTable = memo((props: TeamTableProps) => {
   const thereAreCoordinators = teamList.find((teammate) => teammate.isCoordinator);
   const headersList = getTeamTableHeadersList(shouldSeeHeroRow);
 
-  const showManagers = (teammate: Teammate) => {
+  const showManagers = (teammate: User) => {
     return teammate.isManager && teammate.id !== userId && !teammate.isCoordinator;
   };
 
-  const showCoordinators = (teammate: Teammate) => {
+  const showCoordinators = (teammate: User) => {
     return teammate.isCoordinator && teammate.id !== userId;
   };
 
-  const renderTeamList = (teammate: Teammate) => (
+  const renderTeamList = (teammate: User) => (
     <TeamRow
       key={teammate.id}
       teammate={teammate}

@@ -5,7 +5,7 @@ import { memo, useState, MouseEvent, useMemo } from 'react';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
-import { AdditionalUserData, Teammate } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
 import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
 import Paper from '@mui/material/Paper';
 import { getTotalBudget } from './getTotalBudget';
@@ -15,7 +15,7 @@ import { visuallyHidden } from '@mui/utils';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { useSelector } from 'react-redux';
-import { getUserData } from '@/entities/User';
+import { getUserData, User } from '@/entities/User';
 
 const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
 
@@ -146,7 +146,7 @@ function SortedTableHead(props: SortedTableProps) {
 
 interface TeamResultsTableProps {
   type: 'currentWeek' | 'lastWeek';
-  teamList: Teammate[];
+  teamList: User[];
   teamIsLoading: boolean;
   isAccountManagersRoute: boolean;
   additionalTeamData: Array<AdditionalUserData>;
@@ -164,7 +164,7 @@ export const TeamResultsTable = memo((props: TeamResultsTableProps) => {
 
   const isCurrentWeek = type === 'currentWeek';
 
-  const filterTeamList = (teammate: Teammate) => {
+  const filterTeamList = (teammate: User) => {
     const additionalUserData = matchAdditionalUserData(additionalTeamData, teammate.insideId);
 
     const getDeals = additionalUserData?.deals.newSale || 0;
@@ -201,7 +201,7 @@ export const TeamResultsTable = memo((props: TeamResultsTableProps) => {
 
   const visibleRows = useMemo(() => [...rows].sort(getComparator(order, orderBy)), [order, orderBy, rows]);
 
-  const topBudgetTeammates = useMemo(() => {
+  const topBudgetUsers = useMemo(() => {
     return [...rows]
       .sort((a, b) => b.budget - a.budget)
       .slice(0, 3)
@@ -248,7 +248,7 @@ export const TeamResultsTable = memo((props: TeamResultsTableProps) => {
                   {isCurrentWeek ? (
                     <Typography variant={'body2'}>{row.name}</Typography>
                   ) : (
-                    <Typography variant={'body2'}>{`${row.name} ${topBudgetTeammates[row.id] || ''}`}</Typography>
+                    <Typography variant={'body2'}>{`${row.name} ${topBudgetUsers[row.id] || ''}`}</Typography>
                   )}
                 </TableCell>
                 <TableCell align="center">

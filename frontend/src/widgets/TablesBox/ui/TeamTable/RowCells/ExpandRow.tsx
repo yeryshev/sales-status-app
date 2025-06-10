@@ -7,10 +7,10 @@ import Table from '@mui/material/Table';
 import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import { Link } from '@mui/material';
-import { Teammate } from '@/entities/Team';
+import { User } from '@/entities/User';
 
 interface ExpandRowProps {
-  teammate: Teammate;
+  teammate: User;
   expandRow: boolean;
 }
 

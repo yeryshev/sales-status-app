@@ -1,10 +1,11 @@
 import { memo } from 'react';
 import Typography from '@mui/material/Typography';
-import { AdditionalUserData, Teammate } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
+import { User } from '@/entities/User';
 
 interface DealsCellProps {
   deals: AdditionalUserData['deals'];
-  teammate: Teammate;
+  teammate: User;
 }
 
 export const DealsCell = memo((props: DealsCellProps) => {

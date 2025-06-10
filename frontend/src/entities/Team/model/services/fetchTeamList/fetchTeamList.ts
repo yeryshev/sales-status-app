@@ -1,14 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { ThunkConfig } from '@/app/providers/StoreProvider';
-import { Teammate } from '../../types/teammate';
+import { User } from '@/entities/User';
 
-export const fetchTeamList = createAsyncThunk<Teammate[], void, ThunkConfig<string>>(
+export const fetchTeamList = createAsyncThunk<User[], void, ThunkConfig<string>>(
   'team/fetchTeamList',
   async (_, thunkAPI) => {
     const { extra, rejectWithValue } = thunkAPI;
 
     try {
-      const response = await extra.api.get<Teammate[]>('/users/');
+      const response = await extra.api.get<User[]>('/users/');
 
       if (!response.data) {
         throw new Error('Произошла ошибка при загрузке списка коллег');

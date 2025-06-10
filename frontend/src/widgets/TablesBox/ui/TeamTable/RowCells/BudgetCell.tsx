@@ -1,10 +1,11 @@
 import { memo } from 'react';
 import Typography from '@mui/material/Typography';
-import { AdditionalUserData, Teammate } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
+import { User } from '@/entities/User';
 
 interface BudgetCellProps {
   budget: AdditionalUserData['budget'];
-  teammate: Teammate;
+  teammate: User;
 }
 
 export const BudgetCell = memo((props: BudgetCellProps) => {

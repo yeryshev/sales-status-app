@@ -1,11 +1,12 @@
 import { memo } from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { AdditionalUserData, Teammate } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
+import { User } from '@/entities/User';
 
 interface QlikCellProps {
   qlik: AdditionalUserData['qlik'];
-  teammate: Teammate;
+  teammate: User;
   absence?: AdditionalUserData['absence'];
 }
 
