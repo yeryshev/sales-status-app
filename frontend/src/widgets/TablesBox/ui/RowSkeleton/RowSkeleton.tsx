@@ -6,37 +6,52 @@ import { Skeleton } from '@mui/material';
 export const RowSkeleton = memo(() => {
   return (
     <TableRow hover={true}>
-      <TableCell align="left" sx={{ width: '50px' }}>
+      {/* Аватар */}
+      <TableCell align="left" width={50}>
         <Skeleton variant="circular" width={50} height={50} />
       </TableCell>
-      <TableCell align="left" sx={{ width: '180px' }}>
+      {/* Имя пользователя */}
+      <TableCell align="left" width={160}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="left" sx={{ width: '110px' }}>
+      {/* Статус */}
+      <TableCell align="left" width={160}>
         <Skeleton variant="text" />
       </TableCell>
+      {/* Комментарий */}
+      <TableCell align="left" width={250}>
+        <Skeleton variant="text" />
+      </TableCell>
+      {/* Qlik */}
+      <TableCell align="left" width={120}>
+        <Skeleton variant="text" />
+      </TableCell>
+      {/* Сделки */}
+      <TableCell align="center" width={60}>
+        <Skeleton variant="text" />
+      </TableCell>
+      {/* Бюджет - без фиксированной ширины как в оригинале */}
       <TableCell align="left">
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
+      {/* Лиды */}
+      <TableCell align="center" width={60}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
+      {/* Задачи */}
+      <TableCell align="center" width={60}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
+      {/* Разговоры */}
+      <TableCell align="center" width={60}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
+      {/* Тикеты */}
+      <TableCell align="center" width={60}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
-        <Skeleton variant="text" />
-      </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
-        <Skeleton variant="text" />
-      </TableCell>
-      <TableCell align="center" sx={{ width: '72px' }}>
+      {/* Стрелка */}
+      <TableCell align="center" width={72}>
         <Skeleton variant="text" />
       </TableCell>
     </TableRow>

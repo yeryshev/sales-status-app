@@ -135,13 +135,15 @@ export const TablesBox = memo(() => {
           }}
         >
           <TeamTableTabs tabNumber={tabNumber} handleChangeTab={handleChangeTab} />
-          <WebSocketStatus
-            isConnected={isConnected}
-            isConnecting={isConnecting}
-            reconnectAttempts={reconnectAttempts}
-            maxReconnectAttempts={5}
-            isOnline={isOnline}
-          />
+          <Box sx={{ minWidth: 150, display: 'flex', justifyContent: 'flex-end' }}>
+            <WebSocketStatus
+              isConnected={isConnected}
+              isConnecting={isConnecting}
+              reconnectAttempts={reconnectAttempts}
+              maxReconnectAttempts={5}
+              isOnline={isOnline}
+            />
+          </Box>
         </Box>
         <TeamTableTabPanel value={tabNumber} index={0}>
           <TeamTable

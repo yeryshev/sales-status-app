@@ -6,7 +6,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import { AdditionalUserData } from '@/entities/Team';
-import { RowSkeleton } from '../RowSkeleton/RowSkeleton';
+import { TeamResultsRowSkeleton } from './TeamResultsRowSkeleton';
 import Paper from '@mui/material/Paper';
 import { getTotalBudget } from './getTotalBudget';
 import TableSortLabel from '@mui/material/TableSortLabel';
@@ -17,7 +17,7 @@ import Typography from '@mui/material/Typography';
 import { useSelector } from 'react-redux';
 import { getUserData, User } from '@/entities/User';
 
-const getSkeletons = () => new Array(10).fill(0).map((_, index) => <RowSkeleton key={index} />);
+const getSkeletons = () => new Array(10).fill(0).map((_, index) => <TeamResultsRowSkeleton key={index} />);
 
 const medalMapper: Record<number, string> = {
   0: '🥇',

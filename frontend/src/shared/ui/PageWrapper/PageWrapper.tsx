@@ -19,6 +19,7 @@ export const PageWrapper = (props: PageProps) => {
         flexGrow: 1,
         height: '100vh',
         overflow: 'auto',
+        scrollbarGutter: 'stable',
       }}
       data-testid={props['data-testid'] ?? 'page-wrapper'}
     >
