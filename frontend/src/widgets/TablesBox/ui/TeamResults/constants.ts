@@ -23,7 +23,7 @@ export const HEAD_CELLS: readonly HeadCell[] = [
     id: 'deals',
     numeric: true,
     disablePadding: false,
-    label: 'Успешых сделок',
+    label: 'Сделки',
   },
   {
     id: 'budget',

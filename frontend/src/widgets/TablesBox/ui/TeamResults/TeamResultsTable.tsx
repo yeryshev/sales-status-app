@@ -29,7 +29,7 @@ export const TeamResultsTable = memo((props: TeamResultsTableProps) => {
 
   return (
     <TableContainer style={{ overflowX: 'auto' }} component={Paper}>
-      <Typography variant="h6" p={2} color="primary.main" borderBottom="1px solid" borderColor="divider">
+      <Typography align='right' variant="subtitle1" p={1} color="primary.main" borderBottom="1px solid" borderColor="divider">
         {isCurrentWeek ? 'Текущая неделя' : 'Прошлая неделя'}
       </Typography>
 

@@ -19,7 +19,7 @@ export const TeamResultsTableHead = memo((props: SortedTableHeadProps) => {
         {HEAD_CELLS.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={isSortableColumn(headCell.id) ? 'center' : 'left'}
+            align={isSortableColumn(headCell.id) ? 'right' : 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
             {isSortableColumn(headCell.id) ? (

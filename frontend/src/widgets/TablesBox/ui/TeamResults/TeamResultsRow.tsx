@@ -17,11 +17,11 @@ export const TeamResultsRow = memo((props: TeamResultsRowProps) => {
         <Typography variant="body2">{displayName}</Typography>
       </TableCell>
 
-      <TableCell align="center">
+      <TableCell align="right">
         <Typography variant="body2">{row.deals}</Typography>
       </TableCell>
 
-      <TableCell align="center">
+      <TableCell align="right">
         <Typography variant="body2">{row.budget.toLocaleString('ru-RU')}</Typography>
       </TableCell>
     </TableRow>
