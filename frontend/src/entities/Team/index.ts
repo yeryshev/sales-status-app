@@ -4,7 +4,7 @@ export { teamReducer, teamActions } from './model/slice/teamSlice';
 
 export { type UserWsUpdates } from './model/types/teamWebsocket';
 
-export { type AdditionalUserData } from './model/types/teamNewWebsocket';
+export { type AdditionalUserData } from './model/types/teamWebsocket';
 
 export { getAccountManagerTeamList, getInboundTeamList, getTeamIsLoading } from './model/selectors/teamSelectors';
 

@@ -1,5 +1,5 @@
 import { rtkApi } from '@/shared/api/rtkApi';
-import { AdditionalUserData } from '../model/types/teamNewWebsocket';
+import { AdditionalUserData } from '../model/types/teamWebsocket';
 import { triggerGlobalDataRefresh } from '@/shared/lib/hooks/useGlobalDataRefresh';
 import { logger } from '@/shared/lib/utils/logger';
 

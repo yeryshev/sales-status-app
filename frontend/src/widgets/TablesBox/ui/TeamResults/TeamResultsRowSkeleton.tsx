@@ -24,4 +24,4 @@ export const TeamResultsRowSkeleton = memo(() => {
       </TableCell>
     </TableRow>
   );
-}); 
+});
