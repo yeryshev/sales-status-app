@@ -216,15 +216,18 @@ export const TeamResultsTable = memo((props: TeamResultsTableProps) => {
 
   return (
     <TableContainer style={{ overflowX: 'auto' }} component={Paper}>
+      <Typography variant="h6" p={2} color="primary.main" borderBottom="1px solid" borderColor="divider">
+        {isCurrentWeek ? 'Текущая неделя' : 'Прошлая неделя'}
+      </Typography>
       <Table size="small">
         {isCurrentWeek ? (
-          <caption>{`За текущую неделю собрано ${getTotalBudget(
-            teamListOnlyMangers,
-            additionalTeamData,
-            true,
-          )} ₽`}</caption>
+          <caption style={{ textAlign: 'right', paddingRight: '16px', captionSide: 'bottom' }}>
+            {`Итого ${getTotalBudget(teamListOnlyMangers, additionalTeamData, true)} ₽`}
+          </caption>
         ) : (
-          <caption>{`За прошлую неделю собрано ${getTotalBudget(teamListOnlyMangers, additionalTeamData, false)} ₽`}</caption>
+          <caption style={{ textAlign: 'right', paddingRight: '16px', captionSide: 'bottom' }}>
+            {`Итого ${getTotalBudget(teamListOnlyMangers, additionalTeamData, false)} ₽`}
+          </caption>
         )}
         <SortedTableHead order={order} orderBy={orderBy} onRequestSort={handleRequestSort} />
         <TableBody>
