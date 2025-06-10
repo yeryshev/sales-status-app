@@ -88,9 +88,10 @@ export const ProfileCard = (props: ProfileCardProps) => {
           <Grid container spacing={2} sx={{ flexGrow: 1 }}>
             <Grid xs={12} sm={12} md={6} lg={6}>
               <TextField
+                id="profile-first-name"
                 value={formData?.firstName ?? ''}
                 onChange={(e) => onChangeFirstName?.(e.target.value)}
-                name={formData?.firstName}
+                name="firstName"
                 label={'Имя'}
                 fullWidth
                 InputLabelProps={{
@@ -102,9 +103,10 @@ export const ProfileCard = (props: ProfileCardProps) => {
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
               <TextField
+                id="profile-second-name"
                 value={formData?.secondName ?? ''}
                 onChange={(e) => onChangeSecondName?.(e.target.value)}
-                name={formData?.secondName}
+                name="secondName"
                 label={'Фамилия'}
                 fullWidth
                 InputLabelProps={{
@@ -116,9 +118,10 @@ export const ProfileCard = (props: ProfileCardProps) => {
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
               <TextField
+                id="profile-inside-id"
                 value={formData?.insideId ?? ''}
                 disabled={true}
-                name={String(formData?.insideId)}
+                name="insideId"
                 label={'Inside Id'}
                 fullWidth
                 InputLabelProps={{
@@ -130,10 +133,11 @@ export const ProfileCard = (props: ProfileCardProps) => {
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
               <TextField
+                id="profile-email"
                 value={formData?.email ?? ''}
                 onChange={(e) => onChangeEmail?.(e.target.value)}
                 disabled={true}
-                name={formData?.email}
+                name="email"
                 label={'Email'}
                 fullWidth
                 InputLabelProps={{
@@ -145,10 +149,11 @@ export const ProfileCard = (props: ProfileCardProps) => {
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
               <TextField
+                id="profile-ext-number"
                 value={formData?.extNumber ?? ''}
                 onChange={(e) => onChangeExtNumber?.(e.target.value)}
                 disabled={true}
-                name={formData?.extNumber}
+                name="extNumber"
                 label={'Добавочный номер телефона'}
                 fullWidth
                 InputLabelProps={{
@@ -160,9 +165,10 @@ export const ProfileCard = (props: ProfileCardProps) => {
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
               <TextField
+                id="profile-telegram"
                 value={formData?.telegram ?? ''}
                 onChange={(e) => onChangeTelegram?.(e.target.value)}
-                name={formData?.telegram}
+                name="telegram"
                 label={'Telegram'}
                 fullWidth
                 InputLabelProps={{

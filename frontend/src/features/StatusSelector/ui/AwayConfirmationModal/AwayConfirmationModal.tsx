@@ -37,7 +37,13 @@ export function AwayConfirmationModal(props: AwayConfirmationModalProps) {
   };
 
   return (
-    <Dialog sx={{ '& .MuiDialog-paper': { width: '80%', maxHeight: 435 } }} maxWidth="xs" open={open} {...other}>
+    <Dialog
+      sx={{ '& .MuiDialog-paper': { width: '80%', maxHeight: 435 } }}
+      maxWidth="xs"
+      open={open}
+      disableRestoreFocus
+      {...other}
+    >
       <DialogTitle>Время отсутствия</DialogTitle>
       <DialogContent dividers>
         <Box display={'flex'} flexDirection={'column'} gap={1} alignItems={'stretch'}>

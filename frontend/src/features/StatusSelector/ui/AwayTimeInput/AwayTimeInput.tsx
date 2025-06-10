@@ -25,6 +25,7 @@ const NumberInput = React.forwardRef(function CustomNumberInput(
         decrementButton: {
           children: '▾',
         },
+        ...props.slotProps,
       }}
       {...props}
       ref={ref}
@@ -41,7 +42,13 @@ export function AwayTimeInput(props: AwayTimeInputProps) {
   const { value, setValue } = props;
   return (
     <NumberInput
-      aria-label="Demo number input"
+      slotProps={{
+        input: {
+          id: 'away-time-input',
+          name: 'awayTimeMinutes',
+        },
+      }}
+      aria-label="Введите количество минут отсутствия"
       placeholder="Введите количество минут..."
       value={value}
       onChange={(_, val) => setValue(val)}
