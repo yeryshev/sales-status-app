@@ -2,8 +2,8 @@ import { rtkApi } from '@/shared/api/rtkApi';
 import { AdditionalUserData } from '../model/types/teamNewWebsocket';
 import { triggerGlobalDataRefresh } from '@/shared/lib/hooks/useGlobalDataRefresh';
 
-const n8nApiUrl = import.meta.env.VITE_NEW_API_URL;
-const apiWsUrl = import.meta.env.VITE_API_SOCKET_URL;
+const externalApiUrl = import.meta.env.VITE_EXTERNAL_API_URL;
+const externalSocketUrl = import.meta.env.VITE_EXTERNAL_SOCKET_URL;
 
 // Глобальный менеджер WebSocket соединений для RTK Query
 class WebSocketManager {
@@ -220,7 +220,7 @@ const tasksApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
     getAdditionalTeamData: build.query<Array<AdditionalUserData>, void>({
       query: () => ({
-        url: n8nApiUrl,
+        url: externalApiUrl,
         credentials: 'same-origin',
       }),
       async onCacheEntryAdded(_, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
@@ -240,13 +240,13 @@ const tasksApi = rtkApi.injectEndpoints({
 
         try {
           await cacheDataLoaded;
-          // Для VITE_API_SOCKET_URL не включаем heartbeat, так как это сторонний сервис
-          wsManager.connect(apiWsUrl, listener, false);
+          // Для VITE_EXTERNAL_SOCKET_URL не включаем heartbeat, так как это сторонний сервис
+          wsManager.connect(externalSocketUrl, listener, false);
         } catch (error) {
           console.error('Error occurred:', error);
         } finally {
           await cacheEntryRemoved;
-          wsManager.disconnect(apiWsUrl, listener);
+          wsManager.disconnect(externalSocketUrl, listener);
         }
       },
     }),

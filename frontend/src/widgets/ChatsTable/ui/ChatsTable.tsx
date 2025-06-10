@@ -27,7 +27,7 @@ const getSkeletons = () => new Array(12).fill(0).map((_, index) => <ChatsRowSkel
 
 export const ChatsTable = memo(() => {
   const { data: rows, isLoading } = useGetTgChats(undefined, {
-    skip: !import.meta.env.VITE_API_URL, // Не выполнять запрос, если URL не настроен
+    skip: !import.meta.env.VITE_EXTERNAL_API_URL, // Не выполнять запрос, если URL не настроен
   });
 
   return (

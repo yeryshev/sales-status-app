@@ -39,7 +39,7 @@ export const TablesBox = memo(() => {
   const accountManagerTeamList = useSelector(getAccountManagerTeamList);
   const teamList = isAccountManagersRoute ? accountManagerTeamList : inboundTeamList;
   const { data: additionalTeamData = [] } = useGetAdditionalTeamData(undefined, {
-    skip: !import.meta.env.VITE_NEW_API_URL, // Не выполнять запрос, если URL не настроен
+    skip: !import.meta.env.VITE_EXTERNAL_API_URL, // Не выполнять запрос, если URL не настроен
   });
   const user = useSelector(getUserData);
   const [tabNumber, setTabNumber] = useState(0);

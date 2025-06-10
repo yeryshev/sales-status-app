@@ -15,11 +15,11 @@ export const useDataRefresh = () => {
   const { refetch: refetchStatuses } = useGetStatuses();
 
   const { refetch: refetchTgChats } = useGetTgChats(undefined, {
-    skip: !import.meta.env.VITE_API_URL,
+    skip: !import.meta.env.VITE_EXTERNAL_API_URL,
   });
 
   const { refetch: refetchTeamData } = useGetAdditionalTeamData(undefined, {
-    skip: !import.meta.env.VITE_NEW_API_URL,
+    skip: !import.meta.env.VITE_EXTERNAL_API_URL,
   });
 
   const refreshAllData = useCallback(async () => {
@@ -36,14 +36,9 @@ export const useDataRefresh = () => {
       // Обновляем RTK Query данные из внешних API
       const refreshPromises = [];
 
-      if (import.meta.env.VITE_API_URL) {
+      if (import.meta.env.VITE_EXTERNAL_API_URL) {
         refreshPromises.push(
           refetchTgChats(), // Telegram чаты
-        );
-      }
-
-      if (import.meta.env.VITE_NEW_API_URL) {
-        refreshPromises.push(
           refetchTeamData(), // Дополнительные данные о команде
         );
       }
