@@ -3,7 +3,7 @@ import { AdditionalUserData } from '../model/types/teamNewWebsocket';
 import { triggerGlobalDataRefresh } from '@/shared/lib/hooks/useGlobalDataRefresh';
 
 const n8nApiUrl = import.meta.env.VITE_NEW_API_URL;
-const apiWsUrl = import.meta.env.VITE_API_URL + '/ws/state';
+const apiWsUrl = import.meta.env.VITE_API_SOCKET_URL;
 
 // Глобальный менеджер WebSocket соединений для RTK Query
 class WebSocketManager {
@@ -240,7 +240,7 @@ const tasksApi = rtkApi.injectEndpoints({
 
         try {
           await cacheDataLoaded;
-          // Для VITE_API_URL не включаем heartbeat, так как это сторонний сервис
+          // Для VITE_API_SOCKET_URL не включаем heartbeat, так как это сторонний сервис
           wsManager.connect(apiWsUrl, listener, false);
         } catch (error) {
           console.error('Error occurred:', error);

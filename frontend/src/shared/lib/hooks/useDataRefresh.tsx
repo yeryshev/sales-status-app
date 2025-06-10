@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useAppDispatch } from './useAppDispatch';
-import { fetchTeamList, useGetAdditionalTeamData as useGetTeamInfoData, useGetTeamTasksData } from '@/entities/Team';
+import { fetchTeamList, useGetAdditionalTeamData } from '@/entities/Team';
 import { checkUser } from '@/entities/User';
 import { useGetStatuses } from '@/entities/Status';
 import { useGetTgChats } from '@/widgets/ChatsTable';
@@ -18,16 +18,8 @@ export const useDataRefresh = () => {
     skip: !import.meta.env.VITE_API_URL,
   });
 
-  const { refetch: refetchTeamInfo } = useGetTeamInfoData(undefined, {
+  const { refetch: refetchTeamData } = useGetAdditionalTeamData(undefined, {
     skip: !import.meta.env.VITE_NEW_API_URL,
-  });
-
-  const { refetch: refetchInboundTasks } = useGetTeamTasksData('inbound', {
-    skip: !import.meta.env.VITE_API_URL,
-  });
-
-  const { refetch: refetchAccountTasks } = useGetTeamTasksData('account', {
-    skip: !import.meta.env.VITE_API_URL,
   });
 
   const refreshAllData = useCallback(async () => {
@@ -47,13 +39,13 @@ export const useDataRefresh = () => {
       if (import.meta.env.VITE_API_URL) {
         refreshPromises.push(
           refetchTgChats(), // Telegram чаты
-          refetchInboundTasks(), // Задачи входящих
-          refetchAccountTasks(), // Задачи аккаунт-менеджеров
         );
       }
 
       if (import.meta.env.VITE_NEW_API_URL) {
-        refreshPromises.push(refetchTeamInfo()); // Дополнительная информация о команде
+        refreshPromises.push(
+          refetchTeamData(), // Дополнительные данные о команде
+        );
       }
 
       await Promise.all(refreshPromises);
@@ -62,7 +54,7 @@ export const useDataRefresh = () => {
     } catch (error) {
       console.error('❌ Error refreshing data:', error);
     }
-  }, [dispatch, refetchStatuses, refetchTgChats, refetchTeamInfo, refetchInboundTasks, refetchAccountTasks]);
+  }, [dispatch, refetchStatuses, refetchTgChats, refetchTeamData]);
 
   return { refreshAllData };
 };
