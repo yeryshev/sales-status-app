@@ -4,6 +4,7 @@ import { fetchTeamList, useGetAdditionalTeamData } from '@/entities/Team';
 import { checkUser } from '@/entities/User';
 import { useGetStatuses } from '@/entities/Status';
 import { useGetTgChats } from '@/widgets/ChatsTable';
+import { logger } from '../utils/logger';
 
 /**
  * Хук для автоматического обновления всех данных при восстановлении соединения
@@ -23,7 +24,7 @@ export const useDataRefresh = () => {
   });
 
   const refreshAllData = useCallback(async () => {
-    console.log('🔄 Refreshing all data after connection restore...');
+    logger.log('🔄 Refreshing all data after connection restore...');
 
     try {
       // Обновляем данные из VITE_BACKEND_URL
@@ -45,9 +46,9 @@ export const useDataRefresh = () => {
 
       await Promise.all(refreshPromises);
 
-      console.log('✅ All data refreshed successfully');
+      logger.log('✅ All data refreshed successfully');
     } catch (error) {
-      console.error('❌ Error refreshing data:', error);
+      logger.error('❌ Error refreshing data:', error);
     }
   }, [dispatch, refetchStatuses, refetchTgChats, refetchTeamData]);
 

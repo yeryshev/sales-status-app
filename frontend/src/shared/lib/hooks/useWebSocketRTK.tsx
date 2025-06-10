@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { logger } from '../utils/logger';
 
 interface UseWebSocketRTKConfig {
   url: string;
@@ -61,7 +62,7 @@ export const useWebSocketRTK = (config: UseWebSocketRTKConfig) => {
       wsRef.current = socket;
 
       socket.onopen = () => {
-        console.log('RTK WebSocket connected:', url);
+        logger.log('RTK WebSocket connected:', url);
         reconnectAttemptsRef.current = 0;
         startHeartbeat(socket);
       };
@@ -79,14 +80,14 @@ export const useWebSocketRTK = (config: UseWebSocketRTKConfig) => {
       };
 
       socket.onclose = (event) => {
-        console.log('RTK WebSocket disconnected:', url, event.code, event.reason);
+        logger.log('RTK WebSocket disconnected:', url, event.code, event.reason);
         clearTimers();
         wsRef.current = null;
 
         // Автоматическое переподключение
         if (!isManuallyClosedRef.current && reconnectAttemptsRef.current < maxReconnectAttempts) {
           reconnectAttemptsRef.current += 1;
-          console.log(`RTK WebSocket reconnecting... Attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts}`);
+          logger.log(`RTK WebSocket reconnecting... Attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts}`);
 
           reconnectTimerRef.current = setTimeout(() => {
             connect();
@@ -95,13 +96,13 @@ export const useWebSocketRTK = (config: UseWebSocketRTKConfig) => {
       };
 
       socket.onerror = (event) => {
-        console.error('RTK WebSocket error:', url, event);
+        logger.error('RTK WebSocket error:', url, event);
         onError?.(event);
       };
 
       return socket;
     } catch (error) {
-      console.error('Failed to create RTK WebSocket:', error);
+      logger.error('Failed to create RTK WebSocket:', error);
       return null;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

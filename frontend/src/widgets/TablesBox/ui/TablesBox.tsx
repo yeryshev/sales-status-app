@@ -25,6 +25,7 @@ import { useDeadlinesCheck } from '../hooks/useDeadlines';
 import { WebSocketStatus } from '@/shared/ui/WebSocketStatus/WebSocketStatus';
 import { useDataRefresh } from '@/shared/lib/hooks/useDataRefresh';
 import { useGlobalDataRefresh, setGlobalRefreshFunction } from '@/shared/lib/hooks/useGlobalDataRefresh';
+import { logger } from '@/shared/lib/utils/logger';
 
 const reducers: ReducersList = {
   teamTable: teamReducer,
@@ -96,16 +97,16 @@ export const TablesBox = memo(() => {
   );
 
   const handleWebSocketConnect = useCallback(() => {
-    console.log('Status WebSocket connected successfully');
+    logger.log('Status WebSocket connected successfully');
     refreshAllData();
   }, [refreshAllData]);
 
   const handleWebSocketDisconnect = useCallback(() => {
-    console.log('Status WebSocket disconnected');
+    logger.log('Status WebSocket disconnected');
   }, []);
 
   const handleWebSocketError = useCallback((event: Event) => {
-    console.error('Status WebSocket error:', event);
+    logger.error('Status WebSocket error:', event);
   }, []);
 
   const { isConnected, isConnecting, reconnectAttempts, isOnline } = useWebSocket({
@@ -117,7 +118,7 @@ export const TablesBox = memo(() => {
     heartbeatInterval: 30000, // 30 секунд
     reconnectInterval: 3000, // 3 секунды
     maxReconnectAttempts: 5,
-    enableHeartbeat: true, // Для VITE_SOCKET_URL включаем heartbeat (ваш сервис)
+    enableHeartbeat: true,
   });
 
   return (

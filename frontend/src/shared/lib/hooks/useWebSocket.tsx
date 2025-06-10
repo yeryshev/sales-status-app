@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { logger } from '../utils/logger';
 
 interface UseWebSocketConfig {
   url: string;
@@ -81,7 +82,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
           // Устанавливаем таймер ожидания ответа
           heartbeatTimeoutRef.current = setTimeout(() => {
             // Если за 10 секунд не получили pong, считаем соединение потерянным
-            console.warn('Heartbeat timeout - no pong received');
+            logger.warn('Heartbeat timeout - no pong received');
             setState((prev) => ({ ...prev, isConnected: false }));
 
             // Принудительно закрываем сокет и переподключаемся
@@ -109,7 +110,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
       const socket = new WebSocket(url);
 
       socket.onopen = () => {
-        console.log('WebSocket connected');
+        logger.log('WebSocket connected');
         setState((prev) => ({
           ...prev,
           socket,
@@ -148,7 +149,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
       };
 
       socket.onclose = (event) => {
-        console.log('WebSocket disconnected', event.code, event.reason);
+        logger.log('WebSocket disconnected', event.code, event.reason);
         clearTimers();
         setState((prev) => ({
           ...prev,
@@ -170,7 +171,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
       };
 
       socket.onerror = (event) => {
-        console.error('WebSocket error:', event);
+        logger.error('WebSocket error:', event);
         setState((prev) => ({
           ...prev,
           lastError: event,
@@ -179,7 +180,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
         onError?.(event);
       };
     } catch (error) {
-      console.error('Failed to create WebSocket:', error);
+      logger.error('Failed to create WebSocket:', error);
       setState((prev) => ({
         ...prev,
         isConnecting: false,
@@ -257,7 +258,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
   // Обработка события перехода в онлайн/офлайн
   useEffect(() => {
     const handleOnline = () => {
-      console.log('Internet connection restored');
+      logger.log('Internet connection restored');
       setState((prev) => ({ ...prev, isOnline: true }));
 
       if (!state.isConnected && !state.isConnecting) {
@@ -267,7 +268,7 @@ export const useWebSocket = (config: UseWebSocketConfig) => {
     };
 
     const handleOffline = () => {
-      console.log('Internet connection lost');
+      logger.log('Internet connection lost');
       setState((prev) => ({ ...prev, isOnline: false, isConnected: false }));
       clearTimers();
     };

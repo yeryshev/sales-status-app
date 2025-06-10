@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { logger } from '../utils/logger';
 import { useAppDispatch } from './useAppDispatch';
 import { fetchTeamList } from '@/entities/Team';
 import { checkUser } from '@/entities/User';
@@ -14,12 +15,12 @@ export const useGlobalDataRefresh = () => {
   const refreshGlobalData = useCallback(async () => {
     // Предотвращаем множественные одновременные обновления
     if (isRefreshingRef.current) {
-      console.log('⏭️ Data refresh already in progress, skipping...');
+      logger.log('⏭️ Data refresh already in progress, skipping...');
       return;
     }
 
     isRefreshingRef.current = true;
-    console.log('🔄 Refreshing global data after connection restore...');
+    logger.log('🔄 Refreshing global data after connection restore...');
 
     try {
       // Обновляем основные данные из VITE_BACKEND_URL
@@ -28,9 +29,9 @@ export const useGlobalDataRefresh = () => {
         dispatch(checkUser()), // Данные текущего пользователя
       ]);
 
-      console.log('✅ Global data refreshed successfully');
+      logger.log('✅ Global data refreshed successfully');
     } catch (error) {
-      console.error('❌ Error refreshing global data:', error);
+      logger.error('❌ Error refreshing global data:', error);
     } finally {
       isRefreshingRef.current = false;
     }
@@ -50,6 +51,6 @@ export const triggerGlobalDataRefresh = async () => {
   if (globalRefreshFunction) {
     await globalRefreshFunction();
   } else {
-    console.warn('⚠️ Global refresh function not set');
+    logger.warn('⚠️ Global refresh function not set');
   }
 };
