@@ -12,6 +12,7 @@ import { ArrowDownCell } from '../RowCells/ArrowDownCell';
 import { ConversationsCell } from '../RowCells/ConversationsCell';
 import { DealsCell } from '../RowCells/DealsCell';
 import { BudgetCell } from '../RowCells/BudgetCell';
+import { QlikCell } from '../RowCells/QlikCell';
 
 export interface TeamRowCell {
   align: TableCellProps['align'];
@@ -27,7 +28,7 @@ interface TeamRowCellsListProps extends TeamRowProps {
 export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] => {
   const { teammate, additionalUserData, isDeadlineReached, isAccountManagersRoute, expandRow, setExpandRow } = props;
 
-  const { avatar, absence, mangoState, deals, budget, leads, overdueTasks, conversations, tickets } =
+  const { avatar, absence, mangoState, deals, budget, qlik, leads, overdueTasks, conversations, tickets } =
     additionalUserData;
 
   return [
@@ -52,6 +53,11 @@ export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
       align: 'left',
       width: 250,
       content: <CommentCell absence={absence} />,
+    },
+    {
+      align: 'left',
+      width: 120,
+      content: <QlikCell qlik={qlik} teammate={teammate} absence={absence} />,
     },
     {
       align: 'center',

@@ -12,5 +12,11 @@ export const BudgetCell = memo((props: BudgetCellProps) => {
   const budgetString = budget?.newSaleAndUpsale?.toLocaleString('ru-RU') || '0';
   const emptyValue = teammate?.isCoordinator ? '' : 0;
 
-  return budget && <Typography variant={'body2'}>{budgetString === '0' ? emptyValue : budgetString}</Typography>;
+  return (
+    budget && (
+      <Typography variant={'body2'} sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>
+        {budgetString === '0' ? emptyValue : budgetString}
+      </Typography>
+    )
+  );
 });

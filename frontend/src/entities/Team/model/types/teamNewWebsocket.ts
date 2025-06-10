@@ -4,6 +4,10 @@ export type AdditionalUserData = {
   idAmoCRM: number;
   idInside: number;
   idChatwoot: number;
+  qlik?: {
+    forecastWithK: string;
+    factWithK: string;
+  };
   budget: {
     newSale: number;
     newSaleAndUpsale: number;

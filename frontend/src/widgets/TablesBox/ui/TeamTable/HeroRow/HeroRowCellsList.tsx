@@ -11,6 +11,7 @@ import { TeamRowCell } from '../TeamRow/TeamRowCellsList';
 import { HeroRowProps } from './HeroRow';
 import { DealsCell } from '../RowCells/DealsCell';
 import { BudgetCell } from '../RowCells/BudgetCell';
+import { QlikCell } from '../RowCells/QlikCell';
 import { CommentCell } from './CommentCell';
 
 interface TeamRowCellsListProps extends HeroRowProps {
@@ -21,7 +22,7 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
   const { teammate, teamIsLoading, additionalUserData, isDeadlineReached, isAccountManagersRoute, handleSwitch } =
     props;
 
-  const { avatar, deals, budget, leads, overdueTasks, conversations, tickets } = additionalUserData ?? {};
+  const { avatar, deals, budget, qlik, leads, overdueTasks, conversations, tickets } = additionalUserData ?? {};
 
   return [
     {
@@ -43,6 +44,11 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
       align: 'left',
       width: 250,
       content: <CommentCell teammate={teammate} teamIsLoading={teamIsLoading} isDeadlineReached={isDeadlineReached} />,
+    },
+    {
+      align: 'left',
+      width: 120,
+      content: <QlikCell qlik={qlik} teammate={teammate} />,
     },
     {
       align: 'center',
