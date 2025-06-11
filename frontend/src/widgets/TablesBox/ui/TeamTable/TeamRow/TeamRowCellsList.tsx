@@ -10,9 +10,9 @@ import { TasksCell } from '../RowCells/TasksCell';
 import { TicketsCell } from '../RowCells/TicketsCell';
 import { ArrowDownCell } from '../RowCells/ArrowDownCell';
 import { ConversationsCell } from '../RowCells/ConversationsCell';
-import { DealsCell } from '../RowCells/DealsCell';
-import { BudgetCell } from '../RowCells/BudgetCell';
 import { QlikCell } from '../RowCells/QlikCell';
+import { AmoCrmCell } from '../RowCells/AmoCrmCell';
+import { CELL_WIDTHS } from '../constants';
 
 export interface TeamRowCell {
   align: TableCellProps['align'];
@@ -34,63 +34,59 @@ export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
   return [
     {
       align: 'left',
-      width: 50,
+      width: CELL_WIDTHS.AVATAR,
       content: <AvatarCell teammate={teammate} avatar={avatar} absence={absence} />,
     },
     {
       align: 'left',
-      width: 160,
+      width: CELL_WIDTHS.USER_NAME,
       content: <UserNameCell teammate={teammate} absence={absence} />,
     },
     {
       align: 'left',
-      width: 160,
+      width: CELL_WIDTHS.STATUS,
       content: !isAccountManagersRoute && (
         <StatusCell teammate={teammate} mango={mangoState} absence={absence} isDeadlineReached={isDeadlineReached} />
       ),
     },
     {
       align: 'left',
-      width: 250,
+      width: CELL_WIDTHS.COMMENT,
       content: <CommentCell absence={absence} />,
     },
     {
       align: 'left',
-      width: 120,
-      content: <QlikCell qlik={qlik} teammate={teammate} absence={absence} />,
-    },
-    {
-      align: 'center',
-      width: 60,
-      content: <DealsCell deals={deals} teammate={teammate} />,
+      width: CELL_WIDTHS.QLIK,
+      content: <QlikCell qlik={qlik} teammate={teammate} />,
     },
     {
       align: 'left',
-      content: <BudgetCell budget={budget} teammate={teammate} />,
+      width: CELL_WIDTHS.AMO_CRM,
+      content: <AmoCrmCell budget={budget} deals={deals} teammate={teammate} />,
     },
     {
       align: 'center',
-      width: 60,
+      width: CELL_WIDTHS.LEADS,
       content: <LeadsCell leads={leads} absence={absence} />,
     },
     {
       align: 'center',
-      width: 60,
+      width: CELL_WIDTHS.TASKS,
       content: <TasksCell overdueTasks={overdueTasks} absence={absence} />,
     },
     {
       align: 'center',
-      width: 60,
+      width: CELL_WIDTHS.CONVERSATIONS,
       content: <ConversationsCell conversations={conversations} absence={absence} />,
     },
     {
       align: 'center',
-      width: 60,
+      width: CELL_WIDTHS.TICKETS,
       content: <TicketsCell tickets={tickets} absence={absence} />,
     },
     {
       align: 'center',
-      width: 72,
+      width: CELL_WIDTHS.ARROW_DOWN,
       content: <ArrowDownCell expandRow={expandRow} setExpandRow={setExpandRow} />,
     },
   ];

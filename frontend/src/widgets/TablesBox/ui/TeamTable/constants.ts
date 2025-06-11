@@ -29,3 +29,17 @@ export const EMPTY_ADDITIONAL_DATA = {
     deals: 0,
   },
 } as const;
+
+export const CELL_WIDTHS = {
+  AVATAR: 82,
+  USER_NAME: 160,
+  STATUS: 160,
+  COMMENT: 300,
+  QLIK: 120,
+  AMO_CRM: 300,
+  LEADS: 60,
+  TASKS: 60,
+  CONVERSATIONS: 60,
+  TICKETS: 60,
+  ARROW_DOWN: 72,
+} as const;

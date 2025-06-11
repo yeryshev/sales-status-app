@@ -1,13 +1,10 @@
-import { TableCellProps, TooltipProps } from '@mui/material';
+import { TableCellProps, TooltipProps, Typography } from '@mui/material';
 import { ReactElement } from 'react';
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import FiberNewOutlinedIcon from '@mui/icons-material/FiberNewOutlined';
-import CurrencyRubleIcon from '@mui/icons-material/CurrencyRuble';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 
 export type TeamTableHeaderItemType = {
   align?: TableCellProps['align'];
@@ -29,18 +26,13 @@ export const getTeamTableHeadersList = (shouldSeeHeroRow: boolean): TeamTableHea
     },
     {
       align: 'left',
-      title: 'Выручка клиентов: факт на сегодняшний день / прогноз на месяц',
-      content: <TrendingUpIcon fontSize={'small'} />,
-    },
-    {
-      align: 'center',
-      title: 'Количество успешных сделок на этой неделе',
-      content: <FiberNewOutlinedIcon fontSize={'large'} />,
+      title: 'Факт выручки на сегодняшний день и прогноз на месяц',
+      content: <Typography variant="body2">Биллинг</Typography>,
     },
     {
       align: 'left',
-      title: 'Бюджет успешных сделок на этой неделе из AmoCRM',
-      content: <CurrencyRubleIcon fontSize={'small'} />,
+      title: 'Бюджет и количество успешных сделок на этой неделе из AmoCRM',
+      content: <Typography variant="body2">AmoCRM</Typography>,
     },
     {
       align: 'center',

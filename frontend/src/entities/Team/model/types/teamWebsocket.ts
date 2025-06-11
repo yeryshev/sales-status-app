@@ -9,12 +9,12 @@ export type AdditionalUserData = {
     factWithK: string;
   };
   budget: {
-    newSale: number;
-    newSaleAndUpsale: number;
+    newSale: number | null;
+    newSaleAndUpsale: number | null;
   };
   deals: {
-    newSale: number;
-    newSaleAndUpsale: number;
+    newSale: number | null;
+    newSaleAndUpsale: number | null;
   };
   overdueTasks: number;
   conversations: number;

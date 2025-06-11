@@ -7,12 +7,12 @@ export const matchAdditionalUserData = (usersData: Array<AdditionalUserData>, in
       idInside: 0,
       idChatwoot: 0,
       budget: {
-        newSale: 0,
-        newSaleAndUpsale: 0,
+        newSale: null,
+        newSaleAndUpsale: null,
       },
       deals: {
-        newSale: 0,
-        newSaleAndUpsale: 0,
+        newSale: null,
+        newSaleAndUpsale: null,
       },
       overdueTasks: 0,
       conversations: 0,
