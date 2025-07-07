@@ -3,20 +3,20 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Tooltip } from '@mui/material';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import { Teammate } from '@/entities/Team';
-import { UserVacation } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
+import { User } from '@/entities/User';
 
 interface UserNameCellProps {
-  teammate: Teammate;
-  vacationState?: UserVacation;
+  teammate: User;
+  absence?: AdditionalUserData['absence'];
 }
 
 export const UserNameCell = memo((props: UserNameCellProps) => {
-  const { teammate, vacationState } = props;
+  const { teammate, absence } = props;
 
   return (
     <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={0.5}>
-      {vacationState?.onVacation ? (
+      {absence?.isAbsence ? (
         <Box display={'flex'} flexDirection={'column'}>
           <Typography
             variant={'body2'}
@@ -35,7 +35,7 @@ export const UserNameCell = memo((props: UserNameCellProps) => {
           <Typography variant={'body2'}>{` ${teammate.secondName}`}</Typography>
         </Box>
       )}
-      {teammate.isWorkingRemotely && !vacationState?.onVacation && (
+      {teammate.isWorkingRemotely && !absence?.isAbsence && (
         <Tooltip title={'Работаю из дома'}>
           <HomeOutlinedIcon fontSize={'small'} />
         </Tooltip>

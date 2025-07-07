@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { statusActions, useGetStatuses } from '@/entities/Status';
@@ -22,6 +22,7 @@ export const StatusSelector = memo(() => {
   const { data: statuses } = useGetStatuses();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [newStatusId, setNewStatusId] = useState(user?.statusId);
+  const selectRef = useRef<HTMLDivElement>(null);
   const cachedStatuses = useMemo(() => statuses, [statuses]);
   const cachedUserStatusId = useMemo(() => user?.statusId, [user?.statusId]);
   const userStatus = useMemo(
@@ -53,6 +54,15 @@ export const StatusSelector = memo(() => {
 
   const handleModalClose = async (minutes?: number) => {
     setModalIsOpen(false);
+
+    // Убираем фокус с Select чтобы избежать конфликта с aria-hidden
+    if (selectRef.current) {
+      const selectInput = selectRef.current.querySelector('input');
+      if (selectInput) {
+        selectInput.blur();
+      }
+    }
+
     if (minutes && user) {
       const deadline = new Date(Date.now() + minutes * 60000).toISOString();
       dispatch(
@@ -72,7 +82,15 @@ export const StatusSelector = memo(() => {
     <DynamicModuleLoader reducers={reducers}>
       <Box display={'flex'} alignItems={'center'} justifyContent={'space-between'} gap={0.5} flexDirection={'column'}>
         <FormControl fullWidth>
-          <Select value={userStatus?.title || ''} onChange={handleChangeMainStatus} size={'small'} fullWidth>
+          <Select
+            ref={selectRef}
+            id="user-status-select"
+            name="userStatus"
+            value={userStatus?.title || ''}
+            onChange={handleChangeMainStatus}
+            size={'small'}
+            fullWidth
+          >
             {cachedStatuses?.map((status) => (
               <MenuItem key={status.id} value={status.title} disabled={user?.statusId === status.id}>
                 {feminizeWord(status.title, user?.isFemale)}

@@ -1,24 +1,22 @@
 import { type ChangeEvent, memo, useCallback } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import { Teammate, UserAvatarsAndBirthday, UserTasks, UserTickets } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
+import { User } from '@/entities/User';
 import { checkUser, updateUser, userActions } from '@/entities/User';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { HeroRowCellsList } from './HeroRowCellsList';
 
 export interface HeroRowProps {
-  teammate: Teammate;
-  tasks: UserTasks;
-  tickets: UserTickets;
-  avatarsAndBirthday: UserAvatarsAndBirthday;
+  teammate: User;
   teamIsLoading: boolean;
+  additionalUserData: AdditionalUserData;
   isDeadlineReached: boolean;
   isAccountManagersRoute: boolean;
 }
 
 export const HeroRow = memo((props: HeroRowProps) => {
-  const { teammate, tasks, tickets, teamIsLoading, avatarsAndBirthday, isDeadlineReached, isAccountManagersRoute } =
-    props;
+  const { teammate, teamIsLoading, additionalUserData, isDeadlineReached, isAccountManagersRoute } = props;
   const dispatch = useAppDispatch();
 
   const handleSwitch = useCallback(
@@ -33,10 +31,8 @@ export const HeroRow = memo((props: HeroRowProps) => {
 
   const heroRowProps = {
     teammate,
-    tasks,
-    tickets,
     teamIsLoading,
-    avatarsAndBirthday,
+    additionalUserData,
     isDeadlineReached,
     isAccountManagersRoute,
     handleSwitch,

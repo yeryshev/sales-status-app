@@ -2,12 +2,12 @@ import { memo } from 'react';
 import { Skeleton } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import moment from 'moment';
-import { Teammate } from '@/entities/Team';
+import { User } from '@/entities/User';
 import { useSelector } from 'react-redux';
 import { getUserData } from '@/entities/User';
 
 interface CommentCellProps {
-  teammate: Teammate;
+  teammate: User;
   teamIsLoading: boolean;
   isDeadlineReached: boolean;
 }

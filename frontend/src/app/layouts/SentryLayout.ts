@@ -16,7 +16,7 @@ if (import.meta.env.PROD) {
       }),
     ],
     tracesSampleRate: 1.0,
-    tracePropagationTargets: ['localhost', import.meta.env.VITE_BACKEND_URL, import.meta.env.VITE_API_URL],
+    tracePropagationTargets: ['localhost', import.meta.env.VITE_BACKEND_URL, import.meta.env.VITE_EXTERNAL_API_URL],
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
   });

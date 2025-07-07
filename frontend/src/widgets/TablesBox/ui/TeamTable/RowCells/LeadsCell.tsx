@@ -1,35 +1,24 @@
 import { memo } from 'react';
 import { Chip, Tooltip } from '@mui/material';
-import { UserTasks, UserVacation } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
 import { StateLabel } from './StateLabel';
 
 interface LeadsCellProps {
-  teamIsLoading: boolean;
-  tasks: UserTasks;
-  vacationState?: UserVacation;
+  leads: AdditionalUserData['leads'];
+  absence?: AdditionalUserData['absence'];
 }
 
 export const LeadsCell = memo((props: LeadsCellProps) => {
-  const { teamIsLoading, tasks, vacationState } = props;
+  const { leads, absence } = props;
 
   return (
-    !teamIsLoading &&
-    tasks &&
-    Boolean(tasks.leads) && (
+    Boolean(leads) && (
       <Tooltip title={'Первичные обращения'}>
         <Chip
-          label={StateLabel(tasks.leads, vacationState?.onVacation)}
+          label={StateLabel(leads, absence?.isAbsence)}
           variant={'outlined'}
           size={'small'}
-          color={
-            vacationState?.onVacation
-              ? 'default'
-              : tasks.leads >= 5
-                ? 'error'
-                : tasks.leads === 0
-                  ? 'success'
-                  : 'primary'
-          }
+          color={absence?.isAbsence ? 'default' : leads >= 5 ? 'error' : leads === 0 ? 'success' : 'primary'}
         ></Chip>
       </Tooltip>
     )

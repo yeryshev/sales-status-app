@@ -14,9 +14,16 @@ interface TgChatsData {
 const ChatsTableApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
     getTgChats: build.query<TgChatsData, void>({
-      query: () => ({
-        url: import.meta.env.VITE_API_URL + '/telegram/chats',
-      }),
+      query: () => {
+        const externalApiUrl = import.meta.env.VITE_EXTERNAL_API_URL;
+        if (!externalApiUrl) {
+          throw new Error('VITE_EXTERNAL_API_URL is not configured');
+        }
+        return {
+          url: externalApiUrl + '/usefullchats',
+          credentials: 'same-origin',
+        };
+      },
     }),
   }),
 });

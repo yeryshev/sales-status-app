@@ -10,8 +10,9 @@ import { TasksCell } from '../RowCells/TasksCell';
 import { TicketsCell } from '../RowCells/TicketsCell';
 import { ArrowDownCell } from '../RowCells/ArrowDownCell';
 import { ConversationsCell } from '../RowCells/ConversationsCell';
-import { DealsCell } from '../RowCells/DealsCell';
-import { BudgetCell } from '../RowCells/BudgetCell';
+import { QlikCell } from '../RowCells/QlikCell';
+import { AmoCrmCell } from '../RowCells/AmoCrmCell';
+import { CELL_WIDTHS } from '../constants';
 
 export interface TeamRowCell {
   align: TableCellProps['align'];
@@ -25,80 +26,67 @@ interface TeamRowCellsListProps extends TeamRowProps {
 }
 
 export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] => {
-  const {
-    teammate,
-    mango,
-    tasks,
-    tickets,
-    vacationState,
-    teamIsLoading,
-    avatarsAndBirthday,
-    isDeadlineReached,
-    isAccountManagersRoute,
-    expandRow,
-    setExpandRow,
-  } = props;
+  const { teammate, additionalUserData, isDeadlineReached, isAccountManagersRoute, expandRow, setExpandRow } = props;
+
+  const { avatar, absence, mangoState, deals, budget, qlik, leads, overdueTasks, conversations, tickets } =
+    additionalUserData;
 
   return [
     {
       align: 'left',
-      width: 50,
-      content: <AvatarCell teammate={teammate} avatarsAndBirthday={avatarsAndBirthday} vacationState={vacationState} />,
+      width: CELL_WIDTHS.AVATAR,
+      content: <AvatarCell teammate={teammate} avatar={avatar} absence={absence} />,
     },
     {
       align: 'left',
-      width: 160,
-      content: <UserNameCell teammate={teammate} vacationState={vacationState} />,
+      width: CELL_WIDTHS.USER_NAME,
+      content: <UserNameCell teammate={teammate} absence={absence} />,
     },
     {
       align: 'left',
-      width: 160,
+      width: CELL_WIDTHS.STATUS,
       content: !isAccountManagersRoute && (
-        <StatusCell
-          teammate={teammate}
-          mango={mango}
-          vacationState={vacationState}
-          isDeadlineReached={isDeadlineReached}
-        />
+        <StatusCell teammate={teammate} mango={mangoState} absence={absence} isDeadlineReached={isDeadlineReached} />
       ),
     },
     {
       align: 'left',
-      width: 250,
-      content: <CommentCell vacationState={vacationState} />,
-    },
-    {
-      align: 'center',
-      width: 60,
-      content: <DealsCell tasks={tasks} teammate={teammate} />,
+      width: CELL_WIDTHS.COMMENT,
+      content: <CommentCell absence={absence} />,
     },
     {
       align: 'left',
-      content: <BudgetCell tasks={tasks} teammate={teammate} />,
+      width: CELL_WIDTHS.QLIK,
+      content: <QlikCell qlik={qlik} teammate={teammate} />,
+    },
+    {
+      align: 'left',
+      width: CELL_WIDTHS.AMO_CRM,
+      content: <AmoCrmCell budget={budget} deals={deals} teammate={teammate} />,
     },
     {
       align: 'center',
-      width: 60,
-      content: <LeadsCell teamIsLoading={teamIsLoading} tasks={tasks} vacationState={vacationState} />,
+      width: CELL_WIDTHS.LEADS,
+      content: <LeadsCell leads={leads} absence={absence} />,
     },
     {
       align: 'center',
-      width: 60,
-      content: <TasksCell teamIsLoading={teamIsLoading} tasks={tasks} vacationState={vacationState} />,
+      width: CELL_WIDTHS.TASKS,
+      content: <TasksCell overdueTasks={overdueTasks} absence={absence} />,
     },
     {
       align: 'center',
-      width: 60,
-      content: <ConversationsCell teamIsLoading={teamIsLoading} tasks={tasks} vacationState={vacationState} />,
+      width: CELL_WIDTHS.CONVERSATIONS,
+      content: <ConversationsCell conversations={conversations} absence={absence} />,
     },
     {
       align: 'center',
-      width: 60,
-      content: <TicketsCell tickets={tickets} vacationState={vacationState} teamIsLoading={teamIsLoading} />,
+      width: CELL_WIDTHS.TICKETS,
+      content: <TicketsCell tickets={tickets} absence={absence} />,
     },
     {
       align: 'center',
-      width: 72,
+      width: CELL_WIDTHS.ARROW_DOWN,
       content: <ArrowDownCell expandRow={expandRow} setExpandRow={setExpandRow} />,
     },
   ];

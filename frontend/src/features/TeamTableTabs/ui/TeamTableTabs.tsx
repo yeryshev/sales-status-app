@@ -34,7 +34,7 @@ export const TeamTableTabs = memo((props: ArticleTypeTabsProps) => {
   ];
 
   return (
-    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    <Box>
       <Tabs tabs={teamTableTabs} tabNumber={tabNumber} handleChangeTab={handleChangeTab} />
     </Box>
   );
