@@ -1,12 +1,13 @@
 import { memo, useState } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import { AdditionalUserData, Teammate } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
+import { User } from '@/entities/User';
 import { TeamRowCellsList } from './TeamRowCellsList';
 import { ExpandRow } from '../RowCells/ExpandRow';
 
 export interface TeamRowProps {
-  teammate: Teammate;
+  teammate: User;
   teamIsLoading: boolean;
   additionalUserData: AdditionalUserData;
   isDeadlineReached: boolean;

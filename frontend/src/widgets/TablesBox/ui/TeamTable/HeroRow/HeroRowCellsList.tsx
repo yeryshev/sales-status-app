@@ -9,9 +9,10 @@ import { ConversationsCell } from '../RowCells/ConversationsCell';
 import { TicketsCell } from '../RowCells/TicketsCell';
 import { TeamRowCell } from '../TeamRow/TeamRowCellsList';
 import { HeroRowProps } from './HeroRow';
-import { DealsCell } from '../RowCells/DealsCell';
-import { BudgetCell } from '../RowCells/BudgetCell';
+import { QlikCell } from '../RowCells/QlikCell';
+import { AmoCrmCell } from '../RowCells/AmoCrmCell';
 import { CommentCell } from './CommentCell';
+import { CELL_WIDTHS } from '../constants';
 
 interface TeamRowCellsListProps extends HeroRowProps {
   handleSwitch: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -21,61 +22,62 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
   const { teammate, teamIsLoading, additionalUserData, isDeadlineReached, isAccountManagersRoute, handleSwitch } =
     props;
 
-  const { avatar, deals, budget, leads, overdueTasks, conversations, tickets } = additionalUserData ?? {};
+  const { avatar, deals, budget, qlik, leads, overdueTasks, conversations, tickets } = additionalUserData ?? {};
 
   return [
     {
       align: 'left',
-      width: 50,
+      width: CELL_WIDTHS.AVATAR,
       content: <AvatarCell teammate={teammate} avatar={avatar} />,
     },
     {
       align: 'left',
-      width: 160,
+      width: CELL_WIDTHS.USER_NAME,
       content: <UserNameCell teammate={teammate} />,
     },
     {
       align: 'left',
-      width: 160,
+      width: CELL_WIDTHS.STATUS,
       content: teamIsLoading ? <Skeleton variant="text" /> : !isAccountManagersRoute && <StatusSelector />,
     },
     {
       align: 'left',
-      width: 250,
+      width: CELL_WIDTHS.COMMENT,
       content: <CommentCell teammate={teammate} teamIsLoading={teamIsLoading} isDeadlineReached={isDeadlineReached} />,
     },
     {
-      align: 'center',
-      width: 60,
-      content: <DealsCell deals={deals} teammate={teammate} />,
+      align: 'left',
+      width: CELL_WIDTHS.QLIK,
+      content: <QlikCell qlik={qlik} teammate={teammate} />,
     },
     {
       align: 'left',
-      content: <BudgetCell budget={budget} teammate={teammate} />,
+      width: CELL_WIDTHS.AMO_CRM,
+      content: <AmoCrmCell budget={budget} deals={deals} teammate={teammate} />,
     },
     {
       align: 'center',
-      width: 60,
+      width: CELL_WIDTHS.LEADS,
       content: <LeadsCell leads={leads} />,
     },
     {
       align: 'center',
-      width: 60,
+      width: CELL_WIDTHS.TASKS,
       content: <TasksCell overdueTasks={overdueTasks} />,
     },
     {
       align: 'center',
-      width: 60,
+      width: CELL_WIDTHS.CONVERSATIONS,
       content: <ConversationsCell conversations={conversations} />,
     },
     {
       align: 'center',
-      width: 60,
+      width: CELL_WIDTHS.TICKETS,
       content: <TicketsCell tickets={tickets} />,
     },
     {
       align: 'center',
-      width: 72,
+      width: CELL_WIDTHS.ARROW_DOWN,
       content: !isAccountManagersRoute && (
         <Switch name="isWorkingRemotely" checked={teammate.isWorkingRemotely} size={'small'} onChange={handleSwitch} />
       ),

@@ -2,41 +2,53 @@ import { memo } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import { Skeleton } from '@mui/material';
+import { CELL_WIDTHS } from '../TeamTable/constants';
 
 export const RowSkeleton = memo(() => {
   return (
     <TableRow hover={true}>
-      <TableCell align="left" sx={{ width: '50px' }}>
+      {/* Аватар */}
+      <TableCell align="left" width={CELL_WIDTHS.AVATAR}>
         <Skeleton variant="circular" width={50} height={50} />
       </TableCell>
-      <TableCell align="left" sx={{ width: '180px' }}>
+      {/* Имя пользователя */}
+      <TableCell align="left" width={CELL_WIDTHS.USER_NAME}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="left" sx={{ width: '110px' }}>
+      {/* Статус */}
+      <TableCell align="left" width={CELL_WIDTHS.STATUS}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="left">
+      {/* Комментарий */}
+      <TableCell align="left" width={CELL_WIDTHS.COMMENT}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
+      {/* Qlik */}
+      <TableCell align="left" width={CELL_WIDTHS.QLIK}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
+      {/* AmoCRM */}
+      <TableCell align="left" width={CELL_WIDTHS.AMO_CRM}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
+      {/* Лиды */}
+      <TableCell align="center" width={CELL_WIDTHS.LEADS}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
+      {/* Задачи */}
+      <TableCell align="center" width={CELL_WIDTHS.TASKS}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
+      {/* Разговоры */}
+      <TableCell align="center" width={CELL_WIDTHS.CONVERSATIONS}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '60px' }}>
+      {/* Тикеты */}
+      <TableCell align="center" width={CELL_WIDTHS.TICKETS}>
         <Skeleton variant="text" />
       </TableCell>
-      <TableCell align="center" sx={{ width: '72px' }}>
+      {/* Стрелка */}
+      <TableCell align="center" width={CELL_WIDTHS.ARROW_DOWN}>
         <Skeleton variant="text" />
       </TableCell>
     </TableRow>

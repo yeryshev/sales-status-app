@@ -7,10 +7,10 @@ import Table from '@mui/material/Table';
 import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import { Link } from '@mui/material';
-import { Teammate } from '@/entities/Team';
+import { User } from '@/entities/User';
 
 interface ExpandRowProps {
-  teammate: Teammate;
+  teammate: User;
   expandRow: boolean;
 }
 
@@ -19,7 +19,7 @@ export const ExpandRow = memo((props: ExpandRowProps) => {
 
   return (
     <TableRow>
-      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={11}>
+      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={12}>
         <Collapse in={expandRow} timeout="auto" unmountOnExit>
           <Box sx={{ margin: 1 }}>
             <Table size="small" aria-label="purchases">

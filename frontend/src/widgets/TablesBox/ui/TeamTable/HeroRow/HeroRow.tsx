@@ -1,13 +1,14 @@
 import { type ChangeEvent, memo, useCallback } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
-import { AdditionalUserData, Teammate } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
+import { User } from '@/entities/User';
 import { checkUser, updateUser, userActions } from '@/entities/User';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
 import { HeroRowCellsList } from './HeroRowCellsList';
 
 export interface HeroRowProps {
-  teammate: Teammate;
+  teammate: User;
   teamIsLoading: boolean;
   additionalUserData: AdditionalUserData;
   isDeadlineReached: boolean;

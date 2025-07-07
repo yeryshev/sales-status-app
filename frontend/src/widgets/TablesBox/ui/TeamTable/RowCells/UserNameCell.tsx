@@ -3,10 +3,11 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Tooltip } from '@mui/material';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import { AdditionalUserData, Teammate } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
+import { User } from '@/entities/User';
 
 interface UserNameCellProps {
-  teammate: Teammate;
+  teammate: User;
   absence?: AdditionalUserData['absence'];
 }
 

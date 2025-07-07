@@ -1,7 +1,8 @@
-import { AdditionalUserData, Teammate } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
+import { User } from '@/entities/User';
 
 export const getTotalBudget = (
-  managers: Array<Teammate>,
+  managers: Array<User>,
   additionalUsersData: Array<AdditionalUserData>,
   isCurrentWeek: boolean,
 ) => {

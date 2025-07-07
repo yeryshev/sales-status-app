@@ -1,7 +1,7 @@
-import { Teammate } from './teammate';
+import { User } from '@/entities/User';
 
 export interface TeamTableSchema {
-  list: Teammate[];
+  list: User[];
   loading: boolean;
   error: string | null;
 }

@@ -1,9 +1,10 @@
 import { memo } from 'react';
-import { AdditionalUserData, Teammate } from '@/entities/Team';
+import { AdditionalUserData } from '@/entities/Team';
+import { User } from '@/entities/User';
 import { Avatar } from '@mui/material';
 
 interface AvatarCellProps {
-  teammate: Teammate;
+  teammate: User;
   avatar: AdditionalUserData['avatar'];
   absence?: AdditionalUserData['absence'];
 }
