@@ -6,7 +6,12 @@ export { type UserWsUpdates } from './model/types/teamWebsocket';
 
 export { type AdditionalUserData } from './model/types/teamWebsocket';
 
-export { getAccountManagerTeamList, getInboundTeamList, getTeamIsLoading } from './model/selectors/teamSelectors';
+export {
+  getAccountManagerTeamList,
+  getInboundTeamList,
+  getTeamIsLoading,
+  getCustomerCareTeamList,
+} from './model/selectors/teamSelectors';
 
 export { fetchTeamList } from './model/services/fetchTeamList/fetchTeamList';
 

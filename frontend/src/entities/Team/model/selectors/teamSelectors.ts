@@ -19,3 +19,7 @@ export const getInboundTeamList = createSelector(getTeamList, (teamList) => {
 export const getAccountManagerTeamList = createSelector(getTeamList, (teamList) => {
   return teamList.filter((user) => user.isAccountManager);
 });
+
+export const getCustomerCareTeamList = createSelector(getTeamList, (teamList) => {
+  return teamList.filter((user) => user.isCcManager);
+});

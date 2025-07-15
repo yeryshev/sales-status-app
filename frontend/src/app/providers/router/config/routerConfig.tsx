@@ -3,6 +3,7 @@ import { TelegramChatsPage } from '@/pages/TelegramChatsPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { LoginPage } from '@/pages/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import { CustomerCarePage } from '@/pages/CustomerCarePage';
 import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { AppRouteProps } from '@/shared/types/router';
 
@@ -34,5 +35,10 @@ export const routerConfig: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.NOT_FOUND]: {
     path: RoutePath.error,
     element: <NotFoundPage />,
+  },
+  [AppRoutes.CUSTOMER_CARE]: {
+    path: RoutePath.customerCare,
+    element: <CustomerCarePage />,
+    authOnly: true,
   },
 };
