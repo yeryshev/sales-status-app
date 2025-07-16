@@ -31,7 +31,9 @@ export const CustomerCareHeroRowCellsList = (props: CustomerCareHeroRowCellsList
     {
       align: 'left',
       width: CELL_WIDTHS.COMMENT,
-      content: <HeroCommentCell teammate={teammate} teamIsLoading={teamIsLoading} isDeadlineReached={isDeadlineReached} />,
+      content: (
+        <HeroCommentCell teammate={teammate} teamIsLoading={teamIsLoading} isDeadlineReached={isDeadlineReached} />
+      ),
     },
     {
       align: 'center',

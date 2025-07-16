@@ -48,11 +48,13 @@ export const LoginForm = memo(() => {
       event.preventDefault();
       const username = event.currentTarget.email.value;
       const password = event.currentTarget.password.value;
-      dispatch(loginByUsername({ username, password })).then(
-        (data) => !data.payload && navigate(location.state?.from.pathname ?? RoutePath.main),
-      );
+      dispatch(loginByUsername({ username, password })).then((data) => {
+        if (!data.payload) {
+          navigate(location.state?.from?.pathname ?? RoutePath.main);
+        }
+      });
     },
-    [dispatch, location.state?.from.pathname, navigate],
+    [dispatch, location.state?.from?.pathname, navigate],
   );
 
   return (
