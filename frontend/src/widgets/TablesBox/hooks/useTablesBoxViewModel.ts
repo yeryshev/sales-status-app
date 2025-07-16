@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, SyntheticEvent } from 'react';
+import { useCallback, useEffect, useState, SyntheticEvent, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import { getUserData, userActions, User } from '@/entities/User';
@@ -14,6 +14,7 @@ export const useTablesBoxViewModel = (teamList: User[], teamIsLoading: boolean) 
   const dispatch = useAppDispatch();
   const user = useSelector(getUserData);
   const [tabNumber, setTabNumber] = useState(0);
+  const lastLocalUpdateRef = useRef<number>(0);
 
   const deadlines = useDeadlinesCheck(teamList, teamIsLoading);
   const { refreshAllData } = useDataRefresh();
@@ -47,15 +48,20 @@ export const useTablesBoxViewModel = (teamList: User[], teamIsLoading: boolean) 
 
         if (currentUserFromWs) {
           const { statusId, status, busyTime, updatedAt, isWorkingRemotely } = currentUserFromWs;
-          dispatch(
-            userActions.updateUserLocal({
-              statusId,
-              status,
-              busyTime,
-              isWorkingRemotely,
-              updatedAt,
-            }),
-          );
+
+          // Проверяем, не было ли локального обновления в последние 2 секунды
+          const now = Date.now();
+          if (now - lastLocalUpdateRef.current > 2000) {
+            dispatch(
+              userActions.updateUserLocal({
+                statusId,
+                status,
+                busyTime,
+                isWorkingRemotely,
+                updatedAt,
+              }),
+            );
+          }
         }
       }
 
@@ -76,14 +82,18 @@ export const useTablesBoxViewModel = (teamList: User[], teamIsLoading: boolean) 
           );
 
           if (id === user.id) {
-            dispatch(
-              userActions.updateUserLocal({
-                statusId,
-                status,
-                busyTime,
-                isWorkingRemotely,
-              }),
-            );
+            // Проверяем, не было ли локального обновления в последние 2 секунды
+            const now = Date.now();
+            if (now - lastLocalUpdateRef.current > 2000) {
+              dispatch(
+                userActions.updateUserLocal({
+                  statusId,
+                  status,
+                  busyTime,
+                  isWorkingRemotely,
+                }),
+              );
+            }
           }
         }
       }
@@ -121,5 +131,6 @@ export const useTablesBoxViewModel = (teamList: User[], teamIsLoading: boolean) 
     handleChangeTab,
     deadlines,
     websocketState,
+    lastLocalUpdateRef,
   };
 };

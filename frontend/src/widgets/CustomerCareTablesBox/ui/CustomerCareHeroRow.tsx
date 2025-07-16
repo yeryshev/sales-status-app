@@ -1,4 +1,4 @@
-import { type ChangeEvent, memo, useCallback } from 'react';
+import { type ChangeEvent, memo, useCallback, useRef } from 'react';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import { AdditionalUserData } from '@/entities/Team';
@@ -17,13 +17,38 @@ export interface CustomerCareHeroRowProps {
 export const CustomerCareHeroRow = memo((props: CustomerCareHeroRowProps) => {
   const { teammate, teamIsLoading, additionalUserData, isDeadlineReached } = props;
   const dispatch = useAppDispatch();
+  const isUpdatingRef = useRef(false);
 
   const handleSwitch = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
-      const dataToUpdate = { ...teammate, isWorkingRemotely: e.target.checked };
-      dispatch(userActions.setUserData(dataToUpdate));
-      const { payload: updatedUser } = await dispatch(updateUser({ user: dataToUpdate }));
-      if (!updatedUser) dispatch(checkUser());
+      const newValue = e.target.checked;
+
+      // Предотвращаем множественные клики
+      if (isUpdatingRef.current) return;
+      isUpdatingRef.current = true;
+
+      try {
+        const dataToUpdate = { ...teammate, isWorkingRemotely: newValue };
+
+        // Оптимистичное обновление UI
+        dispatch(userActions.setUserData(dataToUpdate));
+
+        // Отправляем запрос на сервер
+        const { payload: updatedUser } = await dispatch(updateUser({ user: dataToUpdate }));
+
+        if (!updatedUser) {
+          // Если запрос не удался, восстанавливаем предыдущее состояние
+          dispatch(userActions.setUserData(teammate));
+          dispatch(checkUser());
+        }
+      } catch (error) {
+        // В случае ошибки восстанавливаем предыдущее состояние
+        console.error('Error updating user:', error);
+        dispatch(userActions.setUserData(teammate));
+        dispatch(checkUser());
+      } finally {
+        isUpdatingRef.current = false;
+      }
     },
     [dispatch, teammate],
   );
