@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getUserData, getUserId, getUserIsManager } from '@/entities/User';
+import { getUserData, getUserId } from '@/entities/User';
 import { User } from '@/entities/User';
 import { AdditionalUserData } from '@/entities/Team';
-import { TeamMember, createTeamMember, filterManagers, shouldShowHeroRow, createHeroMember } from '@/widgets/TablesBox';
+import { TeamMember, createTeamMember, createHeroMember } from '@/widgets/TablesBox';
 import { getCustomerCareTableHeadersList } from '../ui/getCustomerCareTableHeadersList';
 
 export interface CustomerCareTeamTableProps {
@@ -20,23 +20,31 @@ export interface CustomerCareFilteredTeamData {
   headers: ReturnType<typeof getCustomerCareTableHeadersList>;
 }
 
+// Специальная функция фильтрации для Customer Care менеджеров
+const filterCustomerCareManagers = (teamMember: TeamMember, excludeUserId?: number): boolean => {
+  const { user } = teamMember;
+  return user.isCcManager && user.id !== excludeUserId && !user.isCoordinator;
+};
+
 export const useCustomerCareTeamTable = (props: CustomerCareTeamTableProps) => {
   const { teamList, isDeadlineReachedObject, additionalTeamData, teamIsLoading } = props;
 
   const userId = useSelector(getUserId);
   const user = useSelector(getUserData);
-  const userIsManager = useSelector(getUserIsManager);
 
-  // Для Customer Care показываем hero row если пользователь является CC менеджером
-  const userOnRightPage = user?.isCcManager === true;
-  const showHeroRow = shouldShowHeroRow(teamIsLoading, userIsManager, userOnRightPage);
+  // Для Customer Care показываем hero row если пользователь является CC менеджером и не является суперпользователем
+  const userOnRightPage = user?.isCcManager === true && user?.isSuperuser === false;
+  const showHeroRow = !teamIsLoading && userOnRightPage;
 
   const teamMembers = useMemo(
     () => teamList.map((teammate) => createTeamMember(teammate, additionalTeamData, isDeadlineReachedObject)),
     [teamList, additionalTeamData, isDeadlineReachedObject],
   );
 
-  const managers = useMemo(() => teamMembers.filter((member) => filterManagers(member, userId)), [teamMembers, userId]);
+  const managers = useMemo(
+    () => teamMembers.filter((member) => filterCustomerCareManagers(member, userId)),
+    [teamMembers, userId],
+  );
 
   const heroMember = useMemo(
     () => createHeroMember(user || null, additionalTeamData, isDeadlineReachedObject),

@@ -8,6 +8,7 @@ export const useTeamResultsTable = (
   teamList: User[],
   additionalTeamData: Array<AdditionalUserData>,
   isCurrentWeek: boolean,
+  isAccountManagersRoute: boolean = false,
 ) => {
   const [order, setOrder] = useState<SortOrder>('desc');
   const [orderBy, setOrderBy] = useState<keyof TeamResultsData>('budget');
@@ -22,8 +23,8 @@ export const useTeamResultsTable = (
   );
 
   const filteredTeamList = useMemo(
-    () => teamList.filter((teammate) => filterManagersOnly(teammate, additionalTeamData)),
-    [teamList, additionalTeamData],
+    () => teamList.filter((teammate) => filterManagersOnly(teammate, additionalTeamData, isAccountManagersRoute)),
+    [teamList, additionalTeamData, isAccountManagersRoute],
   );
 
   const rows = useMemo(

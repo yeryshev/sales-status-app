@@ -13,7 +13,7 @@ export const getTeamList = createSelector(
 export const getTeamIsLoading = (state: StateSchema) => state.teamTable?.loading || false;
 
 export const getInboundTeamList = createSelector(getTeamList, (teamList) => {
-  return teamList.filter((user) => !user.isAccountManager);
+  return teamList.filter((user) => user.isManager);
 });
 
 export const getAccountManagerTeamList = createSelector(getTeamList, (teamList) => {
