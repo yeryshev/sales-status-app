@@ -35,6 +35,8 @@ if settings.BACKEND_CORS_ORIGINS:
             "Origin",
             "sentry-trace",
             "baggage",
+            "X-Requested-With",
+            "Cache-Control",
         ],
     )
 

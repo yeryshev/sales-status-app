@@ -1,6 +1,7 @@
 export enum AppRoutes {
   MAIN = 'main',
   ACCOUNT_MANAGERS = 'accountManagers',
+  CUSTOMER_CARE = 'customerCare',
   TELEGRAM_CHATS = 'telegramChats',
   PROFILE = 'profile',
   LOGIN = 'login',
@@ -10,6 +11,7 @@ export enum AppRoutes {
 export const RoutePath: Record<AppRoutes, string> = {
   [AppRoutes.MAIN]: '/',
   [AppRoutes.ACCOUNT_MANAGERS]: '/account-managers',
+  [AppRoutes.CUSTOMER_CARE]: '/customer-care',
   [AppRoutes.TELEGRAM_CHATS]: '/telegram-chats',
   [AppRoutes.PROFILE]: '/profile',
   [AppRoutes.LOGIN]: '/auth/login',

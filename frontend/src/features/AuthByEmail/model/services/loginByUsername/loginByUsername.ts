@@ -21,12 +21,12 @@ export const loginByUsername = createAsyncThunk<string, LoginByUsernameProps, Th
     try {
       const url = '/auth/login';
 
-      const formData = new FormData();
+      const formData = new URLSearchParams();
       formData.set('username', authData.username);
       formData.set('password', authData.password);
 
       const requestConfig: AxiosRequestConfig = {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         withCredentials: true,
       };
 

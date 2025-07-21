@@ -19,6 +19,7 @@ import { TeamTableTabs } from '@/features/TeamTableTabs';
 import { useTablesBoxViewModel } from '../hooks/useTablesBoxViewModel';
 import { TeamTableContainer } from './TeamTableContainer';
 import { TeamResultsContainer } from './TeamResultsContainer';
+import { MonthlyReportContainer } from './MonthlyReportContainer';
 
 const reducers: ReducersList = {
   teamTable: teamReducer,
@@ -75,6 +76,8 @@ export const TablesBox = memo(() => {
           additionalTeamData={additionalTeamData}
           isAccountManagersRoute={isAccountManagersRoute}
         />
+
+        <MonthlyReportContainer active={tabNumber === 2} />
       </Box>
     </DynamicModuleLoader>
   );

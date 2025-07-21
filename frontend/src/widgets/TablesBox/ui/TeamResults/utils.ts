@@ -17,11 +17,20 @@ export const createTeamResultsData = (
   budget,
 });
 
-export const filterManagersOnly = (teammate: User, additionalTeamData: Array<AdditionalUserData>): boolean => {
+export const filterManagersOnly = (
+  teammate: User,
+  additionalTeamData: Array<AdditionalUserData>,
+  isAccountManagersRoute: boolean = false,
+): boolean => {
   const additionalUserData = additionalTeamData.find((data) => data.idInside === teammate.insideId);
 
   const deals = additionalUserData?.deals.newSale || 0;
-  return teammate.isManager && Number(deals) >= 0 && !teammate.isCoordinator;
+
+  if (isAccountManagersRoute) {
+    return teammate.isAccountManager && Number(deals) >= 0 && !teammate.isCoordinator;
+  } else {
+    return teammate.isManager && Number(deals) >= 0 && !teammate.isCoordinator;
+  }
 };
 
 export const mapTeammateToResultsData = (

@@ -21,6 +21,7 @@ export interface User {
   isFemale: boolean;
   isManager: boolean;
   isAccountManager: boolean;
+  isCcManager: boolean;
   statusId: number;
   isActive: boolean;
   isSuperuser: boolean;

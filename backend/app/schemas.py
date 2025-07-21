@@ -37,6 +37,7 @@ class UserRead(schemas.BaseUser[int]):
     is_female: bool = Field(None, serialization_alias="isFemale")
     is_manager: bool = Field(None, serialization_alias="isManager")
     is_account_manager: bool = Field(None, serialization_alias="isAccountManager")
+    is_cc_manager: bool = Field(None, serialization_alias="isCcManager")
     status_id: int | None = Field(None, serialization_alias="statusId")
     updated_at: datetime = Field(None, serialization_alias="updatedAt")
 
@@ -62,6 +63,7 @@ class UserUpdate(schemas.BaseUserUpdate):
     is_female: bool | None = Field(None, alias="isFemale")
     is_manager: bool | None = Field(None, alias="isManager")
     is_account_manager: bool | None = Field(None, alias="isAccountManager")
+    is_cc_manager: bool | None = Field(None, alias="isCcManager")
     status_id: int | None = Field(None, alias="statusId")
 
 

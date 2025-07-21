@@ -3,6 +3,7 @@ import { SvgIconTypeMap } from '@mui/material';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PaymentsIcon from '@mui/icons-material/Payments';
+import SupportIcon from '@mui/icons-material/Support';
 import TelegramIcon from '@mui/icons-material/Telegram';
 
 import { RoutePath } from '@/shared/const/router';
@@ -23,6 +24,11 @@ export const SidebarItemsList: Array<SidebarItemType> = [
     path: RoutePath.accountManagers,
     text: 'Аккаунты',
     Icon: PaymentsIcon,
+  },
+  {
+    path: RoutePath.customerCare,
+    text: 'Customer Care',
+    Icon: SupportIcon,
   },
   {
     path: RoutePath.telegramChats,
