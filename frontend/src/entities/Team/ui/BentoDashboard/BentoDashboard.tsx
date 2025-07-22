@@ -3,9 +3,10 @@ import { Box, Grid, Typography } from '@mui/material';
 import { People, TrendingUp, Analytics, Assessment } from '@mui/icons-material';
 import { MonthlyReportResponse } from '../../model/types/monthlyReport';
 import { MetricsCard } from '../MetricsCard';
-
 import { StackedBarChartCard } from '../StackedBarChartCard';
 import { ConversionBarChartCard } from '../ConversionBarChartCard';
+import { CurrentMonthFilter } from '../CurrentMonthFilter';
+import { useCurrentMonthFilter } from '../../lib/hooks/useCurrentMonthFilter';
 import {
   processChannelData,
   processConversionData,
@@ -31,35 +32,38 @@ interface BentoDashboardProps {
 export const BentoDashboard = memo((props: BentoDashboardProps) => {
   const { data, isLoading, error } = props;
 
+  // Используем хук для фильтрации текущего месяца
+  const { showCurrentMonth, setShowCurrentMonth, filteredData } = useCurrentMonthFilter(data);
+
   const processedData = useMemo(() => {
-    if (!data) return null;
+    if (!filteredData) return null;
 
     return {
-      channelData: processChannelData(data),
-      channelDataByMonth: processChannelDataByMonth(data),
-      conversionData: processConversionData(data),
-      conversionDataByMonth: processConversionDataByMonth(data),
-      conversionDataForBarChart: processConversionDataForBarChart(data),
-      conversionDataForGroupedBarChart: processConversionDataForGroupedBarChart(data),
-      successByChannelData: processSuccessByChannelData(data),
-      successByChannelDataByMonth: processSuccessByChannelDataByMonth(data),
-      successByTypeData: processSuccessByTypeData(data),
-      successByTypeDataByMonth: processSuccessByTypeDataByMonth(data),
-      failedDealsData: processFailedDealsData(data),
-      failedDealsDataByMonth: processFailedDealsDataByMonth(data),
-      managerData: processManagerData(data),
+      channelData: processChannelData(filteredData),
+      channelDataByMonth: processChannelDataByMonth(filteredData),
+      conversionData: processConversionData(filteredData),
+      conversionDataByMonth: processConversionDataByMonth(filteredData),
+      conversionDataForBarChart: processConversionDataForBarChart(filteredData),
+      conversionDataForGroupedBarChart: processConversionDataForGroupedBarChart(filteredData),
+      successByChannelData: processSuccessByChannelData(filteredData),
+      successByChannelDataByMonth: processSuccessByChannelDataByMonth(filteredData),
+      successByTypeData: processSuccessByTypeData(filteredData),
+      successByTypeDataByMonth: processSuccessByTypeDataByMonth(filteredData),
+      failedDealsData: processFailedDealsData(filteredData),
+      failedDealsDataByMonth: processFailedDealsDataByMonth(filteredData),
+      managerData: processManagerData(filteredData),
     };
-  }, [data]);
+  }, [filteredData]);
 
   // Вычисляем общие метрики
   const totalMetrics = useMemo(() => {
-    if (!data) return null;
+    if (!filteredData) return null;
 
     let totalLeads = 0;
     let totalSuccess = 0;
     let totalQualified = 0;
 
-    data.result.users.forEach((user) => {
+    filteredData.result.users.forEach((user) => {
       user.reports.forEach((report) => {
         totalLeads += report.leads_total;
         totalSuccess += report.leads_success;
@@ -77,7 +81,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
       overallConversionRate,
       overallSuccessRate,
     };
-  }, [data]);
+  }, [filteredData]);
 
   if (isLoading) {
     return (
@@ -114,6 +118,9 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
       <Typography variant="h4" sx={{ mb: 3, fontWeight: 700, color: 'text.primary' }}>
         Аналитика продаж
       </Typography>
+
+      {/* Фильтр текущего месяца */}
+      <CurrentMonthFilter showCurrentMonth={showCurrentMonth} onToggle={setShowCurrentMonth} />
 
       {/* Основные метрики */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -158,7 +165,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
         <Grid item xs={12} sm={6} md={3}>
           <MetricsCard
             title="Активных менеджеров"
-            value={data.result.users.length}
+            value={filteredData?.result.users.length || 0}
             subtitle="В команде"
             color="#9c27b0"
             icon={<Assessment />}
@@ -210,10 +217,10 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
           />
         </Grid>
 
-        {/* Успешность по каналам */}
+        {/* Успешные сделки по каналам */}
         <Grid item xs={12} md={6}>
           <StackedBarChartCard
-            title="Успешность по каналам"
+            title="Успешные сделки по каналам"
             data={processedData.successByChannelDataByMonth}
             yAxisLabel="Количество успешных сделок"
             size="medium"

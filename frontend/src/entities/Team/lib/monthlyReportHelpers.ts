@@ -51,6 +51,11 @@ const failureColors = {
   nooportunity: '#9966FF',
 };
 
+// Функция для форматирования названия месяца
+export const formatMonthLabel = (year: number, month: number): string => {
+  return `${monthNames[month - 1]} ${year}`;
+};
+
 export const processMonthlyReportData = (data: MonthlyReportResponse): ProcessedChartData => {
   const monthDataMap = new Map<string, ChartDataPoint>();
   const managersSet = new Set<string>();
@@ -865,16 +870,16 @@ export const processChannelDataByMonth = (data: MonthlyReportResponse): ManagerD
 export const processManagerData = (data: MonthlyReportResponse): ManagerData[] => {
   const processedData = processMonthlyReportData(data);
   const managerColors = [
-    '#FF6384',
-    '#36A2EB',
-    '#FFCE56',
-    '#4BC0C0',
-    '#9966FF',
-    '#FF9F40',
-    '#C9CBCF',
-    '#FF6384',
-    '#4BC0C0',
-    '#FFCE56',
+    '#FF6384', // Розовый
+    '#36A2EB', // Синий
+    '#FFCE56', // Желтый
+    '#4BC0C0', // Бирюзовый
+    '#9966FF', // Фиолетовый
+    '#FF9F40', // Оранжевый
+    '#C9CBCF', // Серый
+    '#E91E63', // Темно-розовый
+    '#8BC34A', // Зеленый
+    '#9C27B0', // Пурпурный
   ];
 
   return processedData.data.map((monthData) => {

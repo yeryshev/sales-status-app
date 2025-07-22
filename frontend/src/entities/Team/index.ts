@@ -38,7 +38,10 @@ export {
   processFailedDealsDataByMonth,
   processChannelDataByMonth,
   processManagerData,
+  formatMonthLabel,
 } from './lib/monthlyReportHelpers';
+export { useCurrentMonthFilter } from './lib/hooks/useCurrentMonthFilter';
+export { CurrentMonthFilter } from './ui/CurrentMonthFilter';
 export type {
   MonthlyReportResponse,
   MonthlyReportData,
