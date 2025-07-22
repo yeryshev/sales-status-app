@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState, Fragment } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,6 +12,8 @@ import {
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
 import { Box, Typography, Paper } from '@mui/material';
+import { ExpandChartButton } from '../ExpandChartButton';
+import { FullScreenChartModal } from '../FullScreenChartModal';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
 
@@ -33,6 +35,7 @@ interface ConversionBarChartCardProps {
 
 export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) => {
   const { title, data, monthLabels, isLoading, error, size = 'medium', yAxisLabel = 'Количество лидов' } = props;
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   const chartData = useMemo(() => {
     if (!data.length) return null;
@@ -234,36 +237,43 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
   }
 
   return (
-    <Paper
-      elevation={2}
-      sx={{
-        ...getSizeStyles(),
-        borderRadius: 3,
-        background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
-        border: '1px solid #e0e0e0',
-        transition: 'all 0.3s ease',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: 4,
-        },
-      }}
-    >
-      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 600,
-            mb: 2,
-            color: 'text.primary',
-          }}
-        >
-          {title}
-        </Typography>
+    <Fragment>
+      <Paper
+        elevation={2}
+        sx={{
+          ...getSizeStyles(),
+          borderRadius: 3,
+          background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
+          border: '1px solid #e0e0e0',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: 4,
+          },
+        }}
+      >
+        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              mb: 2,
+              color: 'text.primary',
+            }}
+          >
+            {title}
+          </Typography>
 
-        <Box sx={{ height: getChartHeight(), position: 'relative' }}>
-          <Bar data={chartData} options={options} />
+          <Box sx={{ height: getChartHeight(), position: 'relative' }}>
+            <Bar data={chartData} options={options} />
+            <ExpandChartButton onClick={() => setIsFullScreen(true)} title={`Раскрыть "${title}"`} />
+          </Box>
         </Box>
-      </Box>
-    </Paper>
+      </Paper>
+
+      <FullScreenChartModal open={isFullScreen} onClose={() => setIsFullScreen(false)} title={title}>
+        <Bar data={chartData} options={options} />
+      </FullScreenChartModal>
+    </Fragment>
   );
 });

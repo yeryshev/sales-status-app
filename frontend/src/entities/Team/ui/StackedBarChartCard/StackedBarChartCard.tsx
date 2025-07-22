@@ -1,8 +1,10 @@
-import { memo, useRef } from 'react';
+import { memo, useRef, useState, Fragment } from 'react';
 import { Box, Card, CardContent, Typography } from '@mui/material';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
+import { ExpandChartButton } from '../ExpandChartButton';
+import { FullScreenChartModal } from '../FullScreenChartModal';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
 
@@ -25,6 +27,7 @@ interface StackedBarChartCardProps {
 export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
   const { title, data, yAxisLabel = 'Количество', size = 'medium' } = props;
   const chartRef = useRef<ChartJS<'bar'> | null>(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   // Вычисляем итоговые значения для каждого столбца
   const totalValues = data.map((item) => item.datasets.reduce((sum, dataset) => sum + dataset.data, 0));
@@ -48,7 +51,6 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
         position: 'top' as const,
         labels: {
           usePointStyle: true,
-          padding: 20,
           font: {
             size: 12,
           },
@@ -101,6 +103,7 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
       y: {
         stacked: true,
         beginAtZero: true,
+        max: Math.max(...totalValues) * 1.2, // Максимальное значение на 20% больше максимального значения данных
         title: {
           display: true,
           text: yAxisLabel,
@@ -137,37 +140,44 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
   };
 
   return (
-    <Card
-      sx={{
-        height: '100%',
-        background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-        border: '1px solid rgba(0, 0, 0, 0.08)',
-        borderRadius: 3,
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        transition: 'all 0.3s ease',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
-        },
-      }}
-    >
-      <CardContent sx={{ p: 3, height: '100%' }}>
-        <Typography
-          variant="h6"
-          sx={{
-            mb: 2,
-            fontWeight: 600,
-            color: 'text.primary',
-            fontSize: '1.1rem',
-          }}
-        >
-          {title}
-        </Typography>
+    <Fragment>
+      <Card
+        sx={{
+          height: '100%',
+          background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+          border: '1px solid rgba(0, 0, 0, 0.08)',
+          borderRadius: 3,
+          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
+          },
+        }}
+      >
+        <CardContent sx={{ p: 3, height: '100%' }}>
+          <Typography
+            variant="h6"
+            sx={{
+              mb: 2,
+              fontWeight: 600,
+              color: 'text.primary',
+              fontSize: '1.1rem',
+            }}
+          >
+            {title}
+          </Typography>
 
-        <Box sx={{ height: getCardHeight(), position: 'relative' }}>
-          <Bar ref={chartRef} data={chartData} options={options} />
-        </Box>
-      </CardContent>
-    </Card>
+          <Box sx={{ height: getCardHeight(), position: 'relative' }}>
+            <Bar ref={chartRef} data={chartData} options={options} />
+            <ExpandChartButton onClick={() => setIsFullScreen(true)} title={`Раскрыть "${title}"`} />
+          </Box>
+        </CardContent>
+      </Card>
+
+      <FullScreenChartModal open={isFullScreen} onClose={() => setIsFullScreen(false)} title={title}>
+        <Bar ref={chartRef} data={chartData} options={options} />
+      </FullScreenChartModal>
+    </Fragment>
   );
 });

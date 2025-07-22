@@ -23,6 +23,8 @@ export { MetricsCard } from './ui/MetricsCard';
 export { LineChartCard } from './ui/LineChartCard';
 export { BarChartCard } from './ui/BarChartCard';
 export { StackedBarChartCard } from './ui/StackedBarChartCard';
+export { ExpandChartButton } from './ui/ExpandChartButton';
+export { FullScreenChartModal } from './ui/FullScreenChartModal';
 export {
   processChannelData,
   processConversionData,

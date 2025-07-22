@@ -33,8 +33,8 @@ const channelColors = {
   campaign: '#9966FF', // Фиолетовый
   chatwoot: '#FF9F40', // Оранжевый
   telegram: '#C9CBCF', // Серый
-  cold_call: '#E91E63', // Темно-розовый
-  personal_contact: '#8BC34A', // Зеленый
+  coldCall: '#E91E63', // Темно-розовый
+  personalContact: '#8BC34A', // Зеленый
 };
 
 const typeColors = {
@@ -56,13 +56,14 @@ export const formatMonthLabel = (year: number, month: number): string => {
   return `${monthNames[month - 1]} ${year}`;
 };
 
+// Обработка данных для основного графика по менеджерам
 export const processMonthlyReportData = (data: MonthlyReportResponse): ProcessedChartData => {
   const monthDataMap = new Map<string, ChartDataPoint>();
   const managersSet = new Set<string>();
 
   // Обрабатываем данные по каждому менеджеру
   data.result.users.forEach((user) => {
-    managersSet.add(user.manager_name);
+    managersSet.add(user.managerName);
 
     user.reports.forEach((report) => {
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
@@ -79,8 +80,8 @@ export const processMonthlyReportData = (data: MonthlyReportResponse): Processed
       }
 
       const monthData = monthDataMap.get(key)!;
-      monthData.managers[user.manager_name] = report.leads_total;
-      monthData.total += report.leads_total;
+      monthData.managers[user.managerName] = report.leadsTotal;
+      monthData.total += report.leadsTotal;
     });
   });
 
@@ -108,21 +109,21 @@ export const processChannelData = (data: MonthlyReportResponse): ChannelData[] =
     campaign: 0,
     chatwoot: 0,
     telegram: 0,
-    cold_call: 0,
-    personal_contact: 0,
+    coldCall: 0,
+    personalContact: 0,
   };
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
-      channelTotals.call += report.leads_call;
-      channelTotals.email += report.leads_email;
-      channelTotals.event += report.leads_event;
-      channelTotals.tickets += report.leads_tickets;
-      channelTotals.campaign += report.leads_campaign;
-      channelTotals.chatwoot += report.leads_chatwoot;
-      channelTotals.telegram += report.leads_telegram;
-      channelTotals.cold_call += report.leads_cold_call;
-      channelTotals.personal_contact += report.leads_personal_contact;
+      channelTotals.call += report.leadsCall;
+      channelTotals.email += report.leadsEmail;
+      channelTotals.event += report.leadsEvent;
+      channelTotals.tickets += report.leadsTickets;
+      channelTotals.campaign += report.leadsCampaign;
+      channelTotals.chatwoot += report.leadsChatwoot;
+      channelTotals.telegram += report.leadsTelegram;
+      channelTotals.coldCall += report.leadsColdCall;
+      channelTotals.personalContact += report.leadsPersonalContact;
     });
   });
 
@@ -134,8 +135,8 @@ export const processChannelData = (data: MonthlyReportResponse): ChannelData[] =
     campaign: 'Кампании',
     chatwoot: 'Chatwoot',
     telegram: 'Telegram',
-    cold_call: 'Прозвоны регистраций',
-    personal_contact: 'Личные контакты',
+    coldCall: 'Прозвоны регистраций',
+    personalContact: 'Личные контакты',
   };
 
   return Object.entries(channelTotals)
@@ -161,8 +162,8 @@ export const processConversionData = (data: MonthlyReportResponse): ConversionDa
       }
 
       const monthData = monthDataMap.get(key)!;
-      monthData.received += report.leads_total;
-      monthData.qualified += report.leads_qualified;
+      monthData.received += report.leadsTotal;
+      monthData.qualified += report.leadsQualified;
     });
   });
 
@@ -170,11 +171,13 @@ export const processConversionData = (data: MonthlyReportResponse): ConversionDa
     .map(([key, data]) => {
       const [year, month] = key.split('-');
       const monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
+      const conversionRate = data.received > 0 ? (data.qualified / data.received) * 100 : 0;
+
       return {
         period: monthLabel,
         received: data.received,
         qualified: data.qualified,
-        conversionRate: data.received > 0 ? (data.qualified / data.received) * 100 : 0,
+        conversionRate: Math.round(conversionRate * 10) / 10,
       };
     })
     .sort((a, b) => {
@@ -183,13 +186,17 @@ export const processConversionData = (data: MonthlyReportResponse): ConversionDa
       const aMonthIndex = monthNames.indexOf(aMonth);
       const bMonthIndex = monthNames.indexOf(bMonth);
 
-      if (aYear !== bYear) return parseInt(aYear) - parseInt(bYear);
+      if (parseInt(aYear) !== parseInt(bYear)) {
+        return parseInt(aYear) - parseInt(bYear);
+      }
       return aMonthIndex - bMonthIndex;
     });
 };
 
-// Обработка данных конверсии по месяцам для столбчатого графика
-export const processConversionDataByMonth = (data: MonthlyReportResponse): ManagerData[] => {
+// Обработка данных конверсии по месяцам
+export const processConversionDataByMonth = (
+  data: MonthlyReportResponse,
+): Array<{ label: string; value: number; color: string }> => {
   const monthDataMap = new Map<string, { received: number; qualified: number; successful: number }>();
 
   data.result.users.forEach((user) => {
@@ -201,9 +208,9 @@ export const processConversionDataByMonth = (data: MonthlyReportResponse): Manag
       }
 
       const monthData = monthDataMap.get(key)!;
-      monthData.received += report.leads_total;
-      monthData.qualified += report.leads_qualified;
-      monthData.successful += report.leads_success;
+      monthData.received += report.leadsTotal;
+      monthData.qualified += report.leadsQualified;
+      monthData.successful += report.leadsSuccess;
     });
   });
 
@@ -226,33 +233,32 @@ export const processConversionDataByMonth = (data: MonthlyReportResponse): Manag
       return a.monthNumber - b.monthNumber;
     });
 
-  return sortedData.map((monthData) => {
-    const datasets = [
+  const result: Array<{ label: string; value: number; color: string }> = [];
+
+  sortedData.forEach((monthData) => {
+    result.push(
       {
         label: 'Получено лидов',
-        data: monthData.data.received,
-        backgroundColor: '#1976d2', // Синий
+        value: monthData.data.received,
+        color: '#1976d2', // Синий
       },
       {
         label: 'Квалифицировано',
-        data: monthData.data.qualified,
-        backgroundColor: '#ff9800', // Оранжевый
+        value: monthData.data.qualified,
+        color: '#ff9800', // Оранжевый
       },
       {
         label: 'Успешно реализовано',
-        data: monthData.data.successful,
-        backgroundColor: '#4caf50', // Зеленый
+        value: monthData.data.successful,
+        color: '#4caf50', // Зеленый
       },
-    ];
-
-    return {
-      label: monthData.month,
-      datasets,
-    };
+    );
   });
+
+  return result;
 };
 
-// Обработка данных конверсии по месяцам для столбчатого графика с тремя столбцами
+// Обработка данных конверсии для столбчатого графика
 export const processConversionDataForBarChart = (
   data: MonthlyReportResponse,
 ): Array<{ label: string; value: number; color: string }> => {
@@ -267,9 +273,9 @@ export const processConversionDataForBarChart = (
       }
 
       const monthData = monthDataMap.get(key)!;
-      monthData.received += report.leads_total;
-      monthData.qualified += report.leads_qualified;
-      monthData.successful += report.leads_success;
+      monthData.received += report.leadsTotal;
+      monthData.qualified += report.leadsQualified;
+      monthData.successful += report.leadsSuccess;
     });
   });
 
@@ -335,9 +341,9 @@ export const processConversionDataForGroupedBarChart = (
       }
 
       const monthData = monthDataMap.get(key)!;
-      monthData.received += report.leads_total;
-      monthData.qualified += report.leads_qualified;
-      monthData.successful += report.leads_success;
+      monthData.received += report.leadsTotal;
+      monthData.qualified += report.leadsQualified;
+      monthData.successful += report.leadsSuccess;
     });
   });
 
@@ -397,30 +403,30 @@ export const processSuccessByChannelData = (data: MonthlyReportResponse): Succes
     campaign: { total: 0, successful: 0 },
     chatwoot: { total: 0, successful: 0 },
     telegram: { total: 0, successful: 0 },
-    cold_call: { total: 0, successful: 0 },
-    personal_contact: { total: 0, successful: 0 },
+    coldCall: { total: 0, successful: 0 },
+    personalContact: { total: 0, successful: 0 },
   };
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
-      channelData.call.total += report.leads_call;
-      channelData.call.successful += report.leads_success_by_call;
-      channelData.email.total += report.leads_email;
-      channelData.email.successful += report.leads_success_by_email;
-      channelData.event.total += report.leads_event;
-      channelData.event.successful += report.leads_success_by_event;
-      channelData.tickets.total += report.leads_tickets;
-      channelData.tickets.successful += report.leads_success_by_tickets;
-      channelData.campaign.total += report.leads_campaign;
-      channelData.campaign.successful += report.leads_success_by_campaign;
-      channelData.chatwoot.total += report.leads_chatwoot;
-      channelData.chatwoot.successful += report.leads_success_by_chatwoot;
-      channelData.telegram.total += report.leads_telegram;
-      channelData.telegram.successful += report.leads_success_by_telegram;
-      channelData.cold_call.total += report.leads_cold_call;
-      channelData.cold_call.successful += report.leads_success_by_cold_call;
-      channelData.personal_contact.total += report.leads_personal_contact;
-      channelData.personal_contact.successful += report.leads_success_by_personal_contact;
+      channelData.call.total += report.leadsCall;
+      channelData.call.successful += report.leadsSuccessByCall;
+      channelData.email.total += report.leadsEmail;
+      channelData.email.successful += report.leadsSuccessByEmail;
+      channelData.event.total += report.leadsEvent;
+      channelData.event.successful += report.leadsSuccessByEvent;
+      channelData.tickets.total += report.leadsTickets;
+      channelData.tickets.successful += report.leadsSuccessByTickets;
+      channelData.campaign.total += report.leadsCampaign;
+      channelData.campaign.successful += report.leadsSuccessByCampaign;
+      channelData.chatwoot.total += report.leadsChatwoot;
+      channelData.chatwoot.successful += report.leadsSuccessByChatwoot;
+      channelData.telegram.total += report.leadsTelegram;
+      channelData.telegram.successful += report.leadsSuccessByTelegram;
+      channelData.coldCall.total += report.leadsColdCall;
+      channelData.coldCall.successful += report.leadsSuccessByColdCall;
+      channelData.personalContact.total += report.leadsPersonalContact;
+      channelData.personalContact.successful += report.leadsSuccessByPersonalContact;
     });
   });
 
@@ -432,25 +438,41 @@ export const processSuccessByChannelData = (data: MonthlyReportResponse): Succes
     campaign: 'Кампании',
     chatwoot: 'Chatwoot',
     telegram: 'Telegram',
-    cold_call: 'Прозвоны регистраций',
-    personal_contact: 'Личные контакты',
+    coldCall: 'Прозвоны регистраций',
+    personalContact: 'Личные контакты',
   };
 
   return Object.entries(channelData)
     .filter(([, data]) => data.total > 0)
-    .map(([key, data]) => ({
-      channel: channelLabels[key as keyof typeof channelLabels],
-      total: data.total,
-      successful: data.successful,
-      successRate: data.total > 0 ? (data.successful / data.total) * 100 : 0,
-      color: channelColors[key as keyof typeof channelColors],
-    }))
-    .sort((a, b) => b.successRate - a.successRate);
+    .map(([key, data]) => {
+      const successRate = data.total > 0 ? (data.successful / data.total) * 100 : 0;
+      return {
+        channel: channelLabels[key as keyof typeof channelLabels],
+        total: data.total,
+        successful: data.successful,
+        successRate: Math.round(successRate * 10) / 10,
+        color: channelColors[key as keyof typeof channelColors],
+      };
+    })
+    .sort((a, b) => b.successful - a.successful);
 };
 
-// Обработка данных успешности по каналам по месяцам для накопительного графика
+// Обработка данных успешности по каналам по месяцам
 export const processSuccessByChannelDataByMonth = (data: MonthlyReportResponse): ManagerData[] => {
-  const monthDataMap = new Map<string, { [channel: string]: number }>();
+  const monthDataMap = new Map<
+    string,
+    {
+      call: number;
+      email: number;
+      event: number;
+      tickets: number;
+      campaign: number;
+      chatwoot: number;
+      telegram: number;
+      coldCall: number;
+      personalContact: number;
+    }
+  >();
   const channelsSet = new Set<string>();
 
   data.result.users.forEach((user) => {
@@ -466,34 +488,31 @@ export const processSuccessByChannelDataByMonth = (data: MonthlyReportResponse):
           campaign: 0,
           chatwoot: 0,
           telegram: 0,
-          cold_call: 0,
-          personal_contact: 0,
+          coldCall: 0,
+          personalContact: 0,
         });
       }
 
       const monthData = monthDataMap.get(key)!;
+      monthData.call += report.leadsSuccessByCall;
+      monthData.email += report.leadsSuccessByEmail;
+      monthData.event += report.leadsSuccessByEvent;
+      monthData.tickets += report.leadsSuccessByTickets;
+      monthData.campaign += report.leadsSuccessByCampaign;
+      monthData.chatwoot += report.leadsSuccessByChatwoot;
+      monthData.telegram += report.leadsSuccessByTelegram;
+      monthData.coldCall += report.leadsSuccessByColdCall;
+      monthData.personalContact += report.leadsSuccessByPersonalContact;
 
-      // Считаем только успешные сделки
-      monthData.call += report.leads_success_by_call;
-      monthData.email += report.leads_success_by_email;
-      monthData.event += report.leads_success_by_event;
-      monthData.tickets += report.leads_success_by_tickets;
-      monthData.campaign += report.leads_success_by_campaign;
-      monthData.chatwoot += report.leads_success_by_chatwoot;
-      monthData.telegram += report.leads_success_by_telegram;
-      monthData.cold_call += report.leads_success_by_cold_call;
-      monthData.personal_contact += report.leads_success_by_personal_contact;
-
-      // Добавляем каналы, которые имеют успешные сделки
-      if (report.leads_success_by_call > 0) channelsSet.add('call');
-      if (report.leads_success_by_email > 0) channelsSet.add('email');
-      if (report.leads_success_by_event > 0) channelsSet.add('event');
-      if (report.leads_success_by_tickets > 0) channelsSet.add('tickets');
-      if (report.leads_success_by_campaign > 0) channelsSet.add('campaign');
-      if (report.leads_success_by_chatwoot > 0) channelsSet.add('chatwoot');
-      if (report.leads_success_by_telegram > 0) channelsSet.add('telegram');
-      if (report.leads_success_by_cold_call > 0) channelsSet.add('cold_call');
-      if (report.leads_success_by_personal_contact > 0) channelsSet.add('personal_contact');
+      if (report.leadsSuccessByCall > 0) channelsSet.add('call');
+      if (report.leadsSuccessByEmail > 0) channelsSet.add('email');
+      if (report.leadsSuccessByEvent > 0) channelsSet.add('event');
+      if (report.leadsSuccessByTickets > 0) channelsSet.add('tickets');
+      if (report.leadsSuccessByCampaign > 0) channelsSet.add('campaign');
+      if (report.leadsSuccessByChatwoot > 0) channelsSet.add('chatwoot');
+      if (report.leadsSuccessByTelegram > 0) channelsSet.add('telegram');
+      if (report.leadsSuccessByColdCall > 0) channelsSet.add('coldCall');
+      if (report.leadsSuccessByPersonalContact > 0) channelsSet.add('personalContact');
     });
   });
 
@@ -505,8 +524,8 @@ export const processSuccessByChannelDataByMonth = (data: MonthlyReportResponse):
     campaign: 'Кампании',
     chatwoot: 'Chatwoot',
     telegram: 'Telegram',
-    cold_call: 'Прозвоны регистраций',
-    personal_contact: 'Личные контакты',
+    coldCall: 'Прозвоны регистраций',
+    personalContact: 'Личные контакты',
   };
 
   const channelColors = {
@@ -517,8 +536,8 @@ export const processSuccessByChannelDataByMonth = (data: MonthlyReportResponse):
     campaign: '#9966FF',
     chatwoot: '#FF9F40',
     telegram: '#C9CBCF',
-    cold_call: '#E91E63',
-    personal_contact: '#8BC34A',
+    coldCall: '#E91E63',
+    personalContact: '#8BC34A',
   };
 
   const sortedData = Array.from(monthDataMap.entries())
@@ -539,7 +558,7 @@ export const processSuccessByChannelDataByMonth = (data: MonthlyReportResponse):
   return sortedData.map((monthData) => {
     const datasets = channels.map((channel) => ({
       label: channelLabels[channel as keyof typeof channelLabels],
-      data: monthData.channelData[channel] || 0,
+      data: monthData.channelData[channel as keyof typeof monthData.channelData] || 0,
       backgroundColor: channelColors[channel as keyof typeof channelColors],
     }));
 
@@ -584,7 +603,7 @@ export const processSuccessByChannelDataByMonthPercentage = (data: MonthlyReport
   });
 };
 
-// Обработка данных успешности по типу
+// Обработка данных успешности по типам
 export const processSuccessByTypeData = (data: MonthlyReportResponse): SuccessByTypeData[] => {
   const typeTotals = {
     upsale: 0,
@@ -594,9 +613,9 @@ export const processSuccessByTypeData = (data: MonthlyReportResponse): SuccessBy
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
-      typeTotals.upsale += report.leads_142_upsale;
-      typeTotals.newsale += report.leads_142_newsale;
-      typeTotals.accounttransfer += report.leads_142_accounttransfer;
+      typeTotals.upsale += report.leads142Upsale;
+      typeTotals.newsale += report.leads142Newsale;
+      typeTotals.accounttransfer += report.leads142Accounttransfer;
     });
   });
 
@@ -616,9 +635,16 @@ export const processSuccessByTypeData = (data: MonthlyReportResponse): SuccessBy
     .sort((a, b) => b.value - a.value);
 };
 
-// Обработка данных успешности по типу по месяцам для накопительного графика
+// Обработка данных успешности по типам по месяцам
 export const processSuccessByTypeDataByMonth = (data: MonthlyReportResponse): ManagerData[] => {
-  const monthDataMap = new Map<string, { [type: string]: number }>();
+  const monthDataMap = new Map<
+    string,
+    {
+      upsale: number;
+      newsale: number;
+      accounttransfer: number;
+    }
+  >();
   const typesSet = new Set<string>();
 
   data.result.users.forEach((user) => {
@@ -634,16 +660,13 @@ export const processSuccessByTypeDataByMonth = (data: MonthlyReportResponse): Ma
       }
 
       const monthData = monthDataMap.get(key)!;
+      monthData.upsale += report.leads142Upsale;
+      monthData.newsale += report.leads142Newsale;
+      monthData.accounttransfer += report.leads142Accounttransfer;
 
-      // Считаем успешные сделки по типам
-      monthData.upsale += report.leads_142_upsale;
-      monthData.newsale += report.leads_142_newsale;
-      monthData.accounttransfer += report.leads_142_accounttransfer;
-
-      // Добавляем типы, которые имеют успешные сделки
-      if (report.leads_142_upsale > 0) typesSet.add('upsale');
-      if (report.leads_142_newsale > 0) typesSet.add('newsale');
-      if (report.leads_142_accounttransfer > 0) typesSet.add('accounttransfer');
+      if (report.leads142Upsale > 0) typesSet.add('upsale');
+      if (report.leads142Newsale > 0) typesSet.add('newsale');
+      if (report.leads142Accounttransfer > 0) typesSet.add('accounttransfer');
     });
   });
 
@@ -677,7 +700,7 @@ export const processSuccessByTypeDataByMonth = (data: MonthlyReportResponse): Ma
   return sortedData.map((monthData) => {
     const datasets = types.map((type) => ({
       label: typeLabels[type as keyof typeof typeLabels],
-      data: monthData.typeData[type] || 0,
+      data: monthData.typeData[type as keyof typeof monthData.typeData] || 0,
       backgroundColor: typeColors[type as keyof typeof typeColors],
     }));
 
@@ -734,11 +757,11 @@ export const processFailedDealsData = (data: MonthlyReportResponse): FailedDeals
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
-      failureTotals.noanswer += report.leads_143_noanswer;
-      failureTotals.bedservice += report.leads_143_bedservice;
-      failureTotals.legalproblem += report.leads_143_legalproblem;
-      failureTotals.nomoreneeded += report.leads_143_nomoreneeded;
-      failureTotals.nooportunity += report.leads_143_nooportunity;
+      failureTotals.noanswer += report.leads143Noanswer;
+      failureTotals.bedservice += report.leads143Bedservice;
+      failureTotals.legalproblem += report.leads143Legalproblem;
+      failureTotals.nomoreneeded += report.leads143Nomoreneeded;
+      failureTotals.nooportunity += report.leads143Noopportunity;
     });
   });
 
@@ -760,12 +783,20 @@ export const processFailedDealsData = (data: MonthlyReportResponse): FailedDeals
     .sort((a, b) => b.value - a.value);
 };
 
-// Обработка данных неуспешных сделок по месяцам для стекированного графика
+// Обработка данных неуспешных сделок по месяцам
 export const processFailedDealsDataByMonth = (data: MonthlyReportResponse): ManagerData[] => {
-  const monthDataMap = new Map<string, { [reason: string]: number }>();
+  const monthDataMap = new Map<
+    string,
+    {
+      noanswer: number;
+      bedservice: number;
+      legalproblem: number;
+      nomoreneeded: number;
+      nooportunity: number;
+    }
+  >();
   const reasonsSet = new Set<string>();
 
-  // Обрабатываем данные по каждому менеджеру
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
@@ -781,18 +812,17 @@ export const processFailedDealsDataByMonth = (data: MonthlyReportResponse): Mana
       }
 
       const monthData = monthDataMap.get(key)!;
-      monthData.noanswer += report.leads_143_noanswer;
-      monthData.bedservice += report.leads_143_bedservice;
-      monthData.legalproblem += report.leads_143_legalproblem;
-      monthData.nomoreneeded += report.leads_143_nomoreneeded;
-      monthData.nooportunity += report.leads_143_nooportunity;
+      monthData.noanswer += report.leads143Noanswer;
+      monthData.bedservice += report.leads143Bedservice;
+      monthData.legalproblem += report.leads143Legalproblem;
+      monthData.nomoreneeded += report.leads143Nomoreneeded;
+      monthData.nooportunity += report.leads143Noopportunity;
 
-      // Добавляем причины в множество
-      if (report.leads_143_noanswer > 0) reasonsSet.add('noanswer');
-      if (report.leads_143_bedservice > 0) reasonsSet.add('bedservice');
-      if (report.leads_143_legalproblem > 0) reasonsSet.add('legalproblem');
-      if (report.leads_143_nomoreneeded > 0) reasonsSet.add('nomoreneeded');
-      if (report.leads_143_nooportunity > 0) reasonsSet.add('nooportunity');
+      if (report.leads143Noanswer > 0) reasonsSet.add('noanswer');
+      if (report.leads143Bedservice > 0) reasonsSet.add('bedservice');
+      if (report.leads143Legalproblem > 0) reasonsSet.add('legalproblem');
+      if (report.leads143Nomoreneeded > 0) reasonsSet.add('nomoreneeded');
+      if (report.leads143Noopportunity > 0) reasonsSet.add('nooportunity');
     });
   });
 
@@ -804,17 +834,19 @@ export const processFailedDealsDataByMonth = (data: MonthlyReportResponse): Mana
     nooportunity: 'Нет возможности реализовать',
   };
 
-  // Сортируем данные по дате
+  const failureColors = {
+    noanswer: '#FF6384',
+    bedservice: '#36A2EB',
+    legalproblem: '#FFCE56',
+    nomoreneeded: '#4BC0C0',
+    nooportunity: '#9966FF',
+  };
+
   const sortedData = Array.from(monthDataMap.entries())
-    .map(([key, reasonData]) => {
+    .map(([key, failureData]) => {
       const [year, month] = key.split('-');
       const monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
-      return {
-        month: monthLabel,
-        year: parseInt(year),
-        monthNumber: parseInt(month),
-        reasonData,
-      };
+      return { month: monthLabel, year: parseInt(year), monthNumber: parseInt(month), failureData };
     })
     .sort((a, b) => {
       if (a.year !== b.year) {
@@ -828,7 +860,7 @@ export const processFailedDealsDataByMonth = (data: MonthlyReportResponse): Mana
   return sortedData.map((monthData) => {
     const datasets = reasons.map((reason) => ({
       label: failureLabels[reason as keyof typeof failureLabels],
-      data: monthData.reasonData[reason] || 0,
+      data: monthData.failureData[reason as keyof typeof monthData.failureData] || 0,
       backgroundColor: failureColors[reason as keyof typeof failureColors],
     }));
 
@@ -839,12 +871,24 @@ export const processFailedDealsDataByMonth = (data: MonthlyReportResponse): Mana
   });
 };
 
-// Обработка данных лидов по каналам для стекированного графика
+// Обработка данных по каналам по месяцам
 export const processChannelDataByMonth = (data: MonthlyReportResponse): ManagerData[] => {
-  const monthDataMap = new Map<string, { [channel: string]: number }>();
+  const monthDataMap = new Map<
+    string,
+    {
+      call: number;
+      email: number;
+      event: number;
+      tickets: number;
+      campaign: number;
+      chatwoot: number;
+      telegram: number;
+      coldCall: number;
+      personalContact: number;
+    }
+  >();
   const channelsSet = new Set<string>();
 
-  // Обрабатываем данные по каждому менеджеру
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
@@ -858,32 +902,31 @@ export const processChannelDataByMonth = (data: MonthlyReportResponse): ManagerD
           campaign: 0,
           chatwoot: 0,
           telegram: 0,
-          cold_call: 0,
-          personal_contact: 0,
+          coldCall: 0,
+          personalContact: 0,
         });
       }
 
       const monthData = monthDataMap.get(key)!;
-      monthData.call += report.leads_call;
-      monthData.email += report.leads_email;
-      monthData.event += report.leads_event;
-      monthData.tickets += report.leads_tickets;
-      monthData.campaign += report.leads_campaign;
-      monthData.chatwoot += report.leads_chatwoot;
-      monthData.telegram += report.leads_telegram;
-      monthData.cold_call += report.leads_cold_call;
-      monthData.personal_contact += report.leads_personal_contact;
+      monthData.call += report.leadsCall;
+      monthData.email += report.leadsEmail;
+      monthData.event += report.leadsEvent;
+      monthData.tickets += report.leadsTickets;
+      monthData.campaign += report.leadsCampaign;
+      monthData.chatwoot += report.leadsChatwoot;
+      monthData.telegram += report.leadsTelegram;
+      monthData.coldCall += report.leadsColdCall;
+      monthData.personalContact += report.leadsPersonalContact;
 
-      // Добавляем каналы в множество
-      if (report.leads_call > 0) channelsSet.add('call');
-      if (report.leads_email > 0) channelsSet.add('email');
-      if (report.leads_event > 0) channelsSet.add('event');
-      if (report.leads_tickets > 0) channelsSet.add('tickets');
-      if (report.leads_campaign > 0) channelsSet.add('campaign');
-      if (report.leads_chatwoot > 0) channelsSet.add('chatwoot');
-      if (report.leads_telegram > 0) channelsSet.add('telegram');
-      if (report.leads_cold_call > 0) channelsSet.add('cold_call');
-      if (report.leads_personal_contact > 0) channelsSet.add('personal_contact');
+      if (report.leadsCall > 0) channelsSet.add('call');
+      if (report.leadsEmail > 0) channelsSet.add('email');
+      if (report.leadsEvent > 0) channelsSet.add('event');
+      if (report.leadsTickets > 0) channelsSet.add('tickets');
+      if (report.leadsCampaign > 0) channelsSet.add('campaign');
+      if (report.leadsChatwoot > 0) channelsSet.add('chatwoot');
+      if (report.leadsTelegram > 0) channelsSet.add('telegram');
+      if (report.leadsColdCall > 0) channelsSet.add('coldCall');
+      if (report.leadsPersonalContact > 0) channelsSet.add('personalContact');
     });
   });
 
@@ -895,21 +938,27 @@ export const processChannelDataByMonth = (data: MonthlyReportResponse): ManagerD
     campaign: 'Кампании',
     chatwoot: 'Chatwoot',
     telegram: 'Telegram',
-    cold_call: 'Прозвоны регистраций',
-    personal_contact: 'Личные контакты',
+    coldCall: 'Прозвоны регистраций',
+    personalContact: 'Личные контакты',
   };
 
-  // Сортируем данные по дате
+  const channelColors = {
+    call: '#FF6384',
+    email: '#36A2EB',
+    event: '#FFCE56',
+    tickets: '#4BC0C0',
+    campaign: '#9966FF',
+    chatwoot: '#FF9F40',
+    telegram: '#C9CBCF',
+    coldCall: '#E91E63',
+    personalContact: '#8BC34A',
+  };
+
   const sortedData = Array.from(monthDataMap.entries())
     .map(([key, channelData]) => {
       const [year, month] = key.split('-');
       const monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
-      return {
-        month: monthLabel,
-        year: parseInt(year),
-        monthNumber: parseInt(month),
-        channelData,
-      };
+      return { month: monthLabel, year: parseInt(year), monthNumber: parseInt(month), channelData };
     })
     .sort((a, b) => {
       if (a.year !== b.year) {
@@ -923,7 +972,7 @@ export const processChannelDataByMonth = (data: MonthlyReportResponse): ManagerD
   return sortedData.map((monthData) => {
     const datasets = channels.map((channel) => ({
       label: channelLabels[channel as keyof typeof channelLabels],
-      data: monthData.channelData[channel] || 0,
+      data: monthData.channelData[channel as keyof typeof monthData.channelData] || 0,
       backgroundColor: channelColors[channel as keyof typeof channelColors],
     }));
 
@@ -934,9 +983,8 @@ export const processChannelDataByMonth = (data: MonthlyReportResponse): ManagerD
   });
 };
 
-// Обработка данных по менеджерам для стекированного графика
+// Обработка данных по менеджерам
 export const processManagerData = (data: MonthlyReportResponse): ManagerData[] => {
-  const processedData = processMonthlyReportData(data);
   const managerColors = [
     '#FF6384', // Розовый
     '#36A2EB', // Синий
@@ -950,10 +998,43 @@ export const processManagerData = (data: MonthlyReportResponse): ManagerData[] =
     '#9C27B0', // Пурпурный
   ];
 
-  return processedData.data.map((monthData) => {
-    const datasets = processedData.managers.map((manager, index) => ({
+  const monthDataMap = new Map<string, { [managerName: string]: number }>();
+  const managersSet = new Set<string>();
+
+  data.result.users.forEach((user) => {
+    managersSet.add(user.managerName);
+
+    user.reports.forEach((report) => {
+      const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
+
+      if (!monthDataMap.has(key)) {
+        monthDataMap.set(key, {});
+      }
+
+      const monthData = monthDataMap.get(key)!;
+      monthData[user.managerName] = (monthData[user.managerName] || 0) + report.leadsTotal;
+    });
+  });
+
+  const sortedData = Array.from(monthDataMap.entries())
+    .map(([key, managerData]) => {
+      const [year, month] = key.split('-');
+      const monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
+      return { month: monthLabel, year: parseInt(year), monthNumber: parseInt(month), managerData };
+    })
+    .sort((a, b) => {
+      if (a.year !== b.year) {
+        return a.year - b.year;
+      }
+      return a.monthNumber - b.monthNumber;
+    });
+
+  const managers = Array.from(managersSet).sort();
+
+  return sortedData.map((monthData) => {
+    const datasets = managers.map((manager, index) => ({
       label: manager,
-      data: monthData.managers[manager] || 0,
+      data: monthData.managerData[manager] || 0,
       backgroundColor: managerColors[index % managerColors.length],
     }));
 

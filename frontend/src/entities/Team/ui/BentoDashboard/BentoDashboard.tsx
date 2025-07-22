@@ -75,9 +75,9 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
 
     filteredData.result.users.forEach((user) => {
       user.reports.forEach((report) => {
-        totalLeads += report.leads_total;
-        totalSuccess += report.leads_success;
-        totalQualified += report.leads_qualified;
+        totalLeads += report.leadsTotal;
+        totalSuccess += report.leadsSuccess;
+        totalQualified += report.leadsQualified;
       });
     });
 
