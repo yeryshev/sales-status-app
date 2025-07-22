@@ -101,14 +101,6 @@ export interface FailedDealsData {
   color: string;
 }
 
-export interface ChannelConversionData {
-  channel: string;
-  total: number;
-  successful: number;
-  conversionRate: number;
-  color: string;
-}
-
 export interface ManagerData {
   label: string;
   datasets: {

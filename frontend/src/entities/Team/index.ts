@@ -30,7 +30,8 @@ export {
   processSuccessByChannelData,
   processSuccessByTypeData,
   processFailedDealsData,
-  processChannelConversionData,
+  processFailedDealsDataByMonth,
+  processChannelDataByMonth,
   processManagerData,
 } from './lib/monthlyReportHelpers';
 export type {
@@ -45,5 +46,4 @@ export type {
   SuccessByChannelData,
   SuccessByTypeData,
   FailedDealsData,
-  ChannelConversionData,
 } from './model/types/monthlyReport';

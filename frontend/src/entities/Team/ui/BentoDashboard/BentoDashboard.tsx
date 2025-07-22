@@ -13,7 +13,8 @@ import {
   processSuccessByChannelData,
   processSuccessByTypeData,
   processFailedDealsData,
-  processChannelConversionData,
+  processFailedDealsDataByMonth,
+  processChannelDataByMonth,
   processManagerData,
 } from '../../lib/monthlyReportHelpers';
 
@@ -31,11 +32,12 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
 
     return {
       channelData: processChannelData(data),
+      channelDataByMonth: processChannelDataByMonth(data),
       conversionData: processConversionData(data),
       successByChannelData: processSuccessByChannelData(data),
       successByTypeData: processSuccessByTypeData(data),
       failedDealsData: processFailedDealsData(data),
-      channelConversionData: processChannelConversionData(data),
+      failedDealsDataByMonth: processFailedDealsDataByMonth(data),
       managerData: processManagerData(data),
     };
   }, [data]);
@@ -168,21 +170,28 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
           />
         </Grid>
 
-        {/* Количество лидов по каналам */}
-        <Grid item xs={12} md={6}>
-          <PieChartCard
+        {/* Лиды по каналам */}
+        <Grid item xs={12}>
+          <StackedBarChartCard
             title="Лиды по каналам"
-            data={processedData.channelData.map((item) => ({
-              label: item.channel,
-              value: item.value,
-              color: item.color,
-            }))}
+            data={processedData.channelDataByMonth}
+            yAxisLabel="Количество лидов"
+            size="medium"
+          />
+        </Grid>
+
+        {/* Причины неуспешных сделок */}
+        <Grid item xs={12}>
+          <StackedBarChartCard
+            title="Причины неуспешных сделок"
+            data={processedData.failedDealsDataByMonth}
+            yAxisLabel="Количество"
             size="medium"
           />
         </Grid>
 
         {/* Конверсия по месяцам */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12}>
           <LineChartCard
             title="Конверсия по месяцам"
             data={processedData.conversionData.map((item) => ({
@@ -219,35 +228,6 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
               value: item.value,
               color: item.color,
             }))}
-            size="medium"
-          />
-        </Grid>
-
-        {/* Причины неуспешных сделок */}
-        <Grid item xs={12} md={6}>
-          <BarChartCard
-            title="Причины неуспешных сделок"
-            data={processedData.failedDealsData.map((item) => ({
-              label: item.reason,
-              value: item.value,
-              color: item.color,
-            }))}
-            yAxisLabel="Количество"
-            size="medium"
-          />
-        </Grid>
-
-        {/* Конверсия по каналам */}
-        <Grid item xs={12} md={6}>
-          <BarChartCard
-            title="Конверсия по каналам"
-            data={processedData.channelConversionData.map((item) => ({
-              label: item.channel,
-              value: Math.round(item.conversionRate),
-              color: item.color,
-            }))}
-            yAxisLabel="Конверсия (%)"
-            horizontal={true}
             size="medium"
           />
         </Grid>
