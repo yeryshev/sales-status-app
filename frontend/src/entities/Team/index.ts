@@ -20,7 +20,6 @@ export { useGetAdditionalTeamData } from './api/teamInfoApi';
 export { useGetMonthlyReportQuery } from './api/monthlyReportApi';
 export { BentoDashboard } from './ui/BentoDashboard';
 export { MetricsCard } from './ui/MetricsCard';
-export { PieChartCard } from './ui/PieChartCard';
 export { LineChartCard } from './ui/LineChartCard';
 export { BarChartCard } from './ui/BarChartCard';
 export { StackedBarChartCard } from './ui/StackedBarChartCard';
@@ -32,8 +31,10 @@ export {
   processConversionDataForGroupedBarChart,
   processSuccessByChannelData,
   processSuccessByChannelDataByMonth,
+  processSuccessByChannelDataByMonthPercentage,
   processSuccessByTypeData,
   processSuccessByTypeDataByMonth,
+  processSuccessByTypeDataByMonthPercentage,
   processFailedDealsData,
   processFailedDealsDataByMonth,
   processChannelDataByMonth,
@@ -41,7 +42,9 @@ export {
   formatMonthLabel,
 } from './lib/monthlyReportHelpers';
 export { useCurrentMonthFilter } from './lib/hooks/useCurrentMonthFilter';
+export { useChartDisplayMode } from './lib/hooks/useChartDisplayMode';
 export { CurrentMonthFilter } from './ui/CurrentMonthFilter';
+export { ChartModeToggle } from './ui/ChartModeToggle';
 export type {
   MonthlyReportResponse,
   MonthlyReportData,

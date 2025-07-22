@@ -6,7 +6,9 @@ import { MetricsCard } from '../MetricsCard';
 import { StackedBarChartCard } from '../StackedBarChartCard';
 import { ConversionBarChartCard } from '../ConversionBarChartCard';
 import { CurrentMonthFilter } from '../CurrentMonthFilter';
+import { ChartModeToggle } from '../ChartModeToggle';
 import { useCurrentMonthFilter } from '../../lib/hooks/useCurrentMonthFilter';
+import { useChartDisplayMode } from '../../lib/hooks/useChartDisplayMode';
 import {
   processChannelData,
   processConversionData,
@@ -15,8 +17,10 @@ import {
   processConversionDataForGroupedBarChart,
   processSuccessByChannelData,
   processSuccessByChannelDataByMonth,
+  processSuccessByChannelDataByMonthPercentage,
   processSuccessByTypeData,
   processSuccessByTypeDataByMonth,
+  processSuccessByTypeDataByMonthPercentage,
   processFailedDealsData,
   processFailedDealsDataByMonth,
   processChannelDataByMonth,
@@ -35,6 +39,10 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
   // Используем хук для фильтрации текущего месяца
   const { showCurrentMonth, setShowCurrentMonth, filteredData } = useCurrentMonthFilter(data);
 
+  // Используем хук для управления режимами отображения графиков
+  const { successByChannelMode, setSuccessByChannelMode, successByTypeMode, setSuccessByTypeMode } =
+    useChartDisplayMode();
+
   const processedData = useMemo(() => {
     if (!filteredData) return null;
 
@@ -47,8 +55,10 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
       conversionDataForGroupedBarChart: processConversionDataForGroupedBarChart(filteredData),
       successByChannelData: processSuccessByChannelData(filteredData),
       successByChannelDataByMonth: processSuccessByChannelDataByMonth(filteredData),
+      successByChannelDataByMonthPercentage: processSuccessByChannelDataByMonthPercentage(filteredData),
       successByTypeData: processSuccessByTypeData(filteredData),
       successByTypeDataByMonth: processSuccessByTypeDataByMonth(filteredData),
+      successByTypeDataByMonthPercentage: processSuccessByTypeDataByMonthPercentage(filteredData),
       failedDealsData: processFailedDealsData(filteredData),
       failedDealsDataByMonth: processFailedDealsDataByMonth(filteredData),
       managerData: processManagerData(filteredData),
@@ -219,20 +229,36 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
 
         {/* Успешные сделки по каналам */}
         <Grid item xs={12} md={6}>
+          <ChartModeToggle
+            mode={successByChannelMode}
+            onModeChange={setSuccessByChannelMode}
+            title="Режим отображения"
+          />
           <StackedBarChartCard
             title="Успешные сделки по каналам"
-            data={processedData.successByChannelDataByMonth}
-            yAxisLabel="Количество успешных сделок"
+            data={
+              successByChannelMode === 'percentage'
+                ? processedData.successByChannelDataByMonthPercentage
+                : processedData.successByChannelDataByMonth
+            }
+            yAxisLabel={
+              successByChannelMode === 'percentage' ? 'Процент от общего числа' : 'Количество успешных сделок'
+            }
             size="medium"
           />
         </Grid>
 
         {/* Успешные по типу */}
         <Grid item xs={12} md={6}>
+          <ChartModeToggle mode={successByTypeMode} onModeChange={setSuccessByTypeMode} title="Режим отображения" />
           <StackedBarChartCard
             title="Успешные по типу"
-            data={processedData.successByTypeDataByMonth}
-            yAxisLabel="Количество успешных сделок"
+            data={
+              successByTypeMode === 'percentage'
+                ? processedData.successByTypeDataByMonthPercentage
+                : processedData.successByTypeDataByMonth
+            }
+            yAxisLabel={successByTypeMode === 'percentage' ? 'Процент от общего числа' : 'Количество успешных сделок'}
             size="medium"
           />
         </Grid>

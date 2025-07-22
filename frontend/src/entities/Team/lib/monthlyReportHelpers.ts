@@ -550,6 +550,40 @@ export const processSuccessByChannelDataByMonth = (data: MonthlyReportResponse):
   });
 };
 
+// Обработка данных по каналам в процентном режиме
+export const processSuccessByChannelDataByMonthPercentage = (data: MonthlyReportResponse): ManagerData[] => {
+  const absoluteData = processSuccessByChannelDataByMonth(data);
+
+  return absoluteData.map((monthData) => {
+    const total = monthData.datasets.reduce((sum, dataset) => sum + dataset.data, 0);
+
+    if (total === 0) {
+      return {
+        label: monthData.label,
+        datasets: monthData.datasets.map((dataset) => ({ ...dataset, data: 0 })),
+      };
+    }
+
+    // Вычисляем проценты с округлением
+    const datasetsWithPercentages = monthData.datasets.map((dataset) => ({
+      ...dataset,
+      data: Math.round((dataset.data / total) * 100),
+    }));
+
+    // Корректируем последний элемент, чтобы сумма была ровно 100%
+    const calculatedSum = datasetsWithPercentages.reduce((sum, dataset) => sum + dataset.data, 0);
+    if (calculatedSum !== 100 && datasetsWithPercentages.length > 0) {
+      const lastIndex = datasetsWithPercentages.length - 1;
+      datasetsWithPercentages[lastIndex].data += 100 - calculatedSum;
+    }
+
+    return {
+      label: monthData.label,
+      datasets: datasetsWithPercentages,
+    };
+  });
+};
+
 // Обработка данных успешности по типу
 export const processSuccessByTypeData = (data: MonthlyReportResponse): SuccessByTypeData[] => {
   const typeTotals = {
@@ -650,6 +684,40 @@ export const processSuccessByTypeDataByMonth = (data: MonthlyReportResponse): Ma
     return {
       label: monthData.month,
       datasets,
+    };
+  });
+};
+
+// Обработка данных по типу в процентном режиме
+export const processSuccessByTypeDataByMonthPercentage = (data: MonthlyReportResponse): ManagerData[] => {
+  const absoluteData = processSuccessByTypeDataByMonth(data);
+
+  return absoluteData.map((monthData) => {
+    const total = monthData.datasets.reduce((sum, dataset) => sum + dataset.data, 0);
+
+    if (total === 0) {
+      return {
+        label: monthData.label,
+        datasets: monthData.datasets.map((dataset) => ({ ...dataset, data: 0 })),
+      };
+    }
+
+    // Вычисляем проценты с округлением
+    const datasetsWithPercentages = monthData.datasets.map((dataset) => ({
+      ...dataset,
+      data: Math.round((dataset.data / total) * 100),
+    }));
+
+    // Корректируем последний элемент, чтобы сумма была ровно 100%
+    const calculatedSum = datasetsWithPercentages.reduce((sum, dataset) => sum + dataset.data, 0);
+    if (calculatedSum !== 100 && datasetsWithPercentages.length > 0) {
+      const lastIndex = datasetsWithPercentages.length - 1;
+      datasetsWithPercentages[lastIndex].data += 100 - calculatedSum;
+    }
+
+    return {
+      label: monthData.label,
+      datasets: datasetsWithPercentages,
     };
   });
 };
