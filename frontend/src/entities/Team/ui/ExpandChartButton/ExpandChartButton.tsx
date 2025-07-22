@@ -5,10 +5,32 @@ import { Fullscreen } from '@mui/icons-material';
 interface ExpandChartButtonProps {
   onClick: () => void;
   title?: string;
+  position?: 'top-left' | 'top-right';
+  inline?: boolean;
 }
 
 export const ExpandChartButton = memo((props: ExpandChartButtonProps) => {
-  const { onClick, title = 'Раскрыть график' } = props;
+  const { onClick, title = 'Раскрыть график', position = 'top-right', inline = false } = props;
+
+  const getPositionStyles = () => {
+    if (inline) {
+      return {};
+    }
+
+    switch (position) {
+      case 'top-left':
+        return {
+          top: 8,
+          left: 8,
+        };
+      case 'top-right':
+      default:
+        return {
+          top: 8,
+          right: 8,
+        };
+    }
+  };
 
   return (
     <Tooltip title={title} placement="top">
@@ -16,9 +38,8 @@ export const ExpandChartButton = memo((props: ExpandChartButtonProps) => {
         onClick={onClick}
         size="small"
         sx={{
-          position: 'absolute',
-          top: 8,
-          left: 8,
+          position: inline ? 'static' : 'absolute',
+          ...getPositionStyles(),
           zIndex: 10,
           bgcolor: 'rgba(255, 255, 255, 0.9)',
           backdropFilter: 'blur(4px)',

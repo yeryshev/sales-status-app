@@ -253,20 +253,21 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
         }}
       >
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 600,
-              mb: 2,
-              color: 'text.primary',
-            }}
-          >
-            {title}
-          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600,
+                color: 'text.primary',
+              }}
+            >
+              {title}
+            </Typography>
+            <ExpandChartButton onClick={() => setIsFullScreen(true)} title={`Раскрыть "${title}"`} inline />
+          </Box>
 
           <Box sx={{ height: getChartHeight(), position: 'relative' }}>
             <Bar data={chartData} options={options} />
-            <ExpandChartButton onClick={() => setIsFullScreen(true)} title={`Раскрыть "${title}"`} />
           </Box>
         </Box>
       </Paper>

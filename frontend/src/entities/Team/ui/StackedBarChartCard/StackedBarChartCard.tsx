@@ -156,21 +156,24 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
         }}
       >
         <CardContent sx={{ p: 3, height: '100%' }}>
-          <Typography
-            variant="h6"
-            sx={{
-              mb: 2,
-              fontWeight: 600,
-              color: 'text.primary',
-              fontSize: '1.1rem',
-            }}
+          <Box
+            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, position: 'relative' }}
           >
-            {title}
-          </Typography>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600,
+                color: 'text.primary',
+                fontSize: '1.1rem',
+              }}
+            >
+              {title}
+            </Typography>
+            <ExpandChartButton onClick={() => setIsFullScreen(true)} title={`Раскрыть "${title}"`} inline />
+          </Box>
 
           <Box sx={{ height: getCardHeight(), position: 'relative' }}>
             <Bar ref={chartRef} data={chartData} options={options} />
-            <ExpandChartButton onClick={() => setIsFullScreen(true)} title={`Раскрыть "${title}"`} />
           </Box>
         </CardContent>
       </Card>
