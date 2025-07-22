@@ -27,8 +27,13 @@ export { StackedBarChartCard } from './ui/StackedBarChartCard';
 export {
   processChannelData,
   processConversionData,
+  processConversionDataByMonth,
+  processConversionDataForBarChart,
+  processConversionDataForGroupedBarChart,
   processSuccessByChannelData,
+  processSuccessByChannelDataByMonth,
   processSuccessByTypeData,
+  processSuccessByTypeDataByMonth,
   processFailedDealsData,
   processFailedDealsDataByMonth,
   processChannelDataByMonth,

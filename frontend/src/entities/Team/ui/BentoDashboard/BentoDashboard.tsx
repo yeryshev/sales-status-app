@@ -3,15 +3,19 @@ import { Box, Grid, Typography } from '@mui/material';
 import { People, TrendingUp, Analytics, Assessment } from '@mui/icons-material';
 import { MonthlyReportResponse } from '../../model/types/monthlyReport';
 import { MetricsCard } from '../MetricsCard';
-import { PieChartCard } from '../PieChartCard';
-import { LineChartCard } from '../LineChartCard';
-import { BarChartCard } from '../BarChartCard';
+
 import { StackedBarChartCard } from '../StackedBarChartCard';
+import { ConversionBarChartCard } from '../ConversionBarChartCard';
 import {
   processChannelData,
   processConversionData,
+  processConversionDataByMonth,
+  processConversionDataForBarChart,
+  processConversionDataForGroupedBarChart,
   processSuccessByChannelData,
+  processSuccessByChannelDataByMonth,
   processSuccessByTypeData,
+  processSuccessByTypeDataByMonth,
   processFailedDealsData,
   processFailedDealsDataByMonth,
   processChannelDataByMonth,
@@ -34,8 +38,13 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
       channelData: processChannelData(data),
       channelDataByMonth: processChannelDataByMonth(data),
       conversionData: processConversionData(data),
+      conversionDataByMonth: processConversionDataByMonth(data),
+      conversionDataForBarChart: processConversionDataForBarChart(data),
+      conversionDataForGroupedBarChart: processConversionDataForGroupedBarChart(data),
       successByChannelData: processSuccessByChannelData(data),
+      successByChannelDataByMonth: processSuccessByChannelDataByMonth(data),
       successByTypeData: processSuccessByTypeData(data),
+      successByTypeDataByMonth: processSuccessByTypeDataByMonth(data),
       failedDealsData: processFailedDealsData(data),
       failedDealsDataByMonth: processFailedDealsDataByMonth(data),
       managerData: processManagerData(data),
@@ -192,42 +201,31 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
 
         {/* Конверсия по месяцам */}
         <Grid item xs={12}>
-          <LineChartCard
+          <ConversionBarChartCard
             title="Конверсия по месяцам"
-            data={processedData.conversionData.map((item) => ({
-              label: item.period,
-              value: Math.round(item.conversionRate),
-            }))}
-            color="#4caf50"
-            yAxisLabel="Конверсия (%)"
-            size="medium"
+            data={processedData.conversionDataForGroupedBarChart.chartData}
+            monthLabels={processedData.conversionDataForGroupedBarChart.monthLabels}
+            yAxisLabel="Количество лидов"
+            size="large"
           />
         </Grid>
 
         {/* Успешность по каналам */}
         <Grid item xs={12} md={6}>
-          <BarChartCard
+          <StackedBarChartCard
             title="Успешность по каналам"
-            data={processedData.successByChannelData.map((item) => ({
-              label: item.channel,
-              value: Math.round(item.successRate),
-              color: item.color,
-            }))}
-            yAxisLabel="Успешность (%)"
-            horizontal={true}
+            data={processedData.successByChannelDataByMonth}
+            yAxisLabel="Количество успешных сделок"
             size="medium"
           />
         </Grid>
 
         {/* Успешные по типу */}
         <Grid item xs={12} md={6}>
-          <PieChartCard
+          <StackedBarChartCard
             title="Успешные по типу"
-            data={processedData.successByTypeData.map((item) => ({
-              label: item.type,
-              value: item.value,
-              color: item.color,
-            }))}
+            data={processedData.successByTypeDataByMonth}
+            yAxisLabel="Количество успешных сделок"
             size="medium"
           />
         </Grid>

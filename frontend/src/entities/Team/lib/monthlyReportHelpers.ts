@@ -122,14 +122,14 @@ export const processChannelData = (data: MonthlyReportResponse): ChannelData[] =
   });
 
   const channelLabels = {
-    call: 'Звонки',
+    call: 'Входящие звонки',
     email: 'Email',
-    event: 'События',
+    event: 'Ивенты',
     tickets: 'Тикеты',
     campaign: 'Кампании',
     chatwoot: 'Chatwoot',
     telegram: 'Telegram',
-    cold_call: 'Холодные звонки',
+    cold_call: 'Прозвоны регистраций',
     personal_contact: 'Личные контакты',
   };
 
@@ -183,6 +183,205 @@ export const processConversionData = (data: MonthlyReportResponse): ConversionDa
     });
 };
 
+// Обработка данных конверсии по месяцам для столбчатого графика
+export const processConversionDataByMonth = (data: MonthlyReportResponse): ManagerData[] => {
+  const monthDataMap = new Map<string, { received: number; qualified: number; successful: number }>();
+
+  data.result.users.forEach((user) => {
+    user.reports.forEach((report) => {
+      const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
+
+      if (!monthDataMap.has(key)) {
+        monthDataMap.set(key, { received: 0, qualified: 0, successful: 0 });
+      }
+
+      const monthData = monthDataMap.get(key)!;
+      monthData.received += report.leads_total;
+      monthData.qualified += report.leads_qualified;
+      monthData.successful += report.leads_success;
+    });
+  });
+
+  // Сортируем данные по дате
+  const sortedData = Array.from(monthDataMap.entries())
+    .map(([key, data]) => {
+      const [year, month] = key.split('-');
+      const monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
+      return {
+        month: monthLabel,
+        year: parseInt(year),
+        monthNumber: parseInt(month),
+        data,
+      };
+    })
+    .sort((a, b) => {
+      if (a.year !== b.year) {
+        return a.year - b.year;
+      }
+      return a.monthNumber - b.monthNumber;
+    });
+
+  return sortedData.map((monthData) => {
+    const datasets = [
+      {
+        label: 'Получено лидов',
+        data: monthData.data.received,
+        backgroundColor: '#1976d2', // Синий
+      },
+      {
+        label: 'Квалифицировано',
+        data: monthData.data.qualified,
+        backgroundColor: '#ff9800', // Оранжевый
+      },
+      {
+        label: 'Успешно реализовано',
+        data: monthData.data.successful,
+        backgroundColor: '#4caf50', // Зеленый
+      },
+    ];
+
+    return {
+      label: monthData.month,
+      datasets,
+    };
+  });
+};
+
+// Обработка данных конверсии по месяцам для столбчатого графика с тремя столбцами
+export const processConversionDataForBarChart = (
+  data: MonthlyReportResponse,
+): Array<{ label: string; value: number; color: string }> => {
+  const monthDataMap = new Map<string, { received: number; qualified: number; successful: number }>();
+
+  data.result.users.forEach((user) => {
+    user.reports.forEach((report) => {
+      const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
+
+      if (!monthDataMap.has(key)) {
+        monthDataMap.set(key, { received: 0, qualified: 0, successful: 0 });
+      }
+
+      const monthData = monthDataMap.get(key)!;
+      monthData.received += report.leads_total;
+      monthData.qualified += report.leads_qualified;
+      monthData.successful += report.leads_success;
+    });
+  });
+
+  // Сортируем данные по дате
+  const sortedData = Array.from(monthDataMap.entries())
+    .map(([key, data]) => {
+      const [year, month] = key.split('-');
+      const monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
+      return {
+        month: monthLabel,
+        year: parseInt(year),
+        monthNumber: parseInt(month),
+        data,
+      };
+    })
+    .sort((a, b) => {
+      if (a.year !== b.year) {
+        return a.year - b.year;
+      }
+      return a.monthNumber - b.monthNumber;
+    });
+
+  const result: Array<{ label: string; value: number; color: string }> = [];
+
+  sortedData.forEach((monthData) => {
+    result.push(
+      {
+        label: 'Получено лидов',
+        value: monthData.data.received,
+        color: '#1976d2', // Синий
+      },
+      {
+        label: 'Квалифицировано',
+        value: monthData.data.qualified,
+        color: '#ff9800', // Оранжевый
+      },
+      {
+        label: 'Успешно реализовано',
+        value: monthData.data.successful,
+        color: '#4caf50', // Зеленый
+      },
+    );
+  });
+
+  return result;
+};
+
+// Обработка данных конверсии по месяцам для столбчатого графика с группировкой по месяцам
+export const processConversionDataForGroupedBarChart = (
+  data: MonthlyReportResponse,
+): {
+  chartData: Array<{ label: string; value: number; color: string }>;
+  monthLabels: string[];
+} => {
+  const monthDataMap = new Map<string, { received: number; qualified: number; successful: number }>();
+
+  data.result.users.forEach((user) => {
+    user.reports.forEach((report) => {
+      const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
+
+      if (!monthDataMap.has(key)) {
+        monthDataMap.set(key, { received: 0, qualified: 0, successful: 0 });
+      }
+
+      const monthData = monthDataMap.get(key)!;
+      monthData.received += report.leads_total;
+      monthData.qualified += report.leads_qualified;
+      monthData.successful += report.leads_success;
+    });
+  });
+
+  // Сортируем данные по дате
+  const sortedData = Array.from(monthDataMap.entries())
+    .map(([key, data]) => {
+      const [year, month] = key.split('-');
+      const monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
+      return {
+        month: monthLabel,
+        year: parseInt(year),
+        monthNumber: parseInt(month),
+        data,
+      };
+    })
+    .sort((a, b) => {
+      if (a.year !== b.year) {
+        return a.year - b.year;
+      }
+      return a.monthNumber - b.monthNumber;
+    });
+
+  const chartData: Array<{ label: string; value: number; color: string }> = [];
+  const monthLabels: string[] = [];
+
+  sortedData.forEach((monthData) => {
+    monthLabels.push(monthData.month);
+    chartData.push(
+      {
+        label: 'Получено лидов',
+        value: monthData.data.received,
+        color: '#1976d2', // Синий
+      },
+      {
+        label: 'Квалифицировано',
+        value: monthData.data.qualified,
+        color: '#ff9800', // Оранжевый
+      },
+      {
+        label: 'Успешно реализовано',
+        value: monthData.data.successful,
+        color: '#4caf50', // Зеленый
+      },
+    );
+  });
+
+  return { chartData, monthLabels };
+};
+
 // Обработка данных успешности по каналам
 export const processSuccessByChannelData = (data: MonthlyReportResponse): SuccessByChannelData[] => {
   const channelData = {
@@ -221,14 +420,14 @@ export const processSuccessByChannelData = (data: MonthlyReportResponse): Succes
   });
 
   const channelLabels = {
-    call: 'Звонки',
+    call: 'Входящие звонки',
     email: 'Email',
-    event: 'События',
+    event: 'Ивенты',
     tickets: 'Тикеты',
     campaign: 'Кампании',
     chatwoot: 'Chatwoot',
     telegram: 'Telegram',
-    cold_call: 'Холодные звонки',
+    cold_call: 'Прозвоны регистраций',
     personal_contact: 'Личные контакты',
   };
 
@@ -242,6 +441,108 @@ export const processSuccessByChannelData = (data: MonthlyReportResponse): Succes
       color: channelColors[key as keyof typeof channelColors],
     }))
     .sort((a, b) => b.successRate - a.successRate);
+};
+
+// Обработка данных успешности по каналам по месяцам для накопительного графика
+export const processSuccessByChannelDataByMonth = (data: MonthlyReportResponse): ManagerData[] => {
+  const monthDataMap = new Map<string, { [channel: string]: number }>();
+  const channelsSet = new Set<string>();
+
+  data.result.users.forEach((user) => {
+    user.reports.forEach((report) => {
+      const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
+
+      if (!monthDataMap.has(key)) {
+        monthDataMap.set(key, {
+          call: 0,
+          email: 0,
+          event: 0,
+          tickets: 0,
+          campaign: 0,
+          chatwoot: 0,
+          telegram: 0,
+          cold_call: 0,
+          personal_contact: 0,
+        });
+      }
+
+      const monthData = monthDataMap.get(key)!;
+
+      // Считаем только успешные сделки
+      monthData.call += report.leads_success_by_call;
+      monthData.email += report.leads_success_by_email;
+      monthData.event += report.leads_success_by_event;
+      monthData.tickets += report.leads_success_by_tickets;
+      monthData.campaign += report.leads_success_by_campaign;
+      monthData.chatwoot += report.leads_success_by_chatwoot;
+      monthData.telegram += report.leads_success_by_telegram;
+      monthData.cold_call += report.leads_success_by_cold_call;
+      monthData.personal_contact += report.leads_success_by_personal_contact;
+
+      // Добавляем каналы, которые имеют успешные сделки
+      if (report.leads_success_by_call > 0) channelsSet.add('call');
+      if (report.leads_success_by_email > 0) channelsSet.add('email');
+      if (report.leads_success_by_event > 0) channelsSet.add('event');
+      if (report.leads_success_by_tickets > 0) channelsSet.add('tickets');
+      if (report.leads_success_by_campaign > 0) channelsSet.add('campaign');
+      if (report.leads_success_by_chatwoot > 0) channelsSet.add('chatwoot');
+      if (report.leads_success_by_telegram > 0) channelsSet.add('telegram');
+      if (report.leads_success_by_cold_call > 0) channelsSet.add('cold_call');
+      if (report.leads_success_by_personal_contact > 0) channelsSet.add('personal_contact');
+    });
+  });
+
+  const channelLabels = {
+    call: 'Входящие звонки',
+    email: 'Email',
+    event: 'Ивенты',
+    tickets: 'Тикеты',
+    campaign: 'Кампании',
+    chatwoot: 'Chatwoot',
+    telegram: 'Telegram',
+    cold_call: 'Прозвоны регистраций',
+    personal_contact: 'Личные контакты',
+  };
+
+  const channelColors = {
+    call: '#FF6384',
+    email: '#36A2EB',
+    event: '#FFCE56',
+    tickets: '#4BC0C0',
+    campaign: '#9966FF',
+    chatwoot: '#FF9F40',
+    telegram: '#C9CBCF',
+    cold_call: '#E91E63',
+    personal_contact: '#8BC34A',
+  };
+
+  const sortedData = Array.from(monthDataMap.entries())
+    .map(([key, channelData]) => {
+      const [year, month] = key.split('-');
+      const monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
+      return { month: monthLabel, year: parseInt(year), monthNumber: parseInt(month), channelData };
+    })
+    .sort((a, b) => {
+      if (a.year !== b.year) {
+        return a.year - b.year;
+      }
+      return a.monthNumber - b.monthNumber;
+    });
+
+  const channels = Array.from(channelsSet).sort();
+
+  return sortedData.map((monthData) => {
+    const datasets = channels.map((channel) => ({
+      label: channelLabels[channel as keyof typeof channelLabels],
+      data: monthData.channelData[channel] || 0,
+      backgroundColor: channelColors[channel as keyof typeof channelColors],
+    }));
+
+    return {
+      label: monthData.month,
+      datasets,
+    };
+  });
 };
 
 // Обработка данных успешности по типу
@@ -263,7 +564,7 @@ export const processSuccessByTypeData = (data: MonthlyReportResponse): SuccessBy
   const typeLabels = {
     upsale: 'Апсейл',
     newsale: 'Новые продажи',
-    accounttransfer: 'Перевод аккаунтов',
+    accounttransfer: 'Смена аккаунта',
   };
 
   return Object.entries(typeTotals)
@@ -274,6 +575,78 @@ export const processSuccessByTypeData = (data: MonthlyReportResponse): SuccessBy
       color: typeColors[key as keyof typeof typeColors],
     }))
     .sort((a, b) => b.value - a.value);
+};
+
+// Обработка данных успешности по типу по месяцам для накопительного графика
+export const processSuccessByTypeDataByMonth = (data: MonthlyReportResponse): ManagerData[] => {
+  const monthDataMap = new Map<string, { [type: string]: number }>();
+  const typesSet = new Set<string>();
+
+  data.result.users.forEach((user) => {
+    user.reports.forEach((report) => {
+      const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
+
+      if (!monthDataMap.has(key)) {
+        monthDataMap.set(key, {
+          upsale: 0,
+          newsale: 0,
+          accounttransfer: 0,
+        });
+      }
+
+      const monthData = monthDataMap.get(key)!;
+
+      // Считаем успешные сделки по типам
+      monthData.upsale += report.leads_142_upsale;
+      monthData.newsale += report.leads_142_newsale;
+      monthData.accounttransfer += report.leads_142_accounttransfer;
+
+      // Добавляем типы, которые имеют успешные сделки
+      if (report.leads_142_upsale > 0) typesSet.add('upsale');
+      if (report.leads_142_newsale > 0) typesSet.add('newsale');
+      if (report.leads_142_accounttransfer > 0) typesSet.add('accounttransfer');
+    });
+  });
+
+  const typeLabels = {
+    upsale: 'Апсейл',
+    newsale: 'Новые продажи',
+    accounttransfer: 'Смена аккаунта',
+  };
+
+  const typeColors = {
+    upsale: '#FF6384',
+    newsale: '#36A2EB',
+    accounttransfer: '#FFCE56',
+  };
+
+  const sortedData = Array.from(monthDataMap.entries())
+    .map(([key, typeData]) => {
+      const [year, month] = key.split('-');
+      const monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
+      return { month: monthLabel, year: parseInt(year), monthNumber: parseInt(month), typeData };
+    })
+    .sort((a, b) => {
+      if (a.year !== b.year) {
+        return a.year - b.year;
+      }
+      return a.monthNumber - b.monthNumber;
+    });
+
+  const types = Array.from(typesSet).sort();
+
+  return sortedData.map((monthData) => {
+    const datasets = types.map((type) => ({
+      label: typeLabels[type as keyof typeof typeLabels],
+      data: monthData.typeData[type] || 0,
+      backgroundColor: typeColors[type as keyof typeof typeColors],
+    }));
+
+    return {
+      label: monthData.month,
+      datasets,
+    };
+  });
 };
 
 // Обработка данных неуспешных сделок
@@ -442,14 +815,14 @@ export const processChannelDataByMonth = (data: MonthlyReportResponse): ManagerD
   });
 
   const channelLabels = {
-    call: 'Звонки',
+    call: 'Входящие звонки',
     email: 'Email',
-    event: 'События',
+    event: 'Ивенты',
     tickets: 'Тикеты',
     campaign: 'Кампании',
     chatwoot: 'Chatwoot',
     telegram: 'Telegram',
-    cold_call: 'Холодные звонки',
+    cold_call: 'Прозвоны регистраций',
     personal_contact: 'Личные контакты',
   };
 

@@ -9,58 +9,87 @@ import {
   Legend,
   ChartOptions,
 } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
 import { Box, Typography, Paper } from '@mui/material';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
 
-interface BarChartDataPoint {
+interface ConversionBarChartDataPoint {
   label: string;
   value: number;
   color?: string;
 }
 
-interface BarChartCardProps {
+interface ConversionBarChartCardProps {
   title: string;
-  data: BarChartDataPoint[];
+  data: ConversionBarChartDataPoint[];
+  monthLabels: string[];
   isLoading?: boolean;
   error?: string;
   size?: 'small' | 'medium' | 'large';
   yAxisLabel?: string;
-  horizontal?: boolean;
 }
 
-export const BarChartCard = memo((props: BarChartCardProps) => {
-  const { title, data, isLoading, error, size = 'medium', yAxisLabel = 'Значение', horizontal = false } = props;
+export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) => {
+  const { title, data, monthLabels, isLoading, error, size = 'medium', yAxisLabel = 'Количество лидов' } = props;
 
   const chartData = useMemo(() => {
     if (!data.length) return null;
 
-    const colors = data.map((item, index) => item.color || `hsl(${(index * 137.5) % 360}, 70%, 50%)`);
+    // Группируем данные по типам (Получено лидов, Квалифицировано, Успешно реализовано)
+    const receivedData = data.filter((_, index) => index % 3 === 0).map((item) => item.value);
+    const qualifiedData = data.filter((_, index) => index % 3 === 1).map((item) => item.value);
+    const successfulData = data.filter((_, index) => index % 3 === 2).map((item) => item.value);
 
     return {
-      labels: data.map((item) => item.label),
+      labels: monthLabels,
       datasets: [
         {
-          label: title,
-          data: data.map((item) => item.value),
-          backgroundColor: colors,
-          borderColor: colors,
+          label: 'Получено лидов',
+          data: receivedData,
+          backgroundColor: '#1976d2',
+          borderColor: '#1976d2',
+          borderWidth: 1,
+          borderRadius: 4,
+          borderSkipped: false,
+        },
+        {
+          label: 'Квалифицировано',
+          data: qualifiedData,
+          backgroundColor: '#ff9800',
+          borderColor: '#ff9800',
+          borderWidth: 1,
+          borderRadius: 4,
+          borderSkipped: false,
+        },
+        {
+          label: 'Успешно реализовано',
+          data: successfulData,
+          backgroundColor: '#4caf50',
+          borderColor: '#4caf50',
           borderWidth: 1,
           borderRadius: 4,
           borderSkipped: false,
         },
       ],
     };
-  }, [data, title]);
+  }, [data, monthLabels]);
 
   const options: ChartOptions<'bar'> = {
     responsive: true,
     maintainAspectRatio: false,
-    indexAxis: horizontal ? ('y' as const) : ('x' as const),
     plugins: {
       legend: {
-        display: false,
+        display: true,
+        position: 'top' as const,
+        labels: {
+          usePointStyle: true,
+          padding: 20,
+          font: {
+            size: 12,
+          },
+        },
       },
       tooltip: {
         backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -70,8 +99,23 @@ export const BarChartCard = memo((props: BarChartCardProps) => {
         borderWidth: 1,
         callbacks: {
           label: (context) => {
-            return `${context.label}: ${context.parsed.y || context.parsed.x}`;
+            return `${context.dataset.label}: ${context.parsed.y}`;
           },
+        },
+      },
+      datalabels: {
+        display: true,
+        color: '#333',
+        anchor: 'end' as const,
+        align: 'top' as const,
+        offset: 4,
+        rotation: -90,
+        font: {
+          weight: 'bold' as const,
+          size: 11,
+        },
+        formatter: function (value: number) {
+          return value.toString();
         },
       },
     },
@@ -79,17 +123,13 @@ export const BarChartCard = memo((props: BarChartCardProps) => {
       x: {
         beginAtZero: true,
         title: {
-          display: !horizontal,
-          text: horizontal ? 'Значение' : yAxisLabel,
-          font: {
-            size: 12,
-          },
+          display: false,
         },
         grid: {
-          color: 'rgba(0, 0, 0, 0.1)',
+          display: false,
         },
         ticks: {
-          maxRotation: horizontal ? 0 : 45,
+          maxRotation: 45,
           font: {
             size: 11,
           },
@@ -98,8 +138,8 @@ export const BarChartCard = memo((props: BarChartCardProps) => {
       y: {
         beginAtZero: true,
         title: {
-          display: horizontal,
-          text: horizontal ? yAxisLabel : 'Категория',
+          display: true,
+          text: yAxisLabel,
           font: {
             size: 12,
           },
