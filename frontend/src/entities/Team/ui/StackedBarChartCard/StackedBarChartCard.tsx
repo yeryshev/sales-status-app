@@ -6,6 +6,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
 import { ExpandChartButton } from '../ExpandChartButton';
 import { FullScreenChartModal } from '../FullScreenChartModal';
+import { calculateStackedYAxisMax } from '@/shared/lib/utils/chartUtils';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
 
@@ -108,7 +109,7 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
       y: {
         stacked: true,
         beginAtZero: true,
-        max: Math.max(...totalValues) * 1.2, // Максимальное значение на 20% больше максимального значения данных
+        max: calculateStackedYAxisMax(data), // Максимальное значение с правильным округлением
         title: {
           display: true,
           text: yAxisLabel,

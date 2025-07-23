@@ -13,6 +13,7 @@ import {
 import { Line } from 'react-chartjs-2';
 import { Box, Typography, Paper, useTheme } from '@mui/material';
 import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
+import { calculateYAxisMax } from '@/shared/lib/utils/chartUtils';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -92,6 +93,7 @@ export const LineChartCard = memo((props: LineChartCardProps) => {
       },
       y: {
         beginAtZero: true,
+        max: calculateYAxisMax(data.map((item) => item.value)), // Максимальное значение с правильным округлением
         title: {
           display: true,
           text: yAxisLabel,

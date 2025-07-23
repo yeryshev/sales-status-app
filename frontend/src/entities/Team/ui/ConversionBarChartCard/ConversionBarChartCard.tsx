@@ -13,6 +13,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
 import { Box, Typography, Paper, useTheme } from '@mui/material';
 import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
+import { calculateYAxisMax } from '@/shared/lib/utils/chartUtils';
 import { ExpandChartButton } from '../ExpandChartButton';
 import { FullScreenChartModal } from '../FullScreenChartModal';
 
@@ -145,6 +146,7 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
       },
       y: {
         beginAtZero: true,
+        max: calculateYAxisMax(data.map((item) => item.value)), // Максимальное значение с правильным округлением
         title: {
           display: true,
           text: yAxisLabel,

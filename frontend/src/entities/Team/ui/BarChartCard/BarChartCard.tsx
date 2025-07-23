@@ -12,6 +12,7 @@ import {
 import { Bar } from 'react-chartjs-2';
 import { Box, Typography, Paper, useTheme } from '@mui/material';
 import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
+import { calculateYAxisMax } from '@/shared/lib/utils/chartUtils';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -102,6 +103,7 @@ export const BarChartCard = memo((props: BarChartCardProps) => {
       },
       y: {
         beginAtZero: true,
+        max: calculateYAxisMax(data.map((item) => item.value)), // Максимальное значение с правильным округлением
         title: {
           display: horizontal,
           text: horizontal ? yAxisLabel : 'Категория',
