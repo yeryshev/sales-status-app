@@ -33,7 +33,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@sentry/react": "^8.18.0",
     "@sentry/vite-plugin": "^2.21.1",
-    "axios": "1.7.4",
+    "axios": "^1.11.0",
     "chart.js": "^4.5.0",
     "chartjs-plugin-datalabels": "^2.2.0",
     "moment": "^2.29.4",
@@ -75,7 +75,7 @@
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.18.2",
     "typescript-plugin-css-modules": "^5.1.0",
-    "vite": "5.4.6",
+    "vite": "^5.4.19",
     "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^2.0.5"
   }
