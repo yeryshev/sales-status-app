@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { Dialog, DialogContent, IconButton, Box, Typography, Paper } from '@mui/material';
+import { Dialog, DialogContent, IconButton, Box, Typography, Paper, useTheme } from '@mui/material';
 import { Close } from '@mui/icons-material';
 
 interface FullScreenChartModalProps {
@@ -11,6 +11,7 @@ interface FullScreenChartModalProps {
 
 export const FullScreenChartModal = memo((props: FullScreenChartModalProps) => {
   const { open, onClose, title, children } = props;
+  const theme = useTheme();
 
   return (
     <Dialog
@@ -42,9 +43,10 @@ export const FullScreenChartModal = memo((props: FullScreenChartModalProps) => {
           <IconButton
             onClick={onClose}
             sx={{
-              bgcolor: 'rgba(255, 255, 255, 0.9)',
+              bgcolor: theme.palette.mode === 'dark' ? theme.palette.background.paper : 'rgba(255, 255, 255, 0.9)',
+              color: theme.palette.text.primary,
               '&:hover': {
-                bgcolor: 'rgba(255, 255, 255, 1)',
+                bgcolor: theme.palette.mode === 'dark' ? theme.palette.action.hover : 'rgba(255, 255, 255, 1)',
               },
             }}
           >
@@ -60,7 +62,7 @@ export const FullScreenChartModal = memo((props: FullScreenChartModalProps) => {
               pb: 2,
               fontWeight: 600,
               color: 'text.primary',
-              borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+              borderBottom: `1px solid ${theme.palette.divider}`,
             }}
           >
             {title}

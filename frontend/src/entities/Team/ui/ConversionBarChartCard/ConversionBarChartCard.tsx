@@ -11,7 +11,8 @@ import {
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Typography, Paper, useTheme } from '@mui/material';
+import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 import { ExpandChartButton } from '../ExpandChartButton';
 import { FullScreenChartModal } from '../FullScreenChartModal';
 
@@ -36,6 +37,8 @@ interface ConversionBarChartCardProps {
 export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) => {
   const { title, data, monthLabels, isLoading, error, size = 'medium', yAxisLabel = 'Количество лидов' } = props;
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const chartTheme = useChartTheme();
+  const theme = useTheme();
 
   const chartData = useMemo(() => {
     if (!data.length) return null;
@@ -92,13 +95,14 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
           font: {
             size: 12,
           },
+          color: chartTheme.legendTextColor,
         },
       },
       tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#fff',
-        bodyColor: '#fff',
-        borderColor: '#1976d2',
+        backgroundColor: chartTheme.tooltipBackground,
+        titleColor: chartTheme.tooltipTextColor,
+        bodyColor: chartTheme.tooltipTextColor,
+        borderColor: chartTheme.tooltipBorderColor,
         borderWidth: 1,
         callbacks: {
           label: (context) => {
@@ -108,7 +112,7 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
       },
       datalabels: {
         display: true,
-        color: '#333',
+        color: chartTheme.dataLabelColor,
         anchor: 'end' as const,
         align: 'top' as const,
         offset: 4,
@@ -136,6 +140,7 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
           font: {
             size: 11,
           },
+          color: chartTheme.axisLabelColor,
         },
       },
       y: {
@@ -146,14 +151,16 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
           font: {
             size: 12,
           },
+          color: chartTheme.axisLabelColor,
         },
         grid: {
-          color: 'rgba(0, 0, 0, 0.1)',
+          color: chartTheme.gridColor,
         },
         ticks: {
           font: {
             size: 11,
           },
+          color: chartTheme.axisLabelColor,
         },
       },
     },
@@ -243,8 +250,11 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
         sx={{
           ...getSizeStyles(),
           borderRadius: 3,
-          background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
-          border: '1px solid #e0e0e0',
+          background:
+            theme.palette.mode === 'dark'
+              ? 'linear-gradient(135deg, #424242 0%, #303030 100%)'
+              : 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
+          border: `1px solid ${theme.palette.divider}`,
           transition: 'all 0.3s ease',
           '&:hover': {
             transform: 'translateY(-2px)',

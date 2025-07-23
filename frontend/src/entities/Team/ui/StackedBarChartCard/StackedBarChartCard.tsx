@@ -1,5 +1,6 @@
 import { memo, useRef, useState, Fragment } from 'react';
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import { Box, Card, CardContent, Typography, useTheme } from '@mui/material';
+import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
@@ -28,6 +29,8 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
   const { title, data, yAxisLabel = 'Количество', size = 'medium' } = props;
   const chartRef = useRef<ChartJS<'bar'> | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const chartTheme = useChartTheme();
+  const theme = useTheme();
 
   // Вычисляем итоговые значения для каждого столбца
   const totalValues = data.map((item) => item.datasets.reduce((sum, dataset) => sum + dataset.data, 0));
@@ -54,6 +57,7 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
           font: {
             size: 12,
           },
+          color: chartTheme.legendTextColor,
         },
       },
       title: {
@@ -74,7 +78,7 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
           // Показываем только итоговые значения (для последнего датасета в стеке)
           return context.datasetIndex === chartData.datasets.length - 1;
         },
-        color: '#333',
+        color: chartTheme.dataLabelColor,
         anchor: 'end' as const,
         align: 'top' as const,
         offset: 4,
@@ -98,6 +102,7 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
           font: {
             size: 11,
           },
+          color: chartTheme.axisLabelColor,
         },
       },
       y: {
@@ -110,14 +115,16 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
           font: {
             size: 12,
           },
+          color: chartTheme.axisLabelColor,
         },
         grid: {
-          color: 'rgba(0, 0, 0, 0.1)',
+          color: chartTheme.gridColor,
         },
         ticks: {
           font: {
             size: 11,
           },
+          color: chartTheme.axisLabelColor,
         },
       },
     },
@@ -144,8 +151,11 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
       <Card
         sx={{
           height: '100%',
-          background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-          border: '1px solid rgba(0, 0, 0, 0.08)',
+          background:
+            theme.palette.mode === 'dark'
+              ? 'linear-gradient(135deg, #424242 0%, #303030 100%)'
+              : 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+          border: `1px solid ${theme.palette.divider}`,
           borderRadius: 3,
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
           transition: 'all 0.3s ease',

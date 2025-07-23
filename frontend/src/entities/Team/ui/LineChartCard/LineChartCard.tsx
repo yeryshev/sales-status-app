@@ -11,7 +11,8 @@ import {
   ChartOptions,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Typography, Paper, useTheme } from '@mui/material';
+import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -32,6 +33,8 @@ interface LineChartCardProps {
 
 export const LineChartCard = memo((props: LineChartCardProps) => {
   const { title, data, color = '#1976d2', isLoading, error, size = 'medium', yAxisLabel = 'Значение' } = props;
+  const chartTheme = useChartTheme();
+  const theme = useTheme();
 
   const chartData = useMemo(() => {
     if (!data.length) return null;
@@ -48,14 +51,14 @@ export const LineChartCard = memo((props: LineChartCardProps) => {
           fill: true,
           tension: 0.4,
           pointBackgroundColor: color,
-          pointBorderColor: '#fff',
+          pointBorderColor: chartTheme.pointBorderColor,
           pointBorderWidth: 2,
           pointRadius: 4,
           pointHoverRadius: 6,
         },
       ],
     };
-  }, [data, title, color]);
+  }, [data, title, color, chartTheme.pointBorderColor]);
 
   const options: ChartOptions<'line'> = {
     responsive: true,
@@ -67,10 +70,10 @@ export const LineChartCard = memo((props: LineChartCardProps) => {
       tooltip: {
         mode: 'index' as const,
         intersect: false,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#fff',
-        bodyColor: '#fff',
-        borderColor: color,
+        backgroundColor: chartTheme.tooltipBackground,
+        titleColor: chartTheme.tooltipTextColor,
+        bodyColor: chartTheme.tooltipTextColor,
+        borderColor: chartTheme.tooltipBorderColor,
         borderWidth: 1,
       },
     },
@@ -84,6 +87,7 @@ export const LineChartCard = memo((props: LineChartCardProps) => {
           font: {
             size: 11,
           },
+          color: chartTheme.axisLabelColor,
         },
       },
       y: {
@@ -94,9 +98,10 @@ export const LineChartCard = memo((props: LineChartCardProps) => {
           font: {
             size: 12,
           },
+          color: chartTheme.axisLabelColor,
         },
         grid: {
-          color: 'rgba(0, 0, 0, 0.1)',
+          color: chartTheme.gridColor,
         },
       },
     },
@@ -179,8 +184,11 @@ export const LineChartCard = memo((props: LineChartCardProps) => {
       sx={{
         ...getSizeStyles(),
         borderRadius: 3,
-        background: 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
-        border: '1px solid #e0e0e0',
+        background:
+          theme.palette.mode === 'dark'
+            ? 'linear-gradient(135deg, #424242 0%, #303030 100%)'
+            : 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
+        border: `1px solid ${theme.palette.divider}`,
         transition: 'all 0.3s ease',
         '&:hover': {
           transform: 'translateY(-2px)',
