@@ -28,8 +28,20 @@ interface TeamRowCellsListProps extends TeamRowProps {
 export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] => {
   const { teammate, additionalUserData, isDeadlineReached, isAccountManagersRoute, expandRow, setExpandRow } = props;
 
-  const { avatar, absence, mangoState, deals, budget, qlik, leads, overdueTasks, conversations, tickets } =
-    additionalUserData;
+  const {
+    avatar,
+    absence,
+    mangoState,
+    deals,
+    budget,
+    qlik,
+    leads,
+    overdueTasks,
+    conversations,
+    tickets,
+    idAmoCRM,
+    idInside,
+  } = additionalUserData;
 
   return [
     {
@@ -67,12 +79,12 @@ export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'center',
       width: CELL_WIDTHS.LEADS,
-      content: <LeadsCell leads={leads} absence={absence} />,
+      content: <LeadsCell leads={leads} absence={absence} idAmoCRM={idAmoCRM} />,
     },
     {
       align: 'center',
       width: CELL_WIDTHS.TASKS,
-      content: <TasksCell overdueTasks={overdueTasks} absence={absence} />,
+      content: <TasksCell overdueTasks={overdueTasks} absence={absence} idAmoCRM={idAmoCRM} />,
     },
     {
       align: 'center',
@@ -82,7 +94,7 @@ export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'center',
       width: CELL_WIDTHS.TICKETS,
-      content: <TicketsCell tickets={tickets} absence={absence} />,
+      content: <TicketsCell tickets={tickets} absence={absence} idInside={idInside} />,
     },
     {
       align: 'center',
