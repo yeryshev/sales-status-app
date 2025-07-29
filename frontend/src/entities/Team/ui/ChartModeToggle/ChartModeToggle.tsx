@@ -18,8 +18,23 @@ export const ChartModeToggle = memo((props: ChartModeToggleProps) => {
   };
 
   return (
-    <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-      <Typography variant="body2" color="text.secondary" sx={{ minWidth: 'fit-content' }}>
+    <Box
+      sx={{
+        mb: 2,
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        alignItems: { xs: 'stretch', sm: 'center' },
+        gap: { xs: 1, sm: 2 },
+      }}
+    >
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        sx={{
+          minWidth: { xs: 'auto', sm: 'fit-content' },
+          textAlign: { xs: 'center', sm: 'left' },
+        }}
+      >
         {title}:
       </Typography>
       <ToggleButtonGroup
@@ -28,11 +43,9 @@ export const ChartModeToggle = memo((props: ChartModeToggleProps) => {
         onChange={handleChange}
         size="small"
         sx={{
+          width: { xs: '100%', sm: 'auto' },
           '& .MuiToggleButton-root': {
-            px: 2,
-            py: 0.5,
-            fontSize: '0.75rem',
-            textTransform: 'none',
+            flex: { xs: 1, sm: 'none' },
           },
         }}
       >

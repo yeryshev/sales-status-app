@@ -1,5 +1,5 @@
 import { memo, useRef, useState, Fragment } from 'react';
-import { Box, Card, CardContent, Typography, useTheme } from '@mui/material';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -31,7 +31,6 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
   const chartRef = useRef<ChartJS<'bar'> | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const chartTheme = useChartTheme();
-  const theme = useTheme();
 
   // Вычисляем итоговые значения для каждого столбца
   const totalValues = data.map((item) => item.datasets.reduce((sum, dataset) => sum + dataset.data, 0));
@@ -149,37 +148,12 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
 
   return (
     <Fragment>
-      <Card
-        sx={{
-          height: '100%',
-          background:
-            theme.palette.mode === 'dark'
-              ? 'linear-gradient(135deg, #424242 0%, #303030 100%)'
-              : 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: 3,
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-          transition: 'all 0.3s ease',
-          '&:hover': {
-            transform: 'translateY(-2px)',
-            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
-          },
-        }}
-      >
+      <Card>
         <CardContent sx={{ p: 3, height: '100%' }}>
           <Box
             sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, position: 'relative' }}
           >
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 600,
-                color: 'text.primary',
-                fontSize: '1.1rem',
-              }}
-            >
-              {title}
-            </Typography>
+            <Typography variant="h6">{title}</Typography>
             <ExpandChartButton onClick={() => setIsFullScreen(true)} title={`Раскрыть "${title}"`} inline />
           </Box>
 

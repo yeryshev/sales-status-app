@@ -80,7 +80,13 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
       align: 'center',
       width: CELL_WIDTHS.ARROW_DOWN,
       content: !isAccountManagersRoute && (
-        <Switch name="isWorkingRemotely" checked={teammate.isWorkingRemotely} size={'small'} onChange={handleSwitch} />
+        <Switch
+          id="is-working-remotely-switch"
+          name="isWorkingRemotely"
+          checked={teammate.isWorkingRemotely}
+          size={'small'}
+          onChange={handleSwitch}
+        />
       ),
     },
   ];

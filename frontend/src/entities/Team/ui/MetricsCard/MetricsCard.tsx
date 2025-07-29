@@ -21,11 +21,11 @@ export const MetricsCard = memo((props: MetricsCardProps) => {
   const getSizeStyles = () => {
     switch (size) {
       case 'small':
-        return { minHeight: 120, padding: 2 };
+        return { height: 120, p: 2 };
       case 'large':
-        return { minHeight: 200, padding: 3 };
+        return { height: 200, p: 3 };
       default:
-        return { minHeight: 160, padding: 2.5 };
+        return { height: 160, p: 2.5 };
     }
   };
 
@@ -34,20 +34,14 @@ export const MetricsCard = memo((props: MetricsCardProps) => {
       elevation={2}
       sx={{
         ...getSizeStyles(),
-        borderRadius: 3,
-        background: `linear-gradient(135deg, ${color}15 0%, ${color}05 100%)`,
+        borderRadius: 2,
         border: `1px solid ${color}20`,
-        transition: 'all 0.3s ease',
-        '&:hover': {
-          transform: 'translateY(-2px)',
-          boxShadow: 4,
-        },
       }}
     >
       <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <Box>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
-            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
+            <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
               {title}
             </Typography>
             {icon && <Box sx={{ color: color, opacity: 0.7 }}>{icon}</Box>}
@@ -65,7 +59,7 @@ export const MetricsCard = memo((props: MetricsCardProps) => {
           </Typography>
 
           {subtitle && (
-            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+            <Typography variant="caption" color="text.secondary">
               {subtitle}
             </Typography>
           )}
@@ -74,16 +68,15 @@ export const MetricsCard = memo((props: MetricsCardProps) => {
         {trend && (
           <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
             {trend.isPositive ? (
-              <TrendingUp sx={{ color: '#4caf50', fontSize: '1rem', mr: 0.5 }} />
+              <TrendingUp sx={{ color: 'success.main', fontSize: '1rem', mr: 0.5 }} />
             ) : (
-              <TrendingDown sx={{ color: '#f44336', fontSize: '1rem', mr: 0.5 }} />
+              <TrendingDown sx={{ color: 'error.main', fontSize: '1rem', mr: 0.5 }} />
             )}
             <Typography
               variant="caption"
               sx={{
-                color: trend.isPositive ? '#4caf50' : '#f44336',
+                color: trend.isPositive ? 'success.main' : 'error.main',
                 fontWeight: 600,
-                fontSize: '0.75rem',
               }}
             >
               {trend.isPositive ? '+' : ''}

@@ -11,7 +11,7 @@ import {
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
-import { Box, Typography, Paper, useTheme } from '@mui/material';
+import { Box, Typography, Paper } from '@mui/material';
 import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 import { calculateYAxisMax } from '@/shared/lib/utils/chartUtils';
 import { ExpandChartButton } from '../ExpandChartButton';
@@ -39,7 +39,6 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
   const { title, data, monthLabels, isLoading, error, size = 'medium', yAxisLabel = 'Количество лидов' } = props;
   const [isFullScreen, setIsFullScreen] = useState(false);
   const chartTheme = useChartTheme();
-  const theme = useTheme();
 
   const chartData = useMemo(() => {
     if (!data.length) return null;
@@ -171,11 +170,11 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
   const getSizeStyles = () => {
     switch (size) {
       case 'small':
-        return { minHeight: 200, padding: 2 };
+        return { minHeight: 200, p: 2 };
       case 'large':
-        return { minHeight: 500, padding: 3 };
+        return { minHeight: 500, p: 3 };
       default:
-        return { minHeight: 280, padding: 2.5 };
+        return { minHeight: 280, p: 2.5 };
     }
   };
 
@@ -196,7 +195,6 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
         elevation={2}
         sx={{
           ...getSizeStyles(),
-          borderRadius: 3,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -213,7 +211,6 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
         elevation={2}
         sx={{
           ...getSizeStyles(),
-          borderRadius: 3,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -232,7 +229,6 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
         elevation={2}
         sx={{
           ...getSizeStyles(),
-          borderRadius: 3,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -247,34 +243,10 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
 
   return (
     <Fragment>
-      <Paper
-        elevation={2}
-        sx={{
-          ...getSizeStyles(),
-          borderRadius: 3,
-          background:
-            theme.palette.mode === 'dark'
-              ? 'linear-gradient(135deg, #424242 0%, #303030 100%)'
-              : 'linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%)',
-          border: `1px solid ${theme.palette.divider}`,
-          transition: 'all 0.3s ease',
-          '&:hover': {
-            transform: 'translateY(-2px)',
-            boxShadow: 4,
-          },
-        }}
-      >
+      <Paper elevation={2} sx={{ ...getSizeStyles() }}>
         <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 600,
-                color: 'text.primary',
-              }}
-            >
-              {title}
-            </Typography>
+            <Typography variant="h6">{title}</Typography>
             <ExpandChartButton onClick={() => setIsFullScreen(true)} title={`Раскрыть "${title}"`} inline />
           </Box>
 

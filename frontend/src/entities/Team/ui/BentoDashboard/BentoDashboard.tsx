@@ -2,9 +2,12 @@ import { memo, useMemo } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { People, TrendingUp, Analytics, Assessment } from '@mui/icons-material';
 import { MonthlyReportResponse } from '../../model/types/monthlyReport';
+import { MoneyReportResponse } from '../../model/types/moneyReport';
+import { AdditionalUserData } from '../../model/types/teamWebsocket';
 import { MetricsCard } from '../MetricsCard';
 import { StackedBarChartCard } from '../StackedBarChartCard';
 import { ConversionBarChartCard } from '../ConversionBarChartCard';
+import { MoneyReportCard } from '../MoneyReportCard';
 import { CurrentMonthFilter } from '../CurrentMonthFilter';
 import { ChartModeToggle } from '../ChartModeToggle';
 import { useCurrentMonthFilter } from '../../lib/hooks/useCurrentMonthFilter';
@@ -29,12 +32,16 @@ import {
 
 interface BentoDashboardProps {
   data: MonthlyReportResponse;
+  moneyData?: MoneyReportResponse;
+  moneyIsLoading?: boolean;
+  moneyError?: string;
   isLoading?: boolean;
   error?: string;
+  additionalTeamData?: AdditionalUserData[];
 }
 
 export const BentoDashboard = memo((props: BentoDashboardProps) => {
-  const { data, isLoading, error } = props;
+  const { data, moneyData, moneyIsLoading, moneyError, isLoading, error, additionalTeamData = [] } = props;
 
   // Используем хук для фильтрации текущего месяца
   const { showCurrentMonth, setShowCurrentMonth, filteredData } = useCurrentMonthFilter(data);
@@ -95,8 +102,8 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
 
   if (isLoading) {
     return (
-      <Box sx={{ p: 3 }}>
-        <Typography variant="h4" sx={{ mb: 3, fontWeight: 700 }}>
+      <Box>
+        <Typography variant="h4" sx={{ mb: 3 }}>
           Загрузка дашборда...
         </Typography>
       </Box>
@@ -105,7 +112,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
 
   if (error) {
     return (
-      <Box sx={{ p: 3 }}>
+      <Box>
         <Typography variant="h4" color="error" sx={{ mb: 3 }}>
           Ошибка загрузки данных: {error}
         </Typography>
@@ -115,7 +122,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
 
   if (!processedData || !totalMetrics) {
     return (
-      <Box sx={{ p: 3 }}>
+      <Box>
         <Typography variant="h4" sx={{ mb: 3 }}>
           Нет данных для отображения
         </Typography>
@@ -124,10 +131,18 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3, fontWeight: 700, color: 'text.primary' }}>
-        Аналитика продаж
-      </Typography>
+    <Box>
+      {/* Финансовые показатели менеджеров */}
+      {moneyData && (
+        <Box sx={{ mb: 4 }}>
+          <MoneyReportCard
+            data={moneyData}
+            isLoading={moneyIsLoading}
+            error={moneyError}
+            additionalTeamData={additionalTeamData}
+          />
+        </Box>
+      )}
 
       {/* Фильтр текущего месяца */}
       <CurrentMonthFilter showCurrentMonth={showCurrentMonth} onToggle={setShowCurrentMonth} />
@@ -229,38 +244,42 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
 
         {/* Успешные сделки по каналам */}
         <Grid item xs={12} md={6}>
-          <ChartModeToggle
-            mode={successByChannelMode}
-            onModeChange={setSuccessByChannelMode}
-            title="Режим отображения"
-          />
-          <StackedBarChartCard
-            title="Успешные сделки по каналам"
-            data={
-              successByChannelMode === 'percentage'
-                ? processedData.successByChannelDataByMonthPercentage
-                : processedData.successByChannelDataByMonth
-            }
-            yAxisLabel={
-              successByChannelMode === 'percentage' ? 'Процент от общего числа' : 'Количество успешных сделок'
-            }
-            size="medium"
-          />
+          <Box>
+            <ChartModeToggle
+              mode={successByChannelMode}
+              onModeChange={setSuccessByChannelMode}
+              title="Режим отображения"
+            />
+            <StackedBarChartCard
+              title="Успешные сделки по каналам"
+              data={
+                successByChannelMode === 'percentage'
+                  ? processedData.successByChannelDataByMonthPercentage
+                  : processedData.successByChannelDataByMonth
+              }
+              yAxisLabel={
+                successByChannelMode === 'percentage' ? 'Процент от общего числа' : 'Количество успешных сделок'
+              }
+              size="medium"
+            />
+          </Box>
         </Grid>
 
         {/* Успешные по типу */}
         <Grid item xs={12} md={6}>
-          <ChartModeToggle mode={successByTypeMode} onModeChange={setSuccessByTypeMode} title="Режим отображения" />
-          <StackedBarChartCard
-            title="Успешные по типу"
-            data={
-              successByTypeMode === 'percentage'
-                ? processedData.successByTypeDataByMonthPercentage
-                : processedData.successByTypeDataByMonth
-            }
-            yAxisLabel={successByTypeMode === 'percentage' ? 'Процент от общего числа' : 'Количество успешных сделок'}
-            size="medium"
-          />
+          <Box>
+            <ChartModeToggle mode={successByTypeMode} onModeChange={setSuccessByTypeMode} title="Режим отображения" />
+            <StackedBarChartCard
+              title="Успешные по типу"
+              data={
+                successByTypeMode === 'percentage'
+                  ? processedData.successByTypeDataByMonthPercentage
+                  : processedData.successByTypeDataByMonth
+              }
+              yAxisLabel={successByTypeMode === 'percentage' ? 'Процент от общего числа' : 'Количество успешных сделок'}
+              size="medium"
+            />
+          </Box>
         </Grid>
       </Grid>
     </Box>

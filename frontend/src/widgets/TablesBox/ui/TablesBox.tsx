@@ -55,9 +55,11 @@ export const TablesBox = memo(() => {
           }}
         >
           <TeamTableTabs tabNumber={tabNumber} handleChangeTab={handleChangeTab} />
-          <Box sx={{ minWidth: 150, display: 'flex', justifyContent: 'flex-end' }}>
-            <WebSocketStatus {...websocketState} maxReconnectAttempts={5} />
-          </Box>
+          {tabNumber === 0 && (
+            <Box sx={{ minWidth: 150, display: 'flex', justifyContent: 'flex-end' }}>
+              <WebSocketStatus {...websocketState} maxReconnectAttempts={5} />
+            </Box>
+          )}
         </Box>
 
         <TeamTableContainer
@@ -77,7 +79,7 @@ export const TablesBox = memo(() => {
           isAccountManagersRoute={isAccountManagersRoute}
         />
 
-        <MonthlyReportContainer active={tabNumber === 2} />
+        <MonthlyReportContainer active={tabNumber === 2} additionalTeamData={additionalTeamData} />
       </Box>
     </DynamicModuleLoader>
   );

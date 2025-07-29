@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { FormControlLabel, Checkbox, Box, Typography } from '@mui/material';
+import { FormControlLabel, Checkbox, Typography, Paper } from '@mui/material';
 
 interface CurrentMonthFilterProps {
   showCurrentMonth: boolean;
@@ -14,15 +14,19 @@ export const CurrentMonthFilter = memo((props: CurrentMonthFilterProps) => {
   };
 
   return (
-    <Box sx={{ mb: 3, p: 2, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid #e0e0e0' }}>
+    <Paper variant="outlined" sx={{ mb: 3, p: 2 }}>
       <FormControlLabel
-        control={<Checkbox checked={showCurrentMonth} onChange={handleChange} color="primary" />}
-        label={
-          <Typography variant="body2" color="text.primary">
-            Учитывать текущий месяц
-          </Typography>
+        control={
+          <Checkbox
+            id="current-month-checkbox"
+            name="current-month-checkbox"
+            checked={showCurrentMonth}
+            onChange={handleChange}
+            color="primary"
+          />
         }
+        label={<Typography variant="body2">Учитывать текущий месяц</Typography>}
       />
-    </Box>
+    </Paper>
   );
 });
