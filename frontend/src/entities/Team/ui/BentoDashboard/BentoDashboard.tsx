@@ -137,6 +137,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
         <Box sx={{ mb: 4 }}>
           <MoneyReportCard
             data={moneyData}
+            monthlyData={data}
             isLoading={moneyIsLoading}
             error={moneyError}
             additionalTeamData={additionalTeamData}

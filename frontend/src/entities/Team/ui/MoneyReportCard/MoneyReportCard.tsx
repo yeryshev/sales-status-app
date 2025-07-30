@@ -12,13 +12,9 @@ import {
   Tooltip,
 } from '@mui/material';
 import { MoneyReportResponse } from '../../model/types/moneyReport';
+import { MonthlyReportResponse } from '../../model/types/monthlyReport';
 import { AdditionalUserData } from '../../model/types/teamWebsocket';
-import {
-  processMoneyReportData,
-  getSecondToLastMonth,
-  formatCurrency,
-  getNettColor,
-} from '../../lib/moneyReportHelpers';
+import { processMoneyReportData, getLastMonth, formatCurrency, getNettColor } from '../../lib/moneyReportHelpers';
 
 const monthNames = [
   'Январь',
@@ -37,13 +33,14 @@ const monthNames = [
 
 interface MoneyReportCardProps {
   data: MoneyReportResponse;
+  monthlyData?: MonthlyReportResponse;
   isLoading?: boolean;
   error?: string;
   additionalTeamData?: AdditionalUserData[];
 }
 
 export const MoneyReportCard = memo((props: MoneyReportCardProps) => {
-  const { data, isLoading, error, additionalTeamData = [] } = props;
+  const { data, monthlyData, isLoading, error, additionalTeamData = [] } = props;
   const [selectedMonth, setSelectedMonth] = useState<string>('');
 
   // Обрабатываем данные
@@ -52,10 +49,10 @@ export const MoneyReportCard = memo((props: MoneyReportCardProps) => {
     return processMoneyReportData(data);
   }, [data]);
 
-  // Устанавливаем предпоследний месяц по умолчанию
+  // Устанавливаем последний месяц по умолчанию
   useEffect(() => {
     if (processedData && !selectedMonth) {
-      const defaultMonth = getSecondToLastMonth(processedData.months);
+      const defaultMonth = getLastMonth(processedData.months);
       if (defaultMonth) {
         setSelectedMonth(defaultMonth);
       }
@@ -66,18 +63,39 @@ export const MoneyReportCard = memo((props: MoneyReportCardProps) => {
   const monthData = useMemo(() => {
     if (!processedData || !selectedMonth) return null;
 
+    const [selectedYear, selectedMonthNum] = selectedMonth.split('-').map(Number);
+
     const monthManagers = processedData.managers.map((manager) => {
       const managerData = processedData.data[manager][selectedMonth];
+
+      // Получаем количество новых клиентов из monthlyData
+      let newClients = 0;
+      if (monthlyData) {
+        const moneyDataEntry = data.find((item) => item.managerName === manager);
+        if (moneyDataEntry) {
+          const monthlyUser = monthlyData.result.users.find((user) => user.idInside === moneyDataEntry.idInside);
+          if (monthlyUser) {
+            const monthlyReport = monthlyUser.reports.find(
+              (report) => report.year === selectedYear && report.month === selectedMonthNum,
+            );
+            if (monthlyReport) {
+              newClients = monthlyReport.leads142Newsale;
+            }
+          }
+        }
+      }
+
       return {
         name: manager,
         faktK: managerData?.faktK || 0,
         plan: managerData?.plan || 0,
         nett: managerData?.nett || 0,
+        newClients,
       };
     });
 
     return monthManagers.sort((a, b) => b.nett - a.nett); // Сортируем по nett
-  }, [processedData, selectedMonth]);
+  }, [processedData, selectedMonth, monthlyData, data]);
 
   // Функция для получения аватарки по idInside
   const getAvatarByManagerName = (managerName: string): string => {
@@ -243,11 +261,25 @@ export const MoneyReportCard = memo((props: MoneyReportCardProps) => {
                         textAlign: 'center',
                         cursor: 'help',
                         fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                        mb: { xs: 0.5, sm: 1 },
                       }}
                     >
                       {formatCurrency(manager.faktK)}
                     </Typography>
                   </Tooltip>
+
+                  {/* Новые клиенты */}
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary',
+                      textAlign: 'center',
+                      fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                      fontWeight: 500,
+                    }}
+                  >
+                    Новых клиентов: {manager.newClients}
+                  </Typography>
                 </CardContent>
               </Card>
             );

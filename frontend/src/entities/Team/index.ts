@@ -45,7 +45,7 @@ export {
   processManagerData,
   formatMonthLabel,
 } from './lib/monthlyReportHelpers';
-export { processMoneyReportData, getSecondToLastMonth, formatCurrency, getNettColor } from './lib/moneyReportHelpers';
+export { processMoneyReportData, getLastMonth, formatCurrency, getNettColor } from './lib/moneyReportHelpers';
 export { useCurrentMonthFilter } from './lib/hooks/useCurrentMonthFilter';
 export { useChartDisplayMode } from './lib/hooks/useChartDisplayMode';
 export { CurrentMonthFilter } from './ui/CurrentMonthFilter';

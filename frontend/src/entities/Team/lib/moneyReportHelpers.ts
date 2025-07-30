@@ -71,12 +71,12 @@ export const processMoneyReportData = (data: MoneyReportResponse): ProcessedMone
   };
 };
 
-// Получение предпоследнего месяца
-export const getSecondToLastMonth = (months: string[]): string | null => {
-  if (months.length < 2) {
-    return months.length === 1 ? months[0] : null;
+// Получение последнего месяца
+export const getLastMonth = (months: string[]): string | null => {
+  if (months.length === 0) {
+    return null;
   }
-  return months[months.length - 2];
+  return months[months.length - 1];
 };
 
 // Форматирование числа в рубли
