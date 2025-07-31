@@ -24,10 +24,11 @@ interface StackedBarChartCardProps {
   data: StackedBarDataPoint[];
   yAxisLabel?: string;
   size?: 'small' | 'medium' | 'large';
+  isPercentageMode?: boolean;
 }
 
 export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
-  const { title, data, yAxisLabel = 'Количество', size = 'medium' } = props;
+  const { title, data, yAxisLabel = 'Количество', size = 'medium', isPercentageMode = false } = props;
   const chartRef = useRef<ChartJS<'bar'> | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const chartTheme = useChartTheme();
@@ -69,7 +70,9 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
         callbacks: {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           label: function (context: any) {
-            return `${context.dataset.label}: ${context.parsed.y}`;
+            const value = context.parsed.y;
+            const suffix = isPercentageMode ? '%' : '';
+            return `${context.dataset.label}: ${value}${suffix}`;
           },
         },
       },

@@ -262,6 +262,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
                 successByChannelMode === 'percentage' ? 'Процент от общего числа' : 'Количество успешных сделок'
               }
               size="medium"
+              isPercentageMode={successByChannelMode === 'percentage'}
             />
           </Box>
         </Grid>
@@ -279,6 +280,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
               }
               yAxisLabel={successByTypeMode === 'percentage' ? 'Процент от общего числа' : 'Количество успешных сделок'}
               size="medium"
+              isPercentageMode={successByTypeMode === 'percentage'}
             />
           </Box>
         </Grid>

@@ -135,7 +135,7 @@ export const processChannelData = (data: MonthlyReportResponse): ChannelData[] =
     campaign: 'Кампании',
     chatwoot: 'Chatwoot',
     telegram: 'Telegram',
-    coldCall: 'Прозвоны регистраций',
+    coldCall: 'Исходящие звонки',
     personalContact: 'Личные контакты',
   };
 
@@ -438,7 +438,7 @@ export const processSuccessByChannelData = (data: MonthlyReportResponse): Succes
     campaign: 'Кампании',
     chatwoot: 'Chatwoot',
     telegram: 'Telegram',
-    coldCall: 'Прозвоны регистраций',
+    coldCall: 'Исходящие звонки',
     personalContact: 'Личные контакты',
   };
 
@@ -524,7 +524,7 @@ export const processSuccessByChannelDataByMonth = (data: MonthlyReportResponse):
     campaign: 'Кампании',
     chatwoot: 'Chatwoot',
     telegram: 'Telegram',
-    coldCall: 'Прозвоны регистраций',
+    coldCall: 'Исходящие звонки',
     personalContact: 'Личные контакты',
   };
 
@@ -938,7 +938,7 @@ export const processChannelDataByMonth = (data: MonthlyReportResponse): ManagerD
     campaign: 'Кампании',
     chatwoot: 'Chatwoot',
     telegram: 'Telegram',
-    coldCall: 'Прозвоны регистраций',
+    coldCall: 'Исходящие звонки',
     personalContact: 'Личные контакты',
   };
 
