@@ -25,6 +25,7 @@ export { LineChartCard } from './ui/LineChartCard';
 export { BarChartCard } from './ui/BarChartCard';
 export { StackedBarChartCard } from './ui/StackedBarChartCard';
 export { MoneyReportCard } from './ui/MoneyReportCard';
+export { DepartmentPlanChart } from './ui/DepartmentPlanChart';
 export { ExpandChartButton } from './ui/ExpandChartButton';
 export { FullScreenChartModal } from './ui/FullScreenChartModal';
 export {
@@ -42,7 +43,13 @@ export {
   processFailedDealsData,
   processFailedDealsDataByMonth,
   processChannelDataByMonth,
+  processChannelDataByMonthWithUnspecified,
   processManagerData,
+  processDepartmentPlanData,
+  processDepartmentPlanDataPercentage,
+  getCurrentMonthForecast,
+  getCurrentMonthForecastByManagers,
+  DEPARTMENT_PLAN,
   formatMonthLabel,
 } from './lib/monthlyReportHelpers';
 export { processMoneyReportData, getLastMonth, formatCurrency, getNettColor } from './lib/moneyReportHelpers';
@@ -50,6 +57,7 @@ export { useCurrentMonthFilter } from './lib/hooks/useCurrentMonthFilter';
 export { useChartDisplayMode } from './lib/hooks/useChartDisplayMode';
 export { CurrentMonthFilter } from './ui/CurrentMonthFilter';
 export { ChartModeToggle } from './ui/ChartModeToggle';
+export { IncludeForecastCheckbox } from './ui/IncludeForecastCheckbox';
 export type {
   MonthlyReportResponse,
   MonthlyReportData,

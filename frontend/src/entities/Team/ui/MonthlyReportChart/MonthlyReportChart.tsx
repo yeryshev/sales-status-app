@@ -12,6 +12,7 @@ import {
 import { Bar } from 'react-chartjs-2';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
+import { chartColors } from '@/shared/const/chartColors';
 import { ProcessedChartData } from '../../model/types/monthlyReport';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -23,25 +24,7 @@ interface MonthlyReportChartProps {
 }
 
 const generateColors = (count: number) => {
-  const colors = [
-    '#FF6384',
-    '#36A2EB',
-    '#FFCE56',
-    '#4BC0C0',
-    '#9966FF',
-    '#FF9F40',
-    '#FF6384',
-    '#C9CBCF',
-    '#4BC0C0',
-    '#FF6384',
-    '#36A2EB',
-    '#FFCE56',
-    '#4BC0C0',
-    '#9966FF',
-    '#FF9F40',
-  ];
-
-  return colors.slice(0, count);
+  return chartColors.managerColors.slice(0, count);
 };
 
 export const MonthlyReportChart = memo((props: MonthlyReportChartProps) => {

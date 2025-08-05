@@ -14,6 +14,7 @@ import { Bar } from 'react-chartjs-2';
 import { Box, Typography, Paper } from '@mui/material';
 import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 import { calculateYAxisMax } from '@/shared/lib/utils/chartUtils';
+import { chartColors } from '@/shared/const/chartColors';
 import { ExpandChartButton } from '../ExpandChartButton';
 import { FullScreenChartModal } from '../FullScreenChartModal';
 
@@ -54,8 +55,8 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
         {
           label: 'Получено лидов',
           data: receivedData,
-          backgroundColor: '#1976d2',
-          borderColor: '#1976d2',
+          backgroundColor: chartColors.conversionColors.received,
+          borderColor: chartColors.conversionColors.received,
           borderWidth: 1,
           borderRadius: 4,
           borderSkipped: false,
@@ -63,8 +64,8 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
         {
           label: 'Квалифицировано',
           data: qualifiedData,
-          backgroundColor: '#ff9800',
-          borderColor: '#ff9800',
+          backgroundColor: chartColors.conversionColors.qualified,
+          borderColor: chartColors.conversionColors.qualified,
           borderWidth: 1,
           borderRadius: 4,
           borderSkipped: false,
@@ -72,8 +73,8 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
         {
           label: 'Успешно реализовано',
           data: successfulData,
-          backgroundColor: '#4caf50',
-          borderColor: '#4caf50',
+          backgroundColor: chartColors.conversionColors.successful,
+          borderColor: chartColors.conversionColors.successful,
           borderWidth: 1,
           borderRadius: 4,
           borderSkipped: false,

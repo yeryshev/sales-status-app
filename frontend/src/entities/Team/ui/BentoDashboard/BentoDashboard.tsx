@@ -8,8 +8,10 @@ import { MetricsCard } from '../MetricsCard';
 import { StackedBarChartCard } from '../StackedBarChartCard';
 import { ConversionBarChartCard } from '../ConversionBarChartCard';
 import { MoneyReportCard } from '../MoneyReportCard';
+import { DepartmentPlanChart } from '../DepartmentPlanChart';
 import { CurrentMonthFilter } from '../CurrentMonthFilter';
 import { ChartModeToggle } from '../ChartModeToggle';
+import { IncludeForecastCheckbox } from '../IncludeForecastCheckbox';
 import { useCurrentMonthFilter } from '../../lib/hooks/useCurrentMonthFilter';
 import { useChartDisplayMode } from '../../lib/hooks/useChartDisplayMode';
 import {
@@ -26,9 +28,11 @@ import {
   processSuccessByTypeDataByMonthPercentage,
   processFailedDealsData,
   processFailedDealsDataByMonth,
-  processChannelDataByMonth,
+  processChannelDataByMonthWithUnspecified,
   processManagerData,
+  processDepartmentPlanData,
 } from '../../lib/monthlyReportHelpers';
+import { processDepartmentPlanDataPercentage } from '../../lib/monthlyReportHelpers';
 
 interface BentoDashboardProps {
   data: MonthlyReportResponse;
@@ -47,15 +51,23 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
   const { showCurrentMonth, setShowCurrentMonth, filteredData } = useCurrentMonthFilter(data);
 
   // Используем хук для управления режимами отображения графиков
-  const { successByChannelMode, setSuccessByChannelMode, successByTypeMode, setSuccessByTypeMode } =
-    useChartDisplayMode();
+  const {
+    successByChannelMode,
+    setSuccessByChannelMode,
+    successByTypeMode,
+    setSuccessByTypeMode,
+    departmentPlanMode,
+    setDepartmentPlanMode,
+    includeForecast,
+    setIncludeForecast,
+  } = useChartDisplayMode();
 
   const processedData = useMemo(() => {
     if (!filteredData) return null;
 
     return {
       channelData: processChannelData(filteredData),
-      channelDataByMonth: processChannelDataByMonth(filteredData),
+      channelDataByMonth: processChannelDataByMonthWithUnspecified(filteredData),
       conversionData: processConversionData(filteredData),
       conversionDataByMonth: processConversionDataByMonth(filteredData),
       conversionDataForBarChart: processConversionDataForBarChart(filteredData),
@@ -71,6 +83,14 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
       managerData: processManagerData(filteredData),
     };
   }, [filteredData]);
+
+  // Обрабатываем данные для графика выполнения плана отдела
+  const departmentPlanData = useMemo(() => {
+    if (!moneyData || !additionalTeamData) return null;
+    return departmentPlanMode === 'percentage'
+      ? processDepartmentPlanDataPercentage(moneyData, additionalTeamData, includeForecast)
+      : processDepartmentPlanData(moneyData, additionalTeamData, includeForecast);
+  }, [moneyData, additionalTeamData, departmentPlanMode, includeForecast]);
 
   // Вычисляем общие метрики
   const totalMetrics = useMemo(() => {
@@ -141,6 +161,43 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
             isLoading={moneyIsLoading}
             error={moneyError}
             additionalTeamData={additionalTeamData}
+          />
+        </Box>
+      )}
+
+      {/* Выполнение плана отдела */}
+      {departmentPlanData && moneyData && (
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ mb: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: { xs: 'stretch', sm: 'flex-start' },
+                gap: { xs: 1, sm: 2 },
+              }}
+            >
+              <ChartModeToggle
+                mode={departmentPlanMode}
+                onModeChange={setDepartmentPlanMode}
+                title="Режим отображения"
+              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: { xs: 'center', sm: 'flex-start' },
+                  height: 'fit-content',
+                }}
+              >
+                <IncludeForecastCheckbox checked={includeForecast} onChange={setIncludeForecast} />
+              </Box>
+            </Box>
+          </Box>
+          <DepartmentPlanChart
+            data={departmentPlanData}
+            size="large"
+            isPercentageMode={departmentPlanMode === 'percentage'}
           />
         </Box>
       )}
@@ -245,12 +302,14 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
 
         {/* Успешные сделки по каналам */}
         <Grid item xs={12} md={6}>
-          <Box>
-            <ChartModeToggle
-              mode={successByChannelMode}
-              onModeChange={setSuccessByChannelMode}
-              title="Режим отображения"
-            />
+          <Box sx={{ mb: 4 }}>
+            <Box sx={{ mb: 2 }}>
+              <ChartModeToggle
+                mode={successByChannelMode}
+                onModeChange={setSuccessByChannelMode}
+                title="Режим отображения"
+              />
+            </Box>
             <StackedBarChartCard
               title="Успешные сделки по каналам"
               data={
@@ -269,8 +328,10 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
 
         {/* Успешные по типу */}
         <Grid item xs={12} md={6}>
-          <Box>
-            <ChartModeToggle mode={successByTypeMode} onModeChange={setSuccessByTypeMode} title="Режим отображения" />
+          <Box sx={{ mb: 4 }}>
+            <Box sx={{ mb: 2 }}>
+              <ChartModeToggle mode={successByTypeMode} onModeChange={setSuccessByTypeMode} title="Режим отображения" />
+            </Box>
             <StackedBarChartCard
               title="Успешные по типу"
               data={

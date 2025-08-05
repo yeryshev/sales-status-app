@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, IconButton, Box, Typography, Paper } from '@mui/material';
 import { Close } from '@mui/icons-material';
 
@@ -11,6 +11,15 @@ interface FullScreenChartModalProps {
 
 export const FullScreenChartModal = memo((props: FullScreenChartModalProps) => {
   const { open, onClose, title, children } = props;
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Управляем фокусом при открытии/закрытии модального окна
+  useEffect(() => {
+    if (open && closeButtonRef.current) {
+      // Устанавливаем фокус на кнопку закрытия при открытии модального окна
+      closeButtonRef.current.focus();
+    }
+  }, [open]);
 
   return (
     <Dialog
@@ -18,6 +27,8 @@ export const FullScreenChartModal = memo((props: FullScreenChartModalProps) => {
       onClose={onClose}
       maxWidth={false}
       fullWidth
+      disableRestoreFocus
+      disableAutoFocus={false}
       PaperProps={{
         sx: {
           width: '95vw',
@@ -39,7 +50,7 @@ export const FullScreenChartModal = memo((props: FullScreenChartModalProps) => {
             gap: 1,
           }}
         >
-          <IconButton onClick={onClose}>
+          <IconButton ref={closeButtonRef} onClick={onClose} aria-label="Закрыть">
             <Close />
           </IconButton>
         </Box>

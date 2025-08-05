@@ -42,6 +42,7 @@ export function AwayConfirmationModal(props: AwayConfirmationModalProps) {
       maxWidth="xs"
       open={open}
       disableRestoreFocus
+      disableAutoFocus={false}
       {...other}
     >
       <DialogTitle>Время отсутствия</DialogTitle>

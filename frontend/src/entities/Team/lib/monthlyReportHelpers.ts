@@ -9,6 +9,9 @@ import {
   FailedDealsData,
   ManagerData,
 } from '../model/types/monthlyReport';
+import { MoneyReportResponse, MoneyReportData } from '../model/types/moneyReport';
+import { AdditionalUserData } from '../model/types/teamWebsocket';
+import { chartColors } from '@/shared/const/chartColors';
 
 const monthNames = [
   'Январь',
@@ -25,31 +28,9 @@ const monthNames = [
   'Декабрь',
 ];
 
-const channelColors = {
-  call: '#FF6384', // Розовый
-  email: '#36A2EB', // Синий
-  event: '#FFCE56', // Желтый
-  tickets: '#4BC0C0', // Бирюзовый
-  campaign: '#9966FF', // Фиолетовый
-  chatwoot: '#FF9F40', // Оранжевый
-  telegram: '#C9CBCF', // Серый
-  coldCall: '#E91E63', // Темно-розовый
-  personalContact: '#8BC34A', // Зеленый
-};
-
-const typeColors = {
-  upsale: '#FF6384',
-  newsale: '#36A2EB',
-  accounttransfer: '#FFCE56',
-};
-
-const failureColors = {
-  noanswer: '#FF6384',
-  bedservice: '#36A2EB',
-  legalproblem: '#FFCE56',
-  nomoreneeded: '#4BC0C0',
-  nooportunity: '#9966FF',
-};
+const channelColors = chartColors.channelColors;
+const typeColors = chartColors.typeColors;
+const failureColors = chartColors.failureColors;
 
 // Функция для форматирования названия месяца
 export const formatMonthLabel = (year: number, month: number): string => {
@@ -528,17 +509,7 @@ export const processSuccessByChannelDataByMonth = (data: MonthlyReportResponse):
     personalContact: 'Личные контакты',
   };
 
-  const channelColors = {
-    call: '#FF6384',
-    email: '#36A2EB',
-    event: '#FFCE56',
-    tickets: '#4BC0C0',
-    campaign: '#9966FF',
-    chatwoot: '#FF9F40',
-    telegram: '#C9CBCF',
-    coldCall: '#E91E63',
-    personalContact: '#8BC34A',
-  };
+  const channelColors = chartColors.channelColors;
 
   const sortedData = Array.from(monthDataMap.entries())
     .map(([key, channelData]) => {
@@ -676,11 +647,7 @@ export const processSuccessByTypeDataByMonth = (data: MonthlyReportResponse): Ma
     accounttransfer: 'Смена аккаунта',
   };
 
-  const typeColors = {
-    upsale: '#FF6384',
-    newsale: '#36A2EB',
-    accounttransfer: '#FFCE56',
-  };
+  const typeColors = chartColors.typeColors;
 
   const sortedData = Array.from(monthDataMap.entries())
     .map(([key, typeData]) => {
@@ -834,13 +801,7 @@ export const processFailedDealsDataByMonth = (data: MonthlyReportResponse): Mana
     nooportunity: 'Нет возможности реализовать',
   };
 
-  const failureColors = {
-    noanswer: '#FF6384',
-    bedservice: '#36A2EB',
-    legalproblem: '#FFCE56',
-    nomoreneeded: '#4BC0C0',
-    nooportunity: '#9966FF',
-  };
+  const failureColors = chartColors.failureColors;
 
   const sortedData = Array.from(monthDataMap.entries())
     .map(([key, failureData]) => {
@@ -942,17 +903,7 @@ export const processChannelDataByMonth = (data: MonthlyReportResponse): ManagerD
     personalContact: 'Личные контакты',
   };
 
-  const channelColors = {
-    call: '#FF6384',
-    email: '#36A2EB',
-    event: '#FFCE56',
-    tickets: '#4BC0C0',
-    campaign: '#9966FF',
-    chatwoot: '#FF9F40',
-    telegram: '#C9CBCF',
-    coldCall: '#E91E63',
-    personalContact: '#8BC34A',
-  };
+  const channelColors = chartColors.channelColors;
 
   const sortedData = Array.from(monthDataMap.entries())
     .map(([key, channelData]) => {
@@ -983,20 +934,50 @@ export const processChannelDataByMonth = (data: MonthlyReportResponse): ManagerD
   });
 };
 
+// Обработка данных лидов по каналам с добавлением "Канал не указан"
+export const processChannelDataByMonthWithUnspecified = (data: MonthlyReportResponse): ManagerData[] => {
+  // Получаем данные по каналам
+  const channelData = processChannelDataByMonth(data);
+
+  // Получаем данные по менеджерам для расчета общего количества лидов
+  const managerData = processManagerData(data);
+
+  // Создаем мапу для быстрого доступа к данным по месяцам
+  const managerDataMap = new Map<string, number>();
+  managerData.forEach((monthData) => {
+    const totalLeads = monthData.datasets.reduce((sum, dataset) => sum + dataset.data, 0);
+    managerDataMap.set(monthData.label, totalLeads);
+  });
+
+  // Добавляем датасет "Канал не указан" к каждому месяцу
+  return channelData.map((monthData) => {
+    const totalLeadsByChannels = monthData.datasets.reduce((sum, dataset) => sum + dataset.data, 0);
+    const totalLeadsByManagers = managerDataMap.get(monthData.label) || 0;
+    const unspecifiedLeads = Math.max(0, totalLeadsByManagers - totalLeadsByChannels);
+
+    const datasets = [
+      ...monthData.datasets,
+      ...(unspecifiedLeads > 0
+        ? [
+            {
+              label: 'Канал не указан',
+              data: unspecifiedLeads,
+              backgroundColor: chartColors.channelColors.unspecified,
+            },
+          ]
+        : []),
+    ];
+
+    return {
+      label: monthData.label,
+      datasets,
+    };
+  });
+};
+
 // Обработка данных по менеджерам
 export const processManagerData = (data: MonthlyReportResponse): ManagerData[] => {
-  const managerColors = [
-    '#FF6384', // Розовый
-    '#36A2EB', // Синий
-    '#FFCE56', // Желтый
-    '#4BC0C0', // Бирюзовый
-    '#9966FF', // Фиолетовый
-    '#FF9F40', // Оранжевый
-    '#C9CBCF', // Серый
-    '#E91E63', // Темно-розовый
-    '#8BC34A', // Зеленый
-    '#9C27B0', // Пурпурный
-  ];
+  const managerColors = chartColors.managerColors;
 
   const monthDataMap = new Map<string, { [managerName: string]: number }>();
   const managersSet = new Set<string>();
@@ -1044,3 +1025,169 @@ export const processManagerData = (data: MonthlyReportResponse): ManagerData[] =
     };
   });
 };
+
+// Обработка данных выполнения плана отдела
+export const processDepartmentPlanData = (
+  moneyData: MoneyReportResponse,
+  additionalTeamData: AdditionalUserData[],
+  includeForecast: boolean = false,
+): ManagerData[] => {
+  const managerColors = chartColors.managerColors;
+
+  const monthDataMap = new Map<string, { [managerName: string]: number }>();
+  const managersSet = new Set<string>();
+
+  // Обрабатываем данные из финансового отчета (все месяцы кроме текущего)
+  moneyData.forEach((item: MoneyReportData) => {
+    const monthKey = `${item.year}-${item.month.toString().padStart(2, '0')}`;
+    const managerName = item.managerName;
+
+    managersSet.add(managerName);
+
+    if (!monthDataMap.has(monthKey)) {
+      monthDataMap.set(monthKey, {});
+    }
+
+    const monthData = monthDataMap.get(monthKey)!;
+    monthData[managerName] = (monthData[managerName] || 0) + item.faktK;
+  });
+
+  // Добавляем данные текущего месяца из additionalTeamData
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1;
+  const currentMonthKey = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
+
+  // Создаем мапу idInside -> managerName из moneyData
+  const idToManagerMap = new Map<number, string>();
+  moneyData.forEach((item: MoneyReportData) => {
+    idToManagerMap.set(item.idInside, item.managerName);
+  });
+
+  // Добавляем данные текущего месяца
+  additionalTeamData.forEach((userData) => {
+    const managerName = idToManagerMap.get(userData.idInside);
+    if (managerName && userData.qlik?.factWithK) {
+      managersSet.add(managerName);
+
+      if (!monthDataMap.has(currentMonthKey)) {
+        monthDataMap.set(currentMonthKey, {});
+      }
+
+      const monthData = monthDataMap.get(currentMonthKey)!;
+      const factValue = parseFloat(userData.qlik.factWithK);
+      let totalValue = factValue;
+
+      // Если включен учет прогноза, добавляем прогноз к факту
+      if (includeForecast && userData.qlik?.forecastWithK) {
+        const forecastValue = parseFloat(userData.qlik.forecastWithK);
+        totalValue += forecastValue;
+      }
+
+      monthData[managerName] = (monthData[managerName] || 0) + totalValue;
+    }
+  });
+
+  const sortedData = Array.from(monthDataMap.entries())
+    .map(([key, managerData]) => {
+      const [year, month] = key.split('-');
+      const monthLabel = `${monthNames[parseInt(month) - 1]} ${year}`;
+      return { month: monthLabel, year: parseInt(year), monthNumber: parseInt(month), managerData };
+    })
+    .sort((a, b) => {
+      if (a.year !== b.year) {
+        return a.year - b.year;
+      }
+      return a.monthNumber - b.monthNumber;
+    });
+
+  const managers = Array.from(managersSet).sort();
+
+  return sortedData.map((monthData) => {
+    const datasets = managers.map((manager, index) => ({
+      label: manager,
+      data: monthData.managerData[manager] || 0,
+      backgroundColor: managerColors[index % managerColors.length],
+    }));
+
+    return {
+      label: monthData.month,
+      datasets,
+    };
+  });
+};
+
+// Получение данных прогноза текущего месяца по менеджерам
+export const getCurrentMonthForecastByManagers = (
+  additionalTeamData: AdditionalUserData[],
+  moneyData: MoneyReportResponse,
+): { [managerName: string]: number } => {
+  // Создаем мапу idInside -> managerName из moneyData
+  const idToManagerMap = new Map<number, string>();
+  moneyData.forEach((item: MoneyReportData) => {
+    idToManagerMap.set(item.idInside, item.managerName);
+  });
+
+  const forecastByManagers: { [managerName: string]: number } = {};
+
+  additionalTeamData.forEach((userData) => {
+    const managerName = idToManagerMap.get(userData.idInside);
+    if (managerName && userData.qlik?.forecastWithK) {
+      forecastByManagers[managerName] =
+        (forecastByManagers[managerName] || 0) + parseFloat(userData.qlik.forecastWithK);
+    }
+  });
+
+  return forecastByManagers;
+};
+
+// Получение данных прогноза текущего месяца (общая сумма)
+export const getCurrentMonthForecast = (
+  additionalTeamData: AdditionalUserData[],
+  moneyData: MoneyReportResponse,
+): number => {
+  const forecastByManagers = getCurrentMonthForecastByManagers(additionalTeamData, moneyData);
+  return Object.values(forecastByManagers).reduce((total, value) => total + value, 0);
+};
+
+// Обработка данных выполнения плана отдела в процентном режиме
+export const processDepartmentPlanDataPercentage = (
+  moneyData: MoneyReportResponse,
+  additionalTeamData: AdditionalUserData[],
+  includeForecast: boolean = false,
+): ManagerData[] => {
+  const absoluteData = processDepartmentPlanData(moneyData, additionalTeamData, includeForecast);
+
+  return absoluteData.map((monthData) => {
+    // Используем общую сумму для расчета процентов
+    const total = monthData.datasets.reduce((sum, dataset) => sum + dataset.data, 0);
+
+    if (total === 0) {
+      return {
+        label: monthData.label,
+        datasets: monthData.datasets.map((dataset) => ({ ...dataset, data: 0 })),
+      };
+    }
+
+    // Вычисляем проценты с округлением
+    const datasetsWithPercentages = monthData.datasets.map((dataset) => ({
+      ...dataset,
+      data: Math.round((dataset.data / total) * 100),
+    }));
+
+    // Корректируем последний элемент, чтобы сумма была ровно 100%
+    const calculatedSum = datasetsWithPercentages.reduce((sum, dataset) => sum + dataset.data, 0);
+    if (calculatedSum !== 100 && datasetsWithPercentages.length > 0) {
+      const lastIndex = datasetsWithPercentages.length - 1;
+      datasetsWithPercentages[lastIndex].data += 100 - calculatedSum;
+    }
+
+    return {
+      label: monthData.label,
+      datasets: datasetsWithPercentages,
+    };
+  });
+};
+
+// Константа плана отдела
+export const DEPARTMENT_PLAN = 15250000;

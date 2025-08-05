@@ -20,7 +20,6 @@ export const ChartModeToggle = memo((props: ChartModeToggleProps) => {
   return (
     <Box
       sx={{
-        mb: 2,
         display: 'flex',
         flexDirection: { xs: 'column', sm: 'row' },
         alignItems: { xs: 'stretch', sm: 'center' },
