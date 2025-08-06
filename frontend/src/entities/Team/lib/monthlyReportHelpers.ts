@@ -1086,10 +1086,10 @@ export const processDepartmentPlanData = (
       idToManagerMap.set(item.idInside, item.managerName);
     });
 
-    // Добавляем данные текущего месяца
+    // Добавляем данные текущего месяца для всех менеджеров из moneyData
     additionalTeamData.forEach((userData) => {
       const managerName = idToManagerMap.get(userData.idInside);
-      if (managerName && userData.qlik?.factWithK) {
+      if (managerName) {
         managersSet.add(managerName);
 
         if (!monthDataMap.has(currentMonthKey)) {
@@ -1097,7 +1097,7 @@ export const processDepartmentPlanData = (
         }
 
         const monthData = monthDataMap.get(currentMonthKey)!;
-        const factValue = parseFloat(userData.qlik.factWithK);
+        const factValue = userData.qlik?.factWithK ? parseFloat(userData.qlik.factWithK) : 0;
         let totalValue = factValue;
 
         // Если включен учет прогноза, добавляем прогноз к факту
