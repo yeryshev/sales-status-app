@@ -9,7 +9,7 @@ import { calculateStackedYAxisMax } from '@/shared/lib/utils/chartUtils';
 import { ExpandChartButton } from '../ExpandChartButton';
 import { FullScreenChartModal } from '../FullScreenChartModal';
 import { ManagerData } from '../../model/types/monthlyReport';
-import { DEPARTMENT_PLAN } from '../../lib/monthlyReportHelpers';
+import { getDepartmentPlan } from '../../lib/monthlyReportHelpers';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, annotationPlugin);
 
@@ -17,13 +17,17 @@ interface DepartmentPlanChartProps {
   data: ManagerData[];
   size?: 'small' | 'medium' | 'large';
   isPercentageMode?: boolean;
+  isAccountManagersRoute?: boolean;
 }
 
 export const DepartmentPlanChart = memo((props: DepartmentPlanChartProps) => {
-  const { data, size = 'medium', isPercentageMode = false } = props;
+  const { data, size = 'medium', isPercentageMode = false, isAccountManagersRoute = false } = props;
   const chartRef = useRef<ChartJS<'bar'> | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const chartTheme = useChartTheme();
+
+  // Получаем план отдела в зависимости от маршрута
+  const departmentPlan = getDepartmentPlan(isAccountManagersRoute);
 
   // Создаем данные в формате, совместимом с calculateStackedYAxisMax
   const stackedDataForMax = data.map((item) => ({
@@ -123,13 +127,13 @@ export const DepartmentPlanChart = memo((props: DepartmentPlanChartProps) => {
         annotations: {
           planLine: {
             type: 'line' as const,
-            yMin: isPercentageMode ? 0 : DEPARTMENT_PLAN,
-            yMax: isPercentageMode ? 0 : DEPARTMENT_PLAN,
+            yMin: isPercentageMode ? 0 : departmentPlan,
+            yMax: isPercentageMode ? 0 : departmentPlan,
             borderColor: chartTheme.axisLabelColor,
             borderWidth: isPercentageMode ? 0 : 2,
             borderDash: [5, 5],
             label: {
-              content: `План: ${DEPARTMENT_PLAN.toLocaleString('ru-RU')} ₽`,
+              content: `План: ${departmentPlan.toLocaleString('ru-RU')} ₽`,
               enabled: !isPercentageMode,
               position: 'end' as const,
               backgroundColor: chartTheme.tooltipBackground,

@@ -6,10 +6,11 @@ import { BentoDashboard } from '@/entities/Team';
 interface MonthlyReportContainerProps {
   active: boolean;
   additionalTeamData?: AdditionalUserData[];
+  isAccountManagersRoute?: boolean;
 }
 
 export const MonthlyReportContainer = memo((props: MonthlyReportContainerProps) => {
-  const { active, additionalTeamData = [] } = props;
+  const { active, additionalTeamData = [], isAccountManagersRoute = false } = props;
 
   // Проверяем, установлены ли переменные окружения
   const hasMonthlyApiUrl = !!import.meta.env.VITE_MONTHLY_REPORT_URL;
@@ -19,7 +20,7 @@ export const MonthlyReportContainer = memo((props: MonthlyReportContainerProps) 
     data: monthlyReportData,
     isLoading: monthlyIsLoading,
     error: monthlyError,
-  } = useGetMonthlyReportQuery(undefined, {
+  } = useGetMonthlyReportQuery(isAccountManagersRoute, {
     skip: !active || !hasMonthlyApiUrl,
   });
 
@@ -27,7 +28,7 @@ export const MonthlyReportContainer = memo((props: MonthlyReportContainerProps) 
     data: moneyReportData,
     isLoading: moneyIsLoading,
     error: moneyError,
-  } = useGetMoneyReportQuery(undefined, {
+  } = useGetMoneyReportQuery(isAccountManagersRoute, {
     skip: !active || !hasMoneyApiUrl,
   });
 
@@ -82,6 +83,7 @@ export const MonthlyReportContainer = memo((props: MonthlyReportContainerProps) 
         moneyIsLoading={moneyIsLoading}
         moneyError={moneyErrorMessage}
         additionalTeamData={additionalTeamData}
+        isAccountManagersRoute={isAccountManagersRoute}
       />
     </Box>
   );

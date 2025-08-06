@@ -79,7 +79,11 @@ export const TablesBox = memo(() => {
           isAccountManagersRoute={isAccountManagersRoute}
         />
 
-        <MonthlyReportContainer active={tabNumber === 2} additionalTeamData={additionalTeamData} />
+        <MonthlyReportContainer
+          active={tabNumber === 2}
+          additionalTeamData={additionalTeamData}
+          isAccountManagersRoute={isAccountManagersRoute}
+        />
       </Box>
     </DynamicModuleLoader>
   );

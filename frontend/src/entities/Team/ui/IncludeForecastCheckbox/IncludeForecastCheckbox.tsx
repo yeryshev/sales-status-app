@@ -4,10 +4,11 @@ import { FormControlLabel, Checkbox } from '@mui/material';
 interface IncludeForecastCheckboxProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
+  disabled?: boolean;
 }
 
 export const IncludeForecastCheckbox = memo((props: IncludeForecastCheckboxProps) => {
-  const { checked, onChange } = props;
+  const { checked, onChange, disabled = false } = props;
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
@@ -21,6 +22,7 @@ export const IncludeForecastCheckbox = memo((props: IncludeForecastCheckboxProps
           name="include-forecast"
           checked={checked}
           onChange={handleChange}
+          disabled={disabled}
           size="small"
         />
       }

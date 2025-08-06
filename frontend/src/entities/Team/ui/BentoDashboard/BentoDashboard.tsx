@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
 import { People, TrendingUp, Analytics, Assessment } from '@mui/icons-material';
 import { MonthlyReportResponse } from '../../model/types/monthlyReport';
@@ -42,13 +42,23 @@ interface BentoDashboardProps {
   isLoading?: boolean;
   error?: string;
   additionalTeamData?: AdditionalUserData[];
+  isAccountManagersRoute?: boolean;
 }
 
 export const BentoDashboard = memo((props: BentoDashboardProps) => {
-  const { data, moneyData, moneyIsLoading, moneyError, isLoading, error, additionalTeamData = [] } = props;
+  const {
+    data,
+    moneyData,
+    moneyIsLoading,
+    moneyError,
+    isLoading,
+    error,
+    additionalTeamData = [],
+    isAccountManagersRoute = false,
+  } = props;
 
   // Используем хук для фильтрации текущего месяца
-  const { showCurrentMonth, setShowCurrentMonth, filteredData } = useCurrentMonthFilter(data);
+  const { showCurrentMonth, setShowCurrentMonth, filteredData, currentMonth } = useCurrentMonthFilter(data);
 
   // Используем хук для управления режимами отображения графиков
   const {
@@ -61,6 +71,13 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
     includeForecast,
     setIncludeForecast,
   } = useChartDisplayMode();
+
+  // Автоматически сбрасываем прогноз, если отключен учет текущего месяца
+  useEffect(() => {
+    if (!showCurrentMonth && includeForecast) {
+      setIncludeForecast(false);
+    }
+  }, [showCurrentMonth, includeForecast, setIncludeForecast]);
 
   const processedData = useMemo(() => {
     if (!filteredData) return null;
@@ -88,9 +105,15 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
   const departmentPlanData = useMemo(() => {
     if (!moneyData || !additionalTeamData) return null;
     return departmentPlanMode === 'percentage'
-      ? processDepartmentPlanDataPercentage(moneyData, additionalTeamData, includeForecast)
-      : processDepartmentPlanData(moneyData, additionalTeamData, includeForecast);
-  }, [moneyData, additionalTeamData, departmentPlanMode, includeForecast]);
+      ? processDepartmentPlanDataPercentage(
+          moneyData,
+          additionalTeamData,
+          includeForecast,
+          currentMonth,
+          showCurrentMonth,
+        )
+      : processDepartmentPlanData(moneyData, additionalTeamData, includeForecast, currentMonth, showCurrentMonth);
+  }, [moneyData, additionalTeamData, departmentPlanMode, includeForecast, currentMonth, showCurrentMonth]);
 
   // Вычисляем общие метрики
   const totalMetrics = useMemo(() => {
@@ -152,59 +175,6 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
 
   return (
     <Box>
-      {/* Финансовые показатели менеджеров */}
-      {moneyData && (
-        <Box sx={{ mb: 4 }}>
-          <MoneyReportCard
-            data={moneyData}
-            monthlyData={data}
-            isLoading={moneyIsLoading}
-            error={moneyError}
-            additionalTeamData={additionalTeamData}
-          />
-        </Box>
-      )}
-
-      {/* Выполнение плана отдела */}
-      {departmentPlanData && moneyData && (
-        <Box sx={{ mb: 4 }}>
-          <Box sx={{ mb: 2 }}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
-                alignItems: { xs: 'stretch', sm: 'flex-start' },
-                gap: { xs: 1, sm: 2 },
-              }}
-            >
-              <ChartModeToggle
-                mode={departmentPlanMode}
-                onModeChange={setDepartmentPlanMode}
-                title="Режим отображения"
-              />
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: { xs: 'center', sm: 'flex-start' },
-                  height: 'fit-content',
-                }}
-              >
-                <IncludeForecastCheckbox checked={includeForecast} onChange={setIncludeForecast} />
-              </Box>
-            </Box>
-          </Box>
-          <DepartmentPlanChart
-            data={departmentPlanData}
-            size="large"
-            isPercentageMode={departmentPlanMode === 'percentage'}
-          />
-        </Box>
-      )}
-
-      {/* Фильтр текущего месяца */}
-      <CurrentMonthFilter showCurrentMonth={showCurrentMonth} onToggle={setShowCurrentMonth} />
-
       {/* Основные метрики */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
@@ -256,6 +226,64 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
           />
         </Grid>
       </Grid>
+
+      {/* Финансовые показатели менеджеров */}
+      {moneyData && (
+        <Box sx={{ mb: 4 }}>
+          <MoneyReportCard
+            data={moneyData}
+            monthlyData={data}
+            isLoading={moneyIsLoading}
+            error={moneyError}
+            additionalTeamData={additionalTeamData}
+          />
+        </Box>
+      )}
+
+      {/* Фильтр текущего месяца */}
+      <CurrentMonthFilter showCurrentMonth={showCurrentMonth} onToggle={setShowCurrentMonth} />
+
+      {/* Выполнение плана отдела */}
+      {departmentPlanData && moneyData && (
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ mb: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: { xs: 'stretch', sm: 'flex-start' },
+                gap: { xs: 1, sm: 2 },
+              }}
+            >
+              <ChartModeToggle
+                mode={departmentPlanMode}
+                onModeChange={setDepartmentPlanMode}
+                title="Режим отображения"
+              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: { xs: 'center', sm: 'flex-start' },
+                  height: 'fit-content',
+                }}
+              >
+                <IncludeForecastCheckbox
+                  checked={includeForecast}
+                  onChange={setIncludeForecast}
+                  disabled={!showCurrentMonth}
+                />
+              </Box>
+            </Box>
+          </Box>
+          <DepartmentPlanChart
+            data={departmentPlanData}
+            size="large"
+            isPercentageMode={departmentPlanMode === 'percentage'}
+            isAccountManagersRoute={isAccountManagersRoute}
+          />
+        </Box>
+      )}
 
       {/* Графики */}
       <Grid container spacing={3}>

@@ -25,7 +25,7 @@ export const CurrentMonthFilter = memo((props: CurrentMonthFilterProps) => {
             color="primary"
           />
         }
-        label={<Typography variant="body2">Учитывать текущий месяц</Typography>}
+        label={<Typography variant="body2">Учитывать текущий месяц для всех графиков</Typography>}
       />
     </Paper>
   );

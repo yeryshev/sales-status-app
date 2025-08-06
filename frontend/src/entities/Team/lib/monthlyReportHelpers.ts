@@ -1026,19 +1026,40 @@ export const processManagerData = (data: MonthlyReportResponse): ManagerData[] =
   });
 };
 
+// Функция для фильтрации данных финансового отчета
+export const filterMoneyDataByCurrentMonth = (
+  moneyData: MoneyReportResponse,
+  currentMonth: string | null,
+  showCurrentMonth: boolean,
+): MoneyReportResponse => {
+  if (!currentMonth || showCurrentMonth) {
+    return moneyData;
+  }
+
+  return moneyData.filter((item) => {
+    const itemMonthKey = `${item.year}-${item.month.toString().padStart(2, '0')}`;
+    return itemMonthKey !== currentMonth;
+  });
+};
+
 // Обработка данных выполнения плана отдела
 export const processDepartmentPlanData = (
   moneyData: MoneyReportResponse,
   additionalTeamData: AdditionalUserData[],
   includeForecast: boolean = false,
+  currentMonth: string | null = null,
+  showCurrentMonth: boolean = true,
 ): ManagerData[] => {
   const managerColors = chartColors.managerColors;
+
+  // Фильтруем данные финансового отчета
+  const filteredMoneyData = filterMoneyDataByCurrentMonth(moneyData, currentMonth, showCurrentMonth);
 
   const monthDataMap = new Map<string, { [managerName: string]: number }>();
   const managersSet = new Set<string>();
 
   // Обрабатываем данные из финансового отчета (все месяцы кроме текущего)
-  moneyData.forEach((item: MoneyReportData) => {
+  filteredMoneyData.forEach((item: MoneyReportData) => {
     const monthKey = `${item.year}-${item.month.toString().padStart(2, '0')}`;
     const managerName = item.managerName;
 
@@ -1052,41 +1073,43 @@ export const processDepartmentPlanData = (
     monthData[managerName] = (monthData[managerName] || 0) + item.faktK;
   });
 
-  // Добавляем данные текущего месяца из additionalTeamData
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth() + 1;
-  const currentMonthKey = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
+  // Добавляем данные текущего месяца из additionalTeamData только если включен учет текущего месяца
+  if (showCurrentMonth) {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentMonthKey = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
 
-  // Создаем мапу idInside -> managerName из moneyData
-  const idToManagerMap = new Map<number, string>();
-  moneyData.forEach((item: MoneyReportData) => {
-    idToManagerMap.set(item.idInside, item.managerName);
-  });
+    // Создаем мапу idInside -> managerName из moneyData
+    const idToManagerMap = new Map<number, string>();
+    moneyData.forEach((item: MoneyReportData) => {
+      idToManagerMap.set(item.idInside, item.managerName);
+    });
 
-  // Добавляем данные текущего месяца
-  additionalTeamData.forEach((userData) => {
-    const managerName = idToManagerMap.get(userData.idInside);
-    if (managerName && userData.qlik?.factWithK) {
-      managersSet.add(managerName);
+    // Добавляем данные текущего месяца
+    additionalTeamData.forEach((userData) => {
+      const managerName = idToManagerMap.get(userData.idInside);
+      if (managerName && userData.qlik?.factWithK) {
+        managersSet.add(managerName);
 
-      if (!monthDataMap.has(currentMonthKey)) {
-        monthDataMap.set(currentMonthKey, {});
+        if (!monthDataMap.has(currentMonthKey)) {
+          monthDataMap.set(currentMonthKey, {});
+        }
+
+        const monthData = monthDataMap.get(currentMonthKey)!;
+        const factValue = parseFloat(userData.qlik.factWithK);
+        let totalValue = factValue;
+
+        // Если включен учет прогноза, добавляем прогноз к факту
+        if (includeForecast && userData.qlik?.forecastWithK) {
+          const forecastValue = parseFloat(userData.qlik.forecastWithK);
+          totalValue += forecastValue;
+        }
+
+        monthData[managerName] = (monthData[managerName] || 0) + totalValue;
       }
-
-      const monthData = monthDataMap.get(currentMonthKey)!;
-      const factValue = parseFloat(userData.qlik.factWithK);
-      let totalValue = factValue;
-
-      // Если включен учет прогноза, добавляем прогноз к факту
-      if (includeForecast && userData.qlik?.forecastWithK) {
-        const forecastValue = parseFloat(userData.qlik.forecastWithK);
-        totalValue += forecastValue;
-      }
-
-      monthData[managerName] = (monthData[managerName] || 0) + totalValue;
-    }
-  });
+    });
+  }
 
   const sortedData = Array.from(monthDataMap.entries())
     .map(([key, managerData]) => {
@@ -1155,8 +1178,16 @@ export const processDepartmentPlanDataPercentage = (
   moneyData: MoneyReportResponse,
   additionalTeamData: AdditionalUserData[],
   includeForecast: boolean = false,
+  currentMonth: string | null = null,
+  showCurrentMonth: boolean = true,
 ): ManagerData[] => {
-  const absoluteData = processDepartmentPlanData(moneyData, additionalTeamData, includeForecast);
+  const absoluteData = processDepartmentPlanData(
+    moneyData,
+    additionalTeamData,
+    includeForecast,
+    currentMonth,
+    showCurrentMonth,
+  );
 
   return absoluteData.map((monthData) => {
     // Используем общую сумму для расчета процентов
@@ -1189,5 +1220,14 @@ export const processDepartmentPlanDataPercentage = (
   });
 };
 
-// Константа плана отдела
-export const DEPARTMENT_PLAN = 15250000;
+// Константы планов отделов
+export const INBOUND_DEPARTMENT_PLAN = 15250000;
+export const ACCOUNT_MANAGERS_DEPARTMENT_PLAN = 11571000;
+
+// Функция для получения плана отдела в зависимости от маршрута
+export const getDepartmentPlan = (isAccountManagersRoute: boolean = false): number => {
+  return isAccountManagersRoute ? ACCOUNT_MANAGERS_DEPARTMENT_PLAN : INBOUND_DEPARTMENT_PLAN;
+};
+
+// Константа плана отдела (для обратной совместимости)
+export const DEPARTMENT_PLAN = INBOUND_DEPARTMENT_PLAN;
