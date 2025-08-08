@@ -19,12 +19,14 @@ export { useGetAdditionalTeamData } from './api/teamInfoApi';
 
 export { useGetMonthlyReportQuery } from './api/monthlyReportApi';
 export { useGetMoneyReportQuery } from './api/moneyReportApi';
+export { useGetTextReportQuery, useUpdateTextReportMutation, useCreateTextReportMutation } from './api/textReportApi';
 export { BentoDashboard } from './ui/BentoDashboard';
 export { MetricsCard } from './ui/MetricsCard';
 export { LineChartCard } from './ui/LineChartCard';
 export { BarChartCard } from './ui/BarChartCard';
 export { StackedBarChartCard } from './ui/StackedBarChartCard';
 export { MoneyReportCard } from './ui/MoneyReportCard';
+export { TextReportCard } from './ui/TextReportCard';
 export { DepartmentPlanChart } from './ui/DepartmentPlanChart';
 export { ExpandChartButton } from './ui/ExpandChartButton';
 export { FullScreenChartModal } from './ui/FullScreenChartModal';
@@ -72,3 +74,4 @@ export type {
   FailedDealsData,
 } from './model/types/monthlyReport';
 export type { MoneyReportResponse, MoneyReportData, ProcessedMoneyData } from './model/types/moneyReport';
+export type { TextReportResponse, TextReport } from './model/types/textReport';

@@ -236,6 +236,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
             isLoading={moneyIsLoading}
             error={moneyError}
             additionalTeamData={additionalTeamData}
+            isAccountManagersRoute={isAccountManagersRoute}
           />
         </Box>
       )}

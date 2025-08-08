@@ -15,6 +15,7 @@ import { MoneyReportResponse } from '../../model/types/moneyReport';
 import { MonthlyReportResponse } from '../../model/types/monthlyReport';
 import { AdditionalUserData } from '../../model/types/teamWebsocket';
 import { processMoneyReportData, getLastMonth, formatCurrency, getNettColor } from '../../lib/moneyReportHelpers';
+import { TextReportCard } from '../TextReportCard';
 
 const monthNames = [
   'Январь',
@@ -37,6 +38,7 @@ interface MoneyReportCardProps {
   isLoading?: boolean;
   error?: string;
   additionalTeamData?: AdditionalUserData[];
+  isAccountManagersRoute?: boolean;
 }
 
 export const MoneyReportCard = memo((props: MoneyReportCardProps) => {
@@ -285,6 +287,17 @@ export const MoneyReportCard = memo((props: MoneyReportCardProps) => {
             );
           })}
         </Box>
+
+        {/* Текстовый отчет */}
+        {selectedMonth && (
+          <Box sx={{ mt: 4 }}>
+            <TextReportCard
+              year={parseInt(selectedMonth.split('-')[0])}
+              month={parseInt(selectedMonth.split('-')[1])}
+              department={props.isAccountManagersRoute ? 'account' : 'inbound'}
+            />
+          </Box>
+        )}
       </CardContent>
     </Card>
   );
