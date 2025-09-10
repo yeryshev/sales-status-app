@@ -1027,18 +1027,33 @@ export const processManagerData = (data: MonthlyReportResponse): ManagerData[] =
 };
 
 // Функция для фильтрации данных финансового отчета
-export const filterMoneyDataByCurrentMonth = (
+export const filterMoneyDataByNextMonth = (
   moneyData: MoneyReportResponse,
-  currentMonth: string | null,
-  showCurrentMonth: boolean,
+  lastMonth: string | null,
+  showNextMonth: boolean,
 ): MoneyReportResponse => {
-  if (!currentMonth || showCurrentMonth) {
+  if (!lastMonth || !showNextMonth) {
     return moneyData;
   }
 
+  // Определяем следующий месяц после последнего
+  const [year, month] = lastMonth.split('-');
+  const yearNum = parseInt(year);
+  const monthNum = parseInt(month);
+
+  let nextYear = yearNum;
+  let nextMonthNum = monthNum + 1;
+
+  if (nextMonthNum > 12) {
+    nextMonthNum = 1;
+    nextYear = yearNum + 1;
+  }
+
+  const nextMonth = `${nextYear}-${nextMonthNum.toString().padStart(2, '0')}`;
+
   return moneyData.filter((item) => {
     const itemMonthKey = `${item.year}-${item.month.toString().padStart(2, '0')}`;
-    return itemMonthKey !== currentMonth;
+    return itemMonthKey !== nextMonth;
   });
 };
 
@@ -1047,13 +1062,13 @@ export const processDepartmentPlanData = (
   moneyData: MoneyReportResponse,
   additionalTeamData: AdditionalUserData[],
   includeForecast: boolean = false,
-  currentMonth: string | null = null,
-  showCurrentMonth: boolean = true,
+  lastMonth: string | null = null,
+  showNextMonth: boolean = false,
 ): ManagerData[] => {
   const managerColors = chartColors.managerColors;
 
   // Фильтруем данные финансового отчета
-  const filteredMoneyData = filterMoneyDataByCurrentMonth(moneyData, currentMonth, showCurrentMonth);
+  const filteredMoneyData = filterMoneyDataByNextMonth(moneyData, lastMonth, showNextMonth);
 
   const monthDataMap = new Map<string, { [managerName: string]: number }>();
   const managersSet = new Set<string>();
@@ -1073,42 +1088,56 @@ export const processDepartmentPlanData = (
     monthData[managerName] = (monthData[managerName] || 0) + item.faktK;
   });
 
-  // Добавляем данные текущего месяца из additionalTeamData только если включен учет текущего месяца
-  if (showCurrentMonth) {
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth() + 1;
-    const currentMonthKey = `${currentYear}-${currentMonth.toString().padStart(2, '0')}`;
+  // Добавляем данные следующего месяца из additionalTeamData только если включен показ следующего месяца
+  if (showNextMonth && lastMonth) {
+    // Определяем следующий месяц после последнего
+    const parts = lastMonth.split('-');
+    if (parts.length === 2) {
+      const [year, month] = parts;
+      const yearNum = parseInt(year);
+      const monthNum = parseInt(month);
 
-    // Создаем мапу idInside -> managerName из moneyData
-    const idToManagerMap = new Map<number, string>();
-    moneyData.forEach((item: MoneyReportData) => {
-      idToManagerMap.set(item.idInside, item.managerName);
-    });
+      let nextYear = yearNum;
+      let nextMonthNum = monthNum + 1;
 
-    // Добавляем данные текущего месяца для всех менеджеров из moneyData
-    additionalTeamData.forEach((userData) => {
-      const managerName = idToManagerMap.get(userData.idInside);
-      if (managerName) {
-        managersSet.add(managerName);
-
-        if (!monthDataMap.has(currentMonthKey)) {
-          monthDataMap.set(currentMonthKey, {});
-        }
-
-        const monthData = monthDataMap.get(currentMonthKey)!;
-        const factValue = userData.qlik?.factWithK ? parseFloat(userData.qlik.factWithK) : 0;
-        let totalValue = factValue;
-
-        // Если включен учет прогноза, добавляем прогноз к факту
-        if (includeForecast && userData.qlik?.forecastWithK) {
-          const forecastValue = parseFloat(userData.qlik.forecastWithK);
-          totalValue += forecastValue;
-        }
-
-        monthData[managerName] = (monthData[managerName] || 0) + totalValue;
+      if (nextMonthNum > 12) {
+        nextMonthNum = 1;
+        nextYear = yearNum + 1;
       }
-    });
+
+      const nextMonthKey = `${nextYear}-${nextMonthNum.toString().padStart(2, '0')}`;
+
+      // Создаем мапу idInside -> managerName из moneyData
+      const idToManagerMap = new Map<number, string>();
+      moneyData.forEach((item: MoneyReportData) => {
+        idToManagerMap.set(item.idInside, item.managerName);
+      });
+
+      // Добавляем данные следующего месяца для всех менеджеров из moneyData
+      additionalTeamData.forEach((userData) => {
+        const managerName = idToManagerMap.get(userData.idInside);
+        if (managerName) {
+          managersSet.add(managerName);
+
+          if (!monthDataMap.has(nextMonthKey)) {
+            monthDataMap.set(nextMonthKey, {});
+          }
+
+          const monthData = monthDataMap.get(nextMonthKey)!;
+          let totalValue = 0;
+
+          // Если включен учет прогноза, показываем только прогноз
+          if (includeForecast && userData.qlik?.forecastWithK) {
+            totalValue = parseFloat(userData.qlik.forecastWithK);
+          } else {
+            // Если прогноз отключен, показываем только факт
+            totalValue = userData.qlik?.factWithK ? parseFloat(userData.qlik.factWithK) : 0;
+          }
+
+          monthData[managerName] = (monthData[managerName] || 0) + totalValue;
+        }
+      });
+    }
   }
 
   const sortedData = Array.from(monthDataMap.entries())
@@ -1178,15 +1207,15 @@ export const processDepartmentPlanDataPercentage = (
   moneyData: MoneyReportResponse,
   additionalTeamData: AdditionalUserData[],
   includeForecast: boolean = false,
-  currentMonth: string | null = null,
-  showCurrentMonth: boolean = true,
+  lastMonth: string | null = null,
+  showNextMonth: boolean = false,
 ): ManagerData[] => {
   const absoluteData = processDepartmentPlanData(
     moneyData,
     additionalTeamData,
     includeForecast,
-    currentMonth,
-    showCurrentMonth,
+    lastMonth,
+    showNextMonth,
   );
 
   return absoluteData.map((monthData) => {

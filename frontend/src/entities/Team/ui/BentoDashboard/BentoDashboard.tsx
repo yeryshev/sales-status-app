@@ -57,8 +57,8 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
     isAccountManagersRoute = false,
   } = props;
 
-  // Используем хук для фильтрации текущего месяца
-  const { showCurrentMonth, setShowCurrentMonth, filteredData, currentMonth } = useCurrentMonthFilter(data);
+  // Используем хук для фильтрации следующего месяца
+  const { showNextMonth, setShowNextMonth, filteredData, lastMonth } = useCurrentMonthFilter(data);
 
   // Используем хук для управления режимами отображения графиков
   const {
@@ -72,12 +72,12 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
     setIncludeForecast,
   } = useChartDisplayMode();
 
-  // Автоматически сбрасываем прогноз, если отключен учет текущего месяца
+  // Автоматически сбрасываем прогноз, если отключен показ следующего месяца
   useEffect(() => {
-    if (!showCurrentMonth && includeForecast) {
+    if (!showNextMonth && includeForecast) {
       setIncludeForecast(false);
     }
-  }, [showCurrentMonth, includeForecast, setIncludeForecast]);
+  }, [showNextMonth, includeForecast, setIncludeForecast]);
 
   const processedData = useMemo(() => {
     if (!filteredData) return null;
@@ -105,15 +105,9 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
   const departmentPlanData = useMemo(() => {
     if (!moneyData || !additionalTeamData) return null;
     return departmentPlanMode === 'percentage'
-      ? processDepartmentPlanDataPercentage(
-          moneyData,
-          additionalTeamData,
-          includeForecast,
-          currentMonth,
-          showCurrentMonth,
-        )
-      : processDepartmentPlanData(moneyData, additionalTeamData, includeForecast, currentMonth, showCurrentMonth);
-  }, [moneyData, additionalTeamData, departmentPlanMode, includeForecast, currentMonth, showCurrentMonth]);
+      ? processDepartmentPlanDataPercentage(moneyData, additionalTeamData, includeForecast, lastMonth, showNextMonth)
+      : processDepartmentPlanData(moneyData, additionalTeamData, includeForecast, lastMonth, showNextMonth);
+  }, [moneyData, additionalTeamData, departmentPlanMode, includeForecast, lastMonth, showNextMonth]);
 
   // Вычисляем общие метрики
   const totalMetrics = useMemo(() => {
@@ -241,8 +235,8 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
         </Box>
       )}
 
-      {/* Фильтр текущего месяца */}
-      <CurrentMonthFilter showCurrentMonth={showCurrentMonth} onToggle={setShowCurrentMonth} />
+      {/* Фильтр следующего месяца */}
+      <CurrentMonthFilter showNextMonth={showNextMonth} onToggle={setShowNextMonth} />
 
       {/* Выполнение плана отдела */}
       {departmentPlanData && moneyData && (
@@ -272,7 +266,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
                 <IncludeForecastCheckbox
                   checked={includeForecast}
                   onChange={setIncludeForecast}
-                  disabled={!showCurrentMonth}
+                  disabled={!showNextMonth}
                 />
               </Box>
             </Box>

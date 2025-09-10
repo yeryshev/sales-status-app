@@ -12,10 +12,10 @@ const getMonthLabel = (monthString: string | null): string | null => {
 };
 
 export const useCurrentMonthFilter = (data: MonthlyReportResponse | null) => {
-  const [showCurrentMonth, setShowCurrentMonth] = useState(false);
+  const [showNextMonth, setShowNextMonth] = useState(false);
 
-  // Определяем текущий месяц из данных
-  const currentMonth = useMemo(() => {
+  // Определяем последний месяц из данных
+  const lastMonth = useMemo((): string | null => {
     if (!data) return null;
 
     let latestMonth: string | null = null;
@@ -35,40 +35,75 @@ export const useCurrentMonthFilter = (data: MonthlyReportResponse | null) => {
     return latestMonth;
   }, [data]);
 
-  // Получаем отформатированную метку текущего месяца
-  const currentMonthLabel = useMemo(() => {
-    return getMonthLabel(currentMonth);
-  }, [currentMonth]);
+  // Определяем следующий месяц после последнего
+  const nextMonth = useMemo(() => {
+    if (!lastMonth || typeof lastMonth !== 'string') return null;
 
-  // Фильтруем данные, исключая текущий месяц если чекбокс отключен
+    const parts = lastMonth.split('-');
+    if (parts.length !== 2) return null;
+
+    const [year, month] = parts;
+    const yearNum = parseInt(year);
+    const monthNum = parseInt(month);
+
+    if (isNaN(yearNum) || isNaN(monthNum)) return null;
+
+    let nextYear = yearNum;
+    let nextMonthNum = monthNum + 1;
+
+    if (nextMonthNum > 12) {
+      nextMonthNum = 1;
+      nextYear = yearNum + 1;
+    }
+
+    return `${nextYear}-${nextMonthNum.toString().padStart(2, '0')}`;
+  }, [lastMonth]);
+
+  // Получаем отформатированную метку последнего месяца
+  const lastMonthLabel = useMemo(() => {
+    return getMonthLabel(lastMonth);
+  }, [lastMonth]);
+
+  // Получаем отформатированную метку следующего месяца
+  const nextMonthLabel = useMemo(() => {
+    return getMonthLabel(nextMonth);
+  }, [nextMonth]);
+
+  // Фильтруем данные: по умолчанию показываем все месяцы до следующего, при включении чекбокса - включаем следующий месяц
   const filteredData = useMemo(() => {
-    if (!data || !currentMonth || showCurrentMonth) {
+    if (!data || !nextMonth) {
       return data;
     }
 
-    // Создаем копию данных без текущего месяца
-    const filteredResponse: MonthlyReportResponse = {
-      ...data,
-      result: {
-        ...data.result,
-        users: data.result.users.map((user) => ({
-          ...user,
-          reports: user.reports.filter((report) => {
-            const reportKey = `${report.year}-${report.month.toString().padStart(2, '0')}`;
-            return reportKey !== currentMonth;
-          }),
-        })),
-      },
-    };
+    // Если showNextMonth = false, исключаем следующий месяц (показываем только до последнего включительно)
+    if (!showNextMonth) {
+      const filteredResponse: MonthlyReportResponse = {
+        ...data,
+        result: {
+          ...data.result,
+          users: data.result.users.map((user) => ({
+            ...user,
+            reports: user.reports.filter((report) => {
+              const reportKey = `${report.year}-${report.month.toString().padStart(2, '0')}`;
+              return reportKey !== nextMonth;
+            }),
+          })),
+        },
+      };
+      return filteredResponse;
+    }
 
-    return filteredResponse;
-  }, [data, currentMonth, showCurrentMonth]);
+    // Если showNextMonth = true, возвращаем все данные (включая следующий месяц)
+    return data;
+  }, [data, nextMonth, showNextMonth]);
 
   return {
-    showCurrentMonth,
-    setShowCurrentMonth,
-    currentMonth,
-    currentMonthLabel,
+    showNextMonth,
+    setShowNextMonth,
+    lastMonth,
+    lastMonthLabel,
+    nextMonth,
+    nextMonthLabel,
     filteredData,
   };
 };
