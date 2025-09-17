@@ -1,81 +1,36 @@
 import { useState, useMemo } from 'react';
 import { MonthlyReportResponse } from '../../model/types/monthlyReport';
-import { formatMonthLabel } from '../monthlyReportHelpers';
 
-// Функция для получения метки месяца из строки
-const getMonthLabel = (monthString: string | null): string | null => {
-  if (!monthString) return null;
-  const parts = monthString.split('-');
-  if (parts.length !== 2) return null;
-  const [year, month] = parts;
-  return formatMonthLabel(parseInt(year), parseInt(month));
-};
+// удалено: форматирование метки месяца больше не используется здесь
 
 export const useCurrentMonthFilter = (data: MonthlyReportResponse | null) => {
   const [showNextMonth, setShowNextMonth] = useState(false);
 
-  // Определяем последний месяц из данных
-  const lastMonth = useMemo((): string | null => {
-    if (!data) return null;
-
-    let latestMonth: string | null = null;
-    let latestYear = 0;
-    let latestMonthNumber = 0;
-
-    data.result.users.forEach((user) => {
-      user.reports.forEach((report) => {
-        if (report.year > latestYear || (report.year === latestYear && report.month > latestMonthNumber)) {
-          latestYear = report.year;
-          latestMonthNumber = report.month;
-          latestMonth = `${report.year}-${report.month.toString().padStart(2, '0')}`;
-        }
-      });
-    });
-
-    return latestMonth;
-  }, [data]);
-
-  // Определяем следующий месяц после последнего
-  const nextMonth = useMemo(() => {
-    if (!lastMonth || typeof lastMonth !== 'string') return null;
-
-    const parts = lastMonth.split('-');
-    if (parts.length !== 2) return null;
-
-    const [year, month] = parts;
-    const yearNum = parseInt(year);
-    const monthNum = parseInt(month);
-
-    if (isNaN(yearNum) || isNaN(monthNum)) return null;
-
-    let nextYear = yearNum;
-    let nextMonthNum = monthNum + 1;
-
-    if (nextMonthNum > 12) {
-      nextMonthNum = 1;
-      nextYear = yearNum + 1;
-    }
-
-    return `${nextYear}-${nextMonthNum.toString().padStart(2, '0')}`;
-  }, [lastMonth]);
+  // Определяем текущий календарный месяц (YYYY-MM)
+  const currentMonthKey = useMemo(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // 1-12
+    return `${year}-${month.toString().padStart(2, '0')}`;
+  }, []);
 
   // Получаем отформатированную метку последнего месяца
   const lastMonthLabel = useMemo(() => {
-    return getMonthLabel(lastMonth);
-  }, [lastMonth]);
+    return null;
+  }, []);
 
   // Получаем отформатированную метку следующего месяца
   const nextMonthLabel = useMemo(() => {
-    return getMonthLabel(nextMonth);
-  }, [nextMonth]);
+    return null;
+  }, []);
 
-  // Фильтруем данные: по умолчанию показываем все месяцы до следующего, при включении чекбокса - включаем следующий месяц
+  // Фильтруем данные: по умолчанию исключаем текущий месяц, при включении чекбокса — включаем текущий месяц
   const filteredData = useMemo(() => {
-    if (!data || !nextMonth) {
+    if (!data) {
       return data;
     }
 
-    // Если showNextMonth = false, исключаем следующий месяц (показываем только до последнего включительно)
+    // Если showNextMonth = false, исключаем текущий календарный месяц
     if (!showNextMonth) {
       const filteredResponse: MonthlyReportResponse = {
         ...data,
@@ -85,7 +40,7 @@ export const useCurrentMonthFilter = (data: MonthlyReportResponse | null) => {
             ...user,
             reports: user.reports.filter((report) => {
               const reportKey = `${report.year}-${report.month.toString().padStart(2, '0')}`;
-              return reportKey !== nextMonth;
+              return reportKey !== currentMonthKey;
             }),
           })),
         },
@@ -93,16 +48,16 @@ export const useCurrentMonthFilter = (data: MonthlyReportResponse | null) => {
       return filteredResponse;
     }
 
-    // Если showNextMonth = true, возвращаем все данные (включая следующий месяц)
+    // Если showNextMonth = true, возвращаем все данные (включая текущий месяц)
     return data;
-  }, [data, nextMonth, showNextMonth]);
+  }, [data, currentMonthKey, showNextMonth]);
 
   return {
     showNextMonth,
     setShowNextMonth,
-    lastMonth,
+    lastMonth: null,
     lastMonthLabel,
-    nextMonth,
+    nextMonth: null,
     nextMonthLabel,
     filteredData,
   };

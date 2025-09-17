@@ -57,8 +57,8 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
     isAccountManagersRoute = false,
   } = props;
 
-  // Используем хук для фильтрации следующего месяца
-  const { showNextMonth, setShowNextMonth, filteredData, lastMonth } = useCurrentMonthFilter(data);
+  // Используем хук для фильтрации следующего месяца (на основе отчёта лидов)
+  const { showNextMonth, setShowNextMonth, filteredData } = useCurrentMonthFilter(data);
 
   // Используем хук для управления режимами отображения графиков
   const {
@@ -101,13 +101,37 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
     };
   }, [filteredData]);
 
+  // Определяем последний месяц по финансовому отчёту (для графика выполнения плана отдела)
+  const lastFinanceMonth = useMemo(() => {
+    if (!moneyData || moneyData.length === 0) return null;
+
+    let latestYear = 0;
+    let latestMonthNumber = 0;
+
+    moneyData.forEach((item) => {
+      if (item.year > latestYear || (item.year === latestYear && item.month > latestMonthNumber)) {
+        latestYear = item.year;
+        latestMonthNumber = item.month;
+      }
+    });
+
+    if (latestYear === 0 || latestMonthNumber === 0) return null;
+    return `${latestYear}-${latestMonthNumber.toString().padStart(2, '0')}`;
+  }, [moneyData]);
+
   // Обрабатываем данные для графика выполнения плана отдела
   const departmentPlanData = useMemo(() => {
     if (!moneyData || !additionalTeamData) return null;
     return departmentPlanMode === 'percentage'
-      ? processDepartmentPlanDataPercentage(moneyData, additionalTeamData, includeForecast, lastMonth, showNextMonth)
-      : processDepartmentPlanData(moneyData, additionalTeamData, includeForecast, lastMonth, showNextMonth);
-  }, [moneyData, additionalTeamData, departmentPlanMode, includeForecast, lastMonth, showNextMonth]);
+      ? processDepartmentPlanDataPercentage(
+          moneyData,
+          additionalTeamData,
+          includeForecast,
+          lastFinanceMonth,
+          showNextMonth,
+        )
+      : processDepartmentPlanData(moneyData, additionalTeamData, includeForecast, lastFinanceMonth, showNextMonth);
+  }, [moneyData, additionalTeamData, departmentPlanMode, includeForecast, lastFinanceMonth, showNextMonth]);
 
   // Вычисляем общие метрики
   const totalMetrics = useMemo(() => {
