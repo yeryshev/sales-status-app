@@ -42,6 +42,7 @@ export function AwayConfirmationModal(props: AwayConfirmationModalProps) {
       maxWidth="xs"
       open={open}
       disableRestoreFocus
+      disableAutoFocus={false}
       {...other}
     >
       <DialogTitle>Время отсутствия</DialogTitle>
@@ -54,10 +55,10 @@ export function AwayConfirmationModal(props: AwayConfirmationModalProps) {
               onChange={handleChangeRadio}
               value={isOtherSelected ? -1 : minutes}
             >
-              <FormControlLabel value={60} control={<Radio />} label="60 минут" />
-              <FormControlLabel value={30} control={<Radio />} label="30 минут" />
-              <FormControlLabel value={15} control={<Radio />} label="15 минут" />
-              <FormControlLabel value={-1} control={<Radio />} label="Другое" />
+              <FormControlLabel value={60} control={<Radio id="away-time-60" />} label="60 минут" />
+              <FormControlLabel value={30} control={<Radio id="away-time-30" />} label="30 минут" />
+              <FormControlLabel value={15} control={<Radio id="away-time-15" />} label="15 минут" />
+              <FormControlLabel value={-1} control={<Radio id="away-time-other" />} label="Другое" />
             </RadioGroup>
           </FormControl>
           {isOtherSelected && <AwayTimeInput value={minutes || 10} setValue={setMinutes} />}

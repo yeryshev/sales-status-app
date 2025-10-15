@@ -39,7 +39,13 @@ export const CustomerCareHeroRowCellsList = (props: CustomerCareHeroRowCellsList
       align: 'center',
       width: CELL_WIDTHS.ARROW_DOWN,
       content: (
-        <Switch name="isWorkingRemotely" checked={teammate.isWorkingRemotely} size={'small'} onChange={handleSwitch} />
+        <Switch
+          id="customer-care-is-working-remotely-switch"
+          name="isWorkingRemotely"
+          checked={teammate.isWorkingRemotely}
+          size={'small'}
+          onChange={handleSwitch}
+        />
       ),
     },
   ];

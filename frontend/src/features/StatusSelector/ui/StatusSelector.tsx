@@ -90,6 +90,9 @@ export const StatusSelector = memo(() => {
             onChange={handleChangeMainStatus}
             size={'small'}
             fullWidth
+            inputProps={{
+              'aria-label': 'Выберите статус',
+            }}
           >
             {cachedStatuses?.map((status) => (
               <MenuItem key={status.id} value={status.title} disabled={user?.statusId === status.id}>

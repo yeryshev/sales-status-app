@@ -1,47 +1,49 @@
-import { memo, useRef, useState, Fragment } from 'react';
+import { memo, useRef, useState } from 'react';
 import { Box, Card, CardContent, Typography } from '@mui/material';
-import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import annotationPlugin from 'chartjs-plugin-annotation';
 import { Bar } from 'react-chartjs-2';
-import { ExpandChartButton } from '../ExpandChartButton';
-import { FullScreenChartModal } from '../FullScreenChartModal';
+import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 import { calculateStackedYAxisMax } from '@/shared/lib/utils/chartUtils';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartDataLabels);
+import { ExpandChartButton } from '../ExpandChartButton';
+import { FullScreenChartModal } from '../FullScreenChartModal';
+import { ManagerData } from '../../model/types/monthlyReport';
+import { getDepartmentPlan } from '../../lib/monthlyReportHelpers';
 
-interface StackedBarDataPoint {
-  label: string;
-  datasets: {
-    label: string;
-    data: number;
-    backgroundColor: string;
-  }[];
-}
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, annotationPlugin);
 
-interface StackedBarChartCardProps {
-  title: string;
-  data: StackedBarDataPoint[];
-  yAxisLabel?: string;
+interface DepartmentPlanChartProps {
+  data: ManagerData[];
   size?: 'small' | 'medium' | 'large';
   isPercentageMode?: boolean;
+  isAccountManagersRoute?: boolean;
 }
 
-export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
-  const { title, data, yAxisLabel = 'Количество', size = 'medium', isPercentageMode = false } = props;
+export const DepartmentPlanChart = memo((props: DepartmentPlanChartProps) => {
+  const { data, size = 'medium', isPercentageMode = false, isAccountManagersRoute = false } = props;
   const chartRef = useRef<ChartJS<'bar'> | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const chartTheme = useChartTheme();
 
+  // Получаем план отдела в зависимости от маршрута
+  const departmentPlan = getDepartmentPlan(isAccountManagersRoute);
+
+  // Создаем данные в формате, совместимом с calculateStackedYAxisMax
+  const stackedDataForMax = data.map((item) => ({
+    datasets: item.datasets,
+  }));
+
   const chartData = {
     labels: data.map((item) => item.label),
-    datasets:
-      data[0]?.datasets.map((dataset, index) => ({
+    datasets: [
+      ...(data[0]?.datasets.map((dataset, index) => ({
         label: dataset.label,
         data: data.map((item) => item.datasets[index]?.data || 0),
         backgroundColor: dataset.backgroundColor,
         stack: 'Stack 0',
-      })) || [],
+      })) || []),
+    ],
   };
 
   const options = {
@@ -68,8 +70,11 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           label: function (context: any) {
             const value = context.parsed.y;
-            const suffix = isPercentageMode ? '%' : '';
-            return `${context.dataset.label}: ${value}${suffix}`;
+            if (isPercentageMode) {
+              return `${context.dataset.label}: ${value}%`;
+            } else {
+              return `${context.dataset.label}: ${value.toLocaleString('ru-RU')} ₽`;
+            }
           },
         },
       },
@@ -111,11 +116,35 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
             }
           }
 
-          // Добавляем символ '%' в процентном режиме
           if (isPercentageMode) {
             return `${total}%`;
+          } else {
+            return total.toLocaleString('ru-RU');
           }
-          return total;
+        },
+      },
+      annotation: {
+        annotations: {
+          planLine: {
+            type: 'line' as const,
+            yMin: isPercentageMode ? 0 : departmentPlan,
+            yMax: isPercentageMode ? 0 : departmentPlan,
+            borderColor: chartTheme.axisLabelColor,
+            borderWidth: isPercentageMode ? 0 : 2,
+            borderDash: [5, 5],
+            label: {
+              content: `План: ${departmentPlan.toLocaleString('ru-RU')} ₽`,
+              enabled: !isPercentageMode,
+              position: 'end' as const,
+              backgroundColor: chartTheme.tooltipBackground,
+              color: chartTheme.axisLabelColor,
+              font: {
+                size: 11,
+                weight: 'bold' as const,
+              },
+              padding: 4,
+            },
+          },
         },
       },
     },
@@ -135,10 +164,10 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
       y: {
         stacked: true,
         beginAtZero: true,
-        max: isPercentageMode ? 120 : calculateStackedYAxisMax(data), // В процентном режиме максимум 120%
+        max: isPercentageMode ? 120 : calculateStackedYAxisMax(stackedDataForMax), // Максимальное значение с правильным округлением
         title: {
           display: true,
-          text: isPercentageMode ? 'Доля (%)' : yAxisLabel,
+          text: isPercentageMode ? 'Доля (%)' : 'Выручка (₽)',
           font: {
             size: 12,
           },
@@ -152,11 +181,13 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
             size: 11,
           },
           color: chartTheme.axisLabelColor,
-          callback: function (value: string | number) {
+          callback: function (tickValue: string | number) {
+            const value = typeof tickValue === 'string' ? parseFloat(tickValue) : tickValue;
             if (isPercentageMode) {
               return `${value}%`;
+            } else {
+              return value.toLocaleString('ru-RU');
             }
-            return value;
           },
         },
       },
@@ -180,14 +211,14 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
   };
 
   return (
-    <Fragment>
+    <>
       <Card>
         <CardContent sx={{ p: 3, height: '100%' }}>
           <Box
             sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, position: 'relative' }}
           >
-            <Typography variant="h6">{title}</Typography>
-            <ExpandChartButton onClick={() => setIsFullScreen(true)} title={`Раскрыть "${title}"`} inline />
+            <Typography variant="h6">Выполнение плана отдела</Typography>
+            <ExpandChartButton onClick={() => setIsFullScreen(true)} title="Раскрыть график" inline />
           </Box>
 
           <Box sx={{ height: getCardHeight(), position: 'relative' }}>
@@ -196,9 +227,9 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
         </CardContent>
       </Card>
 
-      <FullScreenChartModal open={isFullScreen} onClose={() => setIsFullScreen(false)} title={title}>
+      <FullScreenChartModal open={isFullScreen} onClose={() => setIsFullScreen(false)} title="Выполнение плана отдела">
         <Bar ref={chartRef} data={chartData} options={options} />
       </FullScreenChartModal>
-    </Fragment>
+    </>
   );
 });

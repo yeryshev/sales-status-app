@@ -1,34 +1,45 @@
 import { memo } from 'react';
 import { Box, Typography } from '@mui/material';
-import { useGetMonthlyReportQuery } from '@/entities/Team';
+import { useGetMonthlyReportQuery, useGetMoneyReportQuery, AdditionalUserData } from '@/entities/Team';
 import { BentoDashboard } from '@/entities/Team';
 
 interface MonthlyReportContainerProps {
   active: boolean;
+  additionalTeamData?: AdditionalUserData[];
+  isAccountManagersRoute?: boolean;
 }
 
 export const MonthlyReportContainer = memo((props: MonthlyReportContainerProps) => {
-  const { active } = props;
+  const { active, additionalTeamData = [], isAccountManagersRoute = false } = props;
 
-  // Проверяем, установлена ли переменная окружения
-  const hasApiUrl = !!import.meta.env.VITE_MONTHLY_REPORT_URL;
+  // Проверяем, установлены ли переменные окружения
+  const hasMonthlyApiUrl = !!import.meta.env.VITE_MONTHLY_REPORT_URL;
+  const hasMoneyApiUrl = !!import.meta.env.VITE_MONEY_REPORT_URL;
 
   const {
     data: monthlyReportData,
-    isLoading,
-    error,
-  } = useGetMonthlyReportQuery(undefined, {
-    skip: !active || !hasApiUrl,
+    isLoading: monthlyIsLoading,
+    error: monthlyError,
+  } = useGetMonthlyReportQuery(isAccountManagersRoute, {
+    skip: !active || !hasMonthlyApiUrl,
+  });
+
+  const {
+    data: moneyReportData,
+    isLoading: moneyIsLoading,
+    error: moneyError,
+  } = useGetMoneyReportQuery(isAccountManagersRoute, {
+    skip: !active || !hasMoneyApiUrl,
   });
 
   if (!active) {
     return null;
   }
 
-  // Если переменная окружения не установлена
-  if (!hasApiUrl) {
+  // Если переменная окружения для месячного отчета не установлена
+  if (!hasMonthlyApiUrl) {
     return (
-      <Box sx={{ mt: 3 }}>
+      <Box>
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
           <Typography variant="h6" color="text.secondary" textAlign="center">
             Для отображения отчета необходимо установить переменную окружения VITE_MONTHLY_REPORT_URL
@@ -38,21 +49,42 @@ export const MonthlyReportContainer = memo((props: MonthlyReportContainerProps) 
     );
   }
 
-  // Определяем сообщение об ошибке
-  let errorMessage: string | undefined;
-  if (error) {
-    if ('status' in error && error.status === 404) {
-      errorMessage = 'API не найден. Проверьте правильность URL в VITE_MONTHLY_REPORT_URL';
-    } else if ('status' in error && typeof error.status === 'number' && error.status >= 500) {
-      errorMessage = 'Ошибка сервера. Попробуйте позже';
+  // Определяем сообщение об ошибке для месячного отчета
+  let monthlyErrorMessage: string | undefined;
+  if (monthlyError) {
+    if ('status' in monthlyError && monthlyError.status === 404) {
+      monthlyErrorMessage = 'API не найден. Проверьте правильность URL в VITE_MONTHLY_REPORT_URL';
+    } else if ('status' in monthlyError && typeof monthlyError.status === 'number' && monthlyError.status >= 500) {
+      monthlyErrorMessage = 'Ошибка сервера. Попробуйте позже';
     } else {
-      errorMessage = 'Ошибка загрузки данных. Проверьте подключение к интернету';
+      monthlyErrorMessage = 'Ошибка загрузки данных. Проверьте подключение к интернету';
+    }
+  }
+
+  // Определяем сообщение об ошибке для финансового отчета
+  let moneyErrorMessage: string | undefined;
+  if (moneyError) {
+    if ('status' in moneyError && moneyError.status === 404) {
+      moneyErrorMessage = 'API не найден. Проверьте правильность URL в VITE_MONEY_REPORT_URL';
+    } else if ('status' in moneyError && typeof moneyError.status === 'number' && moneyError.status >= 500) {
+      moneyErrorMessage = 'Ошибка сервера. Попробуйте позже';
+    } else {
+      moneyErrorMessage = 'Ошибка загрузки данных. Проверьте подключение к интернету';
     }
   }
 
   return (
-    <Box sx={{ mt: 3 }}>
-      <BentoDashboard data={monthlyReportData!} isLoading={isLoading} error={errorMessage} />
+    <Box>
+      <BentoDashboard
+        data={monthlyReportData!}
+        isLoading={monthlyIsLoading}
+        error={monthlyErrorMessage}
+        moneyData={moneyReportData}
+        moneyIsLoading={moneyIsLoading}
+        moneyError={moneyErrorMessage}
+        additionalTeamData={additionalTeamData}
+        isAccountManagersRoute={isAccountManagersRoute}
+      />
     </Box>
   );
 });

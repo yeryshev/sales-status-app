@@ -1,0 +1,1 @@
+export { TextReportCard } from './TextReportCard';

@@ -1,11 +1,11 @@
 import { rtkApi } from '@/shared/api/rtkApi';
-import { MonthlyReportResponse } from '../model/types/monthlyReport';
+import { MoneyReportResponse } from '../model/types/moneyReport';
 
-const monthlyReportApi = rtkApi.injectEndpoints({
+const moneyReportApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
-    getMonthlyReport: build.query<MonthlyReportResponse, boolean | void>({
+    getMoneyReport: build.query<MoneyReportResponse, boolean | void>({
       query: (isAccountManagersRoute = false) => {
-        const baseUrl = import.meta.env.VITE_MONTHLY_REPORT_URL;
+        const baseUrl = import.meta.env.VITE_MONEY_REPORT_URL;
         const url = isAccountManagersRoute ? `${baseUrl}/account` : baseUrl;
 
         return {
@@ -18,4 +18,4 @@ const monthlyReportApi = rtkApi.injectEndpoints({
   }),
 });
 
-export const { useGetMonthlyReportQuery } = monthlyReportApi;
+export const { useGetMoneyReportQuery } = moneyReportApi;

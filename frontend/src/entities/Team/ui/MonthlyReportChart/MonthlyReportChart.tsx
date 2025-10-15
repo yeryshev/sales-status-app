@@ -11,6 +11,8 @@ import {
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { Box, Typography, CircularProgress } from '@mui/material';
+import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
+import { chartColors } from '@/shared/const/chartColors';
 import { ProcessedChartData } from '../../model/types/monthlyReport';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -22,29 +24,12 @@ interface MonthlyReportChartProps {
 }
 
 const generateColors = (count: number) => {
-  const colors = [
-    '#FF6384',
-    '#36A2EB',
-    '#FFCE56',
-    '#4BC0C0',
-    '#9966FF',
-    '#FF9F40',
-    '#FF6384',
-    '#C9CBCF',
-    '#4BC0C0',
-    '#FF6384',
-    '#36A2EB',
-    '#FFCE56',
-    '#4BC0C0',
-    '#9966FF',
-    '#FF9F40',
-  ];
-
-  return colors.slice(0, count);
+  return chartColors.managerColors.slice(0, count);
 };
 
 export const MonthlyReportChart = memo((props: MonthlyReportChartProps) => {
   const { data, isLoading, error } = props;
+  const chartTheme = useChartTheme();
 
   const chartData = useMemo(() => {
     if (!data.data.length) return null;
@@ -75,6 +60,7 @@ export const MonthlyReportChart = memo((props: MonthlyReportChartProps) => {
         labels: {
           usePointStyle: true,
           padding: 20,
+          color: chartTheme.legendTextColor,
         },
       },
       title: {
@@ -84,6 +70,7 @@ export const MonthlyReportChart = memo((props: MonthlyReportChartProps) => {
           size: 16,
           weight: 'bold',
         },
+        color: chartTheme.titleColor,
       },
       tooltip: {
         mode: 'index' as const,
@@ -102,14 +89,25 @@ export const MonthlyReportChart = memo((props: MonthlyReportChartProps) => {
         title: {
           display: true,
           text: 'Месяц и год',
+          color: chartTheme.axisLabelColor,
+        },
+        ticks: {
+          color: chartTheme.axisLabelColor,
         },
       },
       y: {
         title: {
           display: true,
           text: 'Количество лидов',
+          color: chartTheme.axisLabelColor,
         },
         beginAtZero: true,
+        ticks: {
+          color: chartTheme.axisLabelColor,
+        },
+        grid: {
+          color: chartTheme.gridColor,
+        },
       },
     },
     interaction: {
