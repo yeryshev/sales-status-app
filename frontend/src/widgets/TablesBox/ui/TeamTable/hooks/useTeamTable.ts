@@ -1,26 +1,41 @@
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getUserData, getUserId, getUserIsManager } from '@/entities/User';
-import { TeamTableProps, FilteredTeamData } from '../types';
-import { createTeamMember, filterManagers, filterCoordinators, shouldShowHeroRow, createHeroMember } from '../utils';
+import { getUserData, getUserId } from '@/entities/User';
+import { TeamTableProps, FilteredTeamData, TeamMember } from '../types';
+import { createTeamMember, filterManagers, filterCoordinators, createHeroMember } from '../utils';
 import { getTeamTableHeadersList } from '../Headers/getTeamTableHeadersList';
+
+// Специальная функция фильтрации для Аккаунт менеджеров
+const filterAccountManagers = (teamMember: TeamMember, excludeUserId?: number): boolean => {
+  const { user } = teamMember;
+  return user.isAccountManager && user.id !== excludeUserId && !user.isCoordinator;
+};
 
 export const useTeamTable = (props: TeamTableProps) => {
   const { teamList, isDeadlineReachedObject, isAccountManagersRoute, additionalTeamData, teamIsLoading } = props;
 
   const userId = useSelector(getUserId);
   const user = useSelector(getUserData);
-  const userIsManager = useSelector(getUserIsManager);
 
-  const userOnRightPage = user?.isAccountManager === isAccountManagersRoute;
-  const showHeroRow = shouldShowHeroRow(teamIsLoading, userIsManager, userOnRightPage);
+  // Показываем hero row если пользователь имеет соответствующие права и не является суперпользователем
+  const userOnRightPage = isAccountManagersRoute
+    ? user?.isAccountManager === true && user?.isSuperuser === false
+    : user?.isManager === true && user?.isSuperuser === false;
+  const showHeroRow = !teamIsLoading && userOnRightPage;
 
   const teamMembers = useMemo(
     () => teamList.map((teammate) => createTeamMember(teammate, additionalTeamData, isDeadlineReachedObject)),
     [teamList, additionalTeamData, isDeadlineReachedObject],
   );
 
-  const managers = useMemo(() => teamMembers.filter((member) => filterManagers(member, userId)), [teamMembers, userId]);
+  // Используем разные функции фильтрации в зависимости от маршрута
+  const managers = useMemo(() => {
+    if (isAccountManagersRoute) {
+      return teamMembers.filter((member) => filterAccountManagers(member, userId));
+    } else {
+      return teamMembers.filter((member) => filterManagers(member, userId));
+    }
+  }, [teamMembers, userId, isAccountManagersRoute]);
 
   const coordinators = useMemo(
     () => teamMembers.filter((member) => filterCoordinators(member, userId)),

@@ -19,6 +19,7 @@ import { TeamTableTabs } from '@/features/TeamTableTabs';
 import { useTablesBoxViewModel } from '../hooks/useTablesBoxViewModel';
 import { TeamTableContainer } from './TeamTableContainer';
 import { TeamResultsContainer } from './TeamResultsContainer';
+import { MonthlyReportContainer } from './MonthlyReportContainer';
 
 const reducers: ReducersList = {
   teamTable: teamReducer,
@@ -54,9 +55,11 @@ export const TablesBox = memo(() => {
           }}
         >
           <TeamTableTabs tabNumber={tabNumber} handleChangeTab={handleChangeTab} />
-          <Box sx={{ minWidth: 150, display: 'flex', justifyContent: 'flex-end' }}>
-            <WebSocketStatus {...websocketState} maxReconnectAttempts={5} />
-          </Box>
+          {tabNumber === 0 && (
+            <Box sx={{ minWidth: 150, display: 'flex', justifyContent: 'flex-end' }}>
+              <WebSocketStatus {...websocketState} maxReconnectAttempts={5} />
+            </Box>
+          )}
         </Box>
 
         <TeamTableContainer
@@ -72,6 +75,12 @@ export const TablesBox = memo(() => {
           active={tabNumber === 1}
           teamList={teamList}
           teamIsLoading={teamIsLoading}
+          additionalTeamData={additionalTeamData}
+          isAccountManagersRoute={isAccountManagersRoute}
+        />
+
+        <MonthlyReportContainer
+          active={tabNumber === 2}
           additionalTeamData={additionalTeamData}
           isAccountManagersRoute={isAccountManagersRoute}
         />

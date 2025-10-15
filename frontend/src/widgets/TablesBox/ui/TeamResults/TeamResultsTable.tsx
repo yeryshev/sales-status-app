@@ -13,7 +13,7 @@ import { TeamResultsTableHead } from './TeamResultsTableHead';
 import { TeamResultsRow } from './TeamResultsRow';
 
 export const TeamResultsTable = memo((props: TeamResultsTableProps) => {
-  const { type, teamIsLoading, teamList, additionalTeamData } = props;
+  const { type, teamIsLoading, teamList, additionalTeamData, isAccountManagersRoute } = props;
   const user = useSelector(getUserData);
 
   const isCurrentWeek = type === 'currentWeek';
@@ -22,6 +22,7 @@ export const TeamResultsTable = memo((props: TeamResultsTableProps) => {
     teamList,
     additionalTeamData,
     isCurrentWeek,
+    isAccountManagersRoute,
   );
 
   const totalBudget = getTotalBudget(filteredTeamList, additionalTeamData, isCurrentWeek);

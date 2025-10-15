@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, SyntheticEvent } from 'react';
+import { useCallback, useEffect, useState, SyntheticEvent, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 import { getUserData, userActions, User } from '@/entities/User';
@@ -14,6 +14,8 @@ export const useTablesBoxViewModel = (teamList: User[], teamIsLoading: boolean) 
   const dispatch = useAppDispatch();
   const user = useSelector(getUserData);
   const [tabNumber, setTabNumber] = useState(0);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const lastLocalUpdateRef = useRef<number>(0);
 
   const deadlines = useDeadlinesCheck(teamList, teamIsLoading);
   const { refreshAllData } = useDataRefresh();
@@ -47,15 +49,20 @@ export const useTablesBoxViewModel = (teamList: User[], teamIsLoading: boolean) 
 
         if (currentUserFromWs) {
           const { statusId, status, busyTime, updatedAt, isWorkingRemotely } = currentUserFromWs;
-          dispatch(
-            userActions.updateUserLocal({
-              statusId,
-              status,
-              busyTime,
-              isWorkingRemotely,
-              updatedAt,
-            }),
-          );
+
+          // Проверяем, не было ли локального обновления в последние 2 секунды
+          const now = Date.now();
+          if (now - lastLocalUpdateRef.current > 2000) {
+            dispatch(
+              userActions.updateUserLocal({
+                statusId,
+                status,
+                busyTime,
+                isWorkingRemotely,
+                updatedAt,
+              }),
+            );
+          }
         }
       }
 
@@ -76,14 +83,18 @@ export const useTablesBoxViewModel = (teamList: User[], teamIsLoading: boolean) 
           );
 
           if (id === user.id) {
-            dispatch(
-              userActions.updateUserLocal({
-                statusId,
-                status,
-                busyTime,
-                isWorkingRemotely,
-              }),
-            );
+            // Проверяем, не было ли локального обновления в последние 2 секунды
+            const now = Date.now();
+            if (now - lastLocalUpdateRef.current > 2000) {
+              dispatch(
+                userActions.updateUserLocal({
+                  statusId,
+                  status,
+                  busyTime,
+                  isWorkingRemotely,
+                }),
+              );
+            }
           }
         }
       }
@@ -93,8 +104,16 @@ export const useTablesBoxViewModel = (teamList: User[], teamIsLoading: boolean) 
 
   const handleWebSocketConnect = useCallback(() => {
     logger.log('✅ Status updates WebSocket ready - real-time status synchronization active');
-    refreshAllData();
-  }, [refreshAllData]);
+
+    // Обновляем данные только при восстановлении соединения, не при первоначальной загрузке
+    if (!isInitialLoad) {
+      logger.log('🔄 WebSocket reconnected - refreshing data to ensure freshness...');
+      refreshAllData();
+    } else {
+      logger.log('📱 Initial WebSocket connection - skipping data refresh (RTK Query already loaded data)');
+      setIsInitialLoad(false);
+    }
+  }, [refreshAllData, isInitialLoad]);
 
   const handleWebSocketDisconnect = useCallback(() => {
     logger.log('❌ Status updates WebSocket disconnected - real-time synchronization paused');
@@ -121,5 +140,6 @@ export const useTablesBoxViewModel = (teamList: User[], teamIsLoading: boolean) 
     handleChangeTab,
     deadlines,
     websocketState,
+    lastLocalUpdateRef,
   };
 };

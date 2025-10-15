@@ -48,6 +48,9 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     is_account_manager: Mapped[bool] = mapped_column(
         Boolean, default=False, nullable=False, server_default="false"
     )
+    is_cc_manager: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False, server_default="false"
+    )
     status_id: Mapped[int | None] = mapped_column(
         ForeignKey("status.id", ondelete="SET NULL"), index=True
     )

@@ -31,6 +31,21 @@ export const TeamTableTabs = memo((props: ArticleTypeTabsProps) => {
         </Tooltip>
       ),
     },
+    {
+      label: (
+        <Tooltip
+          title={
+            <Typography variant={'inherit'}>
+              График количества полученных лидов по менеджерам
+              <br />
+              Данные по месяцам с разбивкой по менеджерам
+            </Typography>
+          }
+        >
+          <Typography variant={'inherit'}>Отчет</Typography>
+        </Tooltip>
+      ),
+    },
   ];
 
   return (

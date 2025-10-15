@@ -22,7 +22,8 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
   const { teammate, teamIsLoading, additionalUserData, isDeadlineReached, isAccountManagersRoute, handleSwitch } =
     props;
 
-  const { avatar, deals, budget, qlik, leads, overdueTasks, conversations, tickets } = additionalUserData ?? {};
+  const { avatar, deals, budget, qlik, leads, overdueTasks, conversations, tickets, idAmoCRM, idInside } =
+    additionalUserData ?? {};
 
   return [
     {
@@ -58,12 +59,12 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'center',
       width: CELL_WIDTHS.LEADS,
-      content: <LeadsCell leads={leads} />,
+      content: <LeadsCell leads={leads} idAmoCRM={idAmoCRM} />,
     },
     {
       align: 'center',
       width: CELL_WIDTHS.TASKS,
-      content: <TasksCell overdueTasks={overdueTasks} />,
+      content: <TasksCell overdueTasks={overdueTasks} idAmoCRM={idAmoCRM} />,
     },
     {
       align: 'center',
@@ -73,13 +74,19 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'center',
       width: CELL_WIDTHS.TICKETS,
-      content: <TicketsCell tickets={tickets} />,
+      content: <TicketsCell tickets={tickets} idInside={idInside} />,
     },
     {
       align: 'center',
       width: CELL_WIDTHS.ARROW_DOWN,
       content: !isAccountManagersRoute && (
-        <Switch name="isWorkingRemotely" checked={teammate.isWorkingRemotely} size={'small'} onChange={handleSwitch} />
+        <Switch
+          id="is-working-remotely-switch"
+          name="isWorkingRemotely"
+          checked={teammate.isWorkingRemotely}
+          size={'small'}
+          onChange={handleSwitch}
+        />
       ),
     },
   ];
