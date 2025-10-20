@@ -7,17 +7,23 @@ import { logger } from '@/shared/lib/utils/logger';
 
 export const SsoButton = memo(() => {
   const auth = useAuth();
+  const isAuthContextAvailable =
+    !!auth && typeof (auth as unknown as { isAuthenticated?: boolean }).isAuthenticated !== 'undefined';
 
   const handleSsoLogin = useCallback(() => {
     logger.log('Starting SSO login...');
-    auth.signinRedirect();
-  }, [auth]);
+    if (isAuthContextAvailable) {
+      auth?.signinRedirect();
+    }
+  }, [auth, isAuthContextAvailable]);
 
   const handleRetry = useCallback(() => {
     logger.log('Retrying SSO login...');
     // Очищаем ошибку и пытаемся снова
-    auth.signinRedirect();
-  }, [auth]);
+    if (isAuthContextAvailable) {
+      auth?.signinRedirect();
+    }
+  }, [auth, isAuthContextAvailable]);
 
   // Функция для получения понятного сообщения об ошибке
   type ErrorInfo = { title: string; description: string; action: string } | null;
@@ -50,7 +56,9 @@ export const SsoButton = memo(() => {
     };
   };
 
-  const errorInfo = getErrorMessage(auth.error);
+  const errorInfo = getErrorMessage(
+    isAuthContextAvailable ? (auth as unknown as { error?: unknown })?.error : undefined,
+  );
 
   return (
     <Box sx={{ mt: 2 }}>
@@ -61,7 +69,7 @@ export const SsoButton = memo(() => {
           variant="outlined"
           startIcon={<LoginIcon />}
           onClick={handleSsoLogin}
-          disabled={auth.isLoading}
+          disabled={isAuthContextAvailable ? auth.isLoading : false}
           sx={{ mb: 1 }}
         >
           Войти через SSO

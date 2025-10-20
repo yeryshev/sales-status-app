@@ -18,9 +18,17 @@ export const SsoAuthWrapper = memo(({ children }: SsoAuthWrapperProps) => {
   const navigate = useNavigate();
   const [ssoError, setSsoError] = useState(false);
 
+  // Доступность OIDC-контекста (в тестах может отсутствовать)
+  const isAuthContextAvailable =
+    !!auth && typeof (auth as unknown as { isAuthenticated?: boolean }).isAuthenticated !== 'undefined';
+
   // Обработка успешной авторизации через SSO
   useEffect(() => {
-    if (auth.isAuthenticated && auth.user && auth.user.profile?.email) {
+    if (!isAuthContextAvailable) {
+      return;
+    }
+
+    if (auth?.isAuthenticated && auth.user && auth.user.profile?.email) {
       logger.log('SSO User data:', auth.user);
       logger.log('User email:', auth.user.profile?.email);
       logger.log('User profile:', auth.user.profile);
@@ -42,15 +50,15 @@ export const SsoAuthWrapper = memo(({ children }: SsoAuthWrapperProps) => {
         }
       });
     }
-  }, [auth.isAuthenticated, auth.user, dispatch, navigate]);
+  }, [isAuthContextAvailable, auth?.isAuthenticated, auth?.user, dispatch, navigate]);
 
   // Если пользователь авторизован через SSO, но произошла ошибка
-  if (auth.isAuthenticated && auth.user && ssoError) {
+  if (isAuthContextAvailable && auth?.isAuthenticated && auth.user && ssoError) {
     return <SsoErrorScreen />;
   }
 
   // Если пользователь авторизован через SSO, показываем загрузку
-  if (auth.isAuthenticated && auth.user) {
+  if (isAuthContextAvailable && auth?.isAuthenticated && auth.user) {
     return <SsoLoadingScreen />;
   }
 
