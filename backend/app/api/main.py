@@ -1,9 +1,10 @@
 from fastapi import APIRouter
 
-from app.api.routes import auth, statuses, users, websockets
+from app.api.routes import auth, sso, statuses, users, websockets
 
 api_router = APIRouter()
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
+api_router.include_router(sso.router, prefix="/auth", tags=["sso"])
 api_router.include_router(users.users_router, prefix="/users", tags=["users"])
 api_router.include_router(users.telegram_router, prefix="/telegram", tags=["telegram"])
 api_router.include_router(

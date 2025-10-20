@@ -92,6 +92,65 @@ class UserRepository:
             return None
 
     @classmethod
+    async def get_user_by_email(
+        cls, email: str, session: AsyncSession
+    ) -> type[User] | None:
+        try:
+            # Нормализуем email - приводим к нижнему регистру
+            normalized_email = email.lower().strip()
+            
+            # Сначала пытаемся найти точное совпадение
+            query = (
+                select(User)
+                .where(func.lower(User.email) == normalized_email)
+                .options(selectinload(User.status), selectinload(User.busy_time))
+            )
+            result = await session.execute(query)
+            user = result.scalar_one_or_none()
+            
+            if user:
+                print(f"Found exact match: {user.email}")
+                return user
+            
+            # Если точного совпадения нет, пробуем альтернативный домен
+            if '@' in normalized_email:
+                username, domain = normalized_email.split('@')
+                print(f"Trying to find user with username: {username}, original domain: {domain}")
+                
+                # Определяем альтернативный домен
+                # Если домен заканчивается на .ru, пробуем .com
+                # Если домен заканчивается на .com, пробуем .ru
+                if domain.endswith('.ru'):
+                    alternative_domain = domain.replace('.ru', '.com')
+                elif domain.endswith('.com'):
+                    alternative_domain = domain.replace('.com', '.ru')
+                else:
+                    # Для других доменов не ищем альтернативы
+                    return None
+                
+                alternative_email = f"{username}@{alternative_domain}"
+                print(f"Trying alternative email: {alternative_email}")
+                
+                # Ищем пользователя с альтернативным доменом
+                query = (
+                    select(User)
+                    .where(func.lower(User.email) == alternative_email)
+                    .options(selectinload(User.status), selectinload(User.busy_time))
+                )
+                result = await session.execute(query)
+                user = result.scalar_one_or_none()
+                
+                if user:
+                    print(f"Found user with alternative domain: {user.email}")
+                    return user
+            
+            return None
+
+        except SQLAlchemyError as e:
+            print(str(e))
+            return None
+
+    @classmethod
     async def get_all_users(cls, session: AsyncSession) -> Sequence[User]:
         try:
             query = (

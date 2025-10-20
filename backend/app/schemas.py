@@ -90,3 +90,8 @@ class UpdateTelegramRequest(BaseModel):
     username: str
     status: int
     secret: str
+
+
+class SsoLoginRequest(BaseModel):
+    email: str
+    name: str | None = None
