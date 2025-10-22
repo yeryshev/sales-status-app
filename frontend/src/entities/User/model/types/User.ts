@@ -16,6 +16,7 @@ export interface User {
   extNumber: string;
   insideId: number;
   telegram: string;
+  telegramChatId: number | null;
   isWorkingRemotely: boolean;
   isCoordinator: boolean;
   isFemale: boolean;

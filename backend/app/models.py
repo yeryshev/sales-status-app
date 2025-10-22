@@ -33,6 +33,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     second_name: Mapped[str | None]
     ext_number: Mapped[str | None]
     telegram: Mapped[str | None]
+    telegram_chat_id: Mapped[int | None] = mapped_column(nullable=True)
     inside_id: Mapped[int | None] = mapped_column(unique=True, nullable=True)
     mango_user_id: Mapped[int | None] = mapped_column(unique=True, nullable=True)
     is_working_remotely: Mapped[bool] = mapped_column(default=False)
