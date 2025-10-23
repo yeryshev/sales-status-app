@@ -21,6 +21,21 @@ export const TeamTableTabs = memo((props: ArticleTypeTabsProps) => {
         <Tooltip
           title={
             <Typography variant={'inherit'}>
+              Конные бега - визуализация соревнования менеджеров
+              <br />
+              Позиция коня зависит от текущей фактической выручки
+            </Typography>
+          }
+        >
+          <Typography variant={'inherit'}>Соревнование</Typography>
+        </Tooltip>
+      ),
+    },
+    {
+      label: (
+        <Tooltip
+          title={
+            <Typography variant={'inherit'}>
               Рейтинг менеджеров по новым клиентам
               <br />
               ТОП 3 получают бейджи каждую неделю
