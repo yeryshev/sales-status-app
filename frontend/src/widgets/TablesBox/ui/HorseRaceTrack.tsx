@@ -145,21 +145,21 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
           position: 'relative',
           width: '100%',
           height: trackHeight * horsesData.length + 40,
-          background: `
-            linear-gradient(90deg, #D2B48C 0%, #F4A460 50%, #D2B48C 100%),
+          background: (theme) => `
+            linear-gradient(90deg, ${theme.palette.mode === 'dark' ? '#8B4513' : '#D2B48C'} 0%, ${theme.palette.mode === 'dark' ? '#A0522D' : '#F4A460'} 50%, ${theme.palette.mode === 'dark' ? '#8B4513' : '#D2B48C'} 100%),
             repeating-linear-gradient(
               45deg,
               transparent,
               transparent 10px,
-              rgba(255,255,255,0.1) 10px,
-              rgba(255,255,255,0.1) 11px
+              ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.1)'} 10px,
+              ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.1)'} 11px
             ),
             repeating-linear-gradient(
               -45deg,
               transparent,
               transparent 15px,
-              rgba(255,255,255,0.05) 15px,
-              rgba(255,255,255,0.05) 16px
+              ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.05)'} 15px,
+              ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.05)'} 16px
             )
           `,
           backgroundSize: '100% 100%, 20px 20px, 30px 30px',
@@ -177,7 +177,8 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
               left: 0,
               right: 0,
               height: 2,
-              background: 'rgba(255, 255, 255, 0.3)',
+              background: (theme) =>
+                theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.3)',
               zIndex: 1,
             }}
           />
@@ -193,7 +194,8 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
               bottom: 0,
               left: `${i * 5 + 2}%`,
               width: '1px',
-              background: 'rgba(255, 255, 255, 0.2)',
+              background: (theme) =>
+                theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.2)',
               zIndex: 1,
             }}
           />
@@ -263,14 +265,14 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
               {/* Иконка лошади - отдельно от информационного блока */}
               <Box
                 sx={{
-                  width: 120,
-                  height: 120,
+                  width: 180,
+                  height: 180,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}
               >
-                <HorseIcon color={horse.color} size={100} variant={horse.variant} />
+                <HorseIcon color={horse.color} size={190} variant={horse.variant} />
               </Box>
 
               {/* Информационный блок - отдельно от иконки */}
