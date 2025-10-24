@@ -245,8 +245,23 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
         {/* Лошади */}
         {horsesData.map((horse) => {
           // Горизонтальное позиционирование по выручке (лидер впереди)
-          const progress = maxRevenue > 0 ? (horse.factRevenue / maxRevenue) * 100 : 0;
-          const leftPosition = (progress / 100) * (trackWidth - 280); // 280px - ширина лошади + информационного блока
+          // Более чувствительное позиционирование: лидер почти в конце, аутсайдер почти в начале
+          const minRevenue = Math.min(...horsesData.map((h) => h.factRevenue));
+          const revenueRange = maxRevenue - minRevenue;
+
+          let progress;
+          if (revenueRange === 0) {
+            // Если все имеют одинаковую выручку, размещаем в середине
+            progress = 50;
+          } else {
+            // Нормализуем выручку от 0 до 100, где 0 = минимальная выручка, 100 = максимальная
+            progress = ((horse.factRevenue - minRevenue) / revenueRange) * 100;
+          }
+
+          // Применяем более агрессивное масштабирование для лучшего распределения
+          const scaledProgress = Math.pow(progress / 100, 0.7) * 100; // Степень 0.7 делает распределение более чувствительным
+          // Увеличиваем диапазон позиционирования, чтобы лидер был в конце трека
+          const leftPosition = (scaledProgress / 100) * (trackWidth - 50); // Еще больше уменьшаем отступ справа
 
           return (
             <Box
