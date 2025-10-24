@@ -4,6 +4,7 @@ import { User } from '@/entities/User';
 import { AdditionalUserData } from '@/entities/Team';
 import { formatValue } from '@/shared/lib/formatValue';
 import { HorseIcon } from './HorseIcon';
+import { getHorseIconVariant } from '@/shared/lib/utils/horseIconScanner';
 
 interface HorseRaceTrackProps {
   teamList: User[];
@@ -13,6 +14,7 @@ interface HorseRaceTrackProps {
 
 interface HorseData {
   id: number;
+  insideId: number; // Добавляем insideId для сопоставления с иконками
   name: string;
   avatar: string;
   factRevenue: number;
@@ -61,6 +63,14 @@ const horseNames = [
 export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
   const { teamList, additionalTeamData } = props;
 
+  // Создаем стабильный ключ для генерации случайного порядка
+  const stableKey = useMemo(() => {
+    return teamList
+      .map((user) => user.id)
+      .sort()
+      .join('-');
+  }, [teamList]);
+
   const horsesData = useMemo(() => {
     // Создаем мапу для связи пользователей с дополнительными данными
     const additionalDataMap = new Map<number, AdditionalUserData>();
@@ -81,6 +91,7 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
 
       return {
         id: user.id,
+        insideId: user.insideId, // Добавляем insideId для сопоставления с иконками
         name: `${user.firstName} ${user.secondName}`,
         avatar: additionalData?.avatar || '',
         factRevenue,
@@ -92,28 +103,34 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
       };
     });
 
-    // Сортируем по фактической выручке (по убыванию)
+    // Сортируем по фактической выручке (по убыванию) для горизонтального позиционирования
     horses.sort((a, b) => b.factRevenue - a.factRevenue);
+
+    // Создаем стабильный случайный порядок на основе стабильного ключа
+    const randomVerticalOrder = Array.from({ length: horses.length }, (_, i) => i);
+
+    // Используем стабильный seed для генерации случайного порядка
+    const seed = stableKey.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const seededRandom = (index: number) => {
+      const x = Math.sin(seed + index) * 10000;
+      return x - Math.floor(x);
+    };
+
+    for (let i = randomVerticalOrder.length - 1; i > 0; i--) {
+      const j = Math.floor(seededRandom(i) * (i + 1));
+      [randomVerticalOrder[i], randomVerticalOrder[j]] = [randomVerticalOrder[j], randomVerticalOrder[i]];
+    }
 
     // Устанавливаем позиции и варианты иконок
     horses.forEach((horse, index) => {
-      horse.position = index;
+      horse.position = randomVerticalOrder[index]; // Случайная вертикальная позиция
 
-      // Определяем variant на основе финальной позиции
-      if (index === 0) {
-        // Первое место - first.png
-        horse.variant = 0;
-      } else if (index === horses.length - 1) {
-        // Последнее место - last.png
-        horse.variant = 5;
-      } else {
-        // Остальные места - regular иконки (1-4)
-        horse.variant = (index % 4) + 1;
-      }
+      // Определяем variant с помощью утилиты
+      horse.variant = getHorseIconVariant(horse.insideId, index, horses.length);
     });
 
     return horses;
-  }, [teamList, additionalTeamData]);
+  }, [teamList, additionalTeamData, stableKey]);
 
   const maxRevenue = Math.max(...horsesData.map((horse) => horse.factRevenue));
   const trackWidth = 800;
@@ -224,7 +241,8 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
         />
 
         {/* Лошади */}
-        {horsesData.map((horse, index) => {
+        {horsesData.map((horse) => {
+          // Горизонтальное позиционирование по выручке (лидер впереди)
           const progress = maxRevenue > 0 ? (horse.factRevenue / maxRevenue) * 100 : 0;
           const leftPosition = (progress / 100) * (trackWidth - 280); // 280px - ширина лошади + информационного блока
 
@@ -233,7 +251,7 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
               key={horse.id}
               sx={{
                 position: 'absolute',
-                top: index * trackHeight + 10,
+                top: horse.position * trackHeight + 10, // Используем случайную вертикальную позицию
                 left: Math.max(10, leftPosition),
                 zIndex: 3,
                 transition: 'left 0.5s ease-in-out',

@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Box } from '@mui/material';
-import { horseIcons } from '@/shared/assets/icons/horses';
+import { baseHorseIcons, specialHorseIcons } from '@/shared/assets/icons/horses';
 
 interface HorseIconProps {
   color: string;
@@ -14,16 +14,23 @@ export const HorseIcon = memo((props: HorseIconProps) => {
 
   // Если используются PNG иконки
   if (usePngIcons) {
-    const pngHorseVariants = [
-      horseIcons.first, // Первое место - всегда first.png
-      horseIcons.regular1,
-      horseIcons.regular2,
-      horseIcons.regular3,
-      horseIcons.regular4,
-      horseIcons.last, // Последнее место - всегда last.png
+    // Базовые иконки для стандартных позиций
+    const baseIcons = [
+      baseHorseIcons.first, // Первое место - всегда first.png
+      baseHorseIcons.regular1,
+      baseHorseIcons.regular2,
+      baseHorseIcons.regular3,
+      baseHorseIcons.regular4,
+      baseHorseIcons.last, // Последнее место - всегда last.png
     ];
 
-    const selectedPngIcon = pngHorseVariants[variant % pngHorseVariants.length];
+    // Специальные иконки по ID (динамически)
+    const specialIcons = Object.values(specialHorseIcons);
+
+    // Объединяем все иконки
+    const allIcons = [...baseIcons, ...specialIcons];
+
+    const selectedPngIcon = allIcons[variant % allIcons.length];
 
     return (
       <Box
