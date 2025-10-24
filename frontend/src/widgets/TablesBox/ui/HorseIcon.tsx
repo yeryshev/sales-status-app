@@ -1,15 +1,54 @@
 import { memo } from 'react';
 import { Box } from '@mui/material';
+import { horseIcons } from '@/shared/assets/icons/horses';
 
 interface HorseIconProps {
   color: string;
   size?: number;
   variant?: number;
+  usePngIcons?: boolean; // Новый пропс для переключения между SVG и PNG
 }
 
 export const HorseIcon = memo((props: HorseIconProps) => {
-  const { color, size = 40, variant = 0 } = props;
+  const { color, size = 40, variant = 0, usePngIcons = true } = props;
 
+  // Если используются PNG иконки
+  if (usePngIcons) {
+    const pngHorseVariants = [
+      horseIcons.first, // Первое место - всегда first.png
+      horseIcons.regular1,
+      horseIcons.regular2,
+      horseIcons.regular3,
+      horseIcons.regular4,
+      horseIcons.last, // Последнее место - всегда last.png
+    ];
+
+    const selectedPngIcon = pngHorseVariants[variant % pngHorseVariants.length];
+
+    return (
+      <Box
+        sx={{
+          width: size,
+          height: size,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <img
+          src={selectedPngIcon}
+          alt={`Horse variant ${variant + 1}`}
+          style={{
+            width: size,
+            height: size,
+            objectFit: 'contain',
+          }}
+        />
+      </Box>
+    );
+  }
+
+  // Существующие SVG варианты
   const horseVariants = [
     // Вариант 1: Простая лошадь в профиль (на основе первого изображения)
     (color: string, size: number) => (

@@ -30,10 +30,10 @@ export const CompetitionContainer = memo((props: CompetitionContainerProps) => {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" sx={{ mb: 3, textAlign: 'center', fontWeight: 'bold' }}>
-        🏇 Конные бега менеджеров
+        🏇 Скачки
       </Typography>
       <Typography variant="body1" sx={{ mb: 4, textAlign: 'center', color: 'text.secondary' }}>
-        Позиция каждого коня зависит от текущей фактической выручки менеджера
+        Позиция каждого участника зависит от текущей фактической выручки
       </Typography>
 
       <HorseRaceTrack

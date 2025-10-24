@@ -88,16 +88,28 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
         position: 0, // Будет рассчитано ниже
         color: horseColors[index % horseColors.length],
         horseName: horseNames[index % horseNames.length],
-        variant: index % 5, // 5 различных вариантов лошадей
+        variant: 0, // Будет установлено после сортировки
       };
     });
 
     // Сортируем по фактической выручке (по убыванию)
     horses.sort((a, b) => b.factRevenue - a.factRevenue);
 
-    // Устанавливаем позиции
+    // Устанавливаем позиции и варианты иконок
     horses.forEach((horse, index) => {
       horse.position = index;
+
+      // Определяем variant на основе финальной позиции
+      if (index === 0) {
+        // Первое место - first.png
+        horse.variant = 0;
+      } else if (index === horses.length - 1) {
+        // Последнее место - last.png
+        horse.variant = 5;
+      } else {
+        // Остальные места - regular иконки (1-4)
+        horse.variant = (index % 4) + 1;
+      }
     });
 
     return horses;
@@ -108,25 +120,32 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
   const trackHeight = 100;
 
   return (
-    <Box sx={{ width: '100%', maxWidth: trackWidth + 200, mx: 'auto' }}>
-      {/* Заголовок трека */}
-      <Box sx={{ mb: 2, textAlign: 'center' }}>
-        <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-          🏁 Финишная прямая
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Максимальная выручка: {formatValue(maxRevenue.toString())}
-        </Typography>
-      </Box>
-
+    <Box sx={{ width: '100%' }}>
       {/* Трек */}
       <Paper
         elevation={3}
         sx={{
           position: 'relative',
-          width: trackWidth,
+          width: '100%',
           height: trackHeight * horsesData.length + 40,
-          background: 'linear-gradient(90deg, #8B4513 0%, #D2691E 50%, #8B4513 100%)',
+          background: `
+            linear-gradient(90deg, #D2B48C 0%, #F4A460 50%, #D2B48C 100%),
+            repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 10px,
+              rgba(255,255,255,0.1) 10px,
+              rgba(255,255,255,0.1) 11px
+            ),
+            repeating-linear-gradient(
+              -45deg,
+              transparent,
+              transparent 15px,
+              rgba(255,255,255,0.05) 15px,
+              rgba(255,255,255,0.05) 16px
+            )
+          `,
+          backgroundSize: '100% 100%, 20px 20px, 30px 30px',
           borderRadius: 2,
           overflow: 'hidden',
         }}
@@ -146,6 +165,50 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
             }}
           />
         ))}
+
+        {/* Вертикальные линии для текстуры дорожки */}
+        {Array.from({ length: 20 }, (_, i) => (
+          <Box
+            key={`vertical-${i}`}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: `${i * 5 + 2}%`,
+              width: '1px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              zIndex: 1,
+            }}
+          />
+        ))}
+
+        {/* Точечные узоры для текстуры */}
+        {Array.from({ length: 120 }, (_, i) => {
+          // Создаем очень плотное распределение
+          const top = (i * 13 + i * i * 7) % 100;
+          const left = (i * 17 + i * i * 11) % 100;
+          const size = 3 + ((i * 7) % 8); // размеры от 3 до 10
+          const opacity =
+            i % 2 === 0
+              ? 0.02 + ((i * 3) % 4) * 0.01 // светлые: 0.02-0.06
+              : 0.06 + ((i * 5) % 8) * 0.01; // темные: 0.06-0.14
+
+          return (
+            <Box
+              key={`dot-${i}`}
+              sx={{
+                position: 'absolute',
+                top: `${top}%`,
+                left: `${left}%`,
+                width: `${size}px`,
+                height: `${size}px`,
+                background: `rgba(0, 0, 0, ${opacity})`,
+                borderRadius: '50%',
+                zIndex: 1,
+              }}
+            />
+          );
+        })}
 
         {/* Финишная черта */}
         <Box
@@ -182,68 +245,41 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
               {/* Иконка лошади - отдельно от информационного блока */}
               <Box
                 sx={{
-                  width: 80,
-                  height: 80,
+                  width: 120,
+                  height: 120,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  borderRadius: 4,
-                  background: `linear-gradient(135deg, ${horse.color}30, ${horse.color}60)`,
-                  border: `4px solid ${horse.color}`,
-                  boxShadow: '0 6px 16px rgba(0,0,0,0.25)',
-                  position: 'relative',
                 }}
               >
-                <HorseIcon color={horse.color} size={65} variant={horse.variant} />
-
-                {/* Позиция на иконке лошади */}
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: -10,
-                    right: -10,
-                    background: index < 3 ? '#FFD700' : index < 6 ? '#C0C0C0' : '#CD7F32',
-                    color: index < 3 ? '#000' : '#fff',
-                    borderRadius: '50%',
-                    width: 28,
-                    height: 28,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.8rem',
-                    fontWeight: 'bold',
-                    boxShadow: '0 3px 6px rgba(0,0,0,0.4)',
-                    border: '3px solid white',
-                  }}
-                >
-                  {index < 3 ? '🥇🥈🥉'[index] : index + 1}
-                </Box>
+                <HorseIcon color={horse.color} size={100} variant={horse.variant} />
               </Box>
 
               {/* Информационный блок - отдельно от иконки */}
               <Box
                 sx={{
-                  background: 'rgba(255, 255, 255, 0.95)',
+                  background: (theme) =>
+                    theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.95)',
                   borderRadius: 3,
-                  p: 2,
+                  p: 1,
                   boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                  minWidth: 200,
+                  minWidth: 140,
                   border: `2px solid ${horse.color}`,
                   position: 'relative',
                 }}
               >
-                {/* Название лошади */}
+                {/* Имя менеджера */}
                 <Typography
                   variant="body2"
                   sx={{
                     fontWeight: 'bold',
-                    fontSize: '0.9rem',
+                    fontSize: '0.8rem',
                     color: horse.color,
-                    mb: 1,
+                    mb: 0.25,
                     textAlign: 'center',
                   }}
                 >
-                  {horse.horseName}
+                  {horse.name}
                 </Typography>
 
                 {/* Фактическая выручка */}
@@ -252,9 +288,9 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
                   sx={{
                     color: 'success.main',
                     fontWeight: 'bold',
-                    fontSize: '0.85rem',
+                    fontSize: '0.75rem',
                     textAlign: 'center',
-                    mb: 0.5,
+                    mb: 0.1,
                   }}
                 >
                   {formatValue(horse.factRevenue.toString())}
@@ -264,8 +300,8 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
                 <Typography
                   variant="caption"
                   sx={{
-                    color: 'text.secondary',
-                    fontSize: '0.75rem',
+                    color: (theme) => (theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : 'text.secondary'),
+                    fontSize: '0.65rem',
                     textAlign: 'center',
                     display: 'block',
                   }}
@@ -277,25 +313,6 @@ export const HorseRaceTrack = memo((props: HorseRaceTrackProps) => {
           );
         })}
       </Paper>
-
-      {/* Легенда */}
-      <Box sx={{ mt: 3, p: 2, background: 'rgba(0,0,0,0.05)', borderRadius: 2 }}>
-        <Typography variant="body2" sx={{ mb: 1, fontWeight: 'bold' }}>
-          📊 Легенда:
-        </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
-          • Зеленые цифры - фактическая выручка
-        </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
-          • Серые цифры - прогноз на месяц
-        </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mb: 0.5 }}>
-          • Позиция лошади зависит от текущей выручки
-        </Typography>
-        <Typography variant="caption" sx={{ display: 'block' }}>
-          • 🥇🥈🥉 - ТОП 3 получают золотые/серебряные медали
-        </Typography>
-      </Box>
     </Box>
   );
 });
