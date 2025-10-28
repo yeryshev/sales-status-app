@@ -10,6 +10,7 @@ import {
   clearError,
   setFilters,
 } from '@/entities/StatusAnalytics';
+import { getUserData } from '@/entities/User';
 import { RequireSuperuser } from '@/shared/lib/components/RequireSuperuser';
 import { Layout } from '@/widgets/Layout';
 import { PageWrapper } from '@/shared/ui/PageWrapper';
@@ -42,6 +43,7 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => {
 
 export const StatusAnalyticsPage = memo(() => {
   const dispatch = useAppDispatch();
+  const userData = useAppSelector(getUserData);
   const filters = useAppSelector(getStatusAnalyticsFilters);
   const error = useAppSelector(getStatusAnalyticsError);
   const [activeTab, setActiveTab] = useState(0);
@@ -128,13 +130,17 @@ export const StatusAnalyticsPage = memo(() => {
 
   // Загружаем фильтры из URL при монтировании
   useEffect(() => {
-    loadFiltersFromUrl();
-  }, [loadFiltersFromUrl]);
+    if (userData?.isSuperuser) {
+      loadFiltersFromUrl();
+    }
+  }, [loadFiltersFromUrl, userData?.isSuperuser]);
 
   // Загружаем данные при изменении фильтров
   useEffect(() => {
-    handleApplyFilters();
-  }, [filters, handleApplyFilters]);
+    if (userData?.isSuperuser) {
+      handleApplyFilters();
+    }
+  }, [filters, handleApplyFilters, userData?.isSuperuser]);
 
   return (
     <RequireSuperuser>
