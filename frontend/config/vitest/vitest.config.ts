@@ -13,6 +13,12 @@ export default defineConfig({
     include: ['**/*.test.tsx', '**/*.test.ts'],
     globals: true,
     environment: 'jsdom',
-    setupFiles: './config/vitest/setupTests.ts',
+    setupFiles: './config/vitest/setupTests.tsx',
+  },
+  optimizeDeps: {
+    include: ['@mui/material', '@mui/x-date-pickers'],
+  },
+  define: {
+    'process.env.NODE_ENV': '"test"',
   },
 });

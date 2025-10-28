@@ -4,6 +4,7 @@ import { ProfilePage } from '@/pages/ProfilePage';
 import { LoginPage } from '@/pages/LoginPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { CustomerCarePage } from '@/pages/CustomerCarePage';
+import { StatusAnalyticsPage } from '@/pages/StatusAnalyticsPage';
 import { AppRoutes, RoutePath } from '@/shared/const/router';
 import { AppRouteProps } from '@/shared/types/router';
 
@@ -39,6 +40,11 @@ export const routerConfig: Record<AppRoutes, AppRouteProps> = {
   [AppRoutes.CUSTOMER_CARE]: {
     path: RoutePath.customerCare,
     element: <CustomerCarePage />,
+    authOnly: true,
+  },
+  [AppRoutes.STATUS_ANALYTICS]: {
+    path: RoutePath.statusAnalytics,
+    element: <StatusAnalyticsPage />,
     authOnly: true,
   },
 };

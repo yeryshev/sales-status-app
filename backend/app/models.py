@@ -131,5 +131,43 @@ class BusyTime(Base):
         }
 
 
+class StatusHistory(Base):
+    __tablename__ = "status_history"
+
+    id: Mapped[int_primary_key]
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("user.id", ondelete="CASCADE"), index=True
+    )
+    old_status_id: Mapped[int | None] = mapped_column(
+        ForeignKey("status.id", ondelete="SET NULL"), nullable=True
+    )
+    new_status_id: Mapped[int] = mapped_column(
+        ForeignKey("status.id", ondelete="CASCADE"), index=True
+    )
+    start_time: Mapped[datetime]
+    end_time: Mapped[datetime | None] = mapped_column(nullable=True)
+    duration_seconds: Mapped[int | None] = mapped_column(nullable=True)
+    created_at: Mapped[created_at]
+
+    user: Mapped["User"] = relationship("User", foreign_keys=[user_id])
+    old_status: Mapped[Optional["Status"]] = relationship("Status", foreign_keys=[old_status_id])
+    new_status: Mapped["Status"] = relationship("Status", foreign_keys=[new_status_id])
+
+    def __repr__(self):
+        return f"id: {self.id}, user_id: {self.user_id}, old_status: {self.old_status_id}, new_status: {self.new_status_id}, start: {self.start_time}, end: {self.end_time}"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "userId": self.user_id,
+            "oldStatusId": self.old_status_id,
+            "newStatusId": self.new_status_id,
+            "startTime": self.start_time.isoformat() if self.start_time else None,
+            "endTime": self.end_time.isoformat() if self.end_time else None,
+            "durationSeconds": self.duration_seconds,
+            "createdAt": self.created_at.isoformat() if self.created_at else None,
+        }
+
+
 class Message(SQLModel):
     message: str

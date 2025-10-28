@@ -67,8 +67,7 @@ export const DepartmentPlanChart = memo((props: DepartmentPlanChartProps) => {
         mode: 'index' as const,
         intersect: false,
         callbacks: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          label: function (context: any) {
+          label: function (context: { parsed: { y: number }; dataset: { label?: string } }) {
             const value = context.parsed.y;
             if (isPercentageMode) {
               return `${context.dataset.label}: ${value}%`;

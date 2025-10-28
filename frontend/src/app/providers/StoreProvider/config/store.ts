@@ -1,5 +1,6 @@
 import { userReducer } from '@/entities/User';
 import { statusReducer } from '@/entities/Status';
+import { statusAnalyticsReducer } from '@/entities/StatusAnalytics';
 import { configureStore, ReducersMapObject } from '@reduxjs/toolkit';
 import { ReduxStoreWithManager, StateSchema, ThunkExtraArg } from './StateSchema';
 import { createReducerManager } from './reducerManager';
@@ -11,6 +12,7 @@ export function createReduxStore(initialState?: StateSchema, asyncReducers?: Red
     ...asyncReducers,
     user: userReducer,
     status: statusReducer,
+    statusAnalytics: statusAnalyticsReducer,
     [rtkApi.reducerPath]: rtkApi.reducer,
   };
 

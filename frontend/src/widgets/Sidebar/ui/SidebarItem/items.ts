@@ -5,6 +5,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import SupportIcon from '@mui/icons-material/Support';
 import TelegramIcon from '@mui/icons-material/Telegram';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
 
 import { RoutePath } from '@/shared/const/router';
 
@@ -39,5 +40,10 @@ export const SidebarItemsList: Array<SidebarItemType> = [
     path: RoutePath.profile,
     text: 'Профиль',
     Icon: AccountBoxIcon,
+  },
+  {
+    path: RoutePath.statusAnalytics,
+    text: 'Аналитика статусов',
+    Icon: AnalyticsIcon,
   },
 ];

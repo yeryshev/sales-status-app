@@ -1,5 +1,5 @@
 import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -76,7 +76,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
 
   return (
     <Grid container spacing={3} mt={4}>
-      <Grid xs={12} sm={12} lg={12} className="form-column">
+      <Grid item xs={12} sm={12} lg={12} className="form-column">
         <Paper
           sx={{
             p: 2,
@@ -86,7 +86,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
           }}
         >
           <Grid container spacing={2} sx={{ flexGrow: 1 }}>
-            <Grid xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
               <TextField
                 id="profile-first-name"
                 value={formData?.firstName ?? ''}
@@ -101,7 +101,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                 data-testid="ProfileCard.FirstName"
               />
             </Grid>
-            <Grid xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
               <TextField
                 id="profile-second-name"
                 value={formData?.secondName ?? ''}
@@ -116,7 +116,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                 data-testid="ProfileCard.SecondName"
               />
             </Grid>
-            <Grid xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
               <TextField
                 id="profile-inside-id"
                 value={formData?.insideId ?? ''}
@@ -131,7 +131,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                 data-testid="ProfileCard.InsideId"
               />
             </Grid>
-            <Grid xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
               <TextField
                 id="profile-email"
                 value={formData?.email ?? ''}
@@ -147,7 +147,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                 data-testid="ProfileCard.Email"
               />
             </Grid>
-            <Grid xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
               <TextField
                 id="profile-ext-number"
                 value={formData?.extNumber ?? ''}
@@ -163,7 +163,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
                 data-testid="ProfileCard.ExtNumber"
               />
             </Grid>
-            <Grid xs={12} sm={12} md={6} lg={6}>
+            <Grid item xs={12} sm={12} md={6} lg={6}>
               <TextField
                 id="profile-telegram"
                 value={formData?.telegram ?? ''}
@@ -182,6 +182,7 @@ export const ProfileCard = (props: ProfileCardProps) => {
         </Paper>
       </Grid>
       <Grid
+        item
         sx={{
           position: 'relative',
           width: '100%',
