@@ -86,3 +86,19 @@ export const fetchStatusesForAnalytics = createAsyncThunk('statusAnalytics/fetch
 
   return (await response.json()) as StatusForAnalytics[];
 });
+
+// Получение диапазона дат из истории статусов
+export const fetchDateRange = createAsyncThunk('statusAnalytics/fetchDateRange', async () => {
+  const response = await fetch(`${API_BASE_URL}/admin/status-analytics/date-range`, {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Ошибка получения диапазона дат');
+  }
+
+  return (await response.json()) as { minDate: string | null; maxDate: string | null };
+});

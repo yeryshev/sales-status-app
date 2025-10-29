@@ -10,6 +10,7 @@ export const getStatusesForAnalytics = (state: StateSchema) => state.statusAnaly
 export const getStatusAnalyticsLoading = (state: StateSchema) => state.statusAnalytics.loading;
 export const getStatusAnalyticsError = (state: StateSchema) => state.statusAnalytics.error;
 export const getStatusAnalyticsFilters = (state: StateSchema) => state.statusAnalytics.filters;
+export const getStatusAnalyticsDateRange = (state: StateSchema) => state.statusAnalytics.dateRange;
 
 // Селекторы для вычисляемых данных
 export const getTotalUsersInAnalytics = (state: StateSchema) => {

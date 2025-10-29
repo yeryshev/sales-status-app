@@ -4,6 +4,7 @@ import {
   fetchStatusAnalytics,
   fetchUsersForAnalytics,
   fetchStatusesForAnalytics,
+  fetchDateRange,
 } from '../api/statusAnalyticsApi';
 import { StatusAnalyticsState } from '../types/statusAnalytics';
 
@@ -12,6 +13,7 @@ const initialState: StatusAnalyticsState = {
   analytics: [],
   users: [],
   statuses: [],
+  dateRange: null,
   loading: false,
   error: null,
   filters: {
@@ -91,6 +93,18 @@ const statusAnalyticsSlice = createSlice({
       })
       .addCase(fetchStatusesForAnalytics.rejected, (state, action) => {
         state.error = action.error.message || 'Ошибка получения списка статусов';
+      });
+
+    // Диапазон дат
+    builder
+      .addCase(fetchDateRange.pending, (state) => {
+        state.error = null;
+      })
+      .addCase(fetchDateRange.fulfilled, (state, action) => {
+        state.dateRange = action.payload;
+      })
+      .addCase(fetchDateRange.rejected, (state, action) => {
+        state.error = action.error.message || 'Ошибка получения диапазона дат';
       });
   },
 });

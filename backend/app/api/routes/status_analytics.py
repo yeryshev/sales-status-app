@@ -305,3 +305,25 @@ async def get_statuses_for_analytics(
         ]
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Ошибка получения статусов: {str(e)}")
+
+
+@router.get("/date-range", response_model=dict)
+async def get_date_range(
+    session: AsyncSession = Depends(get_async_session),
+    current_user: User = Depends(current_superuser),
+):
+    """Получить минимальную и максимальную даты из истории статусов (только для суперпользователей)"""
+    try:
+        query = select(
+            func.min(StatusHistory.start_time).label("min_date"),
+            func.max(StatusHistory.start_time).label("max_date")
+        )
+        result = await session.execute(query)
+        date_range = result.first()
+
+        return {
+            "minDate": date_range.min_date.isoformat() if date_range.min_date else None,
+            "maxDate": date_range.max_date.isoformat() if date_range.max_date else None,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ошибка получения диапазона дат: {str(e)}")

@@ -6,6 +6,7 @@ export {
   fetchStatusAnalytics,
   fetchUsersForAnalytics,
   fetchStatusesForAnalytics,
+  fetchDateRange,
 } from './model/api/statusAnalyticsApi';
 export { setFilters, clearError, clearData } from './model/slice/statusAnalyticsSlice';
 export {
@@ -17,6 +18,7 @@ export {
   getStatusAnalyticsLoading,
   getStatusAnalyticsError,
   getStatusAnalyticsFilters,
+  getStatusAnalyticsDateRange,
   getTotalUsersInAnalytics,
   getTotalStatusesInAnalytics,
   getAnalyticsByUser,
@@ -30,5 +32,6 @@ export type {
   StatusAnalyticsResponse,
   UserForAnalytics,
   StatusForAnalytics,
+  DateRange,
   StatusAnalyticsState,
 } from './model/types/statusAnalytics';

@@ -10,6 +10,7 @@ import {
   getStatusAnalyticsFilters,
   getUsersForAnalytics,
   getStatusesForAnalytics,
+  getStatusAnalyticsDateRange,
   setFilters,
   fetchUsersForAnalytics,
   fetchStatusesForAnalytics,
@@ -25,6 +26,7 @@ export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }:
   const filters = useAppSelector(getStatusAnalyticsFilters);
   const users = useAppSelector(getUsersForAnalytics);
   const statuses = useAppSelector(getStatusesForAnalytics);
+  const dateRange = useAppSelector(getStatusAnalyticsDateRange);
 
   // Загружаем данные для фильтров при монтировании
   useEffect(() => {
@@ -160,6 +162,8 @@ export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }:
                 label="Дата"
                 value={new Date(filters.startDate)}
                 onChange={(date) => handleFilterChange('startDate', date?.toISOString().split('T')[0] || '')}
+                minDate={dateRange?.minDate ? new Date(dateRange.minDate) : undefined}
+                maxDate={dateRange?.maxDate ? new Date(dateRange.maxDate) : undefined}
                 slotProps={{ textField: { fullWidth: true } }}
               />
             </Grid>
@@ -171,6 +175,8 @@ export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }:
                   label="Дата начала"
                   value={new Date(filters.startDate)}
                   onChange={(date) => handleFilterChange('startDate', date?.toISOString().split('T')[0] || '')}
+                  minDate={dateRange?.minDate ? new Date(dateRange.minDate) : undefined}
+                  maxDate={dateRange?.maxDate ? new Date(dateRange.maxDate) : undefined}
                   slotProps={{ textField: { fullWidth: true } }}
                 />
               </Grid>
@@ -181,6 +187,8 @@ export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }:
                   label="Дата окончания"
                   value={new Date(filters.endDate)}
                   onChange={(date) => handleFilterChange('endDate', date?.toISOString().split('T')[0] || '')}
+                  minDate={dateRange?.minDate ? new Date(dateRange.minDate) : undefined}
+                  maxDate={dateRange?.maxDate ? new Date(dateRange.maxDate) : undefined}
                   slotProps={{ textField: { fullWidth: true } }}
                 />
               </Grid>

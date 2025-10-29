@@ -46,11 +46,17 @@ export interface StatusForAnalytics {
   title: string;
 }
 
+export interface DateRange {
+  minDate: string | null;
+  maxDate: string | null;
+}
+
 export interface StatusAnalyticsState {
   history: StatusHistory[];
   analytics: StatusAnalyticsResponse[];
   users: UserForAnalytics[];
   statuses: StatusForAnalytics[];
+  dateRange: DateRange | null;
   loading: boolean;
   error: string | null;
   filters: {

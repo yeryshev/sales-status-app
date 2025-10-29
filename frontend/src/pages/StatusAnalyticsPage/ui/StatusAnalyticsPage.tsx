@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/shared/lib/hooks';
 import {
   fetchStatusAnalytics,
   fetchStatusHistory,
+  fetchDateRange,
   getStatusAnalyticsError,
   getStatusAnalyticsFilters,
   clearError,
@@ -36,7 +37,7 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => {
       aria-labelledby={`analytics-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box>{children}</Box>}
     </div>
   );
 };
@@ -128,12 +129,13 @@ export const StatusAnalyticsPage = memo(() => {
     dispatch(clearError());
   };
 
-  // Загружаем фильтры из URL при монтировании
+  // Загружаем фильтры из URL и диапазон дат при монтировании
   useEffect(() => {
     if (userData?.isSuperuser) {
       loadFiltersFromUrl();
+      dispatch(fetchDateRange());
     }
-  }, [loadFiltersFromUrl, userData?.isSuperuser]);
+  }, [loadFiltersFromUrl, userData?.isSuperuser, dispatch]);
 
   // Загружаем данные при изменении фильтров
   useEffect(() => {
