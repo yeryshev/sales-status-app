@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Union
 
 from fastapi_users import schemas
 from pydantic import BaseModel, Field, field_validator
@@ -103,26 +102,26 @@ class StatusAnalyticsRequest(BaseModel):
     status_id: int | None = Field(None, alias="statusId")
     period_type: str = Field("day", alias="periodType")  # day, week, month
 
-    @field_validator('start_date', mode='before')
+    @field_validator("start_date", mode="before")
     @classmethod
-    def parse_start_date(cls, v):
+    def parse_start_date(cls, v) -> datetime:
         if isinstance(v, str):
             try:
                 return datetime.fromisoformat(v)
             except ValueError:
                 # Для start_date добавляем начало дня
-                return datetime.fromisoformat(v + 'T00:00:00')
+                return datetime.fromisoformat(v + "T00:00:00")
         return v
 
-    @field_validator('end_date', mode='before')
+    @field_validator("end_date", mode="before")
     @classmethod
-    def parse_end_date(cls, v):
+    def parse_end_date(cls, v) -> datetime:
         if isinstance(v, str):
             try:
                 return datetime.fromisoformat(v)
             except ValueError:
                 # Для end_date добавляем конец дня
-                return datetime.fromisoformat(v + 'T23:59:59.999999')
+                return datetime.fromisoformat(v + "T23:59:59.999999")
         return v
 
     class Config:
@@ -134,11 +133,13 @@ class StatusAnalyticsResponse(BaseModel):
     user_name: str = Field(serialization_alias="userName")
     status_id: int = Field(serialization_alias="statusId")
     status_title: str = Field(serialization_alias="statusTitle")
+    start_time: datetime = Field(serialization_alias="startTime")
+    end_time: datetime | None = Field(None, serialization_alias="endTime")
     total_duration_seconds: int = Field(serialization_alias="totalDurationSeconds")
     total_duration_minutes: float = Field(serialization_alias="totalDurationMinutes")
     total_duration_hours: float = Field(serialization_alias="totalDurationHours")
     percentage: float = Field(serialization_alias="percentage")
-    periods: list[dict] = Field(serialization_alias="periods")
+    periods: list[dict[str, str | int]] = Field(serialization_alias="periods")
 
     class Config:
         populate_by_name = True
@@ -150,15 +151,15 @@ class StatusHistoryQuery(BaseModel):
     end_date: datetime | None = Field(None, alias="end_date")
     limit: int = Field(100, alias="limit")
 
-    @field_validator('start_date', 'end_date', mode='before')
+    @field_validator("start_date", "end_date", mode="before")
     @classmethod
-    def parse_dates(cls, v):
+    def parse_dates(cls, v) -> datetime | None:
         if isinstance(v, str):
             try:
                 return datetime.fromisoformat(v)
             except ValueError:
                 # Попробуем парсить как дату без времени
-                return datetime.fromisoformat(v + 'T00:00:00')
+                return datetime.fromisoformat(v + "T00:00:00")
         return v
 
     class Config:

@@ -1,5 +1,6 @@
 import json
 import logging
+
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 router = APIRouter()
@@ -13,12 +14,16 @@ class ConnectionManager:
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.append(websocket)
-        logger.info(f"WebSocket connected. Total connections: {len(self.active_connections)}")
+        logger.info(
+            f"WebSocket connected. Total connections: {len(self.active_connections)}"
+        )
 
     def disconnect(self, websocket: WebSocket):
         if websocket in self.active_connections:
             self.active_connections.remove(websocket)
-        logger.info(f"WebSocket disconnected. Total connections: {len(self.active_connections)}")
+        logger.info(
+            f"WebSocket disconnected. Total connections: {len(self.active_connections)}"
+        )
 
     async def send_personal_message(self, message: str, websocket: WebSocket):
         try:
@@ -35,7 +40,7 @@ class ConnectionManager:
             except Exception as e:
                 logger.error(f"Error broadcasting message: {e}")
                 disconnected.append(connection)
-        
+
         # Удаляем отключенные соединения
         for connection in disconnected:
             self.disconnect(connection)
@@ -59,7 +64,7 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_text()
-            
+
             # Проверяем, является ли сообщение ping
             try:
                 message = json.loads(data)
@@ -69,10 +74,10 @@ async def websocket_endpoint(websocket: WebSocket):
             except json.JSONDecodeError:
                 # Если не JSON, обрабатываем как обычное сообщение
                 pass
-            
+
             # Обычная трансляция сообщения
             await manager.broadcast(data)
-            
+
     except WebSocketDisconnect:
         manager.disconnect(websocket)
     except Exception as e:

@@ -123,26 +123,27 @@ async def update_user_router(
     summary="Set All Users Offline",
 )
 async def set_all_offline(session: AsyncSession = Depends(get_async_session)):
-    from app.crud import StatusHistoryRepository
     from datetime import datetime
-    
+
+    from app.crud import StatusHistoryRepository
+
     statement = select(User)
     result = await session.execute(statement)
     users = result.scalars().all()
-    
+
     current_time = datetime.utcnow()
 
     for user in users:
         # Проверяем, нужно ли менять статус
         if user.status_id != offline_status_id:
             old_status_id = user.status_id
-            
+
             # Закрываем предыдущий статус, если он был
             if old_status_id is not None:
                 await StatusHistoryRepository.update_last_status_end_time(
                     session, user.id, current_time
                 )
-            
+
             # Добавляем новый статус в историю
             await StatusHistoryRepository.add_status_change(
                 session,
@@ -151,7 +152,7 @@ async def set_all_offline(session: AsyncSession = Depends(get_async_session)):
                 new_status_id=offline_status_id,
                 start_time=current_time,
             )
-            
+
             # Обновляем статус пользователя
             user.status_id = offline_status_id
             await change_mango_status(user, mango_statuses["offline"])

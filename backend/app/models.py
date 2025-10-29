@@ -66,7 +66,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
         "BusyTime", back_populates="user", uselist=False
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"id: {self.id}, email: {self.email} first_name: {self.first_name} second_name: {self.second_name}"
 
 
@@ -90,10 +90,10 @@ class Status(Base):
     )
     users: Mapped[list["User"]] = relationship("User", back_populates="status")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"id: {self.id}, title: {self.title}, is_deadline_required: {self.is_deadline_required}"
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, int | str | bool]:
         return {
             "id": self.id,
             "title": self.title,
@@ -119,10 +119,10 @@ class BusyTime(Base):
     user: Mapped["User"] = relationship("User", back_populates="busy_time")
     status: Mapped["Status"] = relationship("Status", back_populates="busy_times")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"id: {self.id}, status_id: {self.status_id}, user_id: {self.user_id}, end_time: {self.end_time}"
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, int | str | None]:
         return {
             "id": self.id,
             "statusId": self.status_id,
@@ -150,13 +150,15 @@ class StatusHistory(Base):
     created_at: Mapped[created_at]
 
     user: Mapped["User"] = relationship("User", foreign_keys=[user_id])
-    old_status: Mapped[Optional["Status"]] = relationship("Status", foreign_keys=[old_status_id])
+    old_status: Mapped[Optional["Status"]] = relationship(
+        "Status", foreign_keys=[old_status_id]
+    )
     new_status: Mapped["Status"] = relationship("Status", foreign_keys=[new_status_id])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"id: {self.id}, user_id: {self.user_id}, old_status: {self.old_status_id}, new_status: {self.new_status_id}, start: {self.start_time}, end: {self.end_time}"
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, int | str | None]:
         return {
             "id": self.id,
             "userId": self.user_id,

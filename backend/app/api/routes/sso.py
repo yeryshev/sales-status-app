@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Response
+from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi_users import BaseUserManager
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.auth_config import auth_backend, get_jwt_strategy
-from app.schemas import SsoLoginRequest
+from app.api.auth_manager import get_user_manager
 from app.core.db import get_async_session
 from app.crud import UserRepository
-from app.api.auth_manager import get_user_manager
-from fastapi_users import BaseUserManager
+from app.schemas import SsoLoginRequest
 
 router = APIRouter()
 
@@ -16,7 +16,7 @@ async def sso_login(
     request: SsoLoginRequest,
     response: Response,
     session: AsyncSession = Depends(get_async_session),
-    user_manager: BaseUserManager = Depends(get_user_manager),
+    _user_manager: BaseUserManager = Depends(get_user_manager),
 ):
     """
     Авторизация через SSO (Keycloak).
@@ -32,7 +32,7 @@ async def sso_login(
             print(f"User not found for email: {request.email}")
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Пользователь с таким email не найден в системе"
+                detail="Пользователь с таким email не найден в системе",
             )
 
         print(f"User found: {user.email} (ID: {user.id})")
@@ -41,7 +41,7 @@ async def sso_login(
             print(f"User {user.email} is not active")
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Пользователь деактивирован"
+                detail="Пользователь деактивирован",
             )
 
         # Создаем JWT токен и устанавливаем cookie для авторизации
@@ -57,10 +57,11 @@ async def sso_login(
         except Exception as token_error:
             print(f"Token creation error: {str(token_error)}")
             import traceback
+
             traceback.print_exc()
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Ошибка создания токена авторизации"
+                detail="Ошибка создания токена авторизации",
             )
 
         # Возвращаем успешный ответ с данными пользователя
@@ -74,7 +75,7 @@ async def sso_login(
                 "second_name": user.second_name,
                 "is_active": user.is_active,
                 "is_superuser": user.is_superuser,
-            }
+            },
         }
 
     except HTTPException:
@@ -82,8 +83,9 @@ async def sso_login(
     except Exception as e:
         print(f"SSO login error: {str(e)}")
         import traceback
+
         traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Ошибка при авторизации через SSO"
+            detail="Ошибка при авторизации через SSO",
         )

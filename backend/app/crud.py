@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.models import BusyTime, Status, User, StatusHistory
+from app.models import BusyTime, Status, StatusHistory, User
 from app.schemas import UserUpdate
 
 
@@ -98,7 +98,7 @@ class UserRepository:
         try:
             # Нормализуем email - приводим к нижнему регистру
             normalized_email = email.lower().strip()
-            
+
             # Сначала пытаемся найти точное совпадение
             query = (
                 select(User)
@@ -107,30 +107,32 @@ class UserRepository:
             )
             result = await session.execute(query)
             user = result.scalar_one_or_none()
-            
+
             if user:
                 print(f"Found exact match: {user.email}")
                 return user
-            
+
             # Если точного совпадения нет, пробуем альтернативный домен
-            if '@' in normalized_email:
-                username, domain = normalized_email.split('@')
-                print(f"Trying to find user with username: {username}, original domain: {domain}")
-                
+            if "@" in normalized_email:
+                username, domain = normalized_email.split("@")
+                print(
+                    f"Trying to find user with username: {username}, original domain: {domain}"
+                )
+
                 # Определяем альтернативный домен
                 # Если домен заканчивается на .ru, пробуем .com
                 # Если домен заканчивается на .com, пробуем .ru
-                if domain.endswith('.ru'):
-                    alternative_domain = domain.replace('.ru', '.com')
-                elif domain.endswith('.com'):
-                    alternative_domain = domain.replace('.com', '.ru')
+                if domain.endswith(".ru"):
+                    alternative_domain = domain.replace(".ru", ".com")
+                elif domain.endswith(".com"):
+                    alternative_domain = domain.replace(".com", ".ru")
                 else:
                     # Для других доменов не ищем альтернативы
                     return None
-                
+
                 alternative_email = f"{username}@{alternative_domain}"
                 print(f"Trying alternative email: {alternative_email}")
-                
+
                 # Ищем пользователя с альтернативным доменом
                 query = (
                     select(User)
@@ -139,11 +141,11 @@ class UserRepository:
                 )
                 result = await session.execute(query)
                 user = result.scalar_one_or_none()
-                
+
                 if user:
                     print(f"Found user with alternative domain: {user.email}")
                     return user
-            
+
             return None
 
         except SQLAlchemyError as e:
@@ -183,7 +185,7 @@ class UserRepository:
                 status = await session.get(Status, value)
                 if status.is_deadline_required and status.id != user.status_id:
                     await handle_busy_time(session, user, value, deadline)
-                
+
                 # Записываем изменение статуса в историю
                 if old_status_id != value:
                     # Закрываем предыдущий статус, если он был
@@ -191,7 +193,7 @@ class UserRepository:
                         await StatusHistoryRepository.update_last_status_end_time(
                             session, user.id, datetime.utcnow()
                         )
-                    
+
                     # Добавляем новый статус в историю
                     await StatusHistoryRepository.add_status_change(
                         session,
@@ -200,7 +202,7 @@ class UserRepository:
                         new_status_id=value,
                         start_time=datetime.utcnow(),
                     )
-                
+
                 user.status_id = value
             else:
                 setattr(user, key, value)
@@ -258,8 +260,7 @@ class StatusHistoryRepository:
             query = (
                 select(StatusHistory)
                 .where(
-                    StatusHistory.user_id == user_id,
-                    StatusHistory.end_time.is_(None)
+                    StatusHistory.user_id == user_id, StatusHistory.end_time.is_(None)
                 )
                 .order_by(StatusHistory.start_time.desc())
                 .limit(1)
