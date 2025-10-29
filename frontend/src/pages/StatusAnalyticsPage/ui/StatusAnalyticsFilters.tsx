@@ -77,7 +77,10 @@ export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }:
   };
 
   const handleClearFilters = () => {
-    const today = new Date().toISOString().split('T')[0];
+    // Получаем текущую дату в Московском времени
+    const now = new Date();
+    const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
+    const today = moscowTime.toISOString().split('T')[0];
     dispatch(
       setFilters({
         userId: undefined,
@@ -102,7 +105,7 @@ export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }:
             <FormControl fullWidth>
               <InputLabel>Пользователь</InputLabel>
               <Select
-                value={filters.userId || ''}
+                value={users.find((user) => user.id === filters.userId) ? filters.userId || '' : ''}
                 onChange={(e) => handleFilterChange('userId', e.target.value || undefined)}
                 label="Пользователь"
               >

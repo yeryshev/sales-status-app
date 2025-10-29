@@ -17,8 +17,18 @@ const initialState: StatusAnalyticsState = {
   loading: false,
   error: null,
   filters: {
-    startDate: new Date().toISOString().split('T')[0], // сегодня
-    endDate: new Date().toISOString().split('T')[0], // сегодня
+    startDate: (() => {
+      // Получаем текущую дату в Московском времени
+      const now = new Date();
+      const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
+      return moscowTime.toISOString().split('T')[0];
+    })(),
+    endDate: (() => {
+      // Получаем текущую дату в Московском времени
+      const now = new Date();
+      const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
+      return moscowTime.toISOString().split('T')[0];
+    })(),
     periodType: 'day',
   },
 };

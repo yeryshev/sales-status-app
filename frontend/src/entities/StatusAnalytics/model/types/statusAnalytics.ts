@@ -22,6 +22,8 @@ export interface StatusAnalyticsResponse {
   userName: string;
   statusId: number;
   statusTitle: string;
+  startTime: string;
+  endTime: string | null;
   totalDurationSeconds: number;
   totalDurationMinutes: number;
   totalDurationHours: number;

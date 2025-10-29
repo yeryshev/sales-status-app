@@ -79,18 +79,42 @@ export const StatusAnalyticsPage = memo(() => {
     const endDate = searchParams.get('endDate');
     const periodType = searchParams.get('periodType') as 'day' | 'week' | 'month' | null;
 
+    // Если есть параметры в URL, загружаем их
     if (userId || statusId || startDate || endDate || periodType) {
+      // Получаем текущую дату в Московском времени для fallback
+      const now = new Date();
+      const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
+      const today = moscowTime.toISOString().split('T')[0];
+
       dispatch(
         setFilters({
           userId: userId ? parseInt(userId) : undefined,
           statusId: statusId ? parseInt(statusId) : undefined,
-          startDate: startDate || filters.startDate,
-          endDate: endDate || filters.endDate,
-          periodType: periodType || filters.periodType,
+          startDate: startDate || today,
+          endDate: endDate || today,
+          periodType: periodType || 'day',
         }),
       );
+    } else {
+      // Если параметров нет, сбрасываем к значениям по умолчанию и очищаем URL
+      const now = new Date();
+      const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
+      const today = moscowTime.toISOString().split('T')[0];
+
+      dispatch(
+        setFilters({
+          userId: undefined,
+          statusId: undefined,
+          startDate: today,
+          endDate: today,
+          periodType: 'day',
+        }),
+      );
+
+      // Очищаем URL параметры
+      setSearchParams({});
     }
-  }, [searchParams, dispatch, filters.startDate, filters.endDate, filters.periodType]);
+  }, [searchParams, dispatch, setSearchParams]);
 
   const handleApplyFilters = useCallback(async () => {
     setLoading(true);
@@ -110,11 +134,15 @@ export const StatusAnalyticsPage = memo(() => {
       ).unwrap();
 
       // Загружаем историю
+      // Для таймлайна нужна вся история пользователя, а не только за выбранный день
+      const historyStartDate = filters.periodType === 'day' ? undefined : filters.startDate;
+      const historyEndDate = filters.periodType === 'day' ? undefined : filters.endDate;
+
       await dispatch(
         fetchStatusHistory({
           userId: filters.userId,
-          startDate: filters.startDate,
-          endDate: filters.endDate,
+          startDate: historyStartDate,
+          endDate: historyEndDate,
           limit: 1000,
         }),
       ).unwrap();
@@ -137,10 +165,14 @@ export const StatusAnalyticsPage = memo(() => {
     }
   }, [loadFiltersFromUrl, userData?.isSuperuser, dispatch]);
 
-  // Загружаем данные при изменении фильтров
+  // Загружаем данные при изменении фильтров (с небольшой задержкой для синхронизации)
   useEffect(() => {
     if (userData?.isSuperuser) {
-      handleApplyFilters();
+      const timeoutId = setTimeout(() => {
+        handleApplyFilters();
+      }, 100); // Небольшая задержка для синхронизации
+
+      return () => clearTimeout(timeoutId);
     }
   }, [filters, handleApplyFilters, userData?.isSuperuser]);
 
