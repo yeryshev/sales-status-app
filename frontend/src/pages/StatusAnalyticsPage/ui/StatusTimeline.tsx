@@ -175,6 +175,10 @@ export const StatusTimeline = memo(() => {
           // Для шкалы таймлайна всегда используем segmentStart и segmentEnd (только рабочее время дня)
           // Это отличается от таблицы аналитики, где показывается полная продолжительность
           const duration = (segmentEnd.getTime() - segmentStart.getTime()) / 1000;
+
+          // Для активных статусов корректируем duration для правильного отображения ширины
+          const correctedDuration = isActiveStatus ? duration - 3 * 60 * 60 : duration;
+
           if (duration > 0) {
             const statusName = STATUS_NAMES[record.newStatusId] || `статус ${record.newStatusId}`;
             const baseColor = STATUS_COLORS[record.newStatusId] || '#757575';
@@ -186,7 +190,7 @@ export const StatusTimeline = memo(() => {
               startTime: displayStart.toISOString(),
               endTime: displayEnd.toISOString(),
               duration,
-              width: (duration / totalDayDuration) * 100,
+              width: (correctedDuration / totalDayDuration) * 100,
             });
           }
 
@@ -350,7 +354,7 @@ export const StatusTimeline = memo(() => {
                   title={
                     <Box>
                       <Typography variant="body2" fontWeight="bold">
-                        {segment.statusName}
+                        {segment.statusName.replace(' (текущий)', '')}
                       </Typography>
                       <Typography variant="body2">
                         {formatTime(segment.startTime)} -{' '}
@@ -360,7 +364,12 @@ export const StatusTimeline = memo(() => {
                             ? formatTime(segment.endTime)
                             : 'неизвестно'}
                       </Typography>
-                      <Typography variant="body2">Продолжительность: {formatDuration(segment.duration)}</Typography>
+                      <Typography variant="body2">
+                        Продолжительность:{' '}
+                        {formatDuration(
+                          segment.statusName.includes('(текущий)') ? segment.duration - 3 * 60 * 60 : segment.duration,
+                        )}
+                      </Typography>
                     </Box>
                   }
                   arrow
