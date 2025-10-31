@@ -9,12 +9,23 @@ export interface StatusHistory {
   createdAt: string;
 }
 
+export type PeriodType =
+  | 'today'
+  | 'yesterday'
+  | 'last30days'
+  | 'currentWeek'
+  | 'lastWeek'
+  | 'currentMonth'
+  | 'lastMonth'
+  | 'custom';
+
 export interface StatusAnalyticsRequest {
   userId?: number;
   startDate: string;
   endDate: string;
   statusId?: number;
-  periodType: 'day' | 'week' | 'month';
+  periodType: PeriodType;
+  departmentId?: 'managers' | 'account_managers' | 'customer_care';
 }
 
 export interface StatusAnalyticsResponse {
@@ -41,6 +52,9 @@ export interface UserForAnalytics {
   id: number;
   name: string;
   email: string;
+  isManager: boolean;
+  isAccountManager: boolean;
+  isCcManager: boolean;
 }
 
 export interface StatusForAnalytics {
@@ -66,6 +80,7 @@ export interface StatusAnalyticsState {
     startDate: string;
     endDate: string;
     statusId?: number;
-    periodType: 'day' | 'week' | 'month';
+    periodType: PeriodType;
+    departmentId?: 'managers' | 'account_managers' | 'customer_care';
   };
 }

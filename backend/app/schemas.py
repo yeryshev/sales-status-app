@@ -100,7 +100,12 @@ class StatusAnalyticsRequest(BaseModel):
     start_date: datetime = Field(alias="startDate")
     end_date: datetime = Field(alias="endDate")
     status_id: int | None = Field(None, alias="statusId")
-    period_type: str = Field("day", alias="periodType")  # day, week, month
+    period_type: str = Field(
+        "today", alias="periodType"
+    )  # today, yesterday, last30days, currentWeek, lastWeek, currentMonth, lastMonth, custom
+    department_id: str | None = Field(
+        None, alias="departmentId"
+    )  # "managers", "account_managers", "customer_care"
 
     @field_validator("start_date", mode="before")
     @classmethod

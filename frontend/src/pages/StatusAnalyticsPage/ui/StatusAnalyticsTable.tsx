@@ -15,8 +15,8 @@ import {
 import { useAppSelector } from '@/shared/lib/hooks';
 import { getStatusAnalytics, getStatusAnalyticsLoading } from '@/entities/StatusAnalytics';
 
-// Функция для определения цвета статуса
-const mapStatusColors = (statusTitle: string): 'default' | 'success' | 'primary' => {
+// Функция для получения стандартного MUI color prop для Chip
+const getStatusChipColor = (statusTitle: string): 'success' | 'default' | 'info' => {
   const title = statusTitle.toLowerCase();
 
   // Оффлайн статусы - серый цвет
@@ -30,7 +30,7 @@ const mapStatusColors = (statusTitle: string): 'default' | 'success' | 'primary'
   }
 
   // Остальные статусы - синий цвет
-  return 'primary';
+  return 'info';
 };
 
 export const StatusAnalyticsTable = memo(() => {
@@ -52,9 +52,12 @@ export const StatusAnalyticsTable = memo(() => {
     }
   };
 
-  // Функция для форматирования времени в московском времени
-  const formatTime = (timeString: string) => {
-    return new Date(timeString).toLocaleTimeString('ru-RU', {
+  // Функция для форматирования даты и времени в московском времени
+  const formatDateTime = (timeString: string) => {
+    return new Date(timeString).toLocaleString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
       timeZone: 'Europe/Moscow',
@@ -120,13 +123,13 @@ export const StatusAnalyticsTable = memo(() => {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Chip label={item.statusTitle} size="small" color={mapStatusColors(item.statusTitle)} />
+                    <Chip label={item.statusTitle} size="small" color={getStatusChipColor(item.statusTitle)} />
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2">{formatTime(item.startTime)}</Typography>
+                    <Typography variant="body2">{formatDateTime(item.startTime)}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2">{item.endTime ? formatTime(item.endTime) : 'Текущий'}</Typography>
+                    <Typography variant="body2">{item.endTime ? formatDateTime(item.endTime) : 'Текущий'}</Typography>
                   </TableCell>
                   <TableCell align="right">
                     <Typography variant="body2" fontWeight="medium">

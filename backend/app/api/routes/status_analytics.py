@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func, select
+from sqlalchemy import and_, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -22,7 +22,8 @@ def parse_query_params(
     start_date: str | None = Query(None, description="Начальная дата"),
     end_date: str | None = Query(None, description="Конечная дата"),
     limit: int = Query(100, description="Лимит записей"),
-) -> dict[str, int | datetime | None]:
+    department_id: str | None = Query(None, description="ID отдела"),
+) -> dict[str, int | datetime | str | None]:
     """Парсинг query параметров с валидацией дат"""
     parsed_start_date = None
     parsed_end_date = None
@@ -58,6 +59,7 @@ def parse_query_params(
         "start_date": parsed_start_date,
         "end_date": parsed_end_date,
         "limit": limit,
+        "department_id": department_id,
     }
 
 
@@ -86,6 +88,37 @@ async def get_status_history(
             query = query.where(StatusHistory.start_time >= query_params["start_date"])
         if query_params["end_date"]:
             query = query.where(StatusHistory.start_time <= query_params["end_date"])
+
+        # Фильтрация по отделу
+        # По умолчанию показываем только пользователей с флагами отделов
+        # Если указан конкретный отдел, фильтруем по нему
+        department_filter = None
+        if query_params["department_id"]:
+            # Фильтрация по конкретному отделу
+            if query_params["department_id"] == "managers":
+                department_filter = User.is_manager.is_(True)
+            elif query_params["department_id"] == "account_managers":
+                department_filter = User.is_account_manager.is_(True)
+            elif query_params["department_id"] == "customer_care":
+                department_filter = User.is_cc_manager.is_(True)
+        else:
+            # По умолчанию - все пользователи с хотя бы одним флагом отдела
+            department_filter = or_(
+                User.is_manager.is_(True),
+                User.is_account_manager.is_(True),
+                User.is_cc_manager.is_(True),
+            )
+
+        if department_filter is not None:
+            department_users_query = select(User.id).where(department_filter)
+            department_users_result = await session.execute(department_users_query)
+            department_user_ids = list(department_users_result.scalars().all())
+
+            if department_user_ids:
+                query = query.where(StatusHistory.user_id.in_(department_user_ids))
+            else:
+                # Если нет пользователей в отделе, возвращаем пустой результат
+                return []
 
         result = await session.execute(query)
         history_records = result.scalars().all()
@@ -117,6 +150,7 @@ async def get_status_analytics(
 ):
     """Получить аналитику по статусам (только для суперпользователей)"""
     try:
+        # Логируем полученные параметры запроса
         # Исправляем end_date, если он имеет время 00:00:00
         if (
             request.end_date.hour == 0
@@ -127,8 +161,8 @@ async def get_status_analytics(
                 hour=23, minute=59, second=59, microsecond=999999
             )
 
-        # Получаем текущее время для расчета активных статусов
-        current_time = datetime.utcnow()
+        # Получаем текущее время для расчета активных статусов (без timezone, так как в БД используется TIMESTAMP WITHOUT TIME ZONE)
+        current_time = datetime.now(UTC).replace(tzinfo=None)
 
         # Базовый запрос для получения данных - показываем каждую запись истории отдельно
         # Включаем записи, которые:
@@ -149,27 +183,59 @@ async def get_status_analytics(
             )
             .where(
                 # Записи, которые пересекаются с выбранным периодом
-                (
-                    (StatusHistory.start_time >= request.start_date)
-                    & (StatusHistory.start_time <= request.end_date)
-                )
-                | (
-                    (StatusHistory.start_time < request.start_date)
-                    & (
-                        StatusHistory.end_time.is_(None)  # Активные статусы
-                        | (
-                            StatusHistory.end_time >= request.start_date
-                        )  # Завершенные, но пересекающиеся
-                    )
+                or_(
+                    and_(
+                        StatusHistory.start_time >= request.start_date,
+                        StatusHistory.start_time <= request.end_date,
+                    ),
+                    and_(
+                        StatusHistory.start_time < request.start_date,
+                        or_(
+                            StatusHistory.end_time.is_(None),  # Активные статусы
+                            StatusHistory.end_time
+                            >= request.start_date,  # Завершенные, но пересекающиеся
+                        ),
+                    ),
                 )
             )
-            .order_by(StatusHistory.user_id, StatusHistory.start_time)
+            .order_by(StatusHistory.start_time.desc(), StatusHistory.user_id)
         )
 
         if request.user_id:
             query = query.where(StatusHistory.user_id == request.user_id)
         if request.status_id:
             query = query.where(StatusHistory.new_status_id == request.status_id)
+
+        # Фильтрация по отделу
+        # По умолчанию показываем только пользователей с флагами отделов
+        # Если указан конкретный отдел, фильтруем по нему
+        department_filter = None
+        if request.department_id:
+            # Фильтрация по конкретному отделу
+            if request.department_id == "managers":
+                department_filter = User.is_manager.is_(True)
+            elif request.department_id == "account_managers":
+                department_filter = User.is_account_manager.is_(True)
+            elif request.department_id == "customer_care":
+                department_filter = User.is_cc_manager.is_(True)
+        else:
+            # По умолчанию - все пользователи с хотя бы одним флагом отдела
+            department_filter = or_(
+                User.is_manager.is_(True),
+                User.is_account_manager.is_(True),
+                User.is_cc_manager.is_(True),
+            )
+
+        if department_filter is not None:
+            department_users_query = select(User.id).where(department_filter)
+            department_users_result = await session.execute(department_users_query)
+            department_user_ids = list(department_users_result.scalars().all())
+
+            if department_user_ids:
+                query = query.where(StatusHistory.user_id.in_(department_user_ids))
+            else:
+                # Если нет пользователей в отделе, возвращаем пустой результат
+                return []
 
         result = await session.execute(query)
         analytics_data = result.all()
@@ -224,8 +290,7 @@ async def get_status_analytics(
                 )
             )
 
-        # Сортируем по времени начала (самый поздний внизу)
-        responses.sort(key=lambda x: x.start_time, reverse=False)
+        # Данные уже отсортированы в запросе к БД (самые новые сначала)
         return responses
 
     except Exception as e:
@@ -234,6 +299,12 @@ async def get_status_analytics(
             await session.rollback()
         except Exception:
             pass
+        # Логируем полную информацию об ошибке для отладки
+        import traceback
+
+        error_traceback = traceback.format_exc()
+        print(f"Ошибка получения аналитики: {str(e)}")
+        print(f"Traceback: {error_traceback}")
         raise HTTPException(
             status_code=500, detail=f"Ошибка получения аналитики: {str(e)}"
         )
@@ -258,8 +329,8 @@ async def _get_periods_data(
         # Используем валидный period_type для PostgreSQL
         postgres_period_type = valid_period_types[period_type]
 
-        # Получаем текущее время для расчета активных статусов
-        current_time = datetime.utcnow()
+        # Получаем текущее время для расчета активных статусов (без timezone, так как в БД используется TIMESTAMP WITHOUT TIME ZONE)
+        current_time = datetime.now(UTC).replace(tzinfo=None)
 
         query = (
             select(
@@ -322,15 +393,32 @@ async def _get_periods_data(
         return []
 
 
-@router.get("/users", response_model=list[dict[str, str | int]])
+@router.get("/users", response_model=list[dict[str, str | int | bool]])
 async def get_users_for_analytics(
     session: AsyncSession = Depends(get_async_session),
     _current_user: User = Depends(current_superuser),
 ):
-    """Получить список пользователей для фильтрации аналитики (только для суперпользователей)"""
+    """Получить список пользователей для фильтрации аналитики (только для суперпользователей)
+    Возвращает только пользователей с хотя бы одним флагом отдела (isManager, isAccountManager, isCcManager)
+    """
     try:
-        query = select(User.id, User.first_name, User.second_name, User.email).order_by(
-            User.first_name, User.second_name
+        query = (
+            select(
+                User.id,
+                User.first_name,
+                User.second_name,
+                User.email,
+                User.is_manager,
+                User.is_account_manager,
+                User.is_cc_manager,
+            )
+            .where(
+                # Фильтруем только пользователей, у которых хотя бы один флаг отдела = True
+                (User.is_manager.is_(True))
+                | (User.is_account_manager.is_(True))
+                | (User.is_cc_manager.is_(True))
+            )
+            .order_by(User.first_name, User.second_name)
         )
         result = await session.execute(query)
         users = result.all()
@@ -340,6 +428,9 @@ async def get_users_for_analytics(
                 "id": user.id,
                 "name": f"{user.first_name or ''} {user.second_name or ''}".strip(),
                 "email": user.email,
+                "isManager": user.is_manager or False,
+                "isAccountManager": user.is_account_manager or False,
+                "isCcManager": user.is_cc_manager or False,
             }
             for user in users
         ]

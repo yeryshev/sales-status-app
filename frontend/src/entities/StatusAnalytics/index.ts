@@ -34,4 +34,7 @@ export type {
   StatusForAnalytics,
   DateRange,
   StatusAnalyticsState,
+  PeriodType,
 } from './model/types/statusAnalytics';
+
+export { calculatePeriodDates, isSingleDayPeriod, getPeriodLabel } from './lib/calculatePeriodDates';

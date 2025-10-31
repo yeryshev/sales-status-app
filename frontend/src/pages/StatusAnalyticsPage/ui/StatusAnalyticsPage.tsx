@@ -1,6 +1,22 @@
 import { memo, useEffect, useState, useCallback } from 'react';
-import { Box, Typography, Tabs, Tab, Alert, Snackbar, CircularProgress, Container } from '@mui/material';
-import { Analytics as AnalyticsIcon, History as HistoryIcon } from '@mui/icons-material';
+import {
+  Box,
+  Typography,
+  Tabs,
+  Tab,
+  Alert,
+  Snackbar,
+  CircularProgress,
+  Container,
+  Button,
+  Collapse,
+} from '@mui/material';
+import {
+  Analytics as AnalyticsIcon,
+  History as HistoryIcon,
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon,
+} from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '@/shared/lib/hooks';
 import {
   fetchStatusAnalytics,
@@ -10,6 +26,9 @@ import {
   getStatusAnalyticsFilters,
   clearError,
   setFilters,
+  isSingleDayPeriod,
+  calculatePeriodDates,
+  type PeriodType,
 } from '@/entities/StatusAnalytics';
 import { getUserData } from '@/entities/User';
 import { RequireSuperuser } from '@/shared/lib/components/RequireSuperuser';
@@ -50,6 +69,8 @@ export const StatusAnalyticsPage = memo(() => {
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [isTableExpanded, setIsTableExpanded] = useState(false);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
@@ -62,6 +83,7 @@ export const StatusAnalyticsPage = memo(() => {
 
       if (newFilters.userId) params.set('userId', newFilters.userId.toString());
       if (newFilters.statusId) params.set('statusId', newFilters.statusId.toString());
+      if (newFilters.departmentId) params.set('departmentId', newFilters.departmentId);
       if (newFilters.startDate) params.set('startDate', newFilters.startDate);
       if (newFilters.endDate) params.set('endDate', newFilters.endDate);
       if (newFilters.periodType) params.set('periodType', newFilters.periodType);
@@ -75,39 +97,38 @@ export const StatusAnalyticsPage = memo(() => {
   const loadFiltersFromUrl = useCallback(() => {
     const userId = searchParams.get('userId');
     const statusId = searchParams.get('statusId');
+    const departmentId = searchParams.get('departmentId') as 'managers' | 'account_managers' | 'customer_care' | null;
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
-    const periodType = searchParams.get('periodType') as 'day' | 'week' | 'month' | null;
+    const periodType = searchParams.get('periodType') as PeriodType | null;
 
     // Если есть параметры в URL, загружаем их
-    if (userId || statusId || startDate || endDate || periodType) {
+    if (userId || statusId || departmentId || startDate || endDate || periodType) {
       // Получаем текущую дату в Московском времени для fallback
-      const now = new Date();
-      const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
-      const today = moscowTime.toISOString().split('T')[0];
+      const defaultPeriod = calculatePeriodDates('today');
 
       dispatch(
         setFilters({
           userId: userId ? parseInt(userId) : undefined,
           statusId: statusId ? parseInt(statusId) : undefined,
-          startDate: startDate || today,
-          endDate: endDate || today,
-          periodType: periodType || 'day',
+          departmentId: departmentId || undefined,
+          startDate: startDate || defaultPeriod.startDate,
+          endDate: endDate || defaultPeriod.endDate,
+          periodType: periodType || 'today',
         }),
       );
     } else {
       // Если параметров нет, сбрасываем к значениям по умолчанию и очищаем URL
-      const now = new Date();
-      const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
-      const today = moscowTime.toISOString().split('T')[0];
+      const defaultPeriod = calculatePeriodDates('today');
 
       dispatch(
         setFilters({
           userId: undefined,
           statusId: undefined,
-          startDate: today,
-          endDate: today,
-          periodType: 'day',
+          departmentId: undefined,
+          startDate: defaultPeriod.startDate,
+          endDate: defaultPeriod.endDate,
+          periodType: 'today',
         }),
       );
 
@@ -130,13 +151,15 @@ export const StatusAnalyticsPage = memo(() => {
           endDate: filters.endDate,
           statusId: filters.statusId,
           periodType: filters.periodType,
+          departmentId: filters.departmentId,
         }),
       ).unwrap();
 
       // Загружаем историю
-      // Для таймлайна нужна вся история пользователя, а не только за выбранный день
-      const historyStartDate = filters.periodType === 'day' ? undefined : filters.startDate;
-      const historyEndDate = filters.periodType === 'day' ? undefined : filters.endDate;
+      // Для таймлайна (однодневные периоды) нужна вся история пользователя
+      const isSingleDay = isSingleDayPeriod(filters.periodType, filters.startDate, filters.endDate);
+      const historyStartDate = isSingleDay ? undefined : filters.startDate;
+      const historyEndDate = isSingleDay ? undefined : filters.endDate;
 
       await dispatch(
         fetchStatusHistory({
@@ -144,6 +167,7 @@ export const StatusAnalyticsPage = memo(() => {
           startDate: historyStartDate,
           endDate: historyEndDate,
           limit: 1000,
+          departmentId: filters.departmentId,
         }),
       ).unwrap();
     } catch (err) {
@@ -162,19 +186,24 @@ export const StatusAnalyticsPage = memo(() => {
     if (userData?.isSuperuser) {
       loadFiltersFromUrl();
       dispatch(fetchDateRange());
+
+      // Загружаем данные после небольшой задержки, чтобы фильтры успели установиться
+      setTimeout(() => {
+        setIsInitialized(true);
+      }, 50);
     }
   }, [loadFiltersFromUrl, userData?.isSuperuser, dispatch]);
 
-  // Загружаем данные при изменении фильтров (с небольшой задержкой для синхронизации)
+  // Загружаем данные при изменении фильтров с debounce (только после инициализации)
   useEffect(() => {
-    if (userData?.isSuperuser) {
-      const timeoutId = setTimeout(() => {
-        handleApplyFilters();
-      }, 100); // Небольшая задержка для синхронизации
+    if (!userData?.isSuperuser || !isInitialized) return;
 
-      return () => clearTimeout(timeoutId);
-    }
-  }, [filters, handleApplyFilters, userData?.isSuperuser]);
+    const timeoutId = setTimeout(() => {
+      handleApplyFilters();
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [filters, handleApplyFilters, userData?.isSuperuser, isInitialized]);
 
   return (
     <RequireSuperuser>
@@ -193,7 +222,7 @@ export const StatusAnalyticsPage = memo(() => {
             </Typography>
 
             {/* Фильтры */}
-            <StatusAnalyticsFilters onApplyFilters={handleApplyFilters} onFiltersChange={updateUrlParams} />
+            <StatusAnalyticsFilters onFiltersChange={updateUrlParams} />
 
             {/* Вкладки */}
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -221,9 +250,30 @@ export const StatusAnalyticsPage = memo(() => {
                 </Box>
               ) : (
                 <>
-                  {/* Таймлайн - показываем только для одного пользователя за день */}
-                  {filters.userId && filters.periodType === 'day' && <StatusTimeline />}
-                  <StatusAnalyticsTable />
+                  {/* Таймлайн - показываем для пользователя или отдела за однодневный период */}
+                  {(filters.userId || filters.departmentId) &&
+                    isSingleDayPeriod(filters.periodType, filters.startDate, filters.endDate) && <StatusTimeline />}
+
+                  {/* Таблица аналитики - сворачиваемая, если есть таймлайн */}
+                  {(filters.userId || filters.departmentId) &&
+                  isSingleDayPeriod(filters.periodType, filters.startDate, filters.endDate) ? (
+                    <Box>
+                      <Button
+                        onClick={() => setIsTableExpanded(!isTableExpanded)}
+                        startIcon={isTableExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                        sx={{ mb: 2 }}
+                        variant="outlined"
+                        fullWidth
+                      >
+                        {isTableExpanded ? 'Скрыть таблицу аналитики' : 'Показать таблицу аналитики'}
+                      </Button>
+                      <Collapse in={isTableExpanded}>
+                        <StatusAnalyticsTable />
+                      </Collapse>
+                    </Box>
+                  ) : (
+                    <StatusAnalyticsTable />
+                  )}
                 </>
               )}
             </TabPanel>

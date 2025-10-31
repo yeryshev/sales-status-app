@@ -1,10 +1,9 @@
-import { memo, useEffect } from 'react';
-import { Box, Grid, FormControl, InputLabel, Select, MenuItem, Button, Paper, Typography } from '@mui/material';
+import { memo, useEffect, useMemo } from 'react';
+import { Grid, FormControl, InputLabel, Select, MenuItem, Paper, Typography, ListSubheader } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { ru } from 'date-fns/locale';
-import { Search as SearchIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { useAppDispatch, useAppSelector } from '@/shared/lib/hooks';
 import {
   getStatusAnalyticsFilters,
@@ -14,14 +13,15 @@ import {
   setFilters,
   fetchUsersForAnalytics,
   fetchStatusesForAnalytics,
+  calculatePeriodDates,
+  type PeriodType,
 } from '@/entities/StatusAnalytics';
 
 interface StatusAnalyticsFiltersProps {
-  onApplyFilters: () => void;
   onFiltersChange?: (filters: Record<string, unknown>) => void;
 }
 
-export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }: StatusAnalyticsFiltersProps) => {
+export const StatusAnalyticsFilters = memo(({ onFiltersChange }: StatusAnalyticsFiltersProps) => {
   const dispatch = useAppDispatch();
   const filters = useAppSelector(getStatusAnalyticsFilters);
   const users = useAppSelector(getUsersForAnalytics);
@@ -35,62 +35,72 @@ export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }:
   }, [dispatch]);
 
   const handleFilterChange = (field: keyof typeof filters, value: unknown) => {
-    let newFilters: Partial<typeof filters>;
+    let newFilters: typeof filters;
 
-    // При изменении типа периода, синхронизируем даты
+    // При изменении типа периода, рассчитываем новые даты
     if (field === 'periodType') {
-      if (value === 'day') {
-        // Для дня устанавливаем одинаковые даты
+      const periodType = value as PeriodType;
+
+      if (periodType === 'custom') {
+        // Для произвольного периода оставляем текущие даты
         newFilters = {
           ...filters,
-          [field]: value as 'day' | 'week' | 'month',
-          startDate: filters.startDate,
-          endDate: filters.startDate,
+          periodType,
         };
-        dispatch(setFilters(newFilters));
       } else {
-        // Для недели/месяца оставляем интервал
-        newFilters = { ...filters, [field]: value as 'day' | 'week' | 'month' };
-        dispatch(setFilters(newFilters));
+        // Для всех остальных периодов рассчитываем даты автоматически
+        const { startDate, endDate } = calculatePeriodDates(periodType);
+        newFilters = {
+          ...filters,
+          periodType,
+          startDate,
+          endDate,
+        };
       }
-    } else if (field === 'startDate' && filters.periodType === 'day') {
-      // При изменении даты для дня, синхронизируем обе даты
+    } else if (field === 'startDate' || field === 'endDate') {
+      // При изменении дат переключаемся на произвольный период
       newFilters = {
         ...filters,
-        startDate: value as string,
-        endDate: value as string,
+        [field]: value as string,
+        periodType: 'custom',
       };
-      dispatch(setFilters(newFilters));
     } else {
       newFilters = { ...filters, [field]: value };
-      dispatch(setFilters(newFilters));
     }
 
-    // Обновляем URL параметры
-    if (onFiltersChange && newFilters) {
+    // Обновляем Redux state
+    dispatch(setFilters(newFilters));
+
+    // Обновляем URL параметры с полными фильтрами
+    if (onFiltersChange) {
       onFiltersChange(newFilters);
     }
   };
 
-  const handleApplyFilters = () => {
-    onApplyFilters();
-  };
+  // Группируем пользователей по отделам
+  const groupedUsers = useMemo(() => {
+    const managers: typeof users = [];
+    const accountManagers: typeof users = [];
+    const customerCare: typeof users = [];
 
-  const handleClearFilters = () => {
-    // Получаем текущую дату в Московском времени
-    const now = new Date();
-    const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
-    const today = moscowTime.toISOString().split('T')[0];
-    dispatch(
-      setFilters({
-        userId: undefined,
-        statusId: undefined,
-        startDate: today,
-        endDate: today,
-        periodType: 'day',
-      }),
-    );
-  };
+    users.forEach((user) => {
+      if (user.isManager) {
+        managers.push(user);
+      }
+      if (user.isAccountManager) {
+        accountManagers.push(user);
+      }
+      if (user.isCcManager) {
+        customerCare.push(user);
+      }
+    });
+
+    return {
+      managers,
+      accountManagers,
+      customerCare,
+    };
+  }, [users]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ru}>
@@ -100,29 +110,95 @@ export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }:
         </Typography>
 
         <Grid container spacing={3} alignItems="center">
+          {/* Отдел */}
+          <Grid item xs={12} sm={6} md={3}>
+            <FormControl fullWidth>
+              <InputLabel>Отдел</InputLabel>
+              <Select
+                value={filters.departmentId || ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const newDepartmentId = value
+                    ? (value as 'managers' | 'account_managers' | 'customer_care')
+                    : undefined;
+                  // При выборе отдела сбрасываем userId в том же вызове
+                  const newFilters = {
+                    ...filters,
+                    departmentId: newDepartmentId,
+                    userId: newDepartmentId ? undefined : filters.userId, // Сбрасываем userId только если выбран отдел
+                  };
+                  dispatch(setFilters(newFilters));
+                  if (onFiltersChange) {
+                    onFiltersChange(newFilters);
+                  }
+                }}
+                label="Отдел"
+              >
+                <MenuItem value="">
+                  <em>Все отделы</em>
+                </MenuItem>
+                <MenuItem value="managers">Входящие продажи</MenuItem>
+                <MenuItem value="account_managers">Аккаунт-менеджеры</MenuItem>
+                <MenuItem value="customer_care">Customer Care</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+
           {/* Пользователь */}
-          <Grid item xs={12} sm={6} md={filters.periodType === 'day' ? 4 : 3}>
+          <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth>
               <InputLabel>Пользователь</InputLabel>
               <Select
                 value={users.find((user) => user.id === filters.userId) ? filters.userId || '' : ''}
-                onChange={(e) => handleFilterChange('userId', e.target.value || undefined)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const userId = value ? (typeof value === 'number' ? value : parseInt(value)) : undefined;
+                  // При выборе пользователя сбрасываем departmentId в том же вызове
+                  const newFilters = {
+                    ...filters,
+                    userId: userId,
+                    departmentId: userId ? undefined : filters.departmentId, // Сбрасываем departmentId только если выбран пользователь
+                  };
+                  dispatch(setFilters(newFilters));
+                  if (onFiltersChange) {
+                    onFiltersChange(newFilters);
+                  }
+                }}
                 label="Пользователь"
               >
                 <MenuItem value="">
                   <em>Все пользователи</em>
                 </MenuItem>
-                {users.map((user: { id: number; name: string; email: string }) => (
-                  <MenuItem key={user.id} value={user.id}>
-                    {user.name} ({user.email})
-                  </MenuItem>
-                ))}
+                {groupedUsers.managers.length > 0 && [
+                  <ListSubheader key="managers-header">Входящие продажи</ListSubheader>,
+                  ...groupedUsers.managers.map((user) => (
+                    <MenuItem key={user.id} value={user.id}>
+                      {user.name} ({user.email})
+                    </MenuItem>
+                  )),
+                ]}
+                {groupedUsers.accountManagers.length > 0 && [
+                  <ListSubheader key="account-managers-header">Аккаунт-менеджеры</ListSubheader>,
+                  ...groupedUsers.accountManagers.map((user) => (
+                    <MenuItem key={user.id} value={user.id}>
+                      {user.name} ({user.email})
+                    </MenuItem>
+                  )),
+                ]}
+                {groupedUsers.customerCare.length > 0 && [
+                  <ListSubheader key="customer-care-header">Customer Care</ListSubheader>,
+                  ...groupedUsers.customerCare.map((user) => (
+                    <MenuItem key={user.id} value={user.id}>
+                      {user.name} ({user.email})
+                    </MenuItem>
+                  )),
+                ]}
               </Select>
             </FormControl>
           </Grid>
 
           {/* Статус */}
-          <Grid item xs={12} sm={6} md={filters.periodType === 'day' ? 4 : 3}>
+          <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth>
               <InputLabel>Статус</InputLabel>
               <Select
@@ -143,7 +219,7 @@ export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }:
           </Grid>
 
           {/* Период */}
-          <Grid item xs={12} sm={6} md={filters.periodType === 'day' ? 2 : 2}>
+          <Grid item xs={12} sm={6} md={3}>
             <FormControl fullWidth>
               <InputLabel>Период</InputLabel>
               <Select
@@ -151,28 +227,21 @@ export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }:
                 onChange={(e) => handleFilterChange('periodType', e.target.value)}
                 label="Период"
               >
-                <MenuItem value="day">День</MenuItem>
-                <MenuItem value="week">Неделя</MenuItem>
-                <MenuItem value="month">Месяц</MenuItem>
+                <MenuItem value="today">Сегодня</MenuItem>
+                <MenuItem value="yesterday">Вчера</MenuItem>
+                <MenuItem value="last30days">Последние 30 дней</MenuItem>
+                <MenuItem value="currentWeek">Текущая неделя</MenuItem>
+                <MenuItem value="lastWeek">Прошлая неделя</MenuItem>
+                <MenuItem value="currentMonth">Текущий месяц</MenuItem>
+                <MenuItem value="lastMonth">Прошлый месяц</MenuItem>
+                <MenuItem value="custom">Произвольный период</MenuItem>
               </Select>
             </FormControl>
           </Grid>
 
-          {/* Дата - один календарь для дня, два для недели/месяца */}
-          {filters.periodType === 'day' ? (
-            <Grid item xs={12} sm={6} md={2}>
-              <DatePicker
-                label="Дата"
-                value={new Date(filters.startDate)}
-                onChange={(date) => handleFilterChange('startDate', date?.toISOString().split('T')[0] || '')}
-                minDate={dateRange?.minDate ? new Date(dateRange.minDate) : undefined}
-                maxDate={dateRange?.maxDate ? new Date(dateRange.maxDate) : undefined}
-                slotProps={{ textField: { fullWidth: true } }}
-              />
-            </Grid>
-          ) : (
+          {/* Дата начала - показываем всегда для произвольного периода */}
+          {filters.periodType === 'custom' && (
             <>
-              {/* Дата начала */}
               <Grid item xs={12} sm={6} md={2}>
                 <DatePicker
                   label="Дата начала"
@@ -197,18 +266,6 @@ export const StatusAnalyticsFilters = memo(({ onApplyFilters, onFiltersChange }:
               </Grid>
             </>
           )}
-
-          {/* Кнопки */}
-          <Grid item xs={12} sm={12} md={12}>
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-              <Button variant="outlined" startIcon={<ClearIcon />} onClick={handleClearFilters}>
-                Очистить
-              </Button>
-              <Button variant="contained" startIcon={<SearchIcon />} onClick={handleApplyFilters}>
-                Применить фильтры
-              </Button>
-            </Box>
-          </Grid>
         </Grid>
       </Paper>
     </LocalizationProvider>

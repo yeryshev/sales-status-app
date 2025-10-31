@@ -12,12 +12,19 @@ const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
 // Получение истории статусов
 export const fetchStatusHistory = createAsyncThunk(
   'statusAnalytics/fetchStatusHistory',
-  async (params: { userId?: number; startDate?: string; endDate?: string; limit?: number }) => {
+  async (params: {
+    userId?: number;
+    startDate?: string;
+    endDate?: string;
+    limit?: number;
+    departmentId?: 'managers' | 'account_managers' | 'customer_care';
+  }) => {
     const searchParams = new URLSearchParams();
     if (params.userId) searchParams.append('user_id', params.userId.toString());
     if (params.startDate) searchParams.append('start_date', params.startDate);
     if (params.endDate) searchParams.append('end_date', params.endDate);
     if (params.limit) searchParams.append('limit', params.limit.toString());
+    if (params.departmentId) searchParams.append('department_id', params.departmentId);
 
     const response = await fetch(`${API_BASE_URL}/admin/status-analytics/status-history?${searchParams}`, {
       credentials: 'include',

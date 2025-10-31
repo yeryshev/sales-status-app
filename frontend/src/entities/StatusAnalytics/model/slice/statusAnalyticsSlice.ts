@@ -29,7 +29,7 @@ const initialState: StatusAnalyticsState = {
       const moscowTime = new Date(now.toLocaleString('en-US', { timeZone: 'Europe/Moscow' }));
       return moscowTime.toISOString().split('T')[0];
     })(),
-    periodType: 'day',
+    periodType: 'today',
   },
 };
 
