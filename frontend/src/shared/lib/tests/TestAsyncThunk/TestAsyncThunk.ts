@@ -1,12 +1,11 @@
 import { StateSchema } from '@/app/providers/StoreProvider';
-import { AsyncThunkAction } from '@reduxjs/toolkit';
+import { AsyncThunk } from '@reduxjs/toolkit';
 import { Dispatch } from 'redux';
 import axios, { AxiosStatic } from 'axios';
 import { vi, MockedFunction } from 'vitest';
 
-type ActionCreatorType<Return, Arg, RejectedValue> = (
-  arg: Arg,
-) => AsyncThunkAction<Return, Arg, { rejectValue: RejectedValue }>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+type ActionCreatorType<Return, Arg, _RejectedValue> = AsyncThunk<Return, Arg, any>;
 
 vi.mock('axios');
 const mockedAxios = vi.mocked(axios, true);
@@ -25,8 +24,9 @@ export class TestAsyncThunk<Return, Arg, RejectedValue> {
     this.api = mockedAxios;
   }
 
-  async callThunk(arg: Arg) {
-    const action = this.actionCreator(arg);
+  async callThunk(arg?: Arg) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const action = this.actionCreator(arg as any);
     return action(this.dispatch, this.getState, { api: this.api });
   }
 }

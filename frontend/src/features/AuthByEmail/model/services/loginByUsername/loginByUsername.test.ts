@@ -3,6 +3,7 @@ import { TestAsyncThunk } from '@/shared/lib/tests/TestAsyncThunk/TestAsyncThunk
 
 describe('loginByUsername', () => {
   test('error login', async () => {
+    // @ts-expect-error - Type compatibility issue with Redux Toolkit update
     const thunk = new TestAsyncThunk(loginByUsername);
     // @ts-expect-error ts(2339)
     thunk.api.post.mockReturnValue(Promise.resolve({ status: 403 }));

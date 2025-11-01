@@ -41,16 +41,9 @@ export const getSpecialIconsByPattern = () => {
 };
 
 // Функция для определения variant на основе ID и позиции
-export const getHorseIconVariant = (insideId: number, position: number, totalHorses: number): number => {
-  // Приоритет 1: По позиции (first/last)
-  if (position === 0) {
-    return 0; // first.png
-  }
-  if (position === totalHorses - 1) {
-    return 5; // last.png
-  }
-
-  // Приоритет 2: По специальным иконкам
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getHorseIconVariant = (insideId: number, position: number, _totalHorses: number): number => {
+  // Приоритет 1: По специальным иконкам по insideId
   const specialIcons = getSpecialIconsByPattern();
   const availableSpecialIds = Object.keys(specialIcons).map(Number);
 
@@ -59,6 +52,6 @@ export const getHorseIconVariant = (insideId: number, position: number, totalHor
     return 6 + specialIndex; // После базовых иконок
   }
 
-  // Приоритет 3: Regular иконки
-  return (position % 4) + 1;
+  // Приоритет 2: Regular иконки (циклически)
+  return (position % 5) + 1; // 1-5 для regular1-regular5
 };
