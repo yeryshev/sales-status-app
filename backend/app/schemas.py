@@ -187,3 +187,80 @@ class UpdateTelegramRequest(BaseModel):
 class SsoLoginRequest(BaseModel):
     email: str
     name: str | None = None
+
+
+# Схемы для дополнительных данных пользователя от внешнего сервиса
+class QlikData(BaseModel):
+    forecast_with_k: str = Field(..., alias="forecastWithK")
+    fact_with_k: str = Field(..., alias="factWithK")
+
+    class Config:
+        populate_by_name = True
+
+
+class BudgetDealsData(BaseModel):
+    new_sale: int | None = Field(None, alias="newSale")
+    new_sale_and_upsale: int | None = Field(None, alias="newSaleAndUpsale")
+
+    class Config:
+        populate_by_name = True
+
+
+class LastWeekData(BaseModel):
+    budget: int
+    deals: int
+
+
+class AbsenceData(BaseModel):
+    is_absence: bool = Field(..., alias="isAbsence")
+    end_date: str | None = Field(None, alias="endDate")
+    description: str | None = None
+
+    class Config:
+        populate_by_name = True
+
+
+class ExternalUserDataRequest(BaseModel):
+    """Схема для приёма данных от внешнего сервиса через POST запрос"""
+
+    id_amo_crm: int = Field(..., alias="idAmoCRM")
+    id_inside: int = Field(..., alias="idInside")
+    id_chatwoot: int = Field(..., alias="idChatwoot")
+    qlik: QlikData | None = None
+    budget: BudgetDealsData
+    deals: BudgetDealsData
+    overdue_tasks: int = Field(..., alias="overdueTasks")
+    conversations: int
+    tickets: int
+    avatar: str
+    absence: AbsenceData
+    mango_state: bool = Field(..., alias="mangoState")
+    leads: int
+    last_week: LastWeekData = Field(..., alias="lastWeek")
+    mango_ext: int | None = Field(None, alias="mangoExt")
+
+    class Config:
+        populate_by_name = True
+
+
+class ExternalUserDataResponse(BaseModel):
+    """Схема для отправки данных на фронтенд через WebSocket"""
+
+    id_amo_crm: int = Field(serialization_alias="idAmoCRM")
+    id_inside: int = Field(serialization_alias="idInside")
+    id_chatwoot: int = Field(serialization_alias="idChatwoot")
+    qlik: QlikData | None = None
+    budget: BudgetDealsData
+    deals: BudgetDealsData
+    overdue_tasks: int = Field(serialization_alias="overdueTasks")
+    conversations: int
+    tickets: int
+    avatar: str
+    is_birthday: bool = Field(default=False, serialization_alias="isBirthday")
+    absence: AbsenceData
+    mango_state: bool = Field(serialization_alias="mangoState")
+    leads: int
+    last_week: LastWeekData = Field(serialization_alias="lastWeek")
+
+    class Config:
+        populate_by_name = True

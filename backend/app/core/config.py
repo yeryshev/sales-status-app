@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     MANGO_SET_STATUS: str
     AUTH_SECRET: str
     TELEGRAM_BOT_SECRET: str
+    EXTERNAL_API_KEY: str | None = None  # API ключ для внешнего сервиса
 
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 

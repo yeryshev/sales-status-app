@@ -35,9 +35,7 @@ export const TablesBox = memo(() => {
   const accountManagerTeamList = useSelector(getAccountManagerTeamList);
   const teamList = isAccountManagersRoute ? accountManagerTeamList : inboundTeamList;
 
-  const { data: additionalTeamData = [] } = useGetAdditionalTeamData(undefined, {
-    skip: !import.meta.env.VITE_EXTERNAL_API_URL,
-  });
+  const { data: additionalTeamData = [] } = useGetAdditionalTeamData();
 
   const { tabNumber, handleChangeTab, deadlines, websocketState } = useTablesBoxViewModel(teamList, teamIsLoading);
 
