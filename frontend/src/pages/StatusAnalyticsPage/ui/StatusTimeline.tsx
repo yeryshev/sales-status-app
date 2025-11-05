@@ -420,7 +420,12 @@ export const StatusTimeline = memo(() => {
 
                 const totalDuration = userTimeline.segments
                   .filter((s) => s.statusId === statusId)
-                  .reduce((sum, s) => sum + s.duration, 0);
+                  .reduce((sum, s) => {
+                    // Для текущих активных статусов вычитаем 3 часа
+                    const isActive = s.statusName.includes('(текущий)');
+                    const duration = isActive ? s.duration - 3 * 60 * 60 : s.duration;
+                    return sum + duration;
+                  }, 0);
 
                 // Убираем "(текущий)" из названия для легенды
                 const cleanStatusName = segment.statusName.replace(' (текущий)', '');

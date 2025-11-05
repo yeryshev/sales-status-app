@@ -67,8 +67,9 @@ export const DepartmentPlanChart = memo((props: DepartmentPlanChartProps) => {
         mode: 'index' as const,
         intersect: false,
         callbacks: {
-          label: function (context: { parsed: { y: number }; dataset: { label?: string } }) {
+          label: function (context: { parsed: { y: number | null }; dataset: { label?: string } }) {
             const value = context.parsed.y;
+            if (value === null) return '';
             if (isPercentageMode) {
               return `${context.dataset.label}: ${value}%`;
             } else {

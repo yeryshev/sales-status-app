@@ -65,8 +65,9 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
         mode: 'index' as const,
         intersect: false,
         callbacks: {
-          label: function (context: { parsed: { y: number }; dataset: { label?: string } }) {
+          label: function (context: { parsed: { y: number | null }; dataset: { label?: string } }) {
             const value = context.parsed.y;
+            if (value === null) return '';
             const suffix = isPercentageMode ? '%' : '';
             return `${context.dataset.label}: ${value}${suffix}`;
           },

@@ -16,12 +16,12 @@ export const HorseIcon = memo((props: HorseIconProps) => {
   if (usePngIcons) {
     // Базовые иконки для стандартных позиций
     const baseIcons = [
-      baseHorseIcons.first, // Первое место - всегда first.png
-      baseHorseIcons.regular1,
-      baseHorseIcons.regular2,
-      baseHorseIcons.regular3,
-      baseHorseIcons.regular4,
-      baseHorseIcons.last, // Последнее место - всегда last.png
+      baseHorseIcons.regular1, // Индекс 0 (не используется, начинаем с 1)
+      baseHorseIcons.regular1, // Индекс 1
+      baseHorseIcons.regular2, // Индекс 2
+      baseHorseIcons.regular3, // Индекс 3
+      baseHorseIcons.regular4, // Индекс 4
+      baseHorseIcons.regular5, // Индекс 5
     ];
 
     // Специальные иконки по ID (динамически)
