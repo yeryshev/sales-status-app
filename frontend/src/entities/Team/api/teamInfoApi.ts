@@ -4,7 +4,23 @@ import { triggerGlobalDataRefresh } from '@/shared/lib/hooks/useGlobalDataRefres
 import { logger } from '@/shared/lib/utils/logger';
 
 const externalApiUrl = import.meta.env.VITE_EXTERNAL_API_URL;
-const externalSocketUrl = import.meta.env.VITE_EXTERNAL_SOCKET_URL;
+
+// WebSocket URL для внутреннего сервера
+// Используем тот же URL, что и для статусов (VITE_SOCKET_URL)
+// Если не задан, строим автоматически
+const getInternalWebSocketUrl = () => {
+  // Если есть VITE_SOCKET_URL, используем его
+  if (import.meta.env.VITE_SOCKET_URL) {
+    return import.meta.env.VITE_SOCKET_URL;
+  }
+
+  // Иначе строим из VITE_API_BASE_URL или текущего хоста
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const host = import.meta.env.VITE_API_BASE_URL
+    ? import.meta.env.VITE_API_BASE_URL.replace(/^https?:\/\//, '').replace(/\/$/, '')
+    : window.location.host;
+  return `${protocol}//${host}`;
+};
 
 // Глобальный менеджер WebSocket соединений для RTK Query
 class WebSocketManager {
@@ -33,6 +49,13 @@ class WebSocketManager {
     // Если соединение уже существует и активно, просто добавляем слушатель
     const existingConnection = this.connections.get(url);
     if (existingConnection && existingConnection.readyState === WebSocket.OPEN) {
+      logger.log('🔗 RTK Query: Reusing existing WebSocket connection to:', url);
+      return;
+    }
+
+    // Если соединение в процессе установки, ждем его
+    if (existingConnection && existingConnection.readyState === WebSocket.CONNECTING) {
+      logger.log('🔗 RTK Query: Waiting for existing WebSocket connection to:', url);
       return;
     }
 
@@ -220,20 +243,43 @@ window.addEventListener('offline', () => {
 const tasksApi = rtkApi.injectEndpoints({
   endpoints: (build) => ({
     getAdditionalTeamData: build.query<Array<AdditionalUserData>, void>({
-      query: () => ({
-        url: externalApiUrl,
-        credentials: 'same-origin',
-      }),
+      query: () => {
+        // Если внешний API URL не настроен, возвращаем пустой запрос
+        // WebSocket будет работать независимо от этого
+        if (!externalApiUrl) {
+          return { url: '', method: 'GET' };
+        }
+        return {
+          url: externalApiUrl,
+          credentials: 'same-origin',
+        };
+      },
+      // Возвращаем пустой массив если нет внешнего API
+      transformResponse: (response: Array<AdditionalUserData> | null) => {
+        return response || [];
+      },
       async onCacheEntryAdded(_, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
         const listener = (event: MessageEvent) => {
           try {
-            const dataFromSocket: AdditionalUserData = JSON.parse(event.data);
-            updateCachedData((draft: Array<AdditionalUserData>) => {
-              const index = draft.findIndex((item) => item.idInside === dataFromSocket.idInside);
-              if (index !== -1) {
-                draft[index] = dataFromSocket;
-              }
-            });
+            const message = JSON.parse(event.data);
+            logger.log('📨 Received WebSocket message:', message);
+
+            // Обрабатываем сообщения с типом externalUserData от внутреннего WebSocket
+            if (message.type === 'externalUserData' && message.data) {
+              const dataFromSocket: AdditionalUserData = message.data;
+              logger.log('✅ Processing external user data for idInside:', dataFromSocket.idInside);
+              updateCachedData((draft: Array<AdditionalUserData>) => {
+                const index = draft.findIndex((item) => item.idInside === dataFromSocket.idInside);
+                if (index !== -1) {
+                  logger.log('🔄 Updating existing user data at index:', index);
+                  draft[index] = dataFromSocket;
+                } else {
+                  // Если пользователя еще нет в кэше, добавляем его
+                  logger.log('➕ Adding new user data to cache');
+                  draft.push(dataFromSocket);
+                }
+              });
+            }
           } catch (error) {
             logger.error('Error parsing WebSocket message:', error);
           }
@@ -241,13 +287,17 @@ const tasksApi = rtkApi.injectEndpoints({
 
         try {
           await cacheDataLoaded;
-          // Для VITE_EXTERNAL_SOCKET_URL не включаем heartbeat, так как это сторонний сервис
-          wsManager.connect(externalSocketUrl, listener, false);
+          const internalSocketUrl = getInternalWebSocketUrl();
+          logger.log('🔌 RTK Query connecting to internal WebSocket:', internalSocketUrl);
+          // Для внутреннего WebSocket включаем heartbeat
+          wsManager.connect(internalSocketUrl, listener, true);
         } catch (error) {
-          logger.error('Error occurred:', error);
+          logger.error('❌ Error occurred during WebSocket setup:', error);
         } finally {
           await cacheEntryRemoved;
-          wsManager.disconnect(externalSocketUrl, listener);
+          const internalSocketUrl = getInternalWebSocketUrl();
+          logger.log('🔌 RTK Query disconnecting from internal WebSocket:', internalSocketUrl);
+          wsManager.disconnect(internalSocketUrl, listener);
         }
       },
     }),

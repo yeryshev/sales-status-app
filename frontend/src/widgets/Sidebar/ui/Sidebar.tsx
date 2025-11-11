@@ -6,8 +6,11 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import { memo } from 'react';
+import { useSelector } from 'react-redux';
 import { SidebarItemsList } from './SidebarItem/items';
 import { SidebarItem } from './SidebarItem/SidebarItem';
+import { getUserData } from '@/entities/User';
+import { RoutePath } from '@/shared/const/router';
 
 interface SidebarProps {
   sideBarOpen: boolean;
@@ -16,6 +19,17 @@ interface SidebarProps {
 
 export const Sidebar = memo((props: SidebarProps) => {
   const { sideBarOpen, toggleSideBar } = props;
+  const userData = useSelector(getUserData);
+
+  // Фильтруем элементы сайдбара в зависимости от прав пользователя
+  const filteredSidebarItems = SidebarItemsList.filter((item) => {
+    // Если это страница аналитики статусов, показываем только суперпользователям
+    if (item.path === RoutePath.statusAnalytics) {
+      return userData?.isSuperuser;
+    }
+    // Остальные элементы показываем всем авторизованным пользователям
+    return true;
+  });
 
   return (
     <Drawer open={sideBarOpen} onClose={toggleSideBar()}>
@@ -40,7 +54,7 @@ export const Sidebar = memo((props: SidebarProps) => {
         </Toolbar>
         <Divider />
         <List component="nav">
-          {SidebarItemsList.map((item) => (
+          {filteredSidebarItems.map((item) => (
             <SidebarItem key={item.path} item={item} />
           ))}
         </List>

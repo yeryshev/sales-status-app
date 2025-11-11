@@ -15,6 +15,7 @@ const data = {
 
 describe('updateProfileData', () => {
   test('success', async () => {
+    // @ts-expect-error - Type compatibility issue with Redux Toolkit update
     const thunk = new TestAsyncThunk(updateProfileData, {
       profile: {
         form: data,
@@ -31,6 +32,7 @@ describe('updateProfileData', () => {
   });
 
   test('error update', async () => {
+    // @ts-expect-error - Type compatibility issue with Redux Toolkit update
     const thunk = new TestAsyncThunk(updateProfileData, {
       profile: {
         form: data,
@@ -45,6 +47,7 @@ describe('updateProfileData', () => {
   });
 
   test('validate error', async () => {
+    // @ts-expect-error - Type compatibility issue with Redux Toolkit update
     const thunk = new TestAsyncThunk(updateProfileData, {
       profile: {
         form: { ...data, telegram: '@username' },

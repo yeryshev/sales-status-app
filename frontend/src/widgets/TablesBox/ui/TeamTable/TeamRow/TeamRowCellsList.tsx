@@ -26,7 +26,7 @@ interface TeamRowCellsListProps extends TeamRowProps {
 }
 
 export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] => {
-  const { teammate, additionalUserData, isDeadlineReached, isAccountManagersRoute, expandRow, setExpandRow } = props;
+  const { teammate, additionalUserData, isDeadlineReached, expandRow, setExpandRow } = props;
 
   const {
     avatar,
@@ -57,7 +57,7 @@ export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'left',
       width: CELL_WIDTHS.STATUS,
-      content: !isAccountManagersRoute && (
+      content: (
         <StatusCell teammate={teammate} mango={mangoState} absence={absence} isDeadlineReached={isDeadlineReached} />
       ),
     },

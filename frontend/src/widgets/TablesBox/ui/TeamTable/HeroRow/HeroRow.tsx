@@ -5,6 +5,7 @@ import { AdditionalUserData } from '@/entities/Team';
 import { User } from '@/entities/User';
 import { checkUser, updateUser, userActions } from '@/entities/User';
 import { useAppDispatch } from '@/shared/lib/hooks/useAppDispatch';
+import { logger } from '@/shared/lib/utils/logger';
 import { HeroRowCellsList } from './HeroRowCellsList';
 
 export interface HeroRowProps {
@@ -44,7 +45,7 @@ export const HeroRow = memo((props: HeroRowProps) => {
         }
       } catch (error) {
         // В случае ошибки восстанавливаем предыдущее состояние
-        console.error('Error updating user:', error);
+        logger.error('Error updating user:', error);
         dispatch(userActions.setUserData(teammate));
         dispatch(checkUser());
       } finally {

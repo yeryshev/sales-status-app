@@ -5,5 +5,6 @@ export interface Profile {
   extNumber?: string;
   insideId?: number | null;
   telegram?: string;
+  telegramChatId?: number | null;
   isWorkingRemotely?: boolean;
 }

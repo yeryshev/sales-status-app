@@ -13,6 +13,7 @@ const data = {
 
 describe('fetchProfileData', () => {
   test('success', async () => {
+    // @ts-expect-error - Type compatibility issue with Redux Toolkit update
     const thunk = new TestAsyncThunk(fetchProfileData);
     // @ts-expect-error ts(2339)
     thunk.api.get.mockReturnValue(Promise.resolve({ data }));
@@ -25,6 +26,7 @@ describe('fetchProfileData', () => {
   });
 
   test('error login', async () => {
+    // @ts-expect-error - Type compatibility issue with Redux Toolkit update
     const thunk = new TestAsyncThunk(fetchProfileData);
     // @ts-expect-error ts(2339)
     thunk.api.get.mockReturnValue(Promise.resolve({ status: 403 }));

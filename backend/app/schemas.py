@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from fastapi_users import schemas
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class StatusCreate(BaseModel):
@@ -31,6 +31,7 @@ class UserRead(schemas.BaseUser[int]):
     second_name: str | None = Field(None, serialization_alias="secondName")
     ext_number: str | None = Field(None, serialization_alias="extNumber")
     telegram: str | None = Field(None, serialization_alias="telegram")
+    telegram_chat_id: int | None = Field(None, serialization_alias="telegramChatId")
     inside_id: int | None = Field(None, serialization_alias="insideId")
     is_working_remotely: bool = Field(None, serialization_alias="isWorkingRemotely")
     is_coordinator: bool = Field(None, serialization_alias="isCoordinator")
@@ -57,6 +58,7 @@ class UserUpdate(schemas.BaseUserUpdate):
     second_name: str | None = Field(None, alias="secondName")
     ext_number: str | None = Field(None, alias="extNumber")
     telegram: str | None = Field(None, alias="telegram")
+    telegram_chat_id: int | None = Field(None, alias="telegramChatId")
     inside_id: int | None = Field(None, alias="insideId")
     is_working_remotely: bool | None = Field(None, alias="isWorkingRemotely")
     is_coordinator: bool | None = Field(None, alias="isCoordinator")
@@ -79,6 +81,96 @@ class UserGet(UserRead):
     busy_time: BusyTime | None = Field(None, serialization_alias="busyTime")
 
 
+class StatusHistoryRead(BaseModel):
+    id: int
+    user_id: int = Field(serialization_alias="userId")
+    old_status_id: int | None = Field(None, serialization_alias="oldStatusId")
+    new_status_id: int = Field(serialization_alias="newStatusId")
+    start_time: datetime = Field(serialization_alias="startTime")
+    end_time: datetime | None = Field(None, serialization_alias="endTime")
+    duration_seconds: int | None = Field(None, serialization_alias="durationSeconds")
+    created_at: datetime = Field(serialization_alias="createdAt")
+
+    class Config:
+        populate_by_name = True
+
+
+class StatusAnalyticsRequest(BaseModel):
+    user_id: int | None = Field(None, alias="userId")
+    start_date: datetime = Field(alias="startDate")
+    end_date: datetime = Field(alias="endDate")
+    status_id: int | None = Field(None, alias="statusId")
+    period_type: str = Field(
+        "today", alias="periodType"
+    )  # today, yesterday, last30days, currentWeek, lastWeek, currentMonth, lastMonth, custom
+    department_id: str | None = Field(
+        None, alias="departmentId"
+    )  # "managers", "account_managers", "customer_care"
+
+    @field_validator("start_date", mode="before")
+    @classmethod
+    def parse_start_date(cls, v) -> datetime:
+        if isinstance(v, str):
+            try:
+                return datetime.fromisoformat(v)
+            except ValueError:
+                # Для start_date добавляем начало дня
+                return datetime.fromisoformat(v + "T00:00:00")
+        return v
+
+    @field_validator("end_date", mode="before")
+    @classmethod
+    def parse_end_date(cls, v) -> datetime:
+        if isinstance(v, str):
+            try:
+                return datetime.fromisoformat(v)
+            except ValueError:
+                # Для end_date добавляем конец дня
+                return datetime.fromisoformat(v + "T23:59:59.999999")
+        return v
+
+    class Config:
+        populate_by_name = True
+
+
+class StatusAnalyticsResponse(BaseModel):
+    user_id: int = Field(serialization_alias="userId")
+    user_name: str = Field(serialization_alias="userName")
+    status_id: int = Field(serialization_alias="statusId")
+    status_title: str = Field(serialization_alias="statusTitle")
+    start_time: datetime = Field(serialization_alias="startTime")
+    end_time: datetime | None = Field(None, serialization_alias="endTime")
+    total_duration_seconds: int = Field(serialization_alias="totalDurationSeconds")
+    total_duration_minutes: float = Field(serialization_alias="totalDurationMinutes")
+    total_duration_hours: float = Field(serialization_alias="totalDurationHours")
+    percentage: float = Field(serialization_alias="percentage")
+    periods: list[dict[str, str | int]] = Field(serialization_alias="periods")
+
+    class Config:
+        populate_by_name = True
+
+
+class StatusHistoryQuery(BaseModel):
+    user_id: int | None = Field(None, alias="user_id")
+    start_date: datetime | None = Field(None, alias="start_date")
+    end_date: datetime | None = Field(None, alias="end_date")
+    limit: int = Field(100, alias="limit")
+
+    @field_validator("start_date", "end_date", mode="before")
+    @classmethod
+    def parse_dates(cls, v) -> datetime | None:
+        if isinstance(v, str):
+            try:
+                return datetime.fromisoformat(v)
+            except ValueError:
+                # Попробуем парсить как дату без времени
+                return datetime.fromisoformat(v + "T00:00:00")
+        return v
+
+    class Config:
+        populate_by_name = True
+
+
 class GetUserStatus(BaseModel):
     name: str
     status: int
@@ -90,3 +182,85 @@ class UpdateTelegramRequest(BaseModel):
     username: str
     status: int
     secret: str
+
+
+class SsoLoginRequest(BaseModel):
+    email: str
+    name: str | None = None
+
+
+# Схемы для дополнительных данных пользователя от внешнего сервиса
+class QlikData(BaseModel):
+    forecast_with_k: str = Field(..., alias="forecastWithK")
+    fact_with_k: str = Field(..., alias="factWithK")
+
+    class Config:
+        populate_by_name = True
+
+
+class BudgetDealsData(BaseModel):
+    new_sale: int | None = Field(None, alias="newSale")
+    new_sale_and_upsale: int | None = Field(None, alias="newSaleAndUpsale")
+
+    class Config:
+        populate_by_name = True
+
+
+class LastWeekData(BaseModel):
+    budget: int
+    deals: int
+
+
+class AbsenceData(BaseModel):
+    is_absence: bool = Field(..., alias="isAbsence")
+    end_date: str | None = Field(None, alias="endDate")
+    description: str | None = None
+
+    class Config:
+        populate_by_name = True
+
+
+class ExternalUserDataRequest(BaseModel):
+    """Схема для приёма данных от внешнего сервиса через POST запрос"""
+
+    id_amo_crm: int = Field(..., alias="idAmoCRM")
+    id_inside: int = Field(..., alias="idInside")
+    id_chatwoot: int = Field(..., alias="idChatwoot")
+    qlik: QlikData | None = None
+    budget: BudgetDealsData
+    deals: BudgetDealsData
+    overdue_tasks: int = Field(..., alias="overdueTasks")
+    conversations: int
+    tickets: int
+    avatar: str
+    absence: AbsenceData
+    mango_state: bool = Field(..., alias="mangoState")
+    leads: int
+    last_week: LastWeekData = Field(..., alias="lastWeek")
+    mango_ext: int | None = Field(None, alias="mangoExt")
+
+    class Config:
+        populate_by_name = True
+
+
+class ExternalUserDataResponse(BaseModel):
+    """Схема для отправки данных на фронтенд через WebSocket"""
+
+    id_amo_crm: int = Field(serialization_alias="idAmoCRM")
+    id_inside: int = Field(serialization_alias="idInside")
+    id_chatwoot: int = Field(serialization_alias="idChatwoot")
+    qlik: QlikData | None = None
+    budget: BudgetDealsData
+    deals: BudgetDealsData
+    overdue_tasks: int = Field(serialization_alias="overdueTasks")
+    conversations: int
+    tickets: int
+    avatar: str
+    is_birthday: bool = Field(default=False, serialization_alias="isBirthday")
+    absence: AbsenceData
+    mango_state: bool = Field(serialization_alias="mangoState")
+    leads: int
+    last_week: LastWeekData = Field(serialization_alias="lastWeek")
+
+    class Config:
+        populate_by_name = True

@@ -1,17 +1,22 @@
+import json
+import logging
 from datetime import datetime
 
 import pytz
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.api.auth_config import current_superuser, current_user, fastapi_users
+from app.api.routes.websockets import manager
 from app.core.config import settings
 from app.core.db import get_async_session
 from app.crud import UserRepository
 from app.models import Message, User
 from app.schemas import (
+    ExternalUserDataRequest,
+    ExternalUserDataResponse,
     GetUserStatus,
     UpdateTelegramRequest,
     UserGet,
@@ -25,6 +30,8 @@ from app.utils import (
     mango_statuses,
     send_ws_after_user_update,
 )
+
+logger = logging.getLogger(__name__)
 
 users_router = APIRouter()
 telegram_router = APIRouter()
@@ -123,13 +130,39 @@ async def update_user_router(
     summary="Set All Users Offline",
 )
 async def set_all_offline(session: AsyncSession = Depends(get_async_session)):
+    from datetime import datetime
+
+    from app.crud import StatusHistoryRepository
+
     statement = select(User)
     result = await session.execute(statement)
     users = result.scalars().all()
 
+    current_time = datetime.utcnow()
+
     for user in users:
-        user.status_id = offline_status_id
-        await change_mango_status(user, mango_statuses["offline"])
+        # Проверяем, нужно ли менять статус
+        if user.status_id != offline_status_id:
+            old_status_id = user.status_id
+
+            # Закрываем предыдущий статус, если он был
+            if old_status_id is not None:
+                await StatusHistoryRepository.update_last_status_end_time(
+                    session, user.id, current_time
+                )
+
+            # Добавляем новый статус в историю
+            await StatusHistoryRepository.add_status_change(
+                session,
+                user_id=user.id,
+                old_status_id=old_status_id,
+                new_status_id=offline_status_id,
+                start_time=current_time,
+            )
+
+            # Обновляем статус пользователя
+            user.status_id = offline_status_id
+            await change_mango_status(user, mango_statuses["offline"])
 
     await session.commit()
     return Message(message="All users set to offline")
@@ -213,3 +246,65 @@ async def update_telegram(
     await send_ws_after_user_update(updated_user)
 
     return updated_user
+
+
+@users_router.post("/external-user-data", status_code=200)
+async def receive_external_user_data(
+    data: ExternalUserDataRequest,
+    x_api_key: str | None = Header(None, alias="X-API-Key"),
+) -> dict[str, str]:
+    """
+    Принимает данные о пользователе от внешнего сервиса через POST запрос
+    и транслирует их всем подключенным WebSocket клиентам.
+
+    Требуется API ключ в заголовке X-API-Key для авторизации.
+    """
+    # Проверка API ключа (если настроен в конфигурации)
+    if hasattr(settings, "EXTERNAL_API_KEY") and settings.EXTERNAL_API_KEY:
+        if not x_api_key or x_api_key != settings.EXTERNAL_API_KEY:
+            logger.warning("Unauthorized external data request")
+            raise HTTPException(status_code=401, detail="Unauthorized")
+
+    try:
+        # Преобразуем данные в формат для отправки на фронтенд
+        response_data = ExternalUserDataResponse(
+            id_amo_crm=data.id_amo_crm,
+            id_inside=data.id_inside,
+            id_chatwoot=data.id_chatwoot,
+            qlik=data.qlik,
+            budget=data.budget,
+            deals=data.deals,
+            overdue_tasks=data.overdue_tasks,
+            conversations=data.conversations,
+            tickets=data.tickets,
+            avatar=data.avatar,
+            is_birthday=False,  # Можно добавить логику определения дня рождения
+            absence=data.absence,
+            mango_state=data.mango_state,
+            leads=data.leads,
+            last_week=data.last_week,
+        )
+
+        # Формируем сообщение для WebSocket
+        ws_message = {
+            "type": "externalUserData",
+            "data": response_data.model_dump(by_alias=True),
+        }
+
+        logger.info(
+            f"Broadcasting external user data for idInside={data.id_inside} to {len(manager.active_connections)} clients"
+        )
+        logger.debug(f"WebSocket message: {ws_message}")
+
+        # Транслируем данные всем подключенным клиентам
+        await manager.broadcast(json.dumps(ws_message))
+
+        logger.info(
+            f"External user data received and broadcasted for user idInside={data.id_inside}"
+        )
+
+        return {"status": "success", "message": "Data received and broadcasted"}
+
+    except Exception as e:
+        logger.error(f"Error processing external user data: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")

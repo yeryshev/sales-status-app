@@ -21,12 +21,13 @@ class Settings(BaseSettings):
     MANGO_SET_STATUS: str
     AUTH_SECRET: str
     TELEGRAM_BOT_SECRET: str
+    EXTERNAL_API_KEY: str | None = None  # API ключ для внешнего сервиса
 
     ENVIRONMENT: Literal["local", "staging", "production"] = "local"
 
-    BACKEND_CORS_ORIGINS: Annotated[
-        list[AnyUrl] | str, BeforeValidator(parse_cors)
-    ] = []
+    BACKEND_CORS_ORIGINS: Annotated[list[AnyUrl] | str, BeforeValidator(parse_cors)] = (
+        []
+    )
 
     SENTRY_DSN: HttpUrl | None = None
     N8N_STATUS_ADMIN_BOT_WEBHOOK: HttpUrl | None = None

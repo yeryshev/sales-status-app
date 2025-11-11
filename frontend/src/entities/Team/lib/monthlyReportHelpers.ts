@@ -1134,7 +1134,9 @@ export const processDepartmentPlanData = (
             totalValue = userData.qlik?.factWithK ? parseFloat(userData.qlik.factWithK) : 0;
           }
 
-          monthData[managerName] = (monthData[managerName] || 0) + totalValue;
+          // Во избежание двойного учета для одного и того же менеджера (при наличии нескольких idInside)
+          // используем максимальное значение вместо суммирования
+          monthData[managerName] = Math.max(monthData[managerName] || 0, totalValue);
         }
       });
     }
@@ -1185,8 +1187,9 @@ export const getCurrentMonthForecastByManagers = (
   additionalTeamData.forEach((userData) => {
     const managerName = idToManagerMap.get(userData.idInside);
     if (managerName && userData.qlik?.forecastWithK) {
-      forecastByManagers[managerName] =
-        (forecastByManagers[managerName] || 0) + parseFloat(userData.qlik.forecastWithK);
+      const value = parseFloat(userData.qlik.forecastWithK);
+      // Во избежание двойного учета по одинаковому менеджеру берем максимум
+      forecastByManagers[managerName] = Math.max(forecastByManagers[managerName] || 0, value);
     }
   });
 

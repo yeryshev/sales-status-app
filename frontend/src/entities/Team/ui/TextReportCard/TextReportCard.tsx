@@ -1,5 +1,6 @@
 import { memo, useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { logger } from '@/shared/lib/utils/logger';
 import {
   Card,
   CardContent,
@@ -358,7 +359,7 @@ export const TextReportCard = memo((props: TextReportCardProps) => {
         });
       }
     } catch (error) {
-      console.error('Ошибка при сохранении отчета:', error);
+      logger.error('Ошибка при сохранении отчета:', error);
       setNotification({
         open: true,
         message: 'Ошибка при сохранении отчета',
