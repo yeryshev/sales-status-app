@@ -1,5 +1,5 @@
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 import { Layout } from '@/widgets/Layout';
 import { memo } from 'react';
 import { PageWrapper } from '@/shared/ui/PageWrapper';
@@ -15,7 +15,9 @@ const TelegramChatsPage = memo(() => {
         </Helmet>
         <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
           <Grid container>
-            <ChatsTable />
+            <Grid item xs={12}>
+              <ChatsTable />
+            </Grid>
           </Grid>
         </Container>
       </PageWrapper>

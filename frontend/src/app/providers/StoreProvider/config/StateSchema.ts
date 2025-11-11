@@ -7,10 +7,12 @@ import { ProfileSchema } from '@/pages/ProfilePage';
 import { AxiosInstance } from 'axios';
 import { rtkApi } from '@/shared/api/rtkApi';
 import { StatusSelectorSchema } from '@/features/StatusSelector';
+import { StatusAnalyticsState } from '@/entities/StatusAnalytics';
 
 export interface StateSchema {
   user: UserSchema;
   status: StatusSchema;
+  statusAnalytics: StatusAnalyticsState;
   [rtkApi.reducerPath]: ReturnType<typeof rtkApi.reducer>;
 
   // Асинхронные редюсеры

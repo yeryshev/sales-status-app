@@ -39,7 +39,7 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     {
       align: 'left',
       width: CELL_WIDTHS.STATUS,
-      content: teamIsLoading ? <Skeleton variant="text" /> : !isAccountManagersRoute && <StatusSelector />,
+      content: teamIsLoading ? <Skeleton variant="text" /> : <StatusSelector />,
     },
     {
       align: 'left',

@@ -24,9 +24,7 @@ export const CustomerCareTablesBox = memo(() => {
   const customerCareTeamList = useSelector(getCustomerCareTeamList);
   const teamList = customerCareTeamList;
 
-  const { data: additionalTeamData = [] } = useGetAdditionalTeamData(undefined, {
-    skip: !import.meta.env.VITE_EXTERNAL_API_URL,
-  });
+  const { data: additionalTeamData = [] } = useGetAdditionalTeamData();
 
   const { tabNumber, handleChangeTab, deadlines, websocketState } = useTablesBoxViewModel(teamList, teamIsLoading);
 

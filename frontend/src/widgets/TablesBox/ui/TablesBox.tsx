@@ -18,6 +18,7 @@ import { TeamTableTabs } from '@/features/TeamTableTabs';
 
 import { useTablesBoxViewModel } from '../hooks/useTablesBoxViewModel';
 import { TeamTableContainer } from './TeamTableContainer';
+import { CompetitionContainer } from './CompetitionContainer';
 import { TeamResultsContainer } from './TeamResultsContainer';
 import { MonthlyReportContainer } from './MonthlyReportContainer';
 
@@ -34,9 +35,7 @@ export const TablesBox = memo(() => {
   const accountManagerTeamList = useSelector(getAccountManagerTeamList);
   const teamList = isAccountManagersRoute ? accountManagerTeamList : inboundTeamList;
 
-  const { data: additionalTeamData = [] } = useGetAdditionalTeamData(undefined, {
-    skip: !import.meta.env.VITE_EXTERNAL_API_URL,
-  });
+  const { data: additionalTeamData = [] } = useGetAdditionalTeamData();
 
   const { tabNumber, handleChangeTab, deadlines, websocketState } = useTablesBoxViewModel(teamList, teamIsLoading);
 
@@ -71,7 +70,7 @@ export const TablesBox = memo(() => {
           isAccountManagersRoute={isAccountManagersRoute}
         />
 
-        <TeamResultsContainer
+        <CompetitionContainer
           active={tabNumber === 1}
           teamList={teamList}
           teamIsLoading={teamIsLoading}
@@ -79,8 +78,16 @@ export const TablesBox = memo(() => {
           isAccountManagersRoute={isAccountManagersRoute}
         />
 
-        <MonthlyReportContainer
+        <TeamResultsContainer
           active={tabNumber === 2}
+          teamList={teamList}
+          teamIsLoading={teamIsLoading}
+          additionalTeamData={additionalTeamData}
+          isAccountManagersRoute={isAccountManagersRoute}
+        />
+
+        <MonthlyReportContainer
+          active={tabNumber === 3}
           additionalTeamData={additionalTeamData}
           isAccountManagersRoute={isAccountManagersRoute}
         />

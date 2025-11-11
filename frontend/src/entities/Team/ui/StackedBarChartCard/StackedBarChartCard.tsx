@@ -65,9 +65,9 @@ export const StackedBarChartCard = memo((props: StackedBarChartCardProps) => {
         mode: 'index' as const,
         intersect: false,
         callbacks: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          label: function (context: any) {
+          label: function (context: { parsed: { y: number | null }; dataset: { label?: string } }) {
             const value = context.parsed.y;
+            if (value === null) return '';
             const suffix = isPercentageMode ? '%' : '';
             return `${context.dataset.label}: ${value}${suffix}`;
           },

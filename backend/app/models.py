@@ -33,6 +33,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     second_name: Mapped[str | None]
     ext_number: Mapped[str | None]
     telegram: Mapped[str | None]
+    telegram_chat_id: Mapped[int | None] = mapped_column(nullable=True)
     inside_id: Mapped[int | None] = mapped_column(unique=True, nullable=True)
     mango_user_id: Mapped[int | None] = mapped_column(unique=True, nullable=True)
     is_working_remotely: Mapped[bool] = mapped_column(default=False)
@@ -65,7 +66,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
         "BusyTime", back_populates="user", uselist=False
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"id: {self.id}, email: {self.email} first_name: {self.first_name} second_name: {self.second_name}"
 
 
@@ -89,10 +90,10 @@ class Status(Base):
     )
     users: Mapped[list["User"]] = relationship("User", back_populates="status")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"id: {self.id}, title: {self.title}, is_deadline_required: {self.is_deadline_required}"
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, int | str | bool]:
         return {
             "id": self.id,
             "title": self.title,
@@ -118,15 +119,55 @@ class BusyTime(Base):
     user: Mapped["User"] = relationship("User", back_populates="busy_time")
     status: Mapped["Status"] = relationship("Status", back_populates="busy_times")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"id: {self.id}, status_id: {self.status_id}, user_id: {self.user_id}, end_time: {self.end_time}"
 
-    def to_dict(self):
+    def to_dict(self) -> dict[str, int | str | None]:
         return {
             "id": self.id,
             "statusId": self.status_id,
             "userId": self.user_id,
             "endTime": self.end_time.isoformat() if self.end_time else None,
+        }
+
+
+class StatusHistory(Base):
+    __tablename__ = "status_history"
+
+    id: Mapped[int_primary_key]
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("user.id", ondelete="CASCADE"), index=True
+    )
+    old_status_id: Mapped[int | None] = mapped_column(
+        ForeignKey("status.id", ondelete="SET NULL"), nullable=True
+    )
+    new_status_id: Mapped[int] = mapped_column(
+        ForeignKey("status.id", ondelete="CASCADE"), index=True
+    )
+    start_time: Mapped[datetime]
+    end_time: Mapped[datetime | None] = mapped_column(nullable=True)
+    duration_seconds: Mapped[int | None] = mapped_column(nullable=True)
+    created_at: Mapped[created_at]
+
+    user: Mapped["User"] = relationship("User", foreign_keys=[user_id])
+    old_status: Mapped[Optional["Status"]] = relationship(
+        "Status", foreign_keys=[old_status_id]
+    )
+    new_status: Mapped["Status"] = relationship("Status", foreign_keys=[new_status_id])
+
+    def __repr__(self) -> str:
+        return f"id: {self.id}, user_id: {self.user_id}, old_status: {self.old_status_id}, new_status: {self.new_status_id}, start: {self.start_time}, end: {self.end_time}"
+
+    def to_dict(self) -> dict[str, int | str | None]:
+        return {
+            "id": self.id,
+            "userId": self.user_id,
+            "oldStatusId": self.old_status_id,
+            "newStatusId": self.new_status_id,
+            "startTime": self.start_time.isoformat() if self.start_time else None,
+            "endTime": self.end_time.isoformat() if self.end_time else None,
+            "durationSeconds": self.duration_seconds,
+            "createdAt": self.created_at.isoformat() if self.created_at else None,
         }
 
 
