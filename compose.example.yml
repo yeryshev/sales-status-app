@@ -4,8 +4,8 @@ services:
     container_name: nginx-proxy
     restart: always
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - certs:/etc/nginx/certs:ro
@@ -13,17 +13,16 @@ services:
   lego-acme:
     image: eryshev/lego-cron-wrapper
     container_name: lego-acme
-    restart: always
     command: >
-      --accept-tos --email=test@gmail.com --dns selectelv2
-      --domains=*.status.sales.localhost.org --domains=status.sales.localhost.org
+      --accept-tos --email=user@gmail.com --dns selectelv2
+      --domains=*.status.sales.company.org --domains=status.sales.company.org --domains=*.ref.sales.company.org --domains=ref.sales.company.org
     environment:
       - RUN_ARGUMENTS=--run-hook=/app/deploy
       - RENEW_ARGUMENTS=--renew-hook=/app/deploy
-      - SELECTELV2_USERNAME=XXXXXXX
-      - SELECTELV2_PASSWORD=XXXXXXX
-      - SELECTELV2_ACCOUNT_ID=XXXXXXX
-      - SELECTELV2_PROJECT_ID=XXXXXXX
+      - SELECTELV2_USERNAME=needtofill
+      - SELECTELV2_PASSWORD=needtofill
+      - SELECTELV2_ACCOUNT_ID=needtofill
+      - SELECTELV2_PROJECT_ID=needtofill
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/app/certificates
@@ -34,9 +33,18 @@ services:
     container_name: frontend
     restart: always
     environment:
-      - VIRTUAL_HOST=status.sales.localhost.org
+      - VIRTUAL_HOST=status.sales.company.org
     depends_on:
       - backend
+      - nginx-proxy
+
+  referral:
+    build: ./referral
+    container_name: referral
+    restart: always
+    environment:
+      - VIRTUAL_HOST=ref.sales.company.org
+    depends_on:
       - nginx-proxy
 
   backend:
@@ -52,7 +60,7 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - VIRTUAL_PORT=8000
-      - VIRTUAL_HOST=api.status.sales.localhost.org
+      - VIRTUAL_HOST=api.status.sales.company.org
     depends_on:
       - nginx-proxy
 
