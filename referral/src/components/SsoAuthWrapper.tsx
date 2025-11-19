@@ -1,5 +1,5 @@
 import { useAuth } from 'react-oidc-context';
-import { useEffect, ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { SsoLoadingScreen } from './SsoLoadingScreen';
 import { logger } from '@/lib/logger';
 
