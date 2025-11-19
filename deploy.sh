@@ -12,12 +12,9 @@ cd /app/certificates
 BASE_DOMAIN=$(echo "$FILE_NAME" | rev | cut -d. -f1-3 | rev)
 
 # Get all VIRTUAL_HOST values from running containers
-VIRTUAL_HOSTS=$(curl -s --unix-socket /var/run/docker.sock http://localhost/containers/json | 
-  grep -o '"VIRTUAL_HOST=[^"]*"' | 
-  cut -d= -f2 | 
-  tr -d '"' | 
-  tr ',' '\n' | 
-  sort -u)
+VIRTUAL_HOSTS=$(for container in $(curl -s --unix-socket /var/run/docker.sock http://localhost/containers/json | grep -o '"Id":"[^"]*"' | cut -d'"' -f4); do 
+  curl -s --unix-socket /var/run/docker.sock http://localhost/containers/$container/json | grep -o '"VIRTUAL_HOST=[^"]*"' | head -1 | cut -d= -f2 | tr -d '"'
+done | tr ',' '\n' | sort -u)
 
 # Create symlinks for domains from the same base domain
 for DOMAIN in $VIRTUAL_HOSTS; do
