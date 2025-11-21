@@ -6,5 +6,9 @@ export const oidcConfig = {
   response_type: 'code',
   scope: 'openid profile email',
   loadUserInfo: true,
+  // Отключаем автоматическое обновление токена, чтобы избежать проблем с CORS
+  automaticSilentRenew: false,
+  // Отключаем автоматическую проверку сессии, чтобы избежать лишних запросов
+  checkSessionInterval: 0,
 };
 

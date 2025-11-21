@@ -1,8 +1,5 @@
 import { useAuth } from 'react-oidc-context';
 import { LogOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export const UserProfile = () => {
   const auth = useAuth();
@@ -18,32 +15,27 @@ export const UserProfile = () => {
   };
 
   return (
-    <Card className="fixed top-5 right-5 z-50 shadow-lg">
+    <div className="fixed top-5 right-5 z-50 shadow-lg bg-white rounded-lg border border-[#d9dfe2]">
       <div className="flex flex-col gap-3 p-4">
         <div className="flex items-center gap-3">
-          <Avatar>
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {userName.charAt(0).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+          <div className="w-10 h-10 rounded-full bg-[#092433] text-white flex items-center justify-center font-semibold">
+            {userName.charAt(0).toUpperCase()}
+          </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">{userName}</span>
+            <span className="text-sm font-semibold text-[#092433]">{userName}</span>
             {auth.user.profile?.email && (
-              <span className="text-xs text-muted-foreground">{auth.user.profile.email}</span>
+              <span className="text-xs text-[#092433] opacity-60">{auth.user.profile.email}</span>
             )}
           </div>
         </div>
-        <Button 
+        <button 
           onClick={handleLogout}
-          variant="destructive"
-          size="sm"
-          className="w-full"
+          className="w-full bg-[#ff4a50] hover:bg-[#dc3035] text-white rounded-lg px-4 py-2 text-sm font-medium transition-colors cursor-pointer flex items-center justify-center gap-2"
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="h-4 w-4" />
           Выйти
-        </Button>
+        </button>
       </div>
-    </Card>
+    </div>
   );
 };
-
