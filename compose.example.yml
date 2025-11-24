@@ -4,54 +4,65 @@ services:
     container_name: nginx-proxy
     restart: always
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - certs:/etc/nginx/certs:ro
+    networks:
+      - corporate_network
 
   lego-acme:
     image: eryshev/lego-cron-wrapper
     container_name: lego-acme
+    restart: always
+    entrypoint: ["/entrypoint-wrapper.sh"]
     command: >
       --accept-tos --email=user@gmail.com --dns selectelv2
-      --domains=*.status.sales.company.org --domains=status.sales.company.org --domains=*.ref.sales.company.org --domains=ref.sales.company.org
+      --domains=*.staging.status.sales.company.org --domains=staging.status.sales.company.org --domains=staging.ref.sales.company.org
     environment:
       - RUN_ARGUMENTS=--run-hook=/app/deploy
       - RENEW_ARGUMENTS=--renew-hook=/app/deploy
-      - SELECTELV2_USERNAME=needtofill
-      - SELECTELV2_PASSWORD=needtofill
-      - SELECTELV2_ACCOUNT_ID=needtofill
-      - SELECTELV2_PROJECT_ID=needtofill
+      - SELECTELV2_USERNAME=fill
+      - SELECTELV2_PASSWORD=fill
+      - SELECTELV2_ACCOUNT_ID=fill
+      - SELECTELV2_PROJECT_ID=fill
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - certs:/app/certificates
       - ./deploy.sh:/app/deploy
+      - ./entrypoint-wrapper.sh:/entrypoint-wrapper.sh
+    networks:
+      - corporate_network
 
   frontend:
     build: ./frontend
     container_name: frontend
     restart: always
     environment:
-      - VIRTUAL_HOST=status.sales.company.org
+      - VIRTUAL_HOST=staging.status.sales.company.org
     depends_on:
       - backend
       - nginx-proxy
+    networks:
+      - corporate_network
 
   referral:
     build: ./referral
     container_name: referral
     restart: always
     environment:
-      - VIRTUAL_HOST=ref.sales.company.org
+      - VIRTUAL_HOST=staging.ref.sales.company.org
     depends_on:
       - nginx-proxy
+    networks:
+      - corporate_network
 
   backend:
     build: ./backend
     container_name: backend
     restart: always
-    command: gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000
+    command: gunicorn app.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:8000 --timeout 60
     ports:
       - '8000:8000'
     volumes:
@@ -60,9 +71,19 @@ services:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - VIRTUAL_PORT=8000
-      - VIRTUAL_HOST=api.status.sales.company.org
+      - VIRTUAL_HOST=api.staging.status.sales.company.org
     depends_on:
       - nginx-proxy
+    networks:
+      - corporate_network
+
+networks:
+  corporate_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.20.0.0/16
+          gateway: 10.20.0.1
 
 volumes:
   certs:
