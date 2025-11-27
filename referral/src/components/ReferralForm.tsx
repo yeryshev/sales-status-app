@@ -10,6 +10,7 @@ interface ReferralFormProps {
 
 export const ReferralForm = ({ onSuccess, isLoading = false }: ReferralFormProps) => {
   const auth = useAuth();
+  
   const [isServercore, setIsServercore] = useState(false);
   const [clientName, setClientName] = useState('');
   const [clientPhone, setClientPhone] = useState('');
@@ -20,6 +21,7 @@ export const ReferralForm = ({ onSuccess, isLoading = false }: ReferralFormProps
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [agreementAccepted, setAgreementAccepted] = useState(false);
+  const [programTermsAccepted, setProgramTermsAccepted] = useState(false);
   const prevIsLoadingRef = useRef(isLoading);
   
   // Ошибки для отдельных полей
@@ -32,6 +34,11 @@ export const ReferralForm = ({ onSuccess, isLoading = false }: ReferralFormProps
       // Список обновился (isLoading был true, стал false), скрываем сообщение
       const timer = setTimeout(() => {
         setSuccess(false);
+        // Прокручиваем страницу к блоку "Мои рекомендации" после скрытия сообщения
+        const recommendationsBlock = document.getElementById('my-recommendations');
+        if (recommendationsBlock) {
+          recommendationsBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       }, 500); // Небольшая задержка для плавности
       return () => clearTimeout(timer);
     }
@@ -109,6 +116,12 @@ export const ReferralForm = ({ onSuccess, isLoading = false }: ReferralFormProps
       return false;
     }
 
+    // Проверка чекбокса условий реферальной программы
+    if (!programTermsAccepted) {
+      setError('Необходимо ознакомиться и согласиться с условиями реферальной программы');
+      return false;
+    }
+
     // Проверка что нет ошибок валидации
     if (emailError) {
       setError('Исправьте ошибки в полях формы');
@@ -160,6 +173,7 @@ export const ReferralForm = ({ onSuccess, isLoading = false }: ReferralFormProps
       setClientTelegram('');
       setDescription('');
       setAgreementAccepted(false);
+      setProgramTermsAccepted(false);
       setEmailError('');
       setPhoneError('');
       setError('');
@@ -170,8 +184,30 @@ export const ReferralForm = ({ onSuccess, isLoading = false }: ReferralFormProps
     }
   };
 
+  // Получаем имя пользователя из профиля
+  const getUserDisplayName = (): string => {
+    if (!auth.user?.profile) return '';
+    
+    const profile = auth.user.profile;
+    // Используем display_name из профиля
+    if (profile.display_name) {
+      return profile.display_name as string;
+    }
+    return '';
+  };
+
+  const userDisplayName = getUserDisplayName();
+
   return (
     <>
+      {/* Информация об авторизованном пользователе */}
+      {userDisplayName && (
+        <div className="mb-6 p-4 bg-[#f8f9fa] border border-[#d9dfe2] rounded-[10px]">
+          <p className="text-sm text-[#092433] opacity-80 mb-1">Вы авторизованы как:</p>
+          <p className="text-base font-medium text-[#092433]">{userDisplayName}</p>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
       {/* Выбор бренда */}
       <div className="space-y-1">
@@ -317,6 +353,24 @@ export const ReferralForm = ({ onSuccess, isLoading = false }: ReferralFormProps
               Политикой
             </a>
             .
+          </span>
+        </label>
+      </div>
+
+      {/* Чекбокс условий реферальной программы */}
+      <div className="space-y-2">
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            id="program-terms-accepted"
+            name="program-terms-accepted"
+            checked={programTermsAccepted}
+            onChange={(e) => setProgramTermsAccepted(e.target.checked)}
+            disabled={isSubmitting}
+            className="tilda-checkbox mt-1"
+          />
+          <span className="text-sm text-[#092433] leading-[14px]">
+            Я ознакомился и согласен с размещенными на данной странице условиями реферальной программы для сотрудников.
           </span>
         </label>
       </div>

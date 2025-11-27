@@ -63,10 +63,10 @@ const BonusBlock = () => {
 
       {/* Content */}
       <div className="relative z-10 text-center h-full flex flex-col items-center justify-center px-3 sm:px-4 md:px-6 py-4 sm:py-0">
-        <h2 className="text-lg sm:text-[22px] md:text-[32px] font-medium text-[#092433] mb-2 md:mb-3 leading-[1.2]" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
+        <h2 className="text-[21px] sm:text-[22px] md:text-[32px] font-medium text-[#092433] mb-2 md:mb-3 leading-[1.2]" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
           <strong>Получи бонус!</strong>
         </h2>
-        <p className="text-xs sm:text-sm md:text-base text-[#092433] opacity-80 max-w-full sm:max-w-[255px] md:max-w-[633px] leading-[1.3] px-2" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
+        <p className="text-[14px] sm:text-sm md:text-base text-[#092433] opacity-80 max-w-full sm:max-w-[255px] md:max-w-[633px] leading-[1.3] px-2" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
           Если из лида вырастет реальный клиент, ты получишь вознаграждение. Выплата придет вместе с заработной платой через 3 месяца после выхода клиента на полную мощность потребления наших услуг.
         </p>
       </div>
@@ -88,7 +88,9 @@ export const ReferralPage = () => {
   const [deals, setDeals] = useState<Deal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const faqContentRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
   const loadDeals = async () => {
     if (auth.isAuthenticated && auth.user?.profile?.eid) {
@@ -132,6 +134,29 @@ export const ReferralPage = () => {
       isMounted = false;
     };
   }, [auth.isAuthenticated, auth.user]);
+
+  // Закрытие тултипа при клике вне его
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
+        setIsTooltipOpen(false);
+      }
+    };
+
+    if (isTooltipOpen) {
+      // Используем небольшую задержку, чтобы клик на иконку не закрывал тултип сразу
+      const timeoutId = setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside, true);
+        document.addEventListener('touchend', handleClickOutside, true);
+      }, 0);
+
+      return () => {
+        clearTimeout(timeoutId);
+        document.removeEventListener('mousedown', handleClickOutside, true);
+        document.removeEventListener('touchend', handleClickOutside, true);
+      };
+    }
+  }, [isTooltipOpen]);
 
   const handleFormSuccess = () => {
     loadDeals();
@@ -458,8 +483,14 @@ export const ReferralPage = () => {
                 Ты получишь 30% от всей выручки компании по клиенту за первые 3 месяца его работы с нами.
               </p>
               {/* Tooltip */}
-              <div className="relative inline-block group">
-                <div className="w-[25px] h-[25px] cursor-pointer bg-[#d9dfe2] rounded-full flex items-center justify-center">
+              <div ref={tooltipRef} className="relative inline-block group">
+                <div 
+                  className="w-[25px] h-[25px] cursor-pointer bg-[#d9dfe2] rounded-full flex items-center justify-center"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsTooltipOpen(!isTooltipOpen);
+                  }}
+                >
                   <svg role="presentation" width="100%" height="100%" style={{ display: 'block' }} viewBox="0 0 25 25">
                     <g stroke="none" strokeWidth="1.5" fill="none" fillRule="evenodd">
                       <g>
@@ -469,7 +500,11 @@ export const ReferralPage = () => {
                     </g>
                   </svg>
                 </div>
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-[250px] md:w-[301px] bg-white rounded-2xl p-3 shadow-[0px_0px_10px_0px_rgba(0,0,0,0.3)] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                <div className={`absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-[250px] md:w-[301px] bg-white rounded-2xl p-3 shadow-[0px_0px_10px_0px_rgba(0,0,0,0.3)] transition-all duration-200 z-10 ${
+                  isTooltipOpen 
+                    ? 'opacity-100 visible' 
+                    : 'opacity-0 invisible group-hover:opacity-100 group-hover:visible'
+                }`}>
                   <p className="text-xs md:text-sm text-[#092433] leading-[1.4]" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
                     Отсчет срока пойдет с момента, как клиент выйдет на полную мощность потребления услуг после переезда/начала проекта. Выплата будет облагаться налогом НДФЛ.
                   </p>
@@ -597,7 +632,7 @@ export const ReferralPage = () => {
         <hr className="my-8 md:my-12 border-[#d9dfe2]" />
 
         {/* My Recommendations */}
-        <div className="mb-8 md:mb-12">
+        <div id="my-recommendations" className="mb-8 md:mb-12 scroll-mt-20">
           <h2 className="text-2xl sm:text-3xl md:text-[48px] font-semibold text-[#092433] mb-4 sm:mb-6 md:mb-8 leading-[0.95]" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
             Мои рекомендации
           </h2>
