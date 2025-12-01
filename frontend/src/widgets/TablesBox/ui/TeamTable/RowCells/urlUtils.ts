@@ -23,5 +23,5 @@ export const generateTicketsUrl = (idInside: number): string => {
   const insideUrl = import.meta.env.VITE_INSIDE_URL;
   if (!insideUrl) return '#';
 
-  return `${insideUrl}/tickets/incoming?isMailingExists=false&page=1&itemsPerPage=50&isAscending=false&sortBy=timer_started_at&statuses=1&statuses=2&statuses=4&assignees=${idInside}`;
+  return `${insideUrl}/tickets/incoming?isMailingExists=true&page=1&itemsPerPage=50&isAscending=false&sortBy=updated_at&teams=pre_sale&statuses=new&statuses=in_progress&statuses=waiting_for_support&assignees=${idInside}`;
 };
