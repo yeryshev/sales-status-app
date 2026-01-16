@@ -1,8 +1,15 @@
 import { useAuth } from 'react-oidc-context';
 import { useEffect, useState, useRef } from 'react';
-import { fetchUserDeals, type Deal } from '@/lib/api';
+import { fetchUserDeals, fetchAllDeals, type Deal } from '@/lib/api';
 import { ReferralForm } from '@/components/ReferralForm';
 import { logger } from '@/lib/logger';
+
+// Список разрешенных eid для просмотра всех рекомендаций
+// Можно вынести в env переменную VITE_ADMIN_USER_IDS (через запятую)
+const ADMIN_USER_IDS = (import.meta.env.VITE_ADMIN_USER_IDS || '')
+  .split(',')
+  .map((id: string) => id.trim())
+  .filter(Boolean);
 
 // Bonus Block Component with Parallax Animation
 const BonusBlock = () => {
@@ -86,11 +93,32 @@ const BonusBlock = () => {
 export const ReferralPage = () => {
   const auth = useAuth();
   const [deals, setDeals] = useState<Deal[]>([]);
+  const [allDeals, setAllDeals] = useState<Deal[]>([]);
+  const [activeTab, setActiveTab] = useState<'my' | 'all'>('my');
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingAll, setIsLoadingAll] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const faqContentRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tooltipRef = useRef<HTMLDivElement>(null);
+
+  // Проверка, имеет ли пользователь доступ к просмотру всех рекомендаций
+  const canViewAllDeals = () => {
+    if (!auth.user?.profile?.eid) return false;
+    
+    // Приводим eid к строке для сравнения (может быть число или строка)
+    const userId = String(auth.user.profile.eid);
+    const hasAccess = ADMIN_USER_IDS.length > 0 && ADMIN_USER_IDS.includes(userId);
+    
+    logger.log('Admin access check:', { 
+      userId, 
+      userIdType: typeof auth.user.profile.eid,
+      adminUserIds: ADMIN_USER_IDS, 
+      hasAccess 
+    });
+    
+    return hasAccess;
+  };
 
   const loadDeals = async () => {
     if (auth.isAuthenticated && auth.user?.profile?.eid) {
@@ -104,6 +132,15 @@ export const ReferralPage = () => {
     } else {
       setIsLoading(false);
     }
+  };
+
+  const loadAllDeals = async () => {
+    if (!canViewAllDeals()) return;
+    
+    setIsLoadingAll(true);
+    const data = await fetchAllDeals();
+    setAllDeals(data);
+    setIsLoadingAll(false);
   };
 
   useEffect(() => {
@@ -160,6 +197,16 @@ export const ReferralPage = () => {
 
   const handleFormSuccess = () => {
     loadDeals();
+    if (activeTab === 'all' && canViewAllDeals()) {
+      loadAllDeals();
+    }
+  };
+
+  const handleTabChange = (tab: 'my' | 'all') => {
+    setActiveTab(tab);
+    if (tab === 'all' && allDeals.length === 0 && canViewAllDeals()) {
+      loadAllDeals();
+    }
   };
 
   const scrollToForm = () => {
@@ -199,14 +246,33 @@ export const ReferralPage = () => {
     return `${baseUrl}${deal.crmLeadId}`;
   };
 
-  const recommendations = deals.map((deal) => ({
+  // Сортируем deals по дате (новые выше) перед формированием рекомендаций
+  const sortedDeals = [...deals].sort((a, b) => b.date - a.date);
+  const recommendations = sortedDeals.map((deal) => ({
     date: formatDate(deal.date),
     company: deal.title,
     engineer: deal.manager,
     status: deal.status,
     statusBadgeClass: getStatusBadgeClass(deal.status),
     crmUrl: getCrmUrl(deal),
+    employeeName: deal.employeeName,
   }));
+
+  // Сортируем allDeals по дате (новые выше) перед формированием рекомендаций
+  const sortedAllDeals = [...allDeals].sort((a, b) => b.date - a.date);
+  const allRecommendations = sortedAllDeals.map((deal) => ({
+    date: formatDate(deal.date),
+    company: deal.title,
+    engineer: deal.manager,
+    status: deal.status,
+    statusBadgeClass: getStatusBadgeClass(deal.status),
+    crmUrl: getCrmUrl(deal),
+    employeeName: deal.employeeName,
+  }));
+
+  const currentRecommendations = activeTab === 'my' ? recommendations : allRecommendations;
+  const currentIsLoading = activeTab === 'my' ? isLoading : isLoadingAll;
+  const showEmployeeNameColumn = activeTab === 'all' && canViewAllDeals();
 
   const steps = [
     {
@@ -633,41 +699,80 @@ export const ReferralPage = () => {
 
         {/* My Recommendations */}
         <div id="my-recommendations" className="mb-8 md:mb-12 scroll-mt-20">
-          <h2 className="text-2xl sm:text-3xl md:text-[48px] font-semibold text-[#092433] mb-4 sm:mb-6 md:mb-8 leading-[0.95]" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
-            Мои рекомендации
-          </h2>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6 md:mb-8">
+            <h2 className="text-2xl sm:text-3xl md:text-[48px] font-semibold text-[#092433] leading-[0.95]" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
+              {canViewAllDeals() ? 'Рекомендации' : 'Мои рекомендации'}
+            </h2>
+            
+            {/* Tabs for admin users */}
+            {canViewAllDeals() && (
+              <div className="flex gap-2 border-b border-[#d9dfe2]">
+                <button
+                  onClick={() => handleTabChange('my')}
+                  className={`px-4 py-2 text-sm md:text-base font-medium transition-colors ${
+                    activeTab === 'my'
+                      ? 'text-[#092433] border-b-2 border-[#092433]'
+                      : 'text-[#092433] opacity-60 hover:opacity-80'
+                  }`}
+                  style={{ fontFamily: "'Manrope', Arial, sans-serif" }}
+                >
+                  Мои рекомендации
+                </button>
+                <button
+                  onClick={() => handleTabChange('all')}
+                  className={`px-4 py-2 text-sm md:text-base font-medium transition-colors ${
+                    activeTab === 'all'
+                      ? 'text-[#092433] border-b-2 border-[#092433]'
+                      : 'text-[#092433] opacity-60 hover:opacity-80'
+                  }`}
+                  style={{ fontFamily: "'Manrope', Arial, sans-serif" }}
+                >
+                  Все рекомендации
+                </button>
+              </div>
+            )}
+          </div>
           
           <div className="bg-white rounded-2xl border-0 shadow-sm">
             <div className="p-4 sm:p-6 md:p-10">
-              <div className="overflow-x-auto">
-                <table className="w-full">
+              <div className="overflow-x-auto lg:overflow-x-visible">
+                <table className="w-full table-auto">
                   <thead>
                     <tr className="border-b border-[#d9dfe2]">
-                      <th className="min-w-[80px] sm:min-w-[100px] text-[#092433] font-semibold text-left p-2 sm:p-4 text-sm md:text-base">Дата</th>
-                      <th className="min-w-[150px] sm:min-w-[200px] text-[#092433] font-semibold text-left p-2 sm:p-4 text-sm md:text-base">Рекомендация</th>
-                      <th className="min-w-[150px] sm:min-w-[180px] hidden md:table-cell text-[#092433] font-semibold text-left p-2 sm:p-4 text-sm md:text-base">Инженер технического сопровождения продаж</th>
-                      <th className="min-w-[100px] sm:min-w-[120px] text-[#092433] font-semibold text-left p-2 sm:p-4 text-sm md:text-base">Статус сделки в CRM</th>
+                      <th className="min-w-[80px] sm:min-w-[100px] md:min-w-0 text-[#092433] font-semibold text-left p-2 sm:p-4 text-sm md:text-base">Дата</th>
+                      {showEmployeeNameColumn && (
+                        <th className="min-w-[150px] sm:min-w-[200px] md:min-w-0 text-[#092433] font-semibold text-left p-2 sm:p-4 text-sm md:text-base">Сотрудник</th>
+                      )}
+                      <th className="min-w-[150px] sm:min-w-[200px] md:min-w-0 text-[#092433] font-semibold text-left p-2 sm:p-4 text-sm md:text-base">Рекомендация</th>
+                      <th className="min-w-[150px] sm:min-w-[180px] md:min-w-0 hidden md:table-cell text-[#092433] font-semibold text-left p-2 sm:p-4 text-sm md:text-base">Инженер технического сопровождения продаж</th>
+                      <th className="min-w-[100px] sm:min-w-[120px] md:min-w-0 md:max-w-[200px] text-[#092433] font-semibold text-left p-2 sm:p-4 text-sm md:text-base">Статус сделки в CRM</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {isLoading ? (
+                    {currentIsLoading ? (
                       <tr>
-                        <td colSpan={4} className="text-center text-[#092433] opacity-60 py-8 p-4 text-sm md:text-base" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
+                        <td colSpan={showEmployeeNameColumn ? 5 : 4} className="text-center text-[#092433] opacity-60 py-8 p-4 text-sm md:text-base" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
                           Загрузка...
                         </td>
                       </tr>
-                    ) : recommendations.length > 0 ? (
-                      recommendations.map((rec, index) => (
+                    ) : currentRecommendations.length > 0 ? (
+                      currentRecommendations.map((rec, index) => (
                         <tr 
                           key={index}
                           className="cursor-pointer hover:bg-[#f5f7f8] transition-colors border-b border-[#d9dfe2]"
                           onClick={() => window.open(rec.crmUrl, '_blank', 'noopener,noreferrer')}
                         >
                           <td className="font-normal text-[#092433] p-2 sm:p-4 text-sm md:text-base" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>{rec.date}</td>
+                          {showEmployeeNameColumn && (
+                            <td className="text-[#092433] p-2 sm:p-4 text-sm md:text-base" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>{rec.employeeName || '-'}</td>
+                          )}
                           <td className="text-[#092433] p-2 sm:p-4 text-sm md:text-base" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>{rec.company}</td>
                           <td className="hidden md:table-cell text-[#092433] opacity-80 p-2 sm:p-4 text-sm md:text-base" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>{rec.engineer}</td>
-                          <td className="p-2 sm:p-4">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs md:text-sm font-medium border ${rec.statusBadgeClass}`}>
+                          <td className="p-2 sm:p-4 align-middle md:max-w-[200px]">
+                            <span 
+                              className={`status-badge px-2.5 py-0.5 rounded-full text-xs md:text-sm font-medium border ${rec.statusBadgeClass}`}
+                              title={rec.status}
+                            >
                               {rec.status}
                             </span>
                           </td>
@@ -675,8 +780,8 @@ export const ReferralPage = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={4} className="text-center text-[#092433] opacity-60 py-8 p-4 text-sm md:text-base" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
-                          Вы еще не пригласили новых клиентов
+                        <td colSpan={showEmployeeNameColumn ? 5 : 4} className="text-center text-[#092433] opacity-60 py-8 p-4 text-sm md:text-base" style={{ fontFamily: "'Manrope', Arial, sans-serif" }}>
+                          {activeTab === 'my' ? 'Вы еще не пригласили новых клиентов' : 'Нет рекомендаций'}
                         </td>
                       </tr>
                     )}

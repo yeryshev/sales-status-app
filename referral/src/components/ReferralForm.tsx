@@ -148,9 +148,11 @@ export const ReferralForm = ({ onSuccess, isLoading = false }: ReferralFormProps
     setError('');
 
     const userId = auth.user?.profile?.eid as string;
+    const employeeName = auth.user?.profile?.display_name as string;
 
     const data: CreateReferralData = {
       employee_inside_id: userId,
+      employee_name: employeeName,
       is_servercore: isServercore,
       client_name: clientName.trim(),
       description: description.trim(),

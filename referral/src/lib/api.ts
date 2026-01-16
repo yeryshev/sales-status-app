@@ -7,6 +7,7 @@ export interface Deal {
   status: string;
   isServercore: boolean;
   crmLeadId: string;
+  employeeName?: string;
 }
 
 export const fetchUserDeals = async (userId: string): Promise<Deal[]> => {
@@ -48,8 +49,48 @@ export const fetchUserDeals = async (userId: string): Promise<Deal[]> => {
   }
 };
 
+export const fetchAllDeals = async (): Promise<Deal[]> => {
+  try {
+    const url = import.meta.env.VITE_GET_DEALS;
+    logger.log('Fetching all deals from:', url);
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    logger.log('Response status:', response.status);
+
+    // Если код 200 и пустое тело - возвращаем пустой массив
+    if (response.status === 200) {
+      const text = await response.text();
+      if (!text || text.trim() === '') {
+        logger.log('Empty response body');
+        return [];
+      }
+      return JSON.parse(text);
+    }
+
+    // Если код 304 - данные есть
+    if (response.status === 304 || response.ok) {
+      const data = await response.json();
+      logger.log('All deals received:', data);
+      return data;
+    }
+
+    logger.error('Unexpected response status:', response.status);
+    return [];
+  } catch (error) {
+    logger.error('Error fetching all deals:', error);
+    return [];
+  }
+};
+
 export interface CreateReferralData {
   employee_inside_id: string;
+  employee_name: string;
   is_servercore: boolean;
   client_name: string;
   client_phone?: string;
