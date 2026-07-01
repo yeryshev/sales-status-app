@@ -313,6 +313,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
             data={processedData.managerData}
             yAxisLabel="Количество лидов"
             size="large"
+            showNextMonth={showNextMonth}
           />
         </Grid>
 
@@ -323,6 +324,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
             data={processedData.channelDataByMonth}
             yAxisLabel="Количество лидов"
             size="medium"
+            showNextMonth={showNextMonth}
           />
         </Grid>
 
@@ -333,6 +335,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
             data={processedData.failedDealsDataByMonth}
             yAxisLabel="Количество"
             size="medium"
+            showNextMonth={showNextMonth}
           />
         </Grid>
 
@@ -344,6 +347,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
             monthLabels={processedData.conversionDataForGroupedBarChart.monthLabels}
             yAxisLabel="Количество лидов"
             size="large"
+            showNextMonth={showNextMonth}
           />
         </Grid>
 
@@ -369,6 +373,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
               }
               size="medium"
               isPercentageMode={successByChannelMode === 'percentage'}
+              showNextMonth={showNextMonth}
             />
           </Box>
         </Grid>
@@ -389,6 +394,7 @@ export const BentoDashboard = memo((props: BentoDashboardProps) => {
               yAxisLabel={successByTypeMode === 'percentage' ? 'Процент от общего числа' : 'Количество успешных сделок'}
               size="medium"
               isPercentageMode={successByTypeMode === 'percentage'}
+              showNextMonth={showNextMonth}
             />
           </Box>
         </Grid>
