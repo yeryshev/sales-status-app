@@ -1,4 +1,4 @@
-import { memo, useMemo, useState, Fragment } from 'react';
+import { memo, useMemo, useState, Fragment, useCallback, useEffect } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +11,8 @@ import {
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Typography, Paper, IconButton } from '@mui/material';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 import { calculateYAxisMax } from '@/shared/lib/utils/chartUtils';
 import { chartColors } from '@/shared/const/chartColors';
@@ -34,23 +35,128 @@ interface ConversionBarChartCardProps {
   error?: string;
   size?: 'small' | 'medium' | 'large';
   yAxisLabel?: string;
+  showNextMonth?: boolean;
 }
 
 export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) => {
-  const { title, data, monthLabels, isLoading, error, size = 'medium', yAxisLabel = 'Количество лидов' } = props;
+  const {
+    title,
+    data,
+    monthLabels,
+    isLoading,
+    error,
+    size = 'medium',
+    yAxisLabel = 'Количество лидов',
+    showNextMonth = false,
+  } = props;
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [scrollIndex, setScrollIndex] = useState(0);
   const chartTheme = useChartTheme();
 
+  // Определяем текущий месяц
+  const currentMonthKey = useMemo(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1; // 1-12
+    return `${year}-${month.toString().padStart(2, '0')}`;
+  }, []);
+
+  // Проверяем, есть ли данные для текущего месяца
+  const hasCurrentMonthData = useMemo(() => {
+    if (!monthLabels || monthLabels.length === 0) return false;
+    const lastLabel = monthLabels[monthLabels.length - 1];
+    // Парсим метку месяца (формат: "Январь 2024")
+    const monthNames = [
+      'Январь',
+      'Февраль',
+      'Март',
+      'Апрель',
+      'Май',
+      'Июнь',
+      'Июль',
+      'Август',
+      'Сентябрь',
+      'Октябрь',
+      'Ноябрь',
+      'Декабрь',
+    ];
+    const parts = lastLabel.split(' ');
+    if (parts.length !== 2) return false;
+    const monthName = parts[0];
+    const year = parseInt(parts[1]);
+    const monthIndex = monthNames.indexOf(monthName);
+    if (monthIndex === -1) return false;
+    const monthKey = `${year}-${(monthIndex + 1).toString().padStart(2, '0')}`;
+    return monthKey === currentMonthKey;
+  }, [monthLabels, currentMonthKey]);
+
+  // Определяем максимальное количество видимых столбцов
+  const maxVisibleColumns = useMemo(() => {
+    if (showNextMonth && hasCurrentMonthData) {
+      return 16;
+    }
+    return 15;
+  }, [showNextMonth, hasCurrentMonthData]);
+
+  // Ограничиваем данные до последних N месяцев
+  const totalMonths = monthLabels.length;
+  const needsScroll = totalMonths > maxVisibleColumns;
+  const maxScrollIndex = Math.max(0, totalMonths - maxVisibleColumns);
+
+  const canScrollLeft = scrollIndex < maxScrollIndex;
+  const canScrollRight = scrollIndex > 0;
+
+  // Данные для отображения с учетом прокрутки
+  const displayMonthLabels = useMemo(() => {
+    if (!needsScroll) {
+      return monthLabels.slice(-maxVisibleColumns);
+    }
+    const startIndex = totalMonths - maxVisibleColumns - scrollIndex;
+    const endIndex = startIndex + maxVisibleColumns;
+    return monthLabels.slice(startIndex, endIndex);
+  }, [monthLabels, maxVisibleColumns, scrollIndex, needsScroll, totalMonths]);
+
+  // Ограничиваем данные соответственно
+  const displayData = useMemo(() => {
+    if (!needsScroll) {
+      // Берем последние N месяцев (каждый месяц = 3 элемента данных)
+      const monthsToShow = maxVisibleColumns;
+      const dataPointsPerMonth = 3;
+      const startDataIndex = data.length - monthsToShow * dataPointsPerMonth;
+      return data.slice(startDataIndex);
+    }
+    // При прокрутке берем соответствующие данные
+    const monthsToShow = maxVisibleColumns;
+    const dataPointsPerMonth = 3;
+    const startMonthIndex = totalMonths - maxVisibleColumns - scrollIndex;
+    const startDataIndex = startMonthIndex * dataPointsPerMonth;
+    const endDataIndex = startDataIndex + monthsToShow * dataPointsPerMonth;
+    return data.slice(startDataIndex, endDataIndex);
+  }, [data, maxVisibleColumns, scrollIndex, needsScroll, totalMonths]);
+
+  const handleScrollLeft = useCallback(() => {
+    setScrollIndex((prev) => Math.min(maxScrollIndex, prev + 1));
+  }, [maxScrollIndex]);
+
+  const handleScrollRight = useCallback(() => {
+    setScrollIndex((prev) => Math.max(0, prev - 1));
+  }, []);
+
+  // Сбрасываем прокрутку при изменении данных или showNextMonth
+  useEffect(() => {
+    setScrollIndex(0);
+  }, [data, showNextMonth, monthLabels]);
+
   const chartData = useMemo(() => {
-    if (!data.length) return null;
+    if (!displayData.length) return null;
 
     // Группируем данные по типам (Получено лидов, Квалифицировано, Успешно реализовано)
-    const receivedData = data.filter((_, index) => index % 3 === 0).map((item) => item.value);
-    const qualifiedData = data.filter((_, index) => index % 3 === 1).map((item) => item.value);
-    const successfulData = data.filter((_, index) => index % 3 === 2).map((item) => item.value);
+    const receivedData = displayData.filter((_, index) => index % 3 === 0).map((item) => item.value);
+    const qualifiedData = displayData.filter((_, index) => index % 3 === 1).map((item) => item.value);
+    const successfulData = displayData.filter((_, index) => index % 3 === 2).map((item) => item.value);
 
     return {
-      labels: monthLabels,
+      labels: displayMonthLabels,
       datasets: [
         {
           label: 'Получено лидов',
@@ -81,7 +187,7 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
         },
       ],
     };
-  }, [data, monthLabels]);
+  }, [displayData, displayMonthLabels]);
 
   const options: ChartOptions<'bar'> = {
     responsive: true,
@@ -146,7 +252,7 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
       },
       y: {
         beginAtZero: true,
-        max: calculateYAxisMax(data.map((item) => item.value)), // Максимальное значение с правильным округлением
+        max: calculateYAxisMax(displayData.map((item) => item.value)), // Максимальное значение с правильным округлением
         title: {
           display: true,
           text: yAxisLabel,
@@ -252,7 +358,79 @@ export const ConversionBarChartCard = memo((props: ConversionBarChartCardProps) 
           </Box>
 
           <Box sx={{ height: getChartHeight(), position: 'relative' }}>
-            <Bar data={chartData} options={options} />
+            {needsScroll && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  left: 8,
+                  top: 8,
+                  zIndex: 10,
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  borderRadius: '50%',
+                  boxShadow: 3,
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 1)',
+                  },
+                }}
+              >
+                <IconButton
+                  onClick={handleScrollLeft}
+                  disabled={!canScrollLeft}
+                  size="small"
+                  sx={{
+                    '&:disabled': {
+                      opacity: 0.3,
+                    },
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                    },
+                  }}
+                >
+                  <ChevronLeft />
+                </IconButton>
+              </Box>
+            )}
+            <Box
+              sx={{
+                overflowX: needsScroll ? 'hidden' : 'visible',
+                width: '100%',
+                height: '100%',
+              }}
+            >
+              <Bar data={chartData} options={options} />
+            </Box>
+            {needsScroll && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  zIndex: 10,
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  borderRadius: '50%',
+                  boxShadow: 3,
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 1)',
+                  },
+                }}
+              >
+                <IconButton
+                  onClick={handleScrollRight}
+                  disabled={!canScrollRight}
+                  size="small"
+                  sx={{
+                    '&:disabled': {
+                      opacity: 0.3,
+                    },
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                    },
+                  }}
+                >
+                  <ChevronRight />
+                </IconButton>
+              </Box>
+            )}
           </Box>
         </Box>
       </Paper>
