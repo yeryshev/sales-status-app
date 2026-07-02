@@ -141,28 +141,20 @@ async def set_all_offline(session: AsyncSession = Depends(get_async_session)):
     current_time = datetime.utcnow()
 
     for user in users:
-        # Проверяем, нужно ли менять статус
-        if user.status_id != offline_status_id:
-            old_status_id = user.status_id
+        locked_user = await session.get(User, user.id, with_for_update=True)
+        if locked_user is None or locked_user.status_id == offline_status_id:
+            continue
 
-            # Закрываем предыдущий статус, если он был
-            if old_status_id is not None:
-                await StatusHistoryRepository.update_last_status_end_time(
-                    session, user.id, current_time
-                )
-
-            # Добавляем новый статус в историю
-            await StatusHistoryRepository.add_status_change(
-                session,
-                user_id=user.id,
-                old_status_id=old_status_id,
-                new_status_id=offline_status_id,
-                start_time=current_time,
-            )
-
-            # Обновляем статус пользователя
-            user.status_id = offline_status_id
-            await change_mango_status(user, mango_statuses["offline"])
+        old_status_id = locked_user.status_id
+        await StatusHistoryRepository.record_transition(
+            session,
+            user_id=locked_user.id,
+            old_status_id=old_status_id,
+            new_status_id=offline_status_id,
+            at_time=current_time,
+        )
+        locked_user.status_id = offline_status_id
+        await change_mango_status(locked_user, mango_statuses["offline"])
 
     await session.commit()
     return Message(message="All users set to offline")

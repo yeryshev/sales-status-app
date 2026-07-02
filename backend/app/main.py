@@ -46,7 +46,10 @@ app.include_router(api_router)
 @app.on_event("startup")
 async def startup_event():
     scheduler.add_job(
-        set_offline_users, CronTrigger(hour=16, minute=00, second=00, timezone="UTC")
+        set_offline_users,
+        CronTrigger(hour=16, minute=00, second=00, timezone="UTC"),
+        max_instances=1,
+        coalesce=True,
     )
     scheduler.start()
 

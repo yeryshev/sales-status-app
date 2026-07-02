@@ -13,6 +13,10 @@ from app.schemas import (
     StatusAnalyticsResponse,
     StatusHistoryRead,
 )
+from app.status_history_utils import (
+    StatusHistorySlice,
+    deduplicate_status_history_records,
+)
 
 router = APIRouter()
 
@@ -121,7 +125,9 @@ async def get_status_history(
                 return []
 
         result = await session.execute(query)
-        history_records = result.scalars().all()
+        history_records = deduplicate_status_history_records(
+            list(result.scalars().all())
+        )
 
         return [
             StatusHistoryRead(
@@ -238,7 +244,28 @@ async def get_status_analytics(
                 return []
 
         result = await session.execute(query)
-        analytics_data = result.all()
+        rows = result.all()
+        deduped_ids = {
+            row.id
+            for row in deduplicate_status_history_records(
+                [
+                    StatusHistorySlice(
+                        id=row.id,
+                        user_id=row.user_id,
+                        new_status_id=row.new_status_id,
+                        start_time=row.start_time,
+                        end_time=row.end_time,
+                        duration_seconds=(
+                            int(row.duration_seconds)
+                            if row.duration_seconds is not None
+                            else None
+                        ),
+                    )
+                    for row in rows
+                ]
+            )
+        }
+        analytics_data = [row for row in rows if row.id in deduped_ids]
 
         # Получаем информацию о пользователях и статусах
         user_ids = list({row.user_id for row in analytics_data})

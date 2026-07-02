@@ -181,26 +181,23 @@ class UserRepository:
 
         for key, value in update_data.items():
             if key == "status_id":
+                locked_user = await session.get(User, user.id, with_for_update=True)
+                if locked_user is None:
+                    raise ValueError(f"User {user.id} not found")
+                user = locked_user
+
                 old_status_id = user.status_id
                 status = await session.get(Status, value)
                 if status.is_deadline_required and status.id != user.status_id:
                     await handle_busy_time(session, user, value, deadline)
 
-                # Записываем изменение статуса в историю
                 if old_status_id != value:
-                    # Закрываем предыдущий статус, если он был
-                    if old_status_id is not None:
-                        await StatusHistoryRepository.update_last_status_end_time(
-                            session, user.id, datetime.utcnow()
-                        )
-
-                    # Добавляем новый статус в историю
-                    await StatusHistoryRepository.add_status_change(
+                    await StatusHistoryRepository.record_transition(
                         session,
                         user_id=user.id,
                         old_status_id=old_status_id,
                         new_status_id=value,
-                        start_time=datetime.utcnow(),
+                        at_time=datetime.utcnow(),
                     )
 
                 user.status_id = value
@@ -213,6 +210,49 @@ class UserRepository:
 
 
 class StatusHistoryRepository:
+    @classmethod
+    async def record_transition(
+        cls,
+        session: AsyncSession,
+        user_id: int,
+        old_status_id: int | None,
+        new_status_id: int,
+        at_time: datetime,
+    ) -> None:
+        """Atomically close open history rows and start a new status period."""
+        if old_status_id == new_status_id:
+            return
+
+        query = (
+            select(StatusHistory)
+            .where(
+                StatusHistory.user_id == user_id,
+                StatusHistory.end_time.is_(None),
+            )
+            .order_by(StatusHistory.start_time.desc())
+        )
+        result = await session.execute(query)
+        open_records = result.scalars().all()
+
+        for record in open_records:
+            duration_seconds = int((at_time - record.start_time).total_seconds())
+            if duration_seconds <= 0:
+                await session.delete(record)
+            else:
+                record.end_time = at_time
+                record.duration_seconds = duration_seconds
+
+        session.add(
+            StatusHistory(
+                user_id=user_id,
+                old_status_id=old_status_id,
+                new_status_id=new_status_id,
+                start_time=at_time,
+                end_time=None,
+                duration_seconds=None,
+            )
+        )
+
     @classmethod
     async def add_status_change(
         cls,
