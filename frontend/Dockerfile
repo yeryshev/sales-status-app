@@ -1,5 +1,6 @@
 FROM node:20-alpine as build
 WORKDIR /app
+ENV CYPRESS_INSTALL_BINARY=0
 ADD *.json .
 RUN npm ci
 ADD . .
