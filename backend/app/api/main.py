@@ -1,6 +1,14 @@
 from fastapi import APIRouter
 
-from app.api.routes import auth, sso, status_analytics, statuses, users, websockets
+from app.api.routes import (
+    auth,
+    sso,
+    status_analytics,
+    statuses,
+    users,
+    websockets,
+    workload_analytics,
+)
 
 api_router = APIRouter()
 api_router.include_router(auth.router, prefix="/auth", tags=["auth"])
@@ -15,5 +23,10 @@ api_router.include_router(
     status_analytics.router,
     prefix="/admin/status-analytics",
     tags=["admin", "status-analytics"],
+)
+api_router.include_router(
+    workload_analytics.router,
+    prefix="/admin/workload-analytics",
+    tags=["admin", "workload-analytics"],
 )
 api_router.include_router(websockets.router)

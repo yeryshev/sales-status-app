@@ -1,4 +1,4 @@
-import { PeriodType } from '../model/types/statusAnalytics';
+import { DateRange, PeriodType } from '../model/types/statusAnalytics';
 
 /**
  * Получает текущую дату в московском времени (UTC+3)
@@ -11,11 +11,22 @@ const getMoscowDate = (): Date => {
 /**
  * Форматирует дату в строку YYYY-MM-DD
  */
-const formatDate = (date: Date): string => {
+export const formatDateString = (date: Date): string => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+};
+
+const formatDate = formatDateString;
+
+const isoToDateString = (isoDate: string): string => isoDate.split('T')[0];
+
+/** Дата N дней назад от YYYY-MM-DD (для узкого окна истории под таймлайн). */
+export const subtractDaysFromDateString = (dateStr: string, days: number): string => {
+  const date = new Date(dateStr + 'T12:00:00');
+  date.setDate(date.getDate() - days);
+  return formatDateString(date);
 };
 
 /**
@@ -56,8 +67,12 @@ const getMonthEnd = (date: Date): Date => {
 /**
  * Рассчитывает даты начала и конца периода на основе типа периода
  */
-export const calculatePeriodDates = (periodType: PeriodType): { startDate: string; endDate: string } => {
+export const calculatePeriodDates = (
+  periodType: PeriodType,
+  dateRange?: DateRange | null,
+): { startDate: string; endDate: string } => {
   const today = getMoscowDate();
+  const todayStr = formatDate(today);
 
   switch (periodType) {
     case 'today': {
@@ -124,11 +139,17 @@ export const calculatePeriodDates = (periodType: PeriodType): { startDate: strin
       };
     }
 
+    case 'allTime': {
+      return {
+        startDate: dateRange?.minDate ? isoToDateString(dateRange.minDate) : todayStr,
+        endDate: dateRange?.maxDate ? isoToDateString(dateRange.maxDate) : todayStr,
+      };
+    }
+
     case 'custom':
     default: {
       // Для custom возвращаем текущую дату, но пользователь может изменить вручную
-      const dateStr = formatDate(today);
-      return { startDate: dateStr, endDate: dateStr };
+      return { startDate: todayStr, endDate: todayStr };
     }
   }
 };
@@ -162,6 +183,7 @@ export const getPeriodLabel = (periodType: PeriodType): string => {
     lastWeek: 'Прошлая неделя',
     currentMonth: 'Текущий месяц',
     lastMonth: 'Прошлый месяц',
+    allTime: 'За всё время',
     custom: 'Произвольный период',
   };
   return labels[periodType];

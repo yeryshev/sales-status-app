@@ -1,46 +1,13 @@
 import { memo, useMemo } from 'react';
-import { Box, Typography, Paper, Tooltip, Chip, useTheme, Theme } from '@mui/material';
+import { Box, Typography, Paper, Tooltip, Chip, useTheme } from '@mui/material';
 import { useAppSelector } from '@/shared/lib/hooks';
-import { getStatusHistory, getStatusAnalyticsFilters, isSingleDayPeriod } from '@/entities/StatusAnalytics';
-
-// Функция для получения цветов из темы MUI для таймлайна
-const getStatusColors = (theme: Theme): Record<number, string> => ({
-  1: theme.palette.success.main, // работаю - зеленый
-  2: theme.palette.warning.main, // занят - оранжевый
-  3: theme.palette.mode === 'light' ? theme.palette.grey[300] : theme.palette.grey[700], // оффлайн - серый (как у default Chip)
-  5: theme.palette.info.main, // обед - синий
-  6: theme.palette.secondary.main, // отошёл - фиолетовый
-  7: theme.palette.primary.main, // встреча - голубой (primary)
-});
-
-// Функция для получения стандартного MUI color prop для Chip
-const getStatusChipColor = (statusId: number): 'success' | 'warning' | 'default' | 'info' | 'secondary' | 'primary' => {
-  switch (statusId) {
-    case 1:
-      return 'success'; // работаю - зеленый
-    case 2:
-      return 'warning'; // занят - оранжевый
-    case 3:
-      return 'default'; // оффлайн - серый
-    case 5:
-      return 'info'; // обед - синий
-    case 6:
-      return 'secondary'; // отошёл - фиолетовый
-    case 7:
-      return 'primary'; // встреча - голубой (primary)
-    default:
-      return 'default';
-  }
-};
-
-const STATUS_NAMES: Record<number, string> = {
-  1: 'работаю',
-  2: 'занят',
-  3: 'оффлайн',
-  5: 'обед',
-  6: 'отошёл',
-  7: 'встреча',
-};
+import {
+  getStatusHistory,
+  getStatusAnalyticsFilters,
+  getStatusesForAnalytics,
+  isSingleDayPeriod,
+} from '@/entities/StatusAnalytics';
+import { getStatusChartColor, getStatusChipColor } from '@/entities/StatusAnalytics';
 
 interface TimelineSegment {
   statusId: number;
@@ -57,9 +24,10 @@ export const StatusTimeline = memo(() => {
   const history = useAppSelector(getStatusHistory);
   const filters = useAppSelector(getStatusAnalyticsFilters);
   const users = useAppSelector((state) => state.statusAnalytics.users);
+  const statuses = useAppSelector(getStatusesForAnalytics);
 
-  // Получаем цвета из текущей темы
-  const STATUS_COLORS = useMemo(() => getStatusColors(theme), [theme]);
+  const getStatusName = (statusId: number) =>
+    statuses.find((status) => status.id === statusId)?.title || `статус ${statusId}`;
 
   // Определяем список пользователей для отображения
   const targetUserIds = useMemo(() => {
@@ -180,8 +148,8 @@ export const StatusTimeline = memo(() => {
           const correctedDuration = isActiveStatus ? duration - 3 * 60 * 60 : duration;
 
           if (duration > 0) {
-            const statusName = STATUS_NAMES[record.newStatusId] || `статус ${record.newStatusId}`;
-            const baseColor = STATUS_COLORS[record.newStatusId] || '#757575';
+            const statusName = getStatusName(record.newStatusId);
+            const baseColor = getStatusChartColor(record.newStatusId, 0, theme);
 
             segments.push({
               statusId: record.newStatusId,
@@ -233,7 +201,7 @@ export const StatusTimeline = memo(() => {
         };
       })
       .filter((timeline) => timeline !== null);
-  }, [history, filters, targetUserIds, users, STATUS_COLORS, theme]);
+  }, [history, filters, targetUserIds, users, theme, statuses]);
 
   if (!timelineData || timelineData.length === 0) {
     return null;

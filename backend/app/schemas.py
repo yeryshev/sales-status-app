@@ -84,8 +84,11 @@ class UserGet(UserRead):
 class StatusHistoryRead(BaseModel):
     id: int
     user_id: int = Field(serialization_alias="userId")
+    user_name: str | None = Field(None, serialization_alias="userName")
     old_status_id: int | None = Field(None, serialization_alias="oldStatusId")
+    old_status_title: str | None = Field(None, serialization_alias="oldStatusTitle")
     new_status_id: int = Field(serialization_alias="newStatusId")
+    new_status_title: str | None = Field(None, serialization_alias="newStatusTitle")
     start_time: datetime = Field(serialization_alias="startTime")
     end_time: datetime | None = Field(None, serialization_alias="endTime")
     duration_seconds: int | None = Field(None, serialization_alias="durationSeconds")
@@ -145,6 +148,83 @@ class StatusAnalyticsResponse(BaseModel):
     total_duration_hours: float = Field(serialization_alias="totalDurationHours")
     percentage: float = Field(serialization_alias="percentage")
     periods: list[dict[str, str | int]] = Field(serialization_alias="periods")
+
+    class Config:
+        populate_by_name = True
+
+
+class StatusSummaryStatusItem(BaseModel):
+    status_id: int = Field(serialization_alias="statusId")
+    status_title: str = Field(serialization_alias="statusTitle")
+    duration_seconds: int = Field(serialization_alias="durationSeconds")
+    duration_hours: float = Field(serialization_alias="durationHours")
+    percentage: float = 0
+
+    class Config:
+        populate_by_name = True
+
+
+class StatusSummaryUserItem(BaseModel):
+    user_id: int = Field(serialization_alias="userId")
+    user_name: str = Field(serialization_alias="userName")
+    duration_seconds: int = Field(serialization_alias="durationSeconds")
+    duration_hours: float = Field(serialization_alias="durationHours")
+    work_duration_seconds: int = Field(serialization_alias="workDurationSeconds")
+    work_duration_hours: float = Field(serialization_alias="workDurationHours")
+    work_percentage: float = Field(serialization_alias="workPercentage")
+
+    class Config:
+        populate_by_name = True
+
+
+class StatusSummaryDayStatusItem(BaseModel):
+    status_id: int = Field(serialization_alias="statusId")
+    status_title: str = Field(serialization_alias="statusTitle")
+    duration_seconds: int = Field(serialization_alias="durationSeconds")
+    duration_hours: float = Field(serialization_alias="durationHours")
+
+    class Config:
+        populate_by_name = True
+
+
+class StatusSummaryDayItem(BaseModel):
+    date: str
+    total_duration_seconds: int = Field(serialization_alias="totalDurationSeconds")
+    user_count: int = Field(0, serialization_alias="userCount")
+    statuses: list[StatusSummaryDayStatusItem]
+
+    class Config:
+        populate_by_name = True
+
+
+class StatusSummaryUserStatusItem(BaseModel):
+    user_id: int = Field(serialization_alias="userId")
+    user_name: str = Field(serialization_alias="userName")
+    statuses: list[StatusSummaryDayStatusItem]
+
+    class Config:
+        populate_by_name = True
+
+
+class StatusAnalyticsSummaryResponse(BaseModel):
+    total_duration_seconds: int = Field(serialization_alias="totalDurationSeconds")
+    total_duration_hours: float = Field(serialization_alias="totalDurationHours")
+    work_duration_seconds: int = Field(serialization_alias="workDurationSeconds")
+    work_duration_hours: float = Field(serialization_alias="workDurationHours")
+    work_percentage: float = Field(serialization_alias="workPercentage")
+    offline_duration_seconds: int = Field(serialization_alias="offlineDurationSeconds")
+    offline_duration_hours: float = Field(serialization_alias="offlineDurationHours")
+    unique_users: int = Field(serialization_alias="uniqueUsers")
+    unique_statuses: int = Field(serialization_alias="uniqueStatuses")
+    segment_count: int = Field(serialization_alias="segmentCount")
+    is_averaged: bool = Field(False, serialization_alias="isAveraged")
+    working_days_count: int = Field(0, serialization_alias="workingDaysCount")
+    by_status: list[StatusSummaryStatusItem] = Field(serialization_alias="byStatus")
+    by_user: list[StatusSummaryUserItem] = Field(serialization_alias="byUser")
+    by_day: list[StatusSummaryDayItem] = Field(serialization_alias="byDay")
+    by_user_status: list[StatusSummaryUserStatusItem] = Field(
+        serialization_alias="byUserStatus"
+    )
 
     class Config:
         populate_by_name = True
@@ -261,6 +341,54 @@ class ExternalUserDataResponse(BaseModel):
     mango_state: bool = Field(serialization_alias="mangoState")
     leads: int
     last_week: LastWeekData = Field(serialization_alias="lastWeek")
+
+    class Config:
+        populate_by_name = True
+
+
+class WorkloadCountersData(BaseModel):
+    leads: int | None = None
+    overdue_tasks: int | None = Field(None, serialization_alias="overdueTasks")
+    open_conversations: int | None = Field(
+        None, serialization_alias="openConversations"
+    )
+    assigned_tickets: int | None = Field(None, serialization_alias="assignedTickets")
+
+    class Config:
+        populate_by_name = True
+
+
+class WorkloadUserAnalyticsItem(BaseModel):
+    user_id: int = Field(serialization_alias="userId")
+    user_name: str = Field(serialization_alias="userName")
+    snapshot_days: int = Field(serialization_alias="snapshotDays")
+    averages: WorkloadCountersData
+    totals: WorkloadCountersData
+
+
+class WorkloadDayAnalyticsItem(BaseModel):
+    date: str
+    user_count: int = Field(serialization_alias="userCount")
+    averages: WorkloadCountersData
+    totals: WorkloadCountersData
+
+
+class WorkloadAnalyticsSummaryResponse(BaseModel):
+    snapshot_days: int = Field(serialization_alias="snapshotDays")
+    unique_users: int = Field(serialization_alias="uniqueUsers")
+    averages: WorkloadCountersData
+    by_user: list[WorkloadUserAnalyticsItem] = Field(serialization_alias="byUser")
+    by_day: list[WorkloadDayAnalyticsItem] = Field(serialization_alias="byDay")
+
+    class Config:
+        populate_by_name = True
+
+
+class WorkloadAnalyticsRequest(BaseModel):
+    start_date: datetime = Field(alias="startDate")
+    end_date: datetime = Field(alias="endDate")
+    user_id: int | None = Field(None, alias="userId")
+    department_id: str | None = Field(None, alias="departmentId")
 
     class Config:
         populate_by_name = True

@@ -5,3 +5,5 @@
 .env
 .env.production
 compose.yml
+# Core dumps from crashed processes in Docker-mounted backend dir
+backend/core

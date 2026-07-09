@@ -2,20 +2,28 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   fetchStatusHistory,
   fetchStatusAnalytics,
+  fetchStatusAnalyticsSummary,
   fetchUsersForAnalytics,
   fetchStatusesForAnalytics,
   fetchDateRange,
+  fetchWorkloadAnalyticsSummary,
+  fetchWorkloadDateRange,
 } from '../api/statusAnalyticsApi';
 import { StatusAnalyticsState } from '../types/statusAnalytics';
 
 const initialState: StatusAnalyticsState = {
   history: [],
   analytics: [],
+  summary: null,
+  workloadSummary: null,
+  workloadDateRange: null,
   users: [],
   statuses: [],
   dateRange: null,
   loading: false,
+  workloadLoading: false,
   error: null,
+  workloadError: null,
   filters: {
     startDate: (() => {
       // Получаем текущую дату в Московском времени
@@ -46,6 +54,11 @@ const statusAnalyticsSlice = createSlice({
     clearData: (state) => {
       state.history = [];
       state.analytics = [];
+      state.summary = null;
+      state.workloadSummary = null;
+    },
+    clearWorkloadError: (state) => {
+      state.workloadError = null;
     },
   },
   extraReducers: (builder) => {
@@ -79,6 +92,22 @@ const statusAnalyticsSlice = createSlice({
       .addCase(fetchStatusAnalytics.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Ошибка получения аналитики статусов';
+      });
+
+    // Сводка аналитики
+    builder
+      .addCase(fetchStatusAnalyticsSummary.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchStatusAnalyticsSummary.fulfilled, (state, action) => {
+        state.summary = action.payload;
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchStatusAnalyticsSummary.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Ошибка получения сводки аналитики';
       });
 
     // Пользователи для фильтрации
@@ -116,8 +145,31 @@ const statusAnalyticsSlice = createSlice({
       .addCase(fetchDateRange.rejected, (state, action) => {
         state.error = action.error.message || 'Ошибка получения диапазона дат';
       });
+
+    builder
+      .addCase(fetchWorkloadAnalyticsSummary.pending, (state) => {
+        state.workloadLoading = true;
+        state.workloadError = null;
+      })
+      .addCase(fetchWorkloadAnalyticsSummary.fulfilled, (state, action) => {
+        state.workloadSummary = action.payload;
+        state.workloadLoading = false;
+        state.workloadError = null;
+      })
+      .addCase(fetchWorkloadAnalyticsSummary.rejected, (state, action) => {
+        state.workloadLoading = false;
+        state.workloadError = action.error.message || 'Ошибка получения аналитики нагрузки';
+      });
+
+    builder
+      .addCase(fetchWorkloadDateRange.fulfilled, (state, action) => {
+        state.workloadDateRange = action.payload;
+      })
+      .addCase(fetchWorkloadDateRange.rejected, (state, action) => {
+        state.workloadError = action.error.message || 'Ошибка получения диапазона дат нагрузки';
+      });
   },
 });
 
-export const { setFilters, clearError, clearData } = statusAnalyticsSlice.actions;
+export const { setFilters, clearError, clearData, clearWorkloadError } = statusAnalyticsSlice.actions;
 export default statusAnalyticsSlice.reducer;

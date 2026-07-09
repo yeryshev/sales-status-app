@@ -3,6 +3,8 @@ import {
   StatusHistory,
   StatusAnalyticsRequest,
   StatusAnalyticsResponse,
+  StatusAnalyticsSummary,
+  WorkloadAnalyticsSummary,
   UserForAnalytics,
   StatusForAnalytics,
 } from '../types/statusAnalytics';
@@ -62,6 +64,27 @@ export const fetchStatusAnalytics = createAsyncThunk(
   },
 );
 
+// Получение агрегированной сводки для дашборда
+export const fetchStatusAnalyticsSummary = createAsyncThunk(
+  'statusAnalytics/fetchStatusAnalyticsSummary',
+  async (request: StatusAnalyticsRequest) => {
+    const response = await fetch(`${API_BASE_URL}/admin/status-analytics/summary`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      throw new Error('Ошибка получения сводки аналитики');
+    }
+
+    return (await response.json()) as StatusAnalyticsSummary;
+  },
+);
+
 // Получение списка пользователей для фильтрации
 export const fetchUsersForAnalytics = createAsyncThunk('statusAnalytics/fetchUsersForAnalytics', async () => {
   const response = await fetch(`${API_BASE_URL}/admin/status-analytics/users`, {
@@ -105,6 +128,46 @@ export const fetchDateRange = createAsyncThunk('statusAnalytics/fetchDateRange',
 
   if (!response.ok) {
     throw new Error('Ошибка получения диапазона дат');
+  }
+
+  return (await response.json()) as { minDate: string | null; maxDate: string | null };
+});
+
+export const fetchWorkloadAnalyticsSummary = createAsyncThunk(
+  'statusAnalytics/fetchWorkloadAnalyticsSummary',
+  async (request: {
+    startDate: string;
+    endDate: string;
+    userId?: number;
+    departmentId?: 'managers' | 'account_managers' | 'customer_care';
+  }) => {
+    const response = await fetch(`${API_BASE_URL}/admin/workload-analytics/summary`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) {
+      throw new Error('Ошибка получения аналитики нагрузки');
+    }
+
+    return (await response.json()) as WorkloadAnalyticsSummary;
+  },
+);
+
+export const fetchWorkloadDateRange = createAsyncThunk('statusAnalytics/fetchWorkloadDateRange', async () => {
+  const response = await fetch(`${API_BASE_URL}/admin/workload-analytics/date-range`, {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Ошибка получения диапазона дат нагрузки');
   }
 
   return (await response.json()) as { minDate: string | null; maxDate: string | null };

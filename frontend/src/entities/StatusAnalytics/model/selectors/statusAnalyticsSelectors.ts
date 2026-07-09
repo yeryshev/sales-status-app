@@ -4,6 +4,11 @@ export const getStatusAnalyticsState = (state: StateSchema) => state.statusAnaly
 
 export const getStatusHistory = (state: StateSchema) => state.statusAnalytics.history;
 export const getStatusAnalytics = (state: StateSchema) => state.statusAnalytics.analytics;
+export const getStatusAnalyticsSummary = (state: StateSchema) => state.statusAnalytics.summary;
+export const getWorkloadAnalyticsSummary = (state: StateSchema) => state.statusAnalytics.workloadSummary;
+export const getWorkloadAnalyticsLoading = (state: StateSchema) => state.statusAnalytics.workloadLoading;
+export const getWorkloadAnalyticsError = (state: StateSchema) => state.statusAnalytics.workloadError;
+export const getWorkloadAnalyticsDateRange = (state: StateSchema) => state.statusAnalytics.workloadDateRange;
 export const getUsersForAnalytics = (state: StateSchema) => state.statusAnalytics.users;
 export const getStatusesForAnalytics = (state: StateSchema) => state.statusAnalytics.statuses;
 

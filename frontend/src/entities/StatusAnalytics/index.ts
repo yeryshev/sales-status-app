@@ -4,15 +4,23 @@ export { default as statusAnalyticsReducer } from './model/slice/statusAnalytics
 export {
   fetchStatusHistory,
   fetchStatusAnalytics,
+  fetchStatusAnalyticsSummary,
   fetchUsersForAnalytics,
   fetchStatusesForAnalytics,
   fetchDateRange,
+  fetchWorkloadAnalyticsSummary,
+  fetchWorkloadDateRange,
 } from './model/api/statusAnalyticsApi';
-export { setFilters, clearError, clearData } from './model/slice/statusAnalyticsSlice';
+export { setFilters, clearError, clearData, clearWorkloadError } from './model/slice/statusAnalyticsSlice';
 export {
   getStatusAnalyticsState,
   getStatusHistory,
   getStatusAnalytics,
+  getStatusAnalyticsSummary,
+  getWorkloadAnalyticsSummary,
+  getWorkloadAnalyticsLoading,
+  getWorkloadAnalyticsError,
+  getWorkloadAnalyticsDateRange,
   getUsersForAnalytics,
   getStatusesForAnalytics,
   getStatusAnalyticsLoading,
@@ -34,7 +42,36 @@ export type {
   StatusForAnalytics,
   DateRange,
   StatusAnalyticsState,
+  StatusAnalyticsSummary,
+  WorkloadAnalyticsSummary,
+  WorkloadAnalyticsRequest,
+  WorkloadCountersData,
   PeriodType,
 } from './model/types/statusAnalytics';
 
-export { calculatePeriodDates, isSingleDayPeriod, getPeriodLabel } from './lib/calculatePeriodDates';
+export {
+  WORKLOAD_METRICS,
+  formatWorkloadValue,
+  getWorkloadMetricValue,
+  type WorkloadMetricKey,
+} from './lib/workloadMetrics';
+
+export {
+  calculatePeriodDates,
+  isSingleDayPeriod,
+  getPeriodLabel,
+  subtractDaysFromDateString,
+} from './lib/calculatePeriodDates';
+export {
+  formatDurationFromSeconds,
+  formatDurationFromHours,
+  formatDateTimeMoscow,
+  formatShortDate,
+} from './lib/formatDuration';
+export {
+  getStatusChartColor,
+  getStatusChipColor,
+  getStatusChipColorByTitle,
+  isOfflineStatus,
+  OFFLINE_STATUS_ID,
+} from './lib/statusColors';

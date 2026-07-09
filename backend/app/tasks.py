@@ -12,8 +12,28 @@ from app.utils import (
     mango_statuses,
     send_ws_with_all_users,
 )
+from app.workload_snapshot_service import snapshot_daily_user_workload
 
 offline_status_id = app_statuses["offline"][0]
+
+
+async def snapshot_all_users_workload():
+    session = async_session_maker()
+    try:
+        saved_count = await snapshot_daily_user_workload(session)
+        await session.commit()
+        print(f"Saved end-of-day workload snapshots for {saved_count} users")
+    except Exception as exc:
+        await session.rollback()
+        print(f"Failed to save workload snapshots: {exc}")
+        raise
+    finally:
+        await session.close()
+
+
+async def end_of_workday_job():
+    await snapshot_all_users_workload()
+    await set_offline_users()
 
 
 async def set_offline_users():

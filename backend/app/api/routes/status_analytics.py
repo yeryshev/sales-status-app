@@ -11,7 +11,13 @@ from app.models import Status, StatusHistory, User
 from app.schemas import (
     StatusAnalyticsRequest,
     StatusAnalyticsResponse,
+    StatusAnalyticsSummaryResponse,
     StatusHistoryRead,
+)
+from app.status_analytics_service import (
+    build_analytics_summary_from_intervals,
+    fetch_analytics_summary_intervals,
+    normalize_end_date,
 )
 from app.status_history_utils import (
     StatusHistorySlice,
@@ -113,7 +119,7 @@ async def get_status_history(
                 User.is_cc_manager.is_(True),
             )
 
-        if department_filter is not None:
+        if department_filter is not None and not query_params["user_id"]:
             department_users_query = select(User.id).where(department_filter)
             department_users_result = await session.execute(department_users_query)
             department_user_ids = list(department_users_result.scalars().all())
@@ -133,8 +139,15 @@ async def get_status_history(
             StatusHistoryRead(
                 id=record.id,
                 user_id=record.user_id,
+                user_name=(
+                    f"{record.user.first_name or ''} {record.user.second_name or ''}".strip()
+                    if record.user
+                    else None
+                ),
                 old_status_id=record.old_status_id,
+                old_status_title=record.old_status.title if record.old_status else None,
                 new_status_id=record.new_status_id,
+                new_status_title=record.new_status.title if record.new_status else None,
                 start_time=record.start_time,
                 end_time=record.end_time,
                 duration_seconds=record.duration_seconds,
@@ -232,7 +245,7 @@ async def get_status_analytics(
                 User.is_cc_manager.is_(True),
             )
 
-        if department_filter is not None:
+        if department_filter is not None and not request.user_id:
             department_users_query = select(User.id).where(department_filter)
             department_users_result = await session.execute(department_users_query)
             department_user_ids = list(department_users_result.scalars().all())
@@ -334,6 +347,56 @@ async def get_status_analytics(
         print(f"Traceback: {error_traceback}")
         raise HTTPException(
             status_code=500, detail=f"Ошибка получения аналитики: {str(e)}"
+        )
+
+
+@router.post("/summary", response_model=StatusAnalyticsSummaryResponse)
+async def get_status_analytics_summary(
+    request: StatusAnalyticsRequest,
+    session: AsyncSession = Depends(get_async_session),
+    _current_user: User = Depends(current_superuser),
+):
+    """Агрегированная аналитика по статусам для дашборда."""
+    try:
+        request.end_date = normalize_end_date(request.end_date)
+        segment_count, day_intervals = await fetch_analytics_summary_intervals(
+            session, request
+        )
+
+        user_ids = {user_id for (_day_key, user_id, _status_id) in day_intervals}
+        status_ids = {status_id for (_day_key, _user_id, status_id) in day_intervals}
+
+        users: dict[int, User] = {}
+        statuses: dict[int, Status] = {}
+
+        if user_ids:
+            users_result = await session.execute(
+                select(User).where(User.id.in_(user_ids))
+            )
+            users = {user.id: user for user in users_result.scalars().all()}
+
+        if status_ids:
+            statuses_result = await session.execute(
+                select(Status).where(Status.id.in_(status_ids))
+            )
+            statuses = {status.id: status for status in statuses_result.scalars().all()}
+
+        summary = build_analytics_summary_from_intervals(
+            day_intervals,
+            users,
+            statuses,
+            request.start_date,
+            request.end_date,
+            segment_count=segment_count,
+        )
+        return StatusAnalyticsSummaryResponse.model_validate(summary)
+    except Exception as e:
+        try:
+            await session.rollback()
+        except Exception:
+            pass
+        raise HTTPException(
+            status_code=500, detail=f"Ошибка получения сводки: {str(e)}"
         )
 
 

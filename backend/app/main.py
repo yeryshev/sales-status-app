@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.main import api_router
 from app.core.config import settings
-from app.tasks import set_offline_users
+from app.tasks import end_of_workday_job
 
 if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
     sentry_sdk.init(
@@ -14,6 +14,8 @@ if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
         traces_sample_rate=0.1,
         profiles_sample_rate=0.1,
         enable_tracing=True,
+        # Analytics POST bodies are tiny; avoid capturing large response payloads in traces.
+        max_request_body_size="never",
     )
 
 app = FastAPI(title="Team Status API")
@@ -46,8 +48,8 @@ app.include_router(api_router)
 @app.on_event("startup")
 async def startup_event():
     scheduler.add_job(
-        set_offline_users,
-        CronTrigger(hour=16, minute=00, second=00, timezone="UTC"),
+        end_of_workday_job,
+        CronTrigger(hour=16, minute=0, second=0, timezone="UTC"),
         max_instances=1,
         coalesce=True,
     )

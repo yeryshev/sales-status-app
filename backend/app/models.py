@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, Optional
 
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
-from sqlalchemy import Boolean, ForeignKey, String, text
+from sqlalchemy import Boolean, Date, ForeignKey, String, UniqueConstraint, text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlmodel import SQLModel
 
@@ -64,6 +64,9 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     status: Mapped[Optional["Status"]] = relationship("Status", back_populates="users")
     busy_time: Mapped[Optional["BusyTime"]] = relationship(
         "BusyTime", back_populates="user", uselist=False
+    )
+    workload_snapshots: Mapped[list["UserWorkloadDailySnapshot"]] = relationship(
+        "UserWorkloadDailySnapshot", back_populates="user"
     )
 
     def __repr__(self) -> str:
@@ -173,3 +176,28 @@ class StatusHistory(Base):
 
 class Message(SQLModel):
     message: str
+
+
+class UserWorkloadDailySnapshot(Base):
+    """End-of-workday workload counters captured at 16:00 UTC."""
+
+    __tablename__ = "user_workload_daily_snapshot"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id", "snapshot_date", name="uq_user_workload_snapshot_day"
+        ),
+    )
+
+    id: Mapped[int_primary_key]
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("user.id", ondelete="CASCADE"), index=True
+    )
+    snapshot_date: Mapped[date] = mapped_column(Date, index=True)
+    snapshot_at: Mapped[datetime]
+    leads: Mapped[int | None]
+    overdue_tasks: Mapped[int | None]
+    open_conversations: Mapped[int | None]
+    assigned_tickets: Mapped[int | None]
+    created_at: Mapped[created_at]
+
+    user: Mapped["User"] = relationship("User", back_populates="workload_snapshots")

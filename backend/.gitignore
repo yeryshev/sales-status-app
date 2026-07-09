@@ -17,3 +17,5 @@ app.egg-info
 htmlcov
 .cache
 .venv
+# Linux core dumps from crashed gunicorn/python (written to /app via volume mount)
+/core

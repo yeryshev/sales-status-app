@@ -48,8 +48,7 @@ export const StatusAnalyticsFilters = memo(({ onFiltersChange }: StatusAnalytics
           periodType,
         };
       } else {
-        // Для всех остальных периодов рассчитываем даты автоматически
-        const { startDate, endDate } = calculatePeriodDates(periodType);
+        const { startDate, endDate } = calculatePeriodDates(periodType, dateRange);
         newFilters = {
           ...filters,
           periodType,
@@ -234,6 +233,7 @@ export const StatusAnalyticsFilters = memo(({ onFiltersChange }: StatusAnalytics
                 <MenuItem value="lastWeek">Прошлая неделя</MenuItem>
                 <MenuItem value="currentMonth">Текущий месяц</MenuItem>
                 <MenuItem value="lastMonth">Прошлый месяц</MenuItem>
+                <MenuItem value="allTime">За всё время</MenuItem>
                 <MenuItem value="custom">Произвольный период</MenuItem>
               </Select>
             </FormControl>
