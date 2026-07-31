@@ -10,6 +10,7 @@ import regular5 from './regular5.png';
 // Прямые импорты специальных иконок (только существующие файлы)
 import icon437 from './437.png';
 import icon633 from './633.png';
+import icon670 from './670.png';
 import icon892 from './892.png';
 import icon992 from './992.png';
 import icon1045 from './1045.png';
@@ -32,6 +33,7 @@ export const baseHorseIcons = {
 export const specialHorseIcons = {
   437: icon437,
   633: icon633,
+  670: icon670,
   892: icon892,
   992: icon992,
   1045: icon1045,
