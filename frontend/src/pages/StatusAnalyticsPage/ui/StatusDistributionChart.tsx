@@ -1,6 +1,7 @@
 import { memo, useMemo } from 'react';
 import { Box, Paper, Typography, useTheme } from '@mui/material';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Doughnut } from 'react-chartjs-2';
 import { useAppSelector } from '@/shared/lib/hooks';
 import { getStatusAnalyticsSummary, getStatusAnalyticsFilters } from '@/entities/StatusAnalytics';
@@ -8,7 +9,7 @@ import { getStatusChartColor, isOfflineStatus } from '@/entities/StatusAnalytics
 import { formatDurationFromSeconds } from '@/entities/StatusAnalytics';
 import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 export const StatusDistributionChart = memo(() => {
   const summary = useAppSelector(getStatusAnalyticsSummary);
@@ -130,6 +131,9 @@ export const StatusDistributionChart = memo(() => {
                     return `${item.statusTitle}: ${formatDurationFromSeconds(item.durationSeconds)} (${item.percentage}%)`;
                   },
                 },
+              },
+              datalabels: {
+                display: false,
               },
             },
           }}

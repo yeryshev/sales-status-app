@@ -1,6 +1,7 @@
 import { memo, useMemo } from 'react';
 import { Box, Paper, Typography, useTheme } from '@mui/material';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
 import { useAppSelector } from '@/shared/lib/hooks';
 import { getStatusAnalyticsSummary, getStatusAnalyticsFilters } from '@/entities/StatusAnalytics';
@@ -8,7 +9,7 @@ import { getStatusChartColor, isOfflineStatus } from '@/entities/StatusAnalytics
 import { formatDurationFromHours, formatShortDate } from '@/entities/StatusAnalytics';
 import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
 
 export const StatusDailyTrendChart = memo(() => {
   const summary = useAppSelector(getStatusAnalyticsSummary);
@@ -98,6 +99,9 @@ export const StatusDailyTrendChart = memo(() => {
                   },
                 },
               },
+              datalabels: {
+                display: false,
+              },
             },
             scales: {
               x: {
@@ -109,10 +113,13 @@ export const StatusDailyTrendChart = memo(() => {
                 stacked: true,
                 beginAtZero: true,
                 grid: { color: chartTheme.gridColor },
-                ticks: { color: chartTheme.axisLabelColor },
+                ticks: {
+                  color: chartTheme.axisLabelColor,
+                  callback: (value) => formatDurationFromHours(Number(value)),
+                },
                 title: {
                   display: true,
-                  text: showAveragePerUser ? 'Среднее, ч/сотр.' : 'Часы',
+                  text: showAveragePerUser ? 'Среднее на сотрудника' : 'Время',
                   color: chartTheme.axisLabelColor,
                 },
               },

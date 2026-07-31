@@ -66,6 +66,9 @@ export const WorkloadDailyTrendChart = memo(() => {
                   label: (context) => `${context.dataset.label}: ${formatWorkloadValue(context.parsed.y)}`,
                 },
               },
+              datalabels: {
+                display: false,
+              },
             },
             scales: {
               x: {

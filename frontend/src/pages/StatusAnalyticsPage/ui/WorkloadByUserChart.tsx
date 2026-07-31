@@ -1,6 +1,7 @@
 import { memo, useMemo, useState } from 'react';
 import { Box, Paper, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Bar } from 'react-chartjs-2';
 import { useAppSelector } from '@/shared/lib/hooks';
 import {
@@ -12,7 +13,7 @@ import {
 } from '@/entities/StatusAnalytics';
 import { useChartTheme } from '@/shared/lib/hooks/useChartTheme';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend, ChartDataLabels);
 
 export const WorkloadByUserChart = memo(() => {
   const summary = useAppSelector(getWorkloadAnalyticsSummary);
@@ -101,6 +102,20 @@ export const WorkloadByUserChart = memo(() => {
                   callbacks: {
                     label: (context) => `${metric.label}: ${formatWorkloadValue(context.parsed.x)}`,
                   },
+                },
+                datalabels: {
+                  display: (context) => (context.dataset.data[context.dataIndex] as number) > 0,
+                  color: '#ffffff',
+                  anchor: 'center',
+                  align: 'center',
+                  clamp: true,
+                  font: {
+                    weight: 'bold',
+                    size: 12,
+                  },
+                  textStrokeColor: 'rgba(0, 0, 0, 0.35)',
+                  textStrokeWidth: 2,
+                  formatter: (value: number) => formatWorkloadValue(value),
                 },
               },
               scales: {
