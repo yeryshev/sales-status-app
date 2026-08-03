@@ -47,6 +47,9 @@ export const processMonthlyReportData = (data: MonthlyReportResponse): Processed
     managersSet.add(user.managerName);
 
     user.reports.forEach((report) => {
+      if (report.year == null || report.month == null) {
+        return;
+      }
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
       const monthLabel = `${monthNames[report.month - 1]} ${report.year}`;
 
@@ -136,6 +139,9 @@ export const processConversionData = (data: MonthlyReportResponse): ConversionDa
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
+      if (report.year == null || report.month == null) {
+        return;
+      }
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
 
       if (!monthDataMap.has(key)) {
@@ -182,6 +188,9 @@ export const processConversionDataByMonth = (
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
+      if (report.year == null || report.month == null) {
+        return;
+      }
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
 
       if (!monthDataMap.has(key)) {
@@ -247,6 +256,9 @@ export const processConversionDataForBarChart = (
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
+      if (report.year == null || report.month == null) {
+        return;
+      }
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
 
       if (!monthDataMap.has(key)) {
@@ -315,6 +327,9 @@ export const processConversionDataForGroupedBarChart = (
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
+      if (report.year == null || report.month == null) {
+        return;
+      }
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
 
       if (!monthDataMap.has(key)) {
@@ -458,6 +473,9 @@ export const processSuccessByChannelDataByMonth = (data: MonthlyReportResponse):
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
+      if (report.year == null || report.month == null) {
+        return;
+      }
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
 
       if (!monthDataMap.has(key)) {
@@ -620,6 +638,9 @@ export const processSuccessByTypeDataByMonth = (data: MonthlyReportResponse): Ma
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
+      if (report.year == null || report.month == null) {
+        return;
+      }
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
 
       if (!monthDataMap.has(key)) {
@@ -766,6 +787,9 @@ export const processFailedDealsDataByMonth = (data: MonthlyReportResponse): Mana
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
+      if (report.year == null || report.month == null) {
+        return;
+      }
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
 
       if (!monthDataMap.has(key)) {
@@ -852,6 +876,9 @@ export const processChannelDataByMonth = (data: MonthlyReportResponse): ManagerD
 
   data.result.users.forEach((user) => {
     user.reports.forEach((report) => {
+      if (report.year == null || report.month == null) {
+        return;
+      }
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
 
       if (!monthDataMap.has(key)) {
@@ -986,6 +1013,9 @@ export const processManagerData = (data: MonthlyReportResponse): ManagerData[] =
     managersSet.add(user.managerName);
 
     user.reports.forEach((report) => {
+      if (report.year == null || report.month == null) {
+        return;
+      }
       const key = `${report.year}-${report.month.toString().padStart(2, '0')}`;
 
       if (!monthDataMap.has(key)) {

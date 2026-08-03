@@ -1,7 +1,7 @@
 export interface MonthlyReportData {
   id: number;
-  year: number;
-  month: number;
+  year: number | null;
+  month: number | null;
   idInside: number;
   leadsCall: number;
   leadsEmail: number;

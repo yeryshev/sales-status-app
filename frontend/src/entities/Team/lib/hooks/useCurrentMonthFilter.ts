@@ -39,6 +39,9 @@ export const useCurrentMonthFilter = (data: MonthlyReportResponse | null) => {
           users: data.result.users.map((user) => ({
             ...user,
             reports: user.reports.filter((report) => {
+              if (report.year == null || report.month == null) {
+                return false;
+              }
               const reportKey = `${report.year}-${report.month.toString().padStart(2, '0')}`;
               return reportKey !== currentMonthKey;
             }),
