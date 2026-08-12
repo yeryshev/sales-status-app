@@ -24,6 +24,7 @@ export const EMPTY_ADDITIONAL_DATA = {
   },
   mangoState: false,
   leads: 0,
+  leadsSourceLost: null,
   lastWeek: {
     budget: 0,
     deals: 0,
@@ -38,6 +39,7 @@ export const CELL_WIDTHS = {
   QLIK: 120,
   AMO_CRM: 300,
   LEADS: 60,
+  LEADS_SOURCE_LOST: 60,
   TASKS: 60,
   CONVERSATIONS: 60,
   TICKETS: 60,

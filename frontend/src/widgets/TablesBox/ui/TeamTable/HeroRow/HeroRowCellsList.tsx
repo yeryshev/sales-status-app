@@ -4,6 +4,7 @@ import { StatusSelector } from '@/features/StatusSelector';
 import { AvatarCell } from '../RowCells/AvatarCell';
 import { UserNameCell } from '../RowCells/UserNameCell';
 import { LeadsCell } from '../RowCells/LeadsCell';
+import { LeadsSourceLostCell } from '../RowCells/LeadsSourceLostCell';
 import { TasksCell } from '../RowCells/TasksCell';
 import { ConversationsCell } from '../RowCells/ConversationsCell';
 import { TicketsCell } from '../RowCells/TicketsCell';
@@ -19,13 +20,31 @@ interface TeamRowCellsListProps extends HeroRowProps {
 }
 
 export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] => {
-  const { teammate, teamIsLoading, additionalUserData, isDeadlineReached, isAccountManagersRoute, handleSwitch } =
-    props;
+  const {
+    teammate,
+    teamIsLoading,
+    additionalUserData,
+    isDeadlineReached,
+    isAccountManagersRoute,
+    showLeadsSourceLost,
+    handleSwitch,
+  } = props;
 
-  const { avatar, deals, budget, qlik, leads, overdueTasks, conversations, tickets, idAmoCRM, idInside } =
-    additionalUserData ?? {};
+  const {
+    avatar,
+    deals,
+    budget,
+    qlik,
+    leads,
+    leadsSourceLost,
+    overdueTasks,
+    conversations,
+    tickets,
+    idAmoCRM,
+    idInside,
+  } = additionalUserData ?? {};
 
-  return [
+  const cells: TeamRowCell[] = [
     {
       align: 'left',
       width: CELL_WIDTHS.AVATAR,
@@ -76,18 +95,29 @@ export const HeroRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
       width: CELL_WIDTHS.TICKETS,
       content: <TicketsCell tickets={tickets} idInside={idInside} />,
     },
-    {
-      align: 'center',
-      width: CELL_WIDTHS.ARROW_DOWN,
-      content: !isAccountManagersRoute && (
-        <Switch
-          id="is-working-remotely-switch"
-          name="isWorkingRemotely"
-          checked={teammate.isWorkingRemotely}
-          size={'small'}
-          onChange={handleSwitch}
-        />
-      ),
-    },
   ];
+
+  if (showLeadsSourceLost) {
+    cells.push({
+      align: 'center',
+      width: CELL_WIDTHS.LEADS_SOURCE_LOST,
+      content: <LeadsSourceLostCell leadsSourceLost={leadsSourceLost} idAmoCRM={idAmoCRM} />,
+    });
+  }
+
+  cells.push({
+    align: 'center',
+    width: CELL_WIDTHS.ARROW_DOWN,
+    content: !isAccountManagersRoute && (
+      <Switch
+        id="is-working-remotely-switch"
+        name="isWorkingRemotely"
+        checked={teammate.isWorkingRemotely}
+        size={'small'}
+        onChange={handleSwitch}
+      />
+    ),
+  });
+
+  return cells;
 };

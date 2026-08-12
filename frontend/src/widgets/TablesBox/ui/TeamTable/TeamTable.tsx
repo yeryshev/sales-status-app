@@ -13,8 +13,16 @@ import { createSkeletons } from '../../lib/teamDataHelpers';
 export const TeamTable = memo((props: TeamTableProps) => {
   const { teamIsLoading } = props;
 
-  const { managers, coordinators, heroMember, headers, hasCoordinators, hasManagers, teamListIsNotEmpty } =
-    useTeamTable(props);
+  const {
+    managers,
+    coordinators,
+    heroMember,
+    headers,
+    hasCoordinators,
+    hasManagers,
+    teamListIsNotEmpty,
+    showLeadsSourceLost,
+  } = useTeamTable(props);
 
   const skeletonKeys = createSkeletons(DEFAULT_SKELETON_COUNT);
 
@@ -39,6 +47,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
                 teamIsLoading={teamIsLoading}
                 isDeadlineReached={heroMember.isDeadlineReached}
                 isAccountManagersRoute={props.isAccountManagersRoute}
+                showLeadsSourceLost={showLeadsSourceLost}
               />
               <SeparatorRow colSpan={headers.length} />
             </>
@@ -50,6 +59,7 @@ export const TeamTable = memo((props: TeamTableProps) => {
               members={managers}
               isAccountManagersRoute={props.isAccountManagersRoute}
               teamIsLoading={teamIsLoading}
+              showLeadsSourceLost={showLeadsSourceLost}
             />
           )}
 
@@ -61,12 +71,14 @@ export const TeamTable = memo((props: TeamTableProps) => {
                 members={coordinators}
                 isAccountManagersRoute={props.isAccountManagersRoute}
                 teamIsLoading={teamIsLoading}
+                showLeadsSourceLost={showLeadsSourceLost}
               />
             </>
           )}
 
           {/* Loading Skeletons */}
-          {teamIsLoading && skeletonKeys.map((key) => <RowSkeleton key={key} />)}
+          {teamIsLoading &&
+            skeletonKeys.map((key) => <RowSkeleton key={key} showLeadsSourceLost={showLeadsSourceLost} />)}
         </TableBody>
       </Table>
     </TableContainer>

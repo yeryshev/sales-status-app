@@ -2,7 +2,13 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { getUserData, getUserId } from '@/entities/User';
 import { TeamTableProps, FilteredTeamData, TeamMember } from '../types';
-import { createTeamMember, filterManagers, filterCoordinators, createHeroMember } from '../utils';
+import {
+  createTeamMember,
+  filterManagers,
+  filterCoordinators,
+  createHeroMember,
+  shouldShowLeadsSourceLostForRenderedMembers,
+} from '../utils';
 import { getTeamTableHeadersList } from '../Headers/getTeamTableHeadersList';
 
 // Специальная функция фильтрации для Аккаунт менеджеров
@@ -47,7 +53,15 @@ export const useTeamTable = (props: TeamTableProps) => {
     [user, additionalTeamData, isDeadlineReachedObject],
   );
 
-  const headers = useMemo(() => getTeamTableHeadersList(showHeroRow), [showHeroRow]);
+  const showLeadsSourceLost = useMemo(
+    () => shouldShowLeadsSourceLostForRenderedMembers(managers, coordinators, showHeroRow ? heroMember : null),
+    [managers, coordinators, heroMember, showHeroRow],
+  );
+
+  const headers = useMemo(
+    () => getTeamTableHeadersList(showHeroRow, showLeadsSourceLost),
+    [showHeroRow, showLeadsSourceLost],
+  );
 
   const filteredData: FilteredTeamData = useMemo(
     () => ({
@@ -55,8 +69,9 @@ export const useTeamTable = (props: TeamTableProps) => {
       coordinators,
       heroMember: showHeroRow ? heroMember : null,
       headers,
+      showLeadsSourceLost,
     }),
-    [managers, coordinators, heroMember, showHeroRow, headers],
+    [managers, coordinators, heroMember, showHeroRow, headers, showLeadsSourceLost],
   );
 
   return {

@@ -2,7 +2,7 @@ import { User } from '@/entities/User';
 import { AdditionalUserData } from '@/entities/Team';
 import { TeamMember } from './types';
 
-import { matchAdditionalUserData } from '../../lib/teamDataHelpers';
+import { matchAdditionalUserData, shouldShowLeadsSourceLostColumn } from '../../lib/teamDataHelpers';
 
 export const createTeamMember = (
   user: User,
@@ -45,3 +45,19 @@ export const createHeroMember = (
     isDeadlineReached: isDeadlineReachedObject[user.id] || false,
   };
 };
+
+/** Rows actually rendered in TeamTable (managers + coordinators + optional hero). */
+export const getRenderedTeamMembers = (
+  managers: TeamMember[],
+  coordinators: TeamMember[],
+  heroMember: TeamMember | null,
+): TeamMember[] => [...managers, ...coordinators, ...(heroMember ? [heroMember] : [])];
+
+export const shouldShowLeadsSourceLostForRenderedMembers = (
+  managers: TeamMember[],
+  coordinators: TeamMember[],
+  heroMember: TeamMember | null,
+): boolean =>
+  shouldShowLeadsSourceLostColumn(
+    getRenderedTeamMembers(managers, coordinators, heroMember).map((member) => member.additionalData),
+  );

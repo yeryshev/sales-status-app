@@ -6,6 +6,7 @@ import { UserNameCell } from '../RowCells/UserNameCell';
 import { StatusCell } from '../RowCells/StatusCell';
 import { CommentCell } from '../RowCells/CommentCell';
 import { LeadsCell } from '../RowCells/LeadsCell';
+import { LeadsSourceLostCell } from '../RowCells/LeadsSourceLostCell';
 import { TasksCell } from '../RowCells/TasksCell';
 import { TicketsCell } from '../RowCells/TicketsCell';
 import { ArrowDownCell } from '../RowCells/ArrowDownCell';
@@ -26,7 +27,7 @@ interface TeamRowCellsListProps extends TeamRowProps {
 }
 
 export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] => {
-  const { teammate, additionalUserData, isDeadlineReached, expandRow, setExpandRow } = props;
+  const { teammate, additionalUserData, isDeadlineReached, expandRow, setExpandRow, showLeadsSourceLost } = props;
 
   const {
     avatar,
@@ -36,6 +37,7 @@ export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     budget,
     qlik,
     leads,
+    leadsSourceLost,
     overdueTasks,
     conversations,
     tickets,
@@ -43,7 +45,7 @@ export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
     idInside,
   } = additionalUserData;
 
-  return [
+  const cells: TeamRowCell[] = [
     {
       align: 'left',
       width: CELL_WIDTHS.AVATAR,
@@ -96,10 +98,21 @@ export const TeamRowCellsList = (props: TeamRowCellsListProps): TeamRowCell[] =>
       width: CELL_WIDTHS.TICKETS,
       content: <TicketsCell tickets={tickets} absence={absence} idInside={idInside} />,
     },
-    {
-      align: 'center',
-      width: CELL_WIDTHS.ARROW_DOWN,
-      content: <ArrowDownCell expandRow={expandRow} setExpandRow={setExpandRow} />,
-    },
   ];
+
+  if (showLeadsSourceLost) {
+    cells.push({
+      align: 'center',
+      width: CELL_WIDTHS.LEADS_SOURCE_LOST,
+      content: <LeadsSourceLostCell leadsSourceLost={leadsSourceLost} absence={absence} idAmoCRM={idAmoCRM} />,
+    });
+  }
+
+  cells.push({
+    align: 'center',
+    width: CELL_WIDTHS.ARROW_DOWN,
+    content: <ArrowDownCell expandRow={expandRow} setExpandRow={setExpandRow} />,
+  });
+
+  return cells;
 };

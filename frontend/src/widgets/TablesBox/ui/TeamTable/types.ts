@@ -20,6 +20,7 @@ export interface TeamSectionProps {
   members: TeamMember[];
   isAccountManagersRoute: boolean;
   teamIsLoading: boolean;
+  showLeadsSourceLost?: boolean;
 }
 
 export interface SeparatorRowProps {
@@ -31,4 +32,5 @@ export interface FilteredTeamData {
   coordinators: TeamMember[];
   heroMember: TeamMember | null;
   headers: TeamTableHeaderItemType[];
+  showLeadsSourceLost: boolean;
 }

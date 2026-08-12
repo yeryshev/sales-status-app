@@ -4,7 +4,13 @@ import TableRow from '@mui/material/TableRow';
 import { Skeleton } from '@mui/material';
 import { CELL_WIDTHS } from '../TeamTable/constants';
 
-export const RowSkeleton = memo(() => {
+interface RowSkeletonProps {
+  showLeadsSourceLost?: boolean;
+}
+
+export const RowSkeleton = memo((props: RowSkeletonProps) => {
+  const { showLeadsSourceLost = false } = props;
+
   return (
     <TableRow hover={true}>
       {/* Аватар */}
@@ -47,7 +53,12 @@ export const RowSkeleton = memo(() => {
       <TableCell align="center" width={CELL_WIDTHS.TICKETS}>
         <Skeleton variant="text" />
       </TableCell>
-      {/* Стрелка */}
+      {showLeadsSourceLost && (
+        <TableCell align="center" width={CELL_WIDTHS.LEADS_SOURCE_LOST}>
+          <Skeleton variant="text" />
+        </TableCell>
+      )}
+      {/* Стрелка / remote */}
       <TableCell align="center" width={CELL_WIDTHS.ARROW_DOWN}>
         <Skeleton variant="text" />
       </TableCell>

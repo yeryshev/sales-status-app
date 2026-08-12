@@ -14,10 +14,18 @@ export interface HeroRowProps {
   additionalUserData: AdditionalUserData;
   isDeadlineReached: boolean;
   isAccountManagersRoute: boolean;
+  showLeadsSourceLost?: boolean;
 }
 
 export const HeroRow = memo((props: HeroRowProps) => {
-  const { teammate, teamIsLoading, additionalUserData, isDeadlineReached, isAccountManagersRoute } = props;
+  const {
+    teammate,
+    teamIsLoading,
+    additionalUserData,
+    isDeadlineReached,
+    isAccountManagersRoute,
+    showLeadsSourceLost = false,
+  } = props;
   const dispatch = useAppDispatch();
   const isUpdatingRef = useRef(false);
 
@@ -61,6 +69,7 @@ export const HeroRow = memo((props: HeroRowProps) => {
     additionalUserData,
     isDeadlineReached,
     isAccountManagersRoute,
+    showLeadsSourceLost,
     handleSwitch,
   };
 

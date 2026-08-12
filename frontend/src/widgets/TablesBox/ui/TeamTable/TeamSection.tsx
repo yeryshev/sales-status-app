@@ -3,7 +3,7 @@ import { TeamRow } from './TeamRow/TeamRow';
 import { TeamSectionProps } from './types';
 
 export const TeamSection = memo((props: TeamSectionProps) => {
-  const { members, isAccountManagersRoute, teamIsLoading } = props;
+  const { members, isAccountManagersRoute, teamIsLoading, showLeadsSourceLost = false } = props;
 
   return (
     <>
@@ -15,6 +15,7 @@ export const TeamSection = memo((props: TeamSectionProps) => {
           isDeadlineReached={member.isDeadlineReached}
           teamIsLoading={teamIsLoading}
           isAccountManagersRoute={isAccountManagersRoute}
+          showLeadsSourceLost={showLeadsSourceLost}
         />
       ))}
     </>

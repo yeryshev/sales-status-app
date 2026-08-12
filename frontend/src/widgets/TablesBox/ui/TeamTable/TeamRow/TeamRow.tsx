@@ -12,10 +12,18 @@ export interface TeamRowProps {
   additionalUserData: AdditionalUserData;
   isDeadlineReached: boolean;
   isAccountManagersRoute: boolean;
+  showLeadsSourceLost?: boolean;
 }
 
 export const TeamRow = memo((props: TeamRowProps) => {
-  const { teammate, teamIsLoading, additionalUserData, isDeadlineReached, isAccountManagersRoute } = props;
+  const {
+    teammate,
+    teamIsLoading,
+    additionalUserData,
+    isDeadlineReached,
+    isAccountManagersRoute,
+    showLeadsSourceLost = false,
+  } = props;
   const [expandRow, setExpandRow] = useState(false);
 
   const exampleProps = {
@@ -24,6 +32,7 @@ export const TeamRow = memo((props: TeamRowProps) => {
     additionalUserData,
     isDeadlineReached,
     isAccountManagersRoute,
+    showLeadsSourceLost,
     expandRow,
     setExpandRow,
   };

@@ -256,7 +256,10 @@ const tasksApi = rtkApi.injectEndpoints({
       },
       // Возвращаем пустой массив если нет внешнего API
       transformResponse: (response: Array<AdditionalUserData> | null) => {
-        return response || [];
+        return (response || []).map((item) => ({
+          ...item,
+          leadsSourceLost: item.leadsSourceLost ?? null,
+        }));
       },
       async onCacheEntryAdded(_, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
         const listener = (event: MessageEvent) => {
@@ -269,14 +272,18 @@ const tasksApi = rtkApi.injectEndpoints({
               const dataFromSocket: AdditionalUserData = message.data;
               logger.log('✅ Processing external user data for idInside:', dataFromSocket.idInside);
               updateCachedData((draft: Array<AdditionalUserData>) => {
-                const index = draft.findIndex((item) => item.idInside === dataFromSocket.idInside);
+                const normalized: AdditionalUserData = {
+                  ...dataFromSocket,
+                  leadsSourceLost: dataFromSocket.leadsSourceLost ?? null,
+                };
+                const index = draft.findIndex((item) => item.idInside === normalized.idInside);
                 if (index !== -1) {
                   logger.log('🔄 Updating existing user data at index:', index);
-                  draft[index] = dataFromSocket;
+                  draft[index] = normalized;
                 } else {
                   // Если пользователя еще нет в кэше, добавляем его
                   logger.log('➕ Adding new user data to cache');
-                  draft.push(dataFromSocket);
+                  draft.push(normalized);
                 }
               });
             }

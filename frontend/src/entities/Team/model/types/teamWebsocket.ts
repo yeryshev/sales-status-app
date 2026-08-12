@@ -28,6 +28,8 @@ export type AdditionalUserData = {
   tickets: number;
   mangoState: boolean;
   leads: number;
+  /** Deals without a lead source; null/undefined when metric is unavailable */
+  leadsSourceLost?: number | null;
   lastWeek: {
     budget: number;
     deals: number;

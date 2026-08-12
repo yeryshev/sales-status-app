@@ -5,6 +5,29 @@ export const generateLeadsUrl = (idAmoCRM: number): string => {
   return `${crmUrl}/leads/pipeline/1019845/?filter%5Bpipe%5D%5B1019845%5D%5B%5D=23650510&filter%5Bmain_user%5D%5B%5D=${idAmoCRM}&useFilter=y`;
 };
 
+export const generateLeadsSourceLostUrl = (idAmoCRM: number): string => {
+  const crmUrl = import.meta.env.VITE_CRM_URL;
+  if (!crmUrl) return '#';
+
+  return (
+    `${crmUrl}/leads/pipeline/1019845/` +
+    `?filter%5Bpipe%5D%5B1019845%5D%5B%5D=142` +
+    `&filter%5Bpipe%5D%5B1019845%5D%5B%5D=143` +
+    `&filter%5Bpipe%5D%5B1019845%5D%5B%5D=18661387` +
+    `&filter%5Bpipe%5D%5B1019845%5D%5B%5D=18661390` +
+    `&filter%5Bpipe%5D%5B1019845%5D%5B%5D=18661393` +
+    `&filter%5Bpipe%5D%5B1019845%5D%5B%5D=18663592` +
+    `&filter%5Bpipe%5D%5B1019845%5D%5B%5D=23017921` +
+    `&filter%5Bpipe%5D%5B1019845%5D%5B%5D=23650510` +
+    `&filter%5Bpipe%5D%5B1019845%5D%5B%5D=23662006` +
+    `&filter%5Bpipe%5D%5B1019845%5D%5B%5D=23886259` +
+    `&filter%5Bmain_user%5D%5B%5D=${idAmoCRM}` +
+    `&filter%5Bcf%5D%5B578515%5D%5B%5D=empty` +
+    `&filter%5Bdate_preset%5D=current_month` +
+    `&useFilter=y`
+  );
+};
+
 export const generateTasksUrl = (idAmoCRM: number): string => {
   const crmUrl = import.meta.env.VITE_CRM_URL;
   if (!crmUrl) return '#';

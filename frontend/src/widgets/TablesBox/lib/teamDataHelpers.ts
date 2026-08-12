@@ -26,6 +26,7 @@ export const matchAdditionalUserData = (usersData: Array<AdditionalUserData>, in
       },
       mangoState: false,
       leads: 0,
+      leadsSourceLost: null,
       lastWeek: {
         budget: 0,
         deals: 0,
@@ -33,5 +34,11 @@ export const matchAdditionalUserData = (usersData: Array<AdditionalUserData>, in
     }
   );
 };
+
+export const hasLeadsSourceLost = (value: number | null | undefined): boolean => typeof value === 'number' && value > 0;
+
+/** Show column only when at least one rendered table row has deals without source. */
+export const shouldShowLeadsSourceLostColumn = (additionalDataList: AdditionalUserData[]): boolean =>
+  additionalDataList.some((data) => hasLeadsSourceLost(data.leadsSourceLost));
 
 export const createSkeletons = (count: number = 10) => new Array(count).fill(0).map((_, index) => index);

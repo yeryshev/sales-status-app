@@ -5,6 +5,7 @@ import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutl
 import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import LinkOffOutlinedIcon from '@mui/icons-material/LinkOffOutlined';
 
 export type TeamTableHeaderItemType = {
   align?: TableCellProps['align'];
@@ -12,8 +13,11 @@ export type TeamTableHeaderItemType = {
   content?: ReactElement<HTMLElement>;
 };
 
-export const getTeamTableHeadersList = (shouldSeeHeroRow: boolean): TeamTableHeaderItemType[] => {
-  return [
+export const getTeamTableHeadersList = (
+  shouldSeeHeroRow: boolean,
+  showLeadsSourceLost = false,
+): TeamTableHeaderItemType[] => {
+  const headers: TeamTableHeaderItemType[] = [
     {},
     {
       align: 'left',
@@ -54,10 +58,21 @@ export const getTeamTableHeadersList = (shouldSeeHeroRow: boolean): TeamTableHea
       title: 'Назначенные тикеты',
       content: <FeedbackOutlinedIcon fontSize={'small'} />,
     },
-    {
-      align: 'center',
-      title: shouldSeeHeroRow ? 'Работаю из дома' : '',
-      content: shouldSeeHeroRow ? <HomeOutlinedIcon fontSize={'small'} /> : <></>,
-    },
   ];
+
+  if (showLeadsSourceLost) {
+    headers.push({
+      align: 'center',
+      title: 'Сделки без источника',
+      content: <LinkOffOutlinedIcon fontSize={'small'} color="error" />,
+    });
+  }
+
+  headers.push({
+    align: 'center',
+    title: shouldSeeHeroRow ? 'Работаю из дома' : '',
+    content: shouldSeeHeroRow ? <HomeOutlinedIcon fontSize={'small'} /> : <></>,
+  });
+
+  return headers;
 };
